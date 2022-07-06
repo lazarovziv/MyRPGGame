@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include "GameEntity.hpp"
-#include "Game.hpp"
 
 enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 
@@ -23,7 +22,7 @@ private:
     PlayerType type;
     
 public:
-    Player(Game* game);
+    Player();
     ~Player() = default;
     int getStrengthPoints();
     int getIntelligencePoints();

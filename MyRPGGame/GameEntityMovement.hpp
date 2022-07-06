@@ -3,18 +3,18 @@
 
 #include <stdio.h>
 #include "GameEntity.hpp"
-#include "Game.hpp"
 #include "GameMap.hpp"
 
 class GameEntityMovement {
 private:
     GameEntity* entity;
-    Game* game;
-    GameMap* map;
+    int screenWidth, screenHeight;
 public:
-    GameEntityMovement(Game* game, GameEntity* entity, GameMap* map);
+    GameEntityMovement(GameEntity* entity);
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
+    void setScreenWidth(int width);
+    void setScreenHeight(int height);
 };
 
 #endif /* GameEntityMovement_hpp */

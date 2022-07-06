@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 #include "GameMap.hpp"
-#include "Game.hpp"
 
 enum class MoveDirection { UP, DOWN, RIGHT, LEFT };
 
@@ -33,10 +32,9 @@ protected:
     Sprite sprite; // maybe VertexArray for each direction
     GameMap* currentGameMap;
 //    FloatRect rectangle; for intersecting with unreachable areas
-    Game* game;
     
 public:
-    GameEntity(Game* game);
+    GameEntity();
     ~GameEntity() = default;
     // getters
     long getID();
@@ -73,8 +71,6 @@ public:
     void decreaseSpeed(float speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
-    
-    Game* getGame();
 };
 
 #endif /* GameEntity_hpp */

@@ -1,12 +1,11 @@
 #include "GameEntityMovement.hpp"
 
-GameEntityMovement::GameEntityMovement(Game* game, GameEntity* entity, GameMap* map) {
-    this->game = game;
+GameEntityMovement::GameEntityMovement(GameEntity* entity) {
     this->entity = entity;
-    this->map = map;
 }
 
 bool GameEntityMovement::move(MoveDirection direction) {
+    GameMap* map = entity->getCurrentGameMap();
     // size of array
     int unreachableAreasSize = sizeof(*(map->getUnreachableAreas())) / sizeof(map->getUnreachableAreas()[0]);
     bool canCollide = false;
@@ -27,7 +26,7 @@ bool GameEntityMovement::move(MoveDirection direction) {
             entity->setPosition(entity->getPosition().x, entity->getPosition().y - entity->getSpeed());
         }
     } else if (direction == MoveDirection::DOWN) {
-        if (entity->getPosition().y + entity->getSpeed() >= game->getScreenHeight()) return false;
+        if (entity->getPosition().y + entity->getSpeed() >= screenHeight) return false;
         // temp rectangle for moving down
         FloatRect rect(entity->getRectangle().left, entity->getRectangle().top + entity->getSpeed(), entity->getRectangle().width, entity->getRectangle().height);
         // check if the move can ovelap with any of the unreachable areas
@@ -42,7 +41,7 @@ bool GameEntityMovement::move(MoveDirection direction) {
             entity->setPosition(entity->getPosition().x, entity->getPosition().y + entity->getSpeed());
         }
     } else if (direction == MoveDirection::RIGHT) {
-        if (entity->getPosition().x + entity->getSpeed() >= game->getScreenWidth()) return false;
+        if (entity->getPosition().x + entity->getSpeed() >= screenWidth) return false;
         // temp rectangle for moving right
         FloatRect rect(entity->getRectangle().left + entity->getSpeed(), entity->getRectangle().top, entity->getRectangle().width, entity->getRectangle().height);
         for (int i = 0; i < unreachableAreasSize; i++) {
@@ -72,4 +71,12 @@ bool GameEntityMovement::move(MoveDirection direction) {
     
     entity->setMoveDirection(direction);
     return true;
+}
+
+void GameEntityMovement::setScreenWidth(int width) {
+    screenWidth = width;
+}
+
+void GameEntityMovement::setScreenHeight(int height) {
+    screenHeight = height;
 }

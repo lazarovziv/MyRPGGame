@@ -1,7 +1,6 @@
 #include "GameEntity.hpp"
 
-GameEntity::GameEntity(Game* game) {
-    this->game = game;
+GameEntity::GameEntity() {
     level = 1;
     maxHealthPoints = 50;
     currentHealthPoints = maxHealthPoints;
@@ -155,8 +154,4 @@ GameMap* GameEntity::getCurrentGameMap() {
 
 FloatRect GameEntity::getRectangle() {
     return sprite.getGlobalBounds();
-}
-
-Game* GameEntity::getGame() {
-    return game;
 }

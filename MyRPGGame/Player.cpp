@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(Game* game) : GameEntity(game) {
+Player::Player() {
     expPoints = 0;
     
     Texture playerTexture;
