@@ -63,6 +63,8 @@ public:
     void increaseDefencePoints(int amount);
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
+    void setX(float x);
+    void setY(float y);
     void setPosition(float x, float y);
     void setCurrentGameMap(GameMap &map);
     // for situations where changing for worse equipment (adding logic for negative base values)
@@ -71,6 +73,8 @@ public:
     void decreaseSpeed(float speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
+    
+    void update();
 };
 
 #endif /* GameEntity_hpp */

@@ -33,8 +33,6 @@ public:
     void levelUpIntelligencePoints();
     void levelUpCriticalHitsPoints();
     void setPlayerType(PlayerType type);
-    
-    void update();
 };
 
 #endif /* Player_hpp */

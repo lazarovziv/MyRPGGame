@@ -6,7 +6,7 @@ Player::Player() {
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
     sprite.setTexture(playerTexture);
-    sprite.setOrigin(25, 25);
+    sprite.setOrigin(32, 32);
     sprite.setPosition(position);
 }
 
@@ -40,8 +40,4 @@ void Player::levelUpCriticalHitsPoints() {
 
 void Player::setPlayerType(PlayerType type) {
     this->type = type;
-}
-
-void Player::update() {
-    
 }

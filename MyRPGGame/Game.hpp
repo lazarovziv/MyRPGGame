@@ -11,7 +11,6 @@ enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
 class Game {
 private:
-    int screenWidth, screenHeight;
     RenderWindow* window;
     VideoMode* videoMode;
     const char* title;
@@ -21,10 +20,10 @@ private:
     GameMap*** worldMap;
     int currentGameMapRow, currentGameMapCol;
 public:
-    Game(const char* str, int screenWidth, int screenHeight);
+    Game(const char* str);
     ~Game() = default;
-    int getScreenWidth();
-    int getScreenHeight();
+    static const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
+    static const int TILE_SIZE = 64;
     RenderWindow* getWindow();
     GameMap*** getWorldMap();
     GameState getState();

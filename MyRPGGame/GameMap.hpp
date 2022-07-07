@@ -17,7 +17,9 @@ private:
     Vector2f topEnterPoint, topExitPoint;
     Vector2f bottomEnterPoint, bottomExitPoint;
     // areas where entities cannot move or reach by walking
-    FloatRect unreachableAreas[];
+    int numOfUnreachableAreas = 0;
+    FloatRect unreachableAreas[100];
+    
     
 public:
     GameMap(int row, int col);
@@ -33,10 +35,13 @@ public:
     Vector2f getBottomEnterPoint();
     Vector2f getBottomExitPoint();
     FloatRect* getUnreachableAreas();
+    int getNumOfUnreachableAreas();
+    void addUnreachableArea(FloatRect rect);
     bool isReachableFromLeft();
     bool isReachableFromRight();
     bool isReachableFromTop();
     bool isReachableFromBottom();
+    // setters for reachable from direction
 };
 
 #endif /* GameMap_hpp */

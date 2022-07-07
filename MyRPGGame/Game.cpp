@@ -3,11 +3,9 @@
 
 using namespace std;
 
-Game::Game(const char* str, int width, int height) {
-    screenWidth = width;
-    screenHeight = height;
+Game::Game(const char* str) {
     title = str;
-    this->videoMode = new VideoMode(screenWidth, screenHeight);
+    this->videoMode = new VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
     std::string s(title);
     this->window = new RenderWindow(*videoMode, s);
     
@@ -23,18 +21,87 @@ Game::Game(const char* str, int width, int height) {
             worldMap[r][c] = new GameMap(r, c);
         }
     }
+    
+    this->player = new Player();
+    
+    player->setCurrentGameMap(*(worldMap[0][0]));
+    player->setPosition(SCREEN_WIDTH/2 + 100, SCREEN_HEIGHT/2 - 100);
+    
+    FloatRect unreachableArea0(200, 100, 100, 100);
+    FloatRect unreachableArea1(300, 400, 100, 100);
+    worldMap[0][0]->addUnreachableArea(unreachableArea0);
+    worldMap[0][0]->addUnreachableArea(unreachableArea1);
+//    cout << worldMap[0][0]->getNumOfUnreachableAreas() << endl;
+}
+
+void Game::render() {
+    window->clear();
+    RectangleShape rect0(Vector2f(100, 100));
+    rect0.setPosition(200, 100);
+    RectangleShape rect1(Vector2f(100, 100));
+    rect1.setPosition(300, 400);
+    window->draw(rect0);
+    window->draw(rect1);
+    window->draw(player->getSprite());
+    window->display();
+}
+
+void Game::start() {
+//    player->increaseSpeed(23);
+    GameEntityMovement playerMovement(player);
+    
+    bool canMove = false;
+    
+    // game loop
+    while (window->isOpen()) {
+        Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                // add save game and exit message confirmation
+                window->close();
+            }
+            if (event.type == Event::KeyPressed) {
+                int eventKeyCode = event.key.code;
+                // exit the game
+                if (eventKeyCode == Keyboard::Escape) {
+                    window->close();
+                    // starting the game by pressing enter
+                } else if (eventKeyCode == Keyboard::Enter) {
+                    changeState(GameState::PLAYING);
+                    canMove = true;
+                }
+                if (state == GameState::PLAYING) {
+                    // moving with the arrows
+                    if (eventKeyCode == Keyboard::Up && canMove) {
+                        playerMovement.move(MoveDirection::UP);
+                    } else if (eventKeyCode == Keyboard::Down && canMove) {
+                        playerMovement.move(MoveDirection::DOWN);
+                    } else if (eventKeyCode == Keyboard::Right && canMove) {
+                        playerMovement.move(MoveDirection::RIGHT);
+                    } else if (eventKeyCode == Keyboard::Left && canMove) {
+                        playerMovement.move(MoveDirection::LEFT);
+                        // pressing I sends to menu (not implemented menu yet)
+                    } else if (eventKeyCode == Keyboard::I) {
+                        changeState(GameState::IN_MENU);
+                        cout << "In Menu" << endl;
+                        canMove = false;
+                    }
+                    if (canMove) cout << "Player (x, y): (" << player->getPosition().x << ", " << player->getPosition().y << ")" << endl;
+                    // update player data
+                    update();
+                }
+            }
+        }
+        
+        // redner only when playing
+        if (state == GameState::PLAYING) {
+            render();
+        }
+    }
 }
 
 void Game::changeState(GameState state) {
     this->state = state;
-}
-
-int Game::getScreenWidth() {
-    return screenWidth;
-}
-
-int Game::getScreenHeight() {
-    return screenHeight;
 }
 
 RenderWindow* Game::getWindow() {
@@ -58,60 +125,5 @@ void Game::setPlayer(Player* player) {
 }
 
 void Game::update() {
-    
-}
-
-void Game::render() {
-    window->clear();
-    window->draw(player->getSprite());
-    window->display();
-}
-
-void Game::start() {
-    GameEntityMovement playerMovement(player);
-    
-    bool canMove = false;
-    
-    // game loop
-    while (window->isOpen()) {
-        Event event;
-        while (window->pollEvent(event)) {
-            if (event.type == Event::KeyPressed) {
-                int eventKeyCode = event.key.code;
-                // exit the game
-                if (eventKeyCode == Keyboard::Escape) {
-                    window->close();
-                    // starting the game by pressing enter
-                } else if (eventKeyCode == Keyboard::Return) {
-                    changeState(GameState::PLAYING);
-                    canMove = true;
-                    // moving with the arrows
-                } else if (eventKeyCode == Keyboard::Up && canMove) {
-                    playerMovement.move(MoveDirection::UP);
-                } else if (eventKeyCode == Keyboard::Down && canMove) {
-                    playerMovement.move(MoveDirection::DOWN);
-                } else if (eventKeyCode == Keyboard::Right && canMove) {
-                    playerMovement.move(MoveDirection::RIGHT);
-                } else if (eventKeyCode == Keyboard::Left && canMove) {
-                    playerMovement.move(MoveDirection::LEFT);
-                    // pressing I sends to menu (not implemented menu yet)
-                } else if (eventKeyCode == Keyboard::I) {
-                    changeState(GameState::IN_MENU);
-                    cout << "In Menu" << endl;
-                    canMove = false;
-                }
-                if (canMove) cout << "Player: (" << player->getPosition().x << ", " << player->getPosition().y << ")" << endl;
-            }
-        }
-        
-        // redner only when playing
-        if (state == GameState::PLAYING) {
-            render();
-        }
-        
-//        // updating game state
-//        game.update();
-//        // rendering game graphics
-//        game.render();
-    }
+    player->update();
 }

@@ -9,11 +9,8 @@ using namespace std;
 using namespace sf;
 
 int main() {
-    Game game("MyRPGGame", 320, 240);
-    Player player;
-    
-    game.setPlayer(&player);
-    
+    Game game("MyRPGGame");
     game.start();
+    
     return 0;
 }

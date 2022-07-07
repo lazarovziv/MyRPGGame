@@ -64,3 +64,12 @@ bool GameMap::isReachableFromTop() {
 bool GameMap::isReachableFromBottom() {
     return reachableFromBottom;
 }
+
+int GameMap::getNumOfUnreachableAreas() {
+    return numOfUnreachableAreas;
+}
+
+void GameMap::addUnreachableArea(FloatRect rect) {
+    unreachableAreas[numOfUnreachableAreas] = rect;
+    numOfUnreachableAreas++;
+}

@@ -35,9 +35,10 @@ void GameEntity::increaseMaxManaPoints(int amount) {
 
 void GameEntity::increaseSpeed(float amount) {
     // setting upper limit to 3
-    if (speed + amount < 3) {
-        speed += amount;
-    }
+//    if (speed + amount < 3) {
+//        speed += amount;
+//    }
+    speed += amount;
 }
 
 void GameEntity::increaseAttackPoints(int amount) {
@@ -56,14 +57,21 @@ void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
 }
 
+void GameEntity::setX(float x) {
+    position.x = x;
+}
+
+void GameEntity::setY(float y) {
+    position.y = y;
+}
+
 void GameEntity::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
-    sprite.setPosition(position);
 }
 
 void GameEntity::setCurrentGameMap(GameMap &map) {
-    *currentGameMap = map; // check if it works
+    currentGameMap = &map; // check if it works
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
@@ -154,4 +162,8 @@ GameMap* GameEntity::getCurrentGameMap() {
 
 FloatRect GameEntity::getRectangle() {
     return sprite.getGlobalBounds();
+}
+
+void GameEntity::update() {
+    sprite.setPosition(position);
 }

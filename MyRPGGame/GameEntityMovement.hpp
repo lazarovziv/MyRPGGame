@@ -9,12 +9,11 @@ class GameEntityMovement {
 private:
     GameEntity* entity;
     int screenWidth, screenHeight;
+    int tileSize;
 public:
     GameEntityMovement(GameEntity* entity);
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
-    void setScreenWidth(int width);
-    void setScreenHeight(int height);
 };
 
 #endif /* GameEntityMovement_hpp */
