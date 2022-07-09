@@ -36,22 +36,43 @@ namespace RpgAPI
 
             app.UseAuthorization();
 
-            //Getting all of the Game Entities
-            app.MapGet("api/gameentities", async (IGameEntitiesRepo repo, IMapper mapper) =>
+
+            //API End Points
+
+
+            //Getting all of the Enemies Entities
+            app.MapGet("api/get/enemies", async (IGameEntitiesRepo repo, IMapper mapper) =>
             {
-                var gameEntities = await repo.GetAllGameEntities();
-                return Results.Ok(mapper.Map<IEnumerable<GameEntityReadDto>>(gameEntities));
+                var enemies = await repo.GetAllNPCEnemies();
+
+                if (enemies == null)
+                    throw new ArgumentNullException(nameof(enemies));
+
+                return Results.Ok(mapper.Map<IEnumerable<GameEntityReadDto>>(enemies));
             });
 
-            //Getting a Game Entity by Id
-            app.MapGet("api/gameentities/{id}", async (IGameEntitiesRepo repo, IMapper mapper,[FromRoute] long id) =>
+
+            //Getting a Player by Id
+            app.MapGet("api/get/players/{id}", async (IGameEntitiesRepo repo, IMapper mapper, [FromRoute] long id) =>
             {
-                var gameEntity = await repo.GetGameEntityById(id);
+                var player = await repo.GetPlayerEntityById(id);
 
-                if(gameEntity != null)
-                    return Results.Ok(mapper.Map<GameEntityReadDto>(gameEntity));
+                if(player == null)
+                    throw new ArgumentNullException(nameof(player));
+                
+                return Results.Ok(mapper.Map<GameEntityReadDto>(player));
+            });
 
-                return Results.NotFound();
+
+            //Getting a Enemy by Id
+            app.MapGet("api/get/enemies/{id}", async (IGameEntitiesRepo repo, IMapper mapper, [FromRoute] int id) =>
+            {
+                var enemy = await repo.GetEnemyEntityById(id);
+
+                if (enemy == null)
+                    throw new ArgumentNullException(nameof(enemy));
+
+                return Results.Ok(mapper.Map<GameEntityReadDto>(enemy));
             });
 
             app.Run();
