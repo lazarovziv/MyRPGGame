@@ -85,11 +85,13 @@ namespace RpgAPI.Repository
             //        MaxHealthPoints = entity.MaxHealthPoints,
             //        AttackPoints = entity.AttackPoints,
             //        DefencePoints = entity.DefencePoints,
+            //        CurrentManaPoints = entity.CurrentManaPoints,
+            //        MaxManaPoints = entity.MaxManaPoints,
             //        Speed = entity.Speed,
             //        PositionX = entity.PositionX,
             //        PositionY = entity.PositionY,
             //        GameMapId = entity.GameMapId,
-            //        PlayerId = entity.PlayerId,
+            //        PlayerId = entity.PlayerId
             //    };
 
             //    var player = new Player
@@ -115,12 +117,24 @@ namespace RpgAPI.Repository
 
         public async Task CreateGameEntity(GameEntity entity)
         {
-            if (entity == null || entity.Player == null || entity.GameMap == null)
+            if (entity == null || entity.GameMap == null)
                 throw new ArgumentNullException(nameof(entity));
 
+            else if (
+                        (entity.IsPlayer == true && entity.Player == null)
+                        ||
+                        (entity.IsPlayer == false && entity.Enemy == null)
+                    )
+                throw new ArgumentNullException(nameof(entity));
+
+
             await _context.GameEntities.AddAsync(entity);
-            await _context.Players.AddAsync(entity.Player);
             await _context.GameMaps.AddAsync(entity.GameMap);
+
+            if (entity.IsPlayer == true)
+                await _context.Players.AddAsync(entity.Player);
+            else
+                await _context.Enemies.AddAsync(entity.Enemy);
 
             //    var gameEntity = new GameEntity
             //    {
@@ -132,11 +146,13 @@ namespace RpgAPI.Repository
             //        MaxHealthPoints = entity.MaxHealthPoints,
             //        AttackPoints = entity.AttackPoints,
             //        DefencePoints = entity.DefencePoints,
+            //        CurrentManaPoints = entity.CurrentManaPoints,
+            //        MaxManaPoints = entity.MaxManaPoints,
             //        Speed = entity.Speed,
             //        PositionX = entity.PositionX,
             //        PositionY = entity.PositionY,
             //        GameMapId = entity.GameMapId,
-            //        PlayerId = entity.PlayerId,
+            //        PlayerId = entity.PlayerId
             //    };
 
             //    var player = new Player
@@ -170,8 +186,10 @@ namespace RpgAPI.Repository
             var query = from gameEntity in _context.GameEntities
                         from player in _context.Players
                         from gameMap in _context.GameMaps
+                        from enemy in _context.Enemies
                         where gameEntity.PlayerId == player.PlayerId
                         && gameEntity.GameMapId == gameMap.GameMapId
+
                         select new GameEntity
                         {
                             EntityId = gameEntity.EntityId,
@@ -182,6 +200,110 @@ namespace RpgAPI.Repository
                             MaxHealthPoints = gameEntity.MaxHealthPoints,
                             AttackPoints = gameEntity.AttackPoints,
                             DefencePoints = gameEntity.DefencePoints,
+                            CurrentManaPoints = gameEntity.CurrentManaPoints,
+                            MaxManaPoints = gameEntity.MaxManaPoints,
+                            Speed = gameEntity.Speed,
+                            PositionX = gameEntity.PositionX,
+                            PositionY = gameEntity.PositionY,
+                            GameMapId = gameEntity.GameMapId,
+
+                            GameMap = new GameMap
+                            {
+                                GameMapId = gameMap.GameMapId,
+                                WorldMapRow = gameMap.WorldMapRow,
+                                WorldMapCol = gameMap.WorldMapCol
+                            },
+
+                            Player = new Player
+                            {
+                                PlayerId = player.PlayerId,
+                                StrengthPoints = player.StrengthPoints,
+                                IntelligencePoints = player.IntelligencePoints,
+                                CriticalPoints = player.CriticalPoints,
+                                ExpPoints = player.ExpPoints,
+                                PlayerType = player.PlayerType
+                            },
+                            Enemy = new NPCEnemy
+                            {
+                                EnemyId = enemy.EnemyId,
+                                BattleTimeout = enemy.BattleTimeout,
+                                BattleAreaRadius = enemy.BattleAreaRadius,
+                                WanderAreaRadius = enemy.WanderAreaRadius,
+                                EnemyType = enemy.EnemyType
+                            }
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<GameEntity>> GetAllPlayersEntities()
+        {
+            var query = from gameEntity in _context.GameEntities
+                        from player in _context.Players
+                        from gameMap in _context.GameMaps
+                        from enemy in _context.Enemies
+                        where gameEntity.PlayerId == player.PlayerId
+                        && gameEntity.GameMapId == gameMap.GameMapId
+                        && gameEntity.IsPlayer == true
+
+                        select new GameEntity
+                        {
+                            EntityId = gameEntity.EntityId,
+                            Name = gameEntity.Name,
+                            Level = gameEntity.Level,
+                            Gender = gameEntity.Gender,
+                            CurrentHealthPoints = gameEntity.CurrentHealthPoints,
+                            MaxHealthPoints = gameEntity.MaxHealthPoints,
+                            AttackPoints = gameEntity.AttackPoints,
+                            DefencePoints = gameEntity.DefencePoints,
+                            CurrentManaPoints = gameEntity.CurrentManaPoints,
+                            MaxManaPoints = gameEntity.MaxManaPoints,
+                            Speed = gameEntity.Speed,
+                            PositionX = gameEntity.PositionX,
+                            PositionY = gameEntity.PositionY,
+                            GameMapId = gameEntity.GameMapId,
+
+                            GameMap = new GameMap
+                            {
+                                GameMapId = gameMap.GameMapId,
+                                WorldMapRow = gameMap.WorldMapRow,
+                                WorldMapCol = gameMap.WorldMapCol
+                            },
+
+                            Player = new Player
+                            {
+                                PlayerId = player.PlayerId,
+                                StrengthPoints = player.StrengthPoints,
+                                IntelligencePoints = player.IntelligencePoints,
+                                CriticalPoints = player.CriticalPoints,
+                                ExpPoints = player.ExpPoints,
+                                PlayerType = player.PlayerType
+                            }
+                        };
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<GameEntity>> GetAllNPCEnemies()
+        {
+            var query = from gameEntity in _context.GameEntities
+                        from gameMap in _context.GameMaps
+                        from enemy in _context.Enemies
+                        where gameEntity.NpcEnemyId == enemy.EnemyId
+                        && gameEntity.GameMapId == gameMap.GameMapId
+                        && gameEntity.IsPlayer == false
+                        select new GameEntity
+                        {
+                            EntityId = gameEntity.EntityId,
+                            Name = gameEntity.Name,
+                            Level = gameEntity.Level,
+                            Gender = gameEntity.Gender,
+                            CurrentHealthPoints = gameEntity.CurrentHealthPoints,
+                            MaxHealthPoints = gameEntity.MaxHealthPoints,
+                            AttackPoints = gameEntity.AttackPoints,
+                            DefencePoints = gameEntity.DefencePoints,
+                            CurrentManaPoints = gameEntity.CurrentManaPoints,
+                            MaxManaPoints = gameEntity.MaxManaPoints,
                             Speed = gameEntity.Speed,
                             PositionX = gameEntity.PositionX,
                             PositionY = gameEntity.PositionY,
@@ -190,15 +312,15 @@ namespace RpgAPI.Repository
                             {
                                 GameMapId = gameMap.GameMapId,
                                 WorldMapRow = gameMap.WorldMapRow,
-                                WorldMapCol = gameMap.WorldMapCol,
+                                WorldMapCol = gameMap.WorldMapCol
                             },
-                            Player = new Player
+                            Enemy = new NPCEnemy
                             {
-                                PlayerId = player.PlayerId,
-                                StrengthPoints = player.StrengthPoints,
-                                IntelligencePoints = player.IntelligencePoints,
-                                CriticalPoints = player.CriticalPoints,
-                                ExpPoints = player.ExpPoints
+                                EnemyId = enemy.EnemyId,
+                                BattleTimeout = enemy.BattleTimeout,
+                                BattleAreaRadius = enemy.BattleAreaRadius,
+                                WanderAreaRadius = enemy.WanderAreaRadius,
+                                EnemyType = enemy.EnemyType
                             }
                         };
 
@@ -210,10 +332,12 @@ namespace RpgAPI.Repository
             var query = from gameEntity in _context.GameEntities
                         from player in _context.Players
                         from gameMap in _context.GameMaps
+                        from enemy in _context.Enemies
 
                         where gameEntity.EntityId == id
                         && gameEntity.PlayerId == player.PlayerId
                         && gameEntity.GameMapId == gameMap.GameMapId
+
                         select new GameEntity
                         {
                             EntityId = gameEntity.EntityId,
@@ -224,28 +348,138 @@ namespace RpgAPI.Repository
                             MaxHealthPoints = gameEntity.MaxHealthPoints,
                             AttackPoints = gameEntity.AttackPoints,
                             DefencePoints = gameEntity.DefencePoints,
+                            CurrentManaPoints = gameEntity.CurrentManaPoints,
+                            MaxManaPoints = gameEntity.MaxManaPoints,
                             Speed = gameEntity.Speed,
                             PositionX = gameEntity.PositionX,
                             PositionY = gameEntity.PositionY,
                             GameMapId = gameEntity.GameMapId,
+
                             GameMap = new GameMap
                             {
                                 GameMapId = gameMap.GameMapId,
                                 WorldMapRow = gameMap.WorldMapRow,
-                                WorldMapCol = gameMap.WorldMapCol,
+                                WorldMapCol = gameMap.WorldMapCol
                             },
+
                             Player = new Player
                             {
                                 PlayerId = player.PlayerId,
                                 StrengthPoints = player.StrengthPoints,
                                 IntelligencePoints = player.IntelligencePoints,
                                 CriticalPoints = player.CriticalPoints,
-                                ExpPoints = player.ExpPoints
+                                ExpPoints = player.ExpPoints,
+                                PlayerType = player.PlayerType
+                            },
+                            Enemy = new NPCEnemy
+                            {
+                                EnemyId = enemy.EnemyId,
+                                BattleTimeout = enemy.BattleTimeout,
+                                BattleAreaRadius = enemy.BattleAreaRadius,
+                                WanderAreaRadius = enemy.WanderAreaRadius,
+                                EnemyType = enemy.EnemyType
                             }
                         };
 
             return await query.FirstOrDefaultAsync();
         }
+
+        public async Task<GameEntity> GetPlayerEntityById(int id)
+        {
+            var query = from gameEntity in _context.GameEntities
+                        from player in _context.Players
+                        from gameMap in _context.GameMaps
+
+                        where gameEntity.EntityId == id
+                        && gameEntity.PlayerId == player.PlayerId
+                        && gameEntity.GameMapId == gameMap.GameMapId
+                        && gameEntity.IsPlayer == true
+
+                        select new GameEntity
+                        {
+                            EntityId = gameEntity.EntityId,
+                            Name = gameEntity.Name,
+                            Level = gameEntity.Level,
+                            Gender = gameEntity.Gender,
+                            CurrentHealthPoints = gameEntity.CurrentHealthPoints,
+                            MaxHealthPoints = gameEntity.MaxHealthPoints,
+                            AttackPoints = gameEntity.AttackPoints,
+                            DefencePoints = gameEntity.DefencePoints,
+                            CurrentManaPoints = gameEntity.CurrentManaPoints,
+                            MaxManaPoints = gameEntity.MaxManaPoints,
+                            Speed = gameEntity.Speed,
+                            PositionX = gameEntity.PositionX,
+                            PositionY = gameEntity.PositionY,
+                            GameMapId = gameEntity.GameMapId,
+
+                            GameMap = new GameMap
+                            {
+                                GameMapId = gameMap.GameMapId,
+                                WorldMapRow = gameMap.WorldMapRow,
+                                WorldMapCol = gameMap.WorldMapCol
+                            },
+
+                            Player = new Player
+                            {
+                                PlayerId = player.PlayerId,
+                                StrengthPoints = player.StrengthPoints,
+                                IntelligencePoints = player.IntelligencePoints,
+                                CriticalPoints = player.CriticalPoints,
+                                ExpPoints = player.ExpPoints,
+                                PlayerType = player.PlayerType
+                            }
+                        };
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<GameEntity> GetEnemyEntityById(int id)
+        {
+            var query = from gameEntity in _context.GameEntities
+                        from gameMap in _context.GameMaps
+                        from enemy in _context.Enemies
+
+                        where gameEntity.EntityId == id
+                        && gameEntity.GameMapId == gameMap.GameMapId
+                        && gameEntity.IsPlayer == false
+
+                        select new GameEntity
+                        {
+                            EntityId = gameEntity.EntityId,
+                            Name = gameEntity.Name,
+                            Level = gameEntity.Level,
+                            Gender = gameEntity.Gender,
+                            CurrentHealthPoints = gameEntity.CurrentHealthPoints,
+                            MaxHealthPoints = gameEntity.MaxHealthPoints,
+                            AttackPoints = gameEntity.AttackPoints,
+                            DefencePoints = gameEntity.DefencePoints,
+                            CurrentManaPoints = gameEntity.CurrentManaPoints,
+                            MaxManaPoints = gameEntity.MaxManaPoints,
+                            Speed = gameEntity.Speed,
+                            PositionX = gameEntity.PositionX,
+                            PositionY = gameEntity.PositionY,
+                            GameMapId = gameEntity.GameMapId,
+
+                            GameMap = new GameMap
+                            {
+                                GameMapId = gameMap.GameMapId,
+                                WorldMapRow = gameMap.WorldMapRow,
+                                WorldMapCol = gameMap.WorldMapCol
+                            },
+                            Enemy = new NPCEnemy
+                            {
+                                EnemyId = enemy.EnemyId,
+                                BattleTimeout = enemy.BattleTimeout,
+                                BattleAreaRadius = enemy.BattleAreaRadius,
+                                WanderAreaRadius = enemy.WanderAreaRadius,
+                                EnemyType = enemy.EnemyType
+                            }
+                        };
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+
     }
 }
 
