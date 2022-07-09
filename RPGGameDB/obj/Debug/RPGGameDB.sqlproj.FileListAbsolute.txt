@@ -1,0 +1,10 @@
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\bin\Debug\RPGGameDB.dacpac
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\bin\Debug\RPGGameDB.dll
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\bin\Debug\RPGGameDB.pdb
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\RPGGameDB.sqlproj.AssemblyReference.cache
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\Model.xml
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\refactor.xml
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\postdeploy.sql
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\predeploy.sql
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\RPGGameDB.dll
+C:\Users\97250\Desktop\Itay\MyRPGGameAPI\RPGGameDB\obj\Debug\RPGGameDB.pdb
