@@ -478,8 +478,6 @@ namespace RpgAPI.Repository
 
             return await query.FirstOrDefaultAsync();
         }
-
-
     }
 }
 
