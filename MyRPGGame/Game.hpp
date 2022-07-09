@@ -11,6 +11,7 @@ enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
 class Game {
 private:
+    static Game* instance;
     RenderWindow* window;
     VideoMode* videoMode;
     const char* title;
@@ -19,11 +20,15 @@ private:
     Player* player;
     GameMap*** worldMap;
     int currentGameMapRow, currentGameMapCol;
-public:
+    
     Game(const char* str);
+public:
+    Game(Game& game) = delete;
     ~Game() = default;
+    void operator=(const Game&) = delete;
     static const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
     static const int TILE_SIZE = 64;
+    static Game* getInstance(const char* str);
     RenderWindow* getWindow();
     GameMap*** getWorldMap();
     GameState getState();

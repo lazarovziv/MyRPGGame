@@ -3,6 +3,15 @@
 
 using namespace std;
 
+Game* Game::instance = nullptr;
+
+Game* Game::getInstance(const char* str) {
+    if (instance == nullptr) {
+        instance = new Game(str);
+    }
+    return instance;
+}
+
 Game::Game(const char* str) {
     title = str;
     this->videoMode = new VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -38,8 +47,8 @@ Game::Game(const char* str) {
 void Game::render() {
     window->clear();
     GameMap* map = getCurrentGameMap();
-    int unreachableAreasSize = map->getNumOfUnreachableAreas();
-    for (int i = 0; i < unreachableAreasSize; i++) {
+    // drawing unreachable areas
+    for (int i = 0; i < map->getNumOfUnreachableAreas(); i++) {
         window->draw(map->getUnreachableAreasSprites()[i]);
     }
     window->draw(player->getSprite());

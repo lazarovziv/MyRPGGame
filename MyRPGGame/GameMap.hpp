@@ -12,6 +12,7 @@ private:
     int worldMapRow;
     int worldMapCol;
     bool reachableFromLeft, reachableFromRight, reachableFromTop, reachableFromBottom;
+    bool exitableFromLeft, exitableFromRight, exitableFromTop, exitableFromBottom;
     Vector2f leftEnterPoint, leftExitPoint;
     Vector2f rightEnterPoint, rightExitPoint;
     Vector2f topEnterPoint, topExitPoint;
@@ -43,6 +44,10 @@ public:
     bool isReachableFromRight();
     bool isReachableFromTop();
     bool isReachableFromBottom();
+    bool isExitableFromLeft();
+    bool isExitableFromRight();
+    bool isExitableFromTop();
+    bool isExitableFromBottom();
     // setters for reachable from direction
 };
 

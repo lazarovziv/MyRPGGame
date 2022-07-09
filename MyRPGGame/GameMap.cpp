@@ -65,6 +65,22 @@ bool GameMap::isReachableFromBottom() {
     return reachableFromBottom;
 }
 
+bool GameMap::isExitableFromLeft() {
+    return exitableFromLeft;
+}
+
+bool GameMap::isExitableFromRight() {
+    return exitableFromRight;
+}
+
+bool GameMap::isExitableFromTop() {
+    return exitableFromTop;
+}
+
+bool GameMap::isExitableFromBottom() {
+    return exitableFromBottom;
+}
+
 int GameMap::getNumOfUnreachableAreas() {
     return numOfUnreachableAreas;
 }

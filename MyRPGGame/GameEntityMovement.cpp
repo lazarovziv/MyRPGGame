@@ -20,6 +20,10 @@ bool GameEntityMovement::move(MoveDirection direction) {
     
     if (direction == MoveDirection::UP) {
         if (entity->getPosition().y - entitySpeed <= tileSize/2) {
+            // TODO: check if edge of screen is an exit point for current game map
+            if (map->isExitableFromTop()) {
+                
+            }
             entity->setPosition(entity->getPosition().x, tileSize/2);
             return false;
         }

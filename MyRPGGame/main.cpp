@@ -9,8 +9,8 @@ using namespace std;
 using namespace sf;
 
 int main() {
-    Game game("MyRPGGame");
-    game.start();
+    Game* game = Game::getInstance("MyRPGGame");
+    game->start();
     
     return 0;
 }
