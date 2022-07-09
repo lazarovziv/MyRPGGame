@@ -16,11 +16,11 @@
         public float PositionX { get; set; }
         public float PositionY { get; set; }
         public bool IsPlayer { get; set; }
-        public int GameMapId { get; set; }
+        //public int GameMapId { get; set; }
         public GameMapReadDto? GameMap { get; set; }
-        public int? PlayerId { get; set; }
+        //public int? PlayerId { get; set; }
         public PlayerReadDto? Player { get; set; }
-        public int? NpcEnemyId { get; set; }
-        public NPCEnemyReadDto? NpcEnemy { get; set; }
+        //public int? EnemyId { get; set; }
+        public NPCEnemyReadDto? Enemy { get; set; }
     }
 }
