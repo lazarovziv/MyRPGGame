@@ -44,11 +44,11 @@ namespace RpgAPI.Models
         public GameMap? GameMap { get; set; }
 
         [ForeignKey("Player")]
-        public int PlayerId { get; set; }
+        public int? PlayerId { get; set; }
         public Player? Player { get; set; }
 
         [ForeignKey("NPCEnemy")]
-        public int NpcEnemyId { get; set; }
+        public int? NpcEnemyId { get; set; }
         public NPCEnemy? Enemy { get; set; }
     }
 }

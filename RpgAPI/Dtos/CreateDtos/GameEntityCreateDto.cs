@@ -35,9 +35,9 @@ namespace RpgAPI.Dtos.CreateDtos
         [Required]
         public int GameMapId { get; set; }
         public GameMapCreateDto? GameMap { get; set; }
-        public int PlayerId { get; set; }
+        public int? PlayerId { get; set; }
         public PlayerCreateDto? Player { get; set; }
-        public int NpcEnemyId { get; set; }
+        public int? NpcEnemyId { get; set; }
         public NPCEnemyCreateDto? Enemy { get; set; }
 
     }

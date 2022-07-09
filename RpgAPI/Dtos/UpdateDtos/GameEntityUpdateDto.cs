@@ -34,9 +34,9 @@ namespace RpgAPI.Dtos.UpdateDtos
         public bool IsPlayer { get; set; }
         public int GameMapId { get; set; }
         public GameMapUpdateDto? GameMap { get; set; }
-        public int PlayerId { get; set; }
+        public int? PlayerId { get; set; }
         public PlayerUpdateDto? Player { get; set; }
-        public int NpcEnemyId { get; set; }
+        public int? NpcEnemyId { get; set; }
         public NPCEnemyUpdateDto? Enemy { get; set; }
     }
 }

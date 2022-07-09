@@ -18,9 +18,9 @@
         public bool IsPlayer { get; set; }
         public int GameMapId { get; set; }
         public GameMapReadDto? GameMap { get; set; }
-        public int PlayerId { get; set; }
+        public int? PlayerId { get; set; }
         public PlayerReadDto? Player { get; set; }
-        public int NpcEnemyId { get; set; }
+        public int? NpcEnemyId { get; set; }
         public NPCEnemyReadDto? NpcEnemy { get; set; }
     }
 }
