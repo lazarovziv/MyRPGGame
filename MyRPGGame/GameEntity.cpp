@@ -70,9 +70,13 @@ void GameEntity::setPosition(float x, float y) {
     position.y = y;
 }
 
-void GameEntity::setCurrentGameMap(GameMap &map) {
-    currentGameMap = &map; // check if it works
-}
+//void GameEntity::setCurrentGameMap(GameMap &map) {
+//    currentGameMap = &map; // check if it works
+//}
+//
+//GameMap* GameEntity::getCurrentGameMap() {
+//    return currentGameMap;
+//}
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
     // don't let it decrease (throw an error)
@@ -154,10 +158,6 @@ Vector2f GameEntity::getPosition() {
 
 Sprite GameEntity::getSprite() {
     return sprite;
-}
-
-GameMap* GameEntity::getCurrentGameMap() {
-    return currentGameMap;
 }
 
 FloatRect GameEntity::getRectangle() {

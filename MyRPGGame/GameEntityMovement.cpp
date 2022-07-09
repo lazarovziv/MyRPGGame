@@ -9,20 +9,33 @@ GameEntityMovement::GameEntityMovement(GameEntity* entity) {
 }
 
 bool GameEntityMovement::move(MoveDirection direction) {
-    GameMap* map = entity->getCurrentGameMap();
+    GameMap* map = Game::getInstance()->getCurrentGameMap();
     // size of array
     int unreachableAreasSize = map->getNumOfUnreachableAreas();
     
     float entitySpeed = entity->getSpeed();
     FloatRect entityRect = entity->getRectangle();
     
+    float entityX = entity->getPosition().x;
+    float entityY = entity->getPosition().y;
+    
     bool canCollide = false;
     
     if (direction == MoveDirection::UP) {
         if (entity->getPosition().y - entitySpeed <= tileSize/2) {
-            // TODO: check if edge of screen is an exit point for current game map
+            // check if edge of screen is an exit point for current game map
             if (map->isExitableFromTop()) {
-                
+                // check if we're at current map's exit point
+                if (entityX <= map->getTopExitMaxX() && entityX >= map->getTopExitMinX()) {
+                    cout << "Reached Top Exit" << endl;
+                    // set current map to map above
+                    Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapRow() + 1);
+                    // set entity position to down enter point (changed current map)
+                    float targetX = (Game::getInstance()->getCurrentGameMap()->getBottomEnterMinX() +  Game::getInstance()->getCurrentGameMap()->getBottomEnterMaxX()) / 2;
+                    float targetY = Game::SCREEN_HEIGHT - tileSize/2;
+                    entity->setPosition(targetX, targetY);
+                    return true;
+                }
             }
             entity->setPosition(entity->getPosition().x, tileSize/2);
             return false;

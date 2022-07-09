@@ -28,13 +28,17 @@ public:
     void operator=(const Game&) = delete;
     static const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
     static const int TILE_SIZE = 64;
-    static Game* getInstance(const char* str);
+    static Game* getInstance();
     RenderWindow* getWindow();
     GameMap*** getWorldMap();
     GameState getState();
     void changeState(GameState state);
     GameMap* getCurrentGameMap();
     void setPlayer(Player* player);
+    int getCurrentWorldMapRow();
+    int getCurrentWorldMapCol();
+    void setCurrentWorldMapRow(int row);
+    void setCurrentWorldMapCol(int col);
     void render();
     void update();
     void start();

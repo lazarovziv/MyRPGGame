@@ -52,7 +52,7 @@ public:
     MoveDirection getMoveDirection();
     Vector2f getPosition();
     Sprite getSprite();
-    GameMap* getCurrentGameMap();
+//    GameMap* getCurrentGameMap();
     FloatRect getRectangle(); // sprite.getGlobalBounds()
     
     void increaseLevel(int amount);
@@ -66,7 +66,7 @@ public:
     void setX(float x);
     void setY(float y);
     void setPosition(float x, float y);
-    void setCurrentGameMap(GameMap &map);
+//    void setCurrentGameMap(GameMap &map);
     // for situations where changing for worse equipment (adding logic for negative base values)
     void decreaseMaxHealthPoints(int amount);
     void decreaseMaxManaPoints(int amount);

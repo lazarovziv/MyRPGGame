@@ -9,7 +9,7 @@ using namespace std;
 using namespace sf;
 
 int main() {
-    Game* game = Game::getInstance("MyRPGGame");
+    Game* game = Game::getInstance();
     game->start();
     
     return 0;

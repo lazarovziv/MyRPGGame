@@ -5,9 +5,9 @@ using namespace std;
 
 Game* Game::instance = nullptr;
 
-Game* Game::getInstance(const char* str) {
+Game* Game::getInstance() {
     if (instance == nullptr) {
-        instance = new Game(str);
+        instance = new Game("MyRPGGame");
     }
     return instance;
 }
@@ -33,15 +33,28 @@ Game::Game(const char* str) {
     
     this->player = new Player();
     
-    player->setCurrentGameMap(*(worldMap[0][0]));
+    
+//    player->setCurrentGameMap(*(worldMap[0][0]));
     player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     
     GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
+    map->setTopExitMinX(400);
+    map->setTopExitMaxX(500);
+    map->setIsExitableFromTop(true);
     
     FloatRect unreachableArea0(200, 100, 100, 100);
     FloatRect unreachableArea1(400, 400, 100, 100);
     map->addUnreachableArea(unreachableArea0);
     map->addUnreachableArea(unreachableArea1);
+    
+    GameMap* mapTop = worldMap[currentGameMapRow + 1][currentGameMapCol];
+    FloatRect unreachableArea2(200, 100, 100, 100);
+    FloatRect unreachableArea3(200, 400, 100, 100);
+    mapTop->addUnreachableArea(unreachableArea2);
+    mapTop->addUnreachableArea(unreachableArea3);
+    
+    mapTop->setBottomEnterMinX(400);
+    mapTop->setBottomEnterMaxX(500);
 }
 
 void Game::render() {
@@ -135,4 +148,20 @@ void Game::setPlayer(Player* player) {
 
 void Game::update() {
     player->update();
+}
+
+int Game::getCurrentWorldMapRow() {
+    return currentGameMapRow;
+}
+
+int Game::getCurrentWorldMapCol() {
+    return currentGameMapCol;
+}
+
+void Game::setCurrentWorldMapRow(int row) {
+    currentGameMapRow = row;
+}
+
+void Game::setCurrentWorldMapCol(int col) {
+    currentGameMapCol = col;
 }
