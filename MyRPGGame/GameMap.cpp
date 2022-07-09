@@ -69,7 +69,16 @@ int GameMap::getNumOfUnreachableAreas() {
     return numOfUnreachableAreas;
 }
 
+RectangleShape* GameMap::getUnreachableAreasSprites() {
+    return unreachableAreasSprites;
+}
+
 void GameMap::addUnreachableArea(FloatRect rect) {
     unreachableAreas[numOfUnreachableAreas] = rect;
+    // creating sprite for unreachable area
+    RectangleShape rectShape(Vector2f(rect.width, rect.height));
+    rectShape.setPosition(rect.left, rect.top);
+    rectShape.setFillColor(Color::Red);
+    unreachableAreasSprites[numOfUnreachableAreas] = rectShape;
     numOfUnreachableAreas++;
 }

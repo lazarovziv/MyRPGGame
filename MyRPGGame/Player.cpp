@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "Game.hpp"
 
 Player::Player() {
     expPoints = 0;
@@ -6,7 +7,7 @@ Player::Player() {
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
     sprite.setTexture(playerTexture);
-    sprite.setOrigin(32, 32);
+    sprite.setOrigin(Game::TILE_SIZE/2, Game::TILE_SIZE/2);
     sprite.setPosition(position);
 }
 

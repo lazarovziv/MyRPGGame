@@ -25,29 +25,29 @@ Game::Game(const char* str) {
     this->player = new Player();
     
     player->setCurrentGameMap(*(worldMap[0][0]));
-    player->setPosition(SCREEN_WIDTH/2 + 100, SCREEN_HEIGHT/2 - 100);
+    player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    
+    GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
     
     FloatRect unreachableArea0(200, 100, 100, 100);
-    FloatRect unreachableArea1(300, 400, 100, 100);
-    worldMap[0][0]->addUnreachableArea(unreachableArea0);
-    worldMap[0][0]->addUnreachableArea(unreachableArea1);
-//    cout << worldMap[0][0]->getNumOfUnreachableAreas() << endl;
+    FloatRect unreachableArea1(400, 400, 100, 100);
+    map->addUnreachableArea(unreachableArea0);
+    map->addUnreachableArea(unreachableArea1);
 }
 
 void Game::render() {
     window->clear();
-    RectangleShape rect0(Vector2f(100, 100));
-    rect0.setPosition(200, 100);
-    RectangleShape rect1(Vector2f(100, 100));
-    rect1.setPosition(300, 400);
-    window->draw(rect0);
-    window->draw(rect1);
+    GameMap* map = getCurrentGameMap();
+    int unreachableAreasSize = map->getNumOfUnreachableAreas();
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        window->draw(map->getUnreachableAreasSprites()[i]);
+    }
     window->draw(player->getSprite());
     window->display();
 }
 
 void Game::start() {
-//    player->increaseSpeed(23);
+    player->increaseSpeed(3);
     GameEntityMovement playerMovement(player);
     
     bool canMove = false;
