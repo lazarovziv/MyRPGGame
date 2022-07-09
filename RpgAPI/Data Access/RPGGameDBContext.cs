@@ -13,5 +13,6 @@ namespace RpgAPI.Data_Access
         public DbSet<GameEntity> GameEntities => Set<GameEntity>();
         public DbSet<GameMap> GameMaps => Set<GameMap>();
         public DbSet<Player> Players => Set<Player>();
+        public DbSet<NPCEnemy> Enemies => Set<NPCEnemy>();
     }
 }
