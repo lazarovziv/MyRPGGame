@@ -39,6 +39,7 @@ public:
     int getCurrentWorldMapCol();
     void setCurrentWorldMapRow(int row);
     void setCurrentWorldMapCol(int col);
+    void initWorldMap();
     void render();
     void update();
     void start();

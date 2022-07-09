@@ -5,6 +5,15 @@ GameMap::GameMap(int row, int col) {
     worldMapCol = col;
 }
 
+GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
+    worldMapRow = row;
+    worldMapCol = col;
+    exitableFromTop = up;
+    exitableFromBottom = down;
+    exitableFromRight = right;
+    exitableFromLeft = left;
+}
+
 int GameMap::getWorldMapRow() {
     return worldMapRow;
 }

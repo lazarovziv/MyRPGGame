@@ -20,6 +20,8 @@ Game::Game(const char* str) {
     
     state = GameState::IN_MENU;
     
+    initWorldMap();
+    
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
@@ -30,17 +32,33 @@ Game::Game(const char* str) {
         worldMap[r] = new GameMap*[3];
         for (int c = 0; c < cols; c++) {
             worldMap[r][c] = new GameMap(r, c);
-            if (r == rows - 1) worldMap[r][c]->setIsExitableFromBottom(false);
-            if (r == 0) worldMap[r][c]->setIsExitableFromTop(false);
-            if (c == cols - 1) worldMap[r][c]->setIsExitableFromRight(false);
-            if (c == 0) worldMap[r][c]->setIsExitableFromLeft(false);
+            // cant go down bu can go right, left and up
+            if (r == rows - 1) {
+                worldMap[r][c] = new GameMap(r, c, true, false, true, true);
+                continue;
+            }
+            // cant go up but can go down, right, left
+            if (r == 0) {
+                worldMap[r][c] = new GameMap(r, c, false, true, true, true);
+                continue;
+            }
+            // cant go right but can go down, up and left
+            if (c == cols - 1) {
+                worldMap[r][c] = new GameMap(r, c, true, true, false, true);
+                continue;
+            }
+            // cant go left but can go right, up and down
+            if (c == 0) {
+                worldMap[r][c] = new GameMap(r, c, true, true, true, false);
+                continue;
+
+            }
+            worldMap[r][c] = new GameMap(r, c, true, true, true, true);
         }
     }
     
     this->player = new Player();
     
-    
-//    player->setCurrentGameMap(*(worldMap[0][0]));
     player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     
     GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
@@ -88,7 +106,7 @@ void Game::start() {
         Event event;
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
-                // add save game and exit message confirmation
+                // TODO: add save game and exit message confirmation
                 window->close();
             }
             if (event.type == Event::KeyPressed) {
@@ -157,6 +175,10 @@ void Game::setPlayer(Player* player) {
 
 void Game::update() {
     player->update();
+}
+
+void Game::initWorldMap() {
+    // TODO: declare all maps here with unreachable areas and exit/enter points
 }
 
 int Game::getCurrentWorldMapRow() {

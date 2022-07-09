@@ -32,6 +32,7 @@ private:
     
 public:
     GameMap(int row, int col);
+    GameMap(int row, int col, bool up, bool down, bool right, bool left);
     ~GameMap() = default;
     int getWorldMapRow();
     int getWorldMapCol();
