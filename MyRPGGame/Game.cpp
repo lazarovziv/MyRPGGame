@@ -20,14 +20,20 @@ Game::Game(const char* str) {
     
     state = GameState::IN_MENU;
     
-    currentGameMapRow = 0;
-    currentGameMapCol = 0;
+    currentGameMapRow = 1;
+    currentGameMapCol = 1;
     
+    int rows = 3;
+    int cols = 3;
     worldMap = new GameMap**[3];
-    for (int r = 0; r < 3; r++) {
+    for (int r = 0; r < rows; r++) {
         worldMap[r] = new GameMap*[3];
-        for (int c = 0; c < 3; c++) {
+        for (int c = 0; c < cols; c++) {
             worldMap[r][c] = new GameMap(r, c);
+            if (r == rows - 1) worldMap[r][c]->setIsExitableFromBottom(false);
+            if (r == 0) worldMap[r][c]->setIsExitableFromTop(false);
+            if (c == cols - 1) worldMap[r][c]->setIsExitableFromRight(false);
+            if (c == 0) worldMap[r][c]->setIsExitableFromLeft(false);
         }
     }
     
@@ -40,21 +46,24 @@ Game::Game(const char* str) {
     GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
     map->setTopExitMinX(400);
     map->setTopExitMaxX(500);
-    map->setIsExitableFromTop(true);
+    map->setTopEnterMinX(400);
+    map->setTopEnterMaxX(500);
     
     FloatRect unreachableArea0(200, 100, 100, 100);
     FloatRect unreachableArea1(400, 400, 100, 100);
     map->addUnreachableArea(unreachableArea0);
     map->addUnreachableArea(unreachableArea1);
     
-    GameMap* mapTop = worldMap[currentGameMapRow + 1][currentGameMapCol];
-    FloatRect unreachableArea2(200, 100, 100, 100);
+    GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
+    FloatRect unreachableArea2(100, 150, 100, 100);
     FloatRect unreachableArea3(200, 400, 100, 100);
     mapTop->addUnreachableArea(unreachableArea2);
     mapTop->addUnreachableArea(unreachableArea3);
     
     mapTop->setBottomEnterMinX(400);
     mapTop->setBottomEnterMaxX(500);
+    mapTop->setBottomExitMinX(400);
+    mapTop->setBottomExitMaxX(500);
 }
 
 void Game::render() {
