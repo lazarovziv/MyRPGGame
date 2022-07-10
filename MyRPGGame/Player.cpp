@@ -1,9 +1,11 @@
 #include "Player.hpp"
 #include "Game.hpp"
+//#include "TextureLoader.hpp"
 
 Player::Player() {
     expPoints = 0;
     
+//    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
     sprite.setTexture(playerTexture);

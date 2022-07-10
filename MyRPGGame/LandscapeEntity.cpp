@@ -10,19 +10,19 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, float x, float y) {
     switch (this->type) {
         case LandscapeType::TREE:
             landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/tree.png");
-            id = 1;
+            id = 1; // totally arbitrary
             break;
         case LandscapeType::GRASS:
             landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/grass.png");
-            id = 2;
+            id = 2; // totally arbitrary
             break;
         case LandscapeType::FLOWER:
             landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/flower.png");
-            id = 3;
+            id = 3; // totally arbitrary
             break;
         case LandscapeType::HOUSE:
             landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/house.png");
-            id = 4;
+            id = 4; // totally arbitrary
             break;
     }
     sprite.setTexture(landscapeTexture);

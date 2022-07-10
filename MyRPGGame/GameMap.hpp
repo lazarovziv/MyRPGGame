@@ -26,7 +26,7 @@ private:
     
     // areas where entities cannot move or reach by walking
     int numOfUnreachableAreas = 0;
-    FloatRect unreachableAreas[100];
+//    FloatRect unreachableAreas[100];
     RectangleShape unreachableAreasSprites[100];
     
     
@@ -151,7 +151,6 @@ public:
         bottomExitMaxX = x;
     }
     
-    FloatRect* getUnreachableAreas();
     RectangleShape* getUnreachableAreasSprites();
     int getNumOfUnreachableAreas();
     void addUnreachableArea(FloatRect rect);

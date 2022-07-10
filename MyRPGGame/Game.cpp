@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "GameEntityMovement.hpp"
+//#include "TextureLoader.hpp"
 
 using namespace std;
 
@@ -27,9 +28,9 @@ Game::Game(const char* str) {
     
     int rows = 3;
     int cols = 3;
-    worldMap = new GameMap**[3];
+    worldMap = new GameMap**[rows];
     for (int r = 0; r < rows; r++) {
-        worldMap[r] = new GameMap*[3];
+        worldMap[r] = new GameMap*[cols];
         for (int c = 0; c < cols; c++) {
             worldMap[r][c] = new GameMap(r, c);
             // cant go down bu can go right, left and up
@@ -106,7 +107,7 @@ void Game::start() {
         Event event;
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
-                // TODO: add save game and exit message confirmation
+                // add save game and exit message confirmation
                 window->close();
             }
             if (event.type == Event::KeyPressed) {
@@ -141,7 +142,6 @@ void Game::start() {
                 }
             }
         }
-        
         // redner only when playing
         if (state == GameState::PLAYING) {
             render();

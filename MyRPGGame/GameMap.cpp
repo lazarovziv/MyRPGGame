@@ -22,10 +22,6 @@ int GameMap::getWorldMapCol() {
     return worldMapCol;
 }
 
-FloatRect* GameMap::getUnreachableAreas() {
-    return unreachableAreas;
-}
-
 bool GameMap::isExitableFromLeft() {
     return exitableFromLeft;
 }
@@ -67,8 +63,7 @@ RectangleShape* GameMap::getUnreachableAreasSprites() {
 }
 
 void GameMap::addUnreachableArea(FloatRect rect) {
-    unreachableAreas[numOfUnreachableAreas] = rect;
-    // creating sprite for unreachable area
+    // creating drawable for unreachable area
     RectangleShape rectShape(Vector2f(rect.width, rect.height));
     rectShape.setPosition(rect.left, rect.top);
     rectShape.setFillColor(Color::Red);
