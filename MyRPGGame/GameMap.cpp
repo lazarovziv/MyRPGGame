@@ -5,6 +5,15 @@ GameMap::GameMap(int row, int col) {
     worldMapCol = col;
 }
 
+GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
+    worldMapRow = row;
+    worldMapCol = col;
+    exitableFromTop = up;
+    exitableFromBottom = down;
+    exitableFromRight = right;
+    exitableFromLeft = left;
+}
+
 int GameMap::getWorldMapRow() {
     return worldMapRow;
 }
@@ -13,54 +22,51 @@ int GameMap::getWorldMapCol() {
     return worldMapCol;
 }
 
-Vector2f GameMap::getLeftEnterPoint() {
-    return leftEnterPoint;
+bool GameMap::isExitableFromLeft() {
+    return exitableFromLeft;
 }
 
-Vector2f GameMap::getLeftExitPoint() {
-    return leftExitPoint;
+bool GameMap::isExitableFromRight() {
+    return exitableFromRight;
 }
 
-Vector2f GameMap::getRightEnterPoint() {
-    return rightEnterPoint;
+bool GameMap::isExitableFromTop() {
+    return exitableFromTop;
 }
 
-Vector2f GameMap::getRightExitPoint() {
-    return rightExitPoint;
+bool GameMap::isExitableFromBottom() {
+    return exitableFromBottom;
 }
 
-Vector2f GameMap::getTopEnterPoint() {
-    return topEnterPoint;
+void GameMap::setIsExitableFromLeft(bool flag) {
+    exitableFromLeft = flag;
 }
 
-Vector2f GameMap::getTopExitPoint() {
-    return topExitPoint;
+void GameMap::setIsExitableFromRight(bool flag) {
+    exitableFromRight = flag;
 }
 
-Vector2f GameMap::getBottomEnterPoint() {
-    return bottomEnterPoint;
+void GameMap::setIsExitableFromTop(bool flag) {
+    exitableFromTop = flag;
 }
 
-Vector2f GameMap::getBottomExitPoint() {
-    return bottomExitPoint;
+void GameMap::setIsExitableFromBottom(bool flag) {
+    exitableFromBottom = flag;
 }
 
-FloatRect* GameMap::getUnreachableAreas() {
-    return unreachableAreas;
+int GameMap::getNumOfUnreachableAreas() {
+    return numOfUnreachableAreas;
 }
 
-bool GameMap::isReachableFromLeft() {
-    return reachableFromLeft;
+RectangleShape* GameMap::getUnreachableAreasSprites() {
+    return unreachableAreasSprites;
 }
 
-bool GameMap::isReachableFromRight() {
-    return reachableFromRight;
-}
-
-bool GameMap::isReachableFromTop() {
-    return reachableFromTop;
-}
-
-bool GameMap::isReachableFromBottom() {
-    return reachableFromBottom;
+void GameMap::addUnreachableArea(FloatRect rect) {
+    // creating drawable for unreachable area
+    RectangleShape rectShape(Vector2f(rect.width, rect.height));
+    rectShape.setPosition(rect.left, rect.top);
+    rectShape.setFillColor(Color::Red);
+    unreachableAreasSprites[numOfUnreachableAreas] = rectShape;
+    numOfUnreachableAreas++;
 }

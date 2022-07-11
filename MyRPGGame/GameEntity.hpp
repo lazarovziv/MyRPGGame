@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef GameEntity_hpp
 #define GameEntity_hpp
 
@@ -27,11 +29,11 @@ protected:
     int defencePoints;
     float speed;
     bool inBattle;
+    bool dead = false;
     MoveDirection moveDirection;
     Vector2f position;
     Sprite sprite; // maybe VertexArray for each direction
     GameMap* currentGameMap;
-//    FloatRect rectangle; for intersecting with unreachable areas
     
 public:
     GameEntity();
@@ -49,10 +51,10 @@ public:
     int getDefencePoints();
     float getSpeed();
     bool isInBattle();
+    bool isDead();
     MoveDirection getMoveDirection();
     Vector2f getPosition();
     Sprite getSprite();
-    GameMap* getCurrentGameMap();
     FloatRect getRectangle(); // sprite.getGlobalBounds()
     
     void increaseLevel(int amount);
@@ -63,14 +65,22 @@ public:
     void increaseDefencePoints(int amount);
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
+    void setX(float x);
+    void setY(float y);
     void setPosition(float x, float y);
-    void setCurrentGameMap(GameMap &map);
+
     // for situations where changing for worse equipment (adding logic for negative base values)
     void decreaseMaxHealthPoints(int amount);
     void decreaseMaxManaPoints(int amount);
+    void decreaseCurrentHealthPoints(int amount);
+    void decreaseCurrentManaPoints(int amount);
     void decreaseSpeed(float speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
+    
+    void attack(GameEntity &entity);
+    
+    void update();
 };
 
 #endif /* GameEntity_hpp */

@@ -1,8 +1,12 @@
+#pragma once
+
 #ifndef NPCEnemy_hpp
 #define NPCEnemy_hpp
 
 #include <stdio.h>
 #include "GameEntity.hpp"
+
+using namespace sf;
 
 enum class EnemyType { WORM, SNAKE, BIRD, ETC }; // add more
 
@@ -19,11 +23,14 @@ private:
     
 public:
     NPCEnemy();
+    NPCEnemy(EnemyType type, float x, float y);
     ~NPCEnemy() = default;
     int getBattleTimeout();
     float getWanderAreaRadius();
     float getBattleAreaRadius();
     EnemyType getType();
+    
+    void spawn(float x, float y);
 };
 
 #endif /* NPCEnemy_hpp */

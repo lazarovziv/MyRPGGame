@@ -1,12 +1,15 @@
 #include "Player.hpp"
+#include "Game.hpp"
+//#include "TextureLoader.hpp"
 
-Player::Player() {
+Player::Player() : GameEntity() {
     expPoints = 0;
     
+//    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
     sprite.setTexture(playerTexture);
-    sprite.setOrigin(25, 25);
+    sprite.setOrigin(Game::TILE_SIZE/2, Game::TILE_SIZE/2);
     sprite.setPosition(position);
 }
 
@@ -40,8 +43,4 @@ void Player::levelUpCriticalHitsPoints() {
 
 void Player::setPlayerType(PlayerType type) {
     this->type = type;
-}
-
-void Player::update() {
-    
 }

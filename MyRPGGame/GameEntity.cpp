@@ -10,6 +10,7 @@ GameEntity::GameEntity() {
     defencePoints = 5;
     speed = 1.f;
     inBattle = false;
+    dead = false;
     moveDirection = MoveDirection::RIGHT;
 }
 
@@ -35,9 +36,10 @@ void GameEntity::increaseMaxManaPoints(int amount) {
 
 void GameEntity::increaseSpeed(float amount) {
     // setting upper limit to 3
-    if (speed + amount < 3) {
-        speed += amount;
-    }
+//    if (speed + amount < 3) {
+//        speed += amount;
+//    }
+    speed += amount;
 }
 
 void GameEntity::increaseAttackPoints(int amount) {
@@ -56,20 +58,30 @@ void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
 }
 
+void GameEntity::setX(float x) {
+    position.x = x;
+}
+
+void GameEntity::setY(float y) {
+    position.y = y;
+}
+
 void GameEntity::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
-    sprite.setPosition(position);
-}
-
-void GameEntity::setCurrentGameMap(GameMap &map) {
-    *currentGameMap = map; // check if it works
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
     // don't let it decrease (throw an error)
     if (maxHealthPoints - amount <= 0) return;
     maxHealthPoints -= amount; // not changing currentHealthPoints like when increasing
+}
+
+void GameEntity::decreaseCurrentHealthPoints(int amount) {
+    if (currentHealthPoints > 0) {
+        currentHealthPoints -= amount;
+    }
+    if (currentHealthPoints <= 0) dead = true;
 }
 
 void GameEntity::decreaseMaxManaPoints(int amount) {
@@ -136,6 +148,10 @@ bool GameEntity::isInBattle() {
     return inBattle;
 }
 
+bool GameEntity::isDead() {
+    return dead;
+}
+
 MoveDirection GameEntity::getMoveDirection() {
     return moveDirection;
 }
@@ -148,10 +164,24 @@ Sprite GameEntity::getSprite() {
     return sprite;
 }
 
-GameMap* GameEntity::getCurrentGameMap() {
-    return currentGameMap;
-}
-
 FloatRect GameEntity::getRectangle() {
     return sprite.getGlobalBounds();
+}
+
+void GameEntity::attack(GameEntity &entity) {
+    if (entity.defencePoints > 0) {
+        if (entity.defencePoints - attackPoints < 0) {
+            entity.defencePoints = 0;
+        } else entity.decreaseDefencePoints(attackPoints);
+    } else {
+        entity.decreaseCurrentHealthPoints(attackPoints);
+    }
+}
+
+void GameEntity::update() {
+    if (!dead) {
+        sprite.setPosition(position);
+    } else {
+        delete this;
+    }
 }
