@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef Player_hpp
 #define Player_hpp
 

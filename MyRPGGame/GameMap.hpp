@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef GameMap_hpp
 #define GameMap_hpp
 

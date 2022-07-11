@@ -2,7 +2,7 @@
 #include "Game.hpp"
 //#include "TextureLoader.hpp"
 
-Player::Player() {
+Player::Player() : GameEntity() {
     expPoints = 0;
     
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef LandscapeEntity_hpp
 #define LandscapeEntity_hpp
 

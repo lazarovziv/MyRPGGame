@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef Game_hpp
 #define Game_hpp
 
@@ -6,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include "GameMap.hpp"
 #include "Player.hpp"
+#include "NPCEnemy.hpp"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
@@ -16,8 +19,12 @@ private:
     VideoMode* videoMode;
     const char* title;
     GameState state;
+    
     // entities
     Player* player;
+    int numOfCurrentEnemies = 0;
+    NPCEnemy currentEnemies[100];
+    
     GameMap*** worldMap;
     int currentGameMapRow, currentGameMapCol;
     

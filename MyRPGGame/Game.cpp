@@ -19,9 +19,7 @@ Game::Game(const char* str) {
     std::string s(title);
     this->window = new RenderWindow(*videoMode, s);
     
-    state = GameState::IN_MENU;
-    
-    initWorldMap();
+    state = GameState::PAUSED;
     
     currentGameMapRow = 1;
     currentGameMapCol = 1;
@@ -33,7 +31,7 @@ Game::Game(const char* str) {
         worldMap[r] = new GameMap*[cols];
         for (int c = 0; c < cols; c++) {
             worldMap[r][c] = new GameMap(r, c);
-            // cant go down bu can go right, left and up
+            // cant go down but can go right, left and up
             if (r == rows - 1) {
                 worldMap[r][c] = new GameMap(r, c, true, false, true, true);
                 continue;
@@ -62,27 +60,11 @@ Game::Game(const char* str) {
     
     player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     
-    GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
-    map->setTopExitMinX(400);
-    map->setTopExitMaxX(500);
-    map->setTopEnterMinX(400);
-    map->setTopEnterMaxX(500);
+    initWorldMap();
     
-    FloatRect unreachableArea0(200, 100, 100, 100);
-    FloatRect unreachableArea1(400, 400, 100, 100);
-    map->addUnreachableArea(unreachableArea0);
-    map->addUnreachableArea(unreachableArea1);
-    
-    GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
-    FloatRect unreachableArea2(100, 150, 100, 100);
-    FloatRect unreachableArea3(200, 400, 100, 100);
-    mapTop->addUnreachableArea(unreachableArea2);
-    mapTop->addUnreachableArea(unreachableArea3);
-    
-    mapTop->setBottomEnterMinX(400);
-    mapTop->setBottomEnterMaxX(500);
-    mapTop->setBottomExitMinX(400);
-    mapTop->setBottomExitMaxX(500);
+    NPCEnemy enemy(EnemyType::WORM, player->getPosition().x + 100, player->getPosition().y - 100);
+    currentEnemies[numOfCurrentEnemies] = enemy;
+    numOfCurrentEnemies++;
 }
 
 void Game::render() {
@@ -91,6 +73,12 @@ void Game::render() {
     // drawing unreachable areas
     for (int i = 0; i < map->getNumOfUnreachableAreas(); i++) {
         window->draw(map->getUnreachableAreasSprites()[i]);
+    }
+    // TODO: remove dead enemies from currentEnemies array and reorganize it
+    for (int i = 0; i < numOfCurrentEnemies; i++) {
+        if (!currentEnemies[i].isDead()) {
+            window->draw(currentEnemies[i].getSprite());
+        }
     }
     window->draw(player->getSprite());
     window->display();
@@ -135,10 +123,29 @@ void Game::start() {
                         changeState(GameState::IN_MENU);
                         cout << "In Menu" << endl;
                         canMove = false;
+                        // pressing x for attacking
+                    } else if (eventKeyCode == Keyboard::X) {
+                        for (int i = 0; i < numOfCurrentEnemies; i++) {
+                            if (currentEnemies[i].getRectangle().intersects(player->getRectangle())) {
+                                player->attack(currentEnemies[i]);
+                            }
+                        }
                     }
-                    if (canMove) cout << "Player (x, y): (" << player->getPosition().x << ", " << player->getPosition().y << ")" << endl;
+//                    if (canMove) cout << "Player (x, y): (" << player->getPosition().x << ", " << player->getPosition().y << ")" << endl;
+                    if (canMove) {
+                        for (int i = 0; i < numOfCurrentEnemies; i++) {
+                            cout << "Enemy " << i << " Health: " << currentEnemies[i].getCurrentHealthPoints() << endl;
+                        }
+                    }
                     // update player data
                     update();
+                } else if (state == GameState::IN_MENU) {
+                    // exiting menu by pressing I again
+                    if (eventKeyCode == Keyboard::I) {
+                        state = GameState::PLAYING;
+                        cout << "Exited Menu" << endl;
+                        canMove = true;
+                    }
                 }
             }
         }
@@ -179,6 +186,27 @@ void Game::update() {
 
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
+    GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
+    map->setTopExitMinX(400);
+    map->setTopExitMaxX(500);
+    map->setTopEnterMinX(400);
+    map->setTopEnterMaxX(500);
+    
+    FloatRect unreachableArea0(200, 100, 100, 100);
+    FloatRect unreachableArea1(400, 400, 100, 100);
+    map->addUnreachableArea(unreachableArea0);
+    map->addUnreachableArea(unreachableArea1);
+    
+    GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
+    FloatRect unreachableArea2(100, 150, 100, 100);
+    FloatRect unreachableArea3(200, 400, 100, 100);
+    mapTop->addUnreachableArea(unreachableArea2);
+    mapTop->addUnreachableArea(unreachableArea3);
+    
+    mapTop->setBottomEnterMinX(400);
+    mapTop->setBottomEnterMaxX(500);
+    mapTop->setBottomExitMinX(400);
+    mapTop->setBottomExitMaxX(500);
 }
 
 int Game::getCurrentWorldMapRow() {
