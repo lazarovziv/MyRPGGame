@@ -59,6 +59,7 @@ Game::Game(const char* str) {
     this->player = new Player();
     
     player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    player->setPlayerType(PlayerType::KNIGHT);
     
     initWorldMap();
     
@@ -126,18 +127,14 @@ void Game::start() {
                         // pressing x for attacking
                     } else if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < numOfCurrentEnemies; i++) {
-                            if (currentEnemies[i].getRectangle().intersects(player->getRectangle())) {
-                                if (!currentEnemies[i].isDead()) {
-                                    player->attack(currentEnemies[i]);
-                                }
+                            if (!currentEnemies[i].isDead()) {
+                                player->attack(currentEnemies[i]);
                             }
                         }
                     }
                     if (canMove) {
                         for (int i = 0; i < numOfCurrentEnemies; i++) {
                             if (&(currentEnemies[i]) == nullptr) continue;
-                            cout << "Enemy " << i << " Health: " << currentEnemies[i].getCurrentHealthPoints() << endl;
-                            cout << "Enemy " << i << " Defence Points: " << currentEnemies[i].getCurrentDefencePoints() << endl;
                         }
                     }
                     // update player data

@@ -43,4 +43,17 @@ void Player::levelUpCriticalHitsPoints() {
 
 void Player::setPlayerType(PlayerType type) {
     this->type = type;
+    switch (this->type) {
+        case PlayerType::KNIGHT:
+            setWeapon(WeaponType::SWORD);
+            break;
+        case PlayerType::DUAL_WIELDER:
+            setWeapon(WeaponType::DAGGER);
+            break;
+        case PlayerType::WIZARD:
+            setWeapon(WeaponType::STAFF);
+            break;
+    }
+    // increase player stats with it's weapon's stats (maybe defence points for some?)
+    increaseAttackPoints(weapon->getAttackPoints());
 }

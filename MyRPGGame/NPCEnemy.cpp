@@ -24,6 +24,9 @@ NPCEnemy::NPCEnemy(EnemyType type, float x, float y) {
     sprite.setTexture(texture);
     sprite.setOrigin(32, 32);
     sprite.setPosition(x, y);
+    weapon = new Weapon(WeaponType::BARE_HANDED);
+    entityCircle = new Circle(position.x, position.y, 45);
+    attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
 //    switch (type) {
 //        case EnemyType::WORM:
 //            level = 1;

@@ -1,4 +1,6 @@
 #include "GameEntity.hpp"
+#include <cmath>
+#include <iostream>
 
 GameEntity::GameEntity() {
     level = 1;
@@ -6,7 +8,7 @@ GameEntity::GameEntity() {
     currentHealthPoints = maxHealthPoints;
     maxManaPoints = 30;
     currentManaPoints = maxManaPoints;
-    attackPoints = 10;
+    attackPoints = 1;
     defencePoints = 5;
     currentDefencePoints = defencePoints;
     speed = 1.f;
@@ -70,6 +72,22 @@ void GameEntity::setY(float y) {
 void GameEntity::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
+    if (entityCircle != nullptr) {
+        entityCircle->getCenter()->setX(position.x);
+        entityCircle->getCenter()->setY(position.y);
+        // if not created
+    } else entityCircle = new Circle(position.x, position.y, 45);
+}
+
+void GameEntity::setWeapon(WeaponType type) {
+    weapon = new Weapon(type);
+    // initializing attackRangeCircle according to weapon
+    if (attackRangeCircle != nullptr) {
+        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
+    } else {
+        attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
+        cout << attackRangeCircle->getCenter()->getX() << endl;
+    }
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
@@ -80,7 +98,8 @@ void GameEntity::decreaseMaxHealthPoints(int amount) {
 
 void GameEntity::decreaseCurrentHealthPoints(int amount) {
     if (currentHealthPoints > 0) {
-        currentHealthPoints -= amount;
+        if (currentHealthPoints - amount <= 0) currentHealthPoints = 0;
+        else currentHealthPoints -= amount;
     }
     if (currentHealthPoints <= 0) dead = true;
 }
@@ -179,18 +198,31 @@ FloatRect GameEntity::getRectangle() {
 }
 
 void GameEntity::attack(GameEntity &entity) {
-    if (entity.currentDefencePoints > 0) {
-        if (entity.currentDefencePoints - attackPoints < 0) {
-            entity.currentDefencePoints = 0;
-        } else entity.decreaseCurrentDefencePoints(attackPoints);
-        // broke defence points
-    } else {
-        entity.decreaseCurrentHealthPoints(attackPoints);
+    // attack only if entity is in range
+    if (isEntityInAttackRange(entity)) {
+        std::cout << "In attack range!" << endl;
+        if (entity.currentDefencePoints > 0) {
+            if (entity.currentDefencePoints - attackPoints < 0) {
+                entity.currentDefencePoints = 0;
+            } else entity.decreaseCurrentDefencePoints(attackPoints);
+            // broke defence points
+        } else {
+            entity.decreaseCurrentHealthPoints(attackPoints);
+        }
     }
+}
+
+bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
+    return attackRangeCircle->intersects(*(entity.entityCircle));
 }
 
 void GameEntity::update() {
     if (!dead) {
         sprite.setPosition(position);
+        // updating entity circle and attack circle
+        entityCircle->getCenter()->setX(position.x);
+        entityCircle->getCenter()->setY(position.y);
+        attackRangeCircle->getCenter()->setX(position.x);
+        attackRangeCircle->getCenter()->setY(position.y);
     }
 }

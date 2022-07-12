@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
 #include "GameMap.hpp"
+#include "Weapon.hpp"
+#include "Circle.hpp"
 
 enum class MoveDirection { UP, DOWN, RIGHT, LEFT };
 
@@ -34,7 +36,10 @@ protected:
     MoveDirection moveDirection;
     Vector2f position;
     Sprite sprite; // maybe VertexArray for each direction
+    Circle* entityCircle = nullptr;
+    Circle* attackRangeCircle = nullptr;
     GameMap* currentGameMap;
+    Weapon* weapon;
     
 public:
     GameEntity();
@@ -70,6 +75,7 @@ public:
     void setX(float x);
     void setY(float y);
     void setPosition(float x, float y);
+    void setWeapon(WeaponType type);
 
     // for situations where changing for worse equipment (adding logic for negative base values)
     void decreaseMaxHealthPoints(int amount);
@@ -80,6 +86,8 @@ public:
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
     void decreaseCurrentDefencePoints(int amount);
+    
+    bool isEntityInAttackRange(GameEntity &entity);
     
     void attack(GameEntity &entity);
     
