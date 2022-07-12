@@ -74,7 +74,7 @@ void Game::render() {
     for (int i = 0; i < map->getNumOfUnreachableAreas(); i++) {
         window->draw(map->getUnreachableAreasSprites()[i]);
     }
-    // TODO: remove dead enemies from currentEnemies array and reorganize it
+    // TODO: remove dead enemies from currentEnemies array and reorganize the array (maybe use a heap or a binary search tree?)
     for (int i = 0; i < numOfCurrentEnemies; i++) {
         if (!currentEnemies[i].isDead()) {
             window->draw(currentEnemies[i].getSprite());
@@ -127,14 +127,17 @@ void Game::start() {
                     } else if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < numOfCurrentEnemies; i++) {
                             if (currentEnemies[i].getRectangle().intersects(player->getRectangle())) {
-                                player->attack(currentEnemies[i]);
+                                if (!currentEnemies[i].isDead()) {
+                                    player->attack(currentEnemies[i]);
+                                }
                             }
                         }
                     }
-//                    if (canMove) cout << "Player (x, y): (" << player->getPosition().x << ", " << player->getPosition().y << ")" << endl;
                     if (canMove) {
                         for (int i = 0; i < numOfCurrentEnemies; i++) {
+                            if (&(currentEnemies[i]) == nullptr) continue;
                             cout << "Enemy " << i << " Health: " << currentEnemies[i].getCurrentHealthPoints() << endl;
+                            cout << "Enemy " << i << " Defence Points: " << currentEnemies[i].getCurrentDefencePoints() << endl;
                         }
                     }
                     // update player data
@@ -181,7 +184,22 @@ void Game::setPlayer(Player* player) {
 }
 
 void Game::update() {
+    // updating player state
     player->update();
+    // updating enemies states
+    for (int i = 0; i < numOfCurrentEnemies; i++) {
+        // setting dead enemy in last index of array and subtracting size
+        if (currentEnemies[i].isDead()) {
+            // it's not last in array
+            if (i != numOfCurrentEnemies - 1) {
+                swapElements(numOfCurrentEnemies - 1, i);
+            } else currentEnemies[i].~NPCEnemy();
+            numOfCurrentEnemies--;
+            continue;
+        }
+        // if enemy is still alive
+        currentEnemies[i].update();
+    }
 }
 
 void Game::initWorldMap() {
@@ -223,4 +241,10 @@ void Game::setCurrentWorldMapRow(int row) {
 
 void Game::setCurrentWorldMapCol(int col) {
     currentGameMapCol = col;
+}
+
+void Game::swapElements(int first, int second) {
+    NPCEnemy &temp = currentEnemies[first];
+    currentEnemies[first] = currentEnemies[second];
+    currentEnemies[second] = temp;
 }

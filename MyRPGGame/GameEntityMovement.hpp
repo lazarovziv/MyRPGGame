@@ -12,6 +12,11 @@ private:
     GameEntity* entity;
     int screenWidth, screenHeight;
     int tileSize;
+    
+    bool moveUp(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
+    bool moveDown(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
+    bool moveRight(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
+    bool moveLeft(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
 public:
     GameEntityMovement(GameEntity* entity);
     ~GameEntityMovement() = default;

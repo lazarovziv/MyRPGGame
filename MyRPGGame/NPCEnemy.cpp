@@ -13,6 +13,7 @@ NPCEnemy::NPCEnemy(EnemyType type, float x, float y) {
     currentManaPoints = maxManaPoints;
     attackPoints = 2;
     defencePoints = 1;
+    currentDefencePoints = defencePoints;
     speed = 1.f;
     inBattle = false;
     dead = false;

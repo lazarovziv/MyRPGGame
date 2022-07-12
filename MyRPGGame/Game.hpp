@@ -50,6 +50,8 @@ public:
     void render();
     void update();
     void start();
+    
+    void swapElements(int first, int second);
 };
 
 #endif /* Game_hpp */

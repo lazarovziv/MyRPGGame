@@ -27,6 +27,7 @@ protected:
     int maxManaPoints;
     int attackPoints;
     int defencePoints;
+    int currentDefencePoints;
     float speed;
     bool inBattle;
     bool dead = false;
@@ -49,6 +50,7 @@ public:
     int getCurrentManaPoints();
     int getAttackPoints();
     int getDefencePoints();
+    int getCurrentDefencePoints();
     float getSpeed();
     bool isInBattle();
     bool isDead();
@@ -77,6 +79,7 @@ public:
     void decreaseSpeed(float speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
+    void decreaseCurrentDefencePoints(int amount);
     
     void attack(GameEntity &entity);
     
