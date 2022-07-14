@@ -1,11 +1,11 @@
-#pragma once
+//#pragma once
 
 #ifndef GameEntity_hpp
 #define GameEntity_hpp
 
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
-#include "GameMap.hpp"
+//#include "GameMap.hpp"
 #include "Weapon.hpp"
 #include "Circle.hpp"
 
@@ -38,7 +38,7 @@ protected:
     Sprite sprite; // maybe VertexArray for each direction
     Circle* entityCircle = nullptr;
     Circle* attackRangeCircle = nullptr;
-    GameMap* currentGameMap;
+//    GameMap* currentGameMap;
     Weapon* weapon;
     
 public:

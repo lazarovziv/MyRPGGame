@@ -1,12 +1,16 @@
-#pragma once
+//#pragma once
 
 #ifndef GameMap_hpp
 #define GameMap_hpp
 
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
+#include "NPCEnemy.hpp"
+#include <vector>
+//class NPCEnemy;
 
 using namespace sf;
+using namespace std;
 
 class GameMap {
 private:
@@ -26,10 +30,13 @@ private:
     float topExitMinX, topExitMaxX;
     float bottomExitMinX, bottomExitMaxX;
     
+    int numOfCurrentEnemies = 0;
     // areas where entities cannot move or reach by walking
     int numOfUnreachableAreas = 0;
-//    FloatRect unreachableAreas[100];
     RectangleShape unreachableAreasSprites[100];
+    // enemies in current
+//    NPCEnemy* enemies;
+    vector<NPCEnemy*> enemies;
     
     
 public:
@@ -38,6 +45,24 @@ public:
     ~GameMap() = default;
     int getWorldMapRow();
     int getWorldMapCol();
+    
+    void init();
+    
+    RectangleShape* getUnreachableAreasSprites();
+    int getNumOfUnreachableAreas();
+    void addUnreachableArea(FloatRect rect);
+    bool isExitableFromLeft();
+    bool isExitableFromRight();
+    bool isExitableFromTop();
+    bool isExitableFromBottom();
+    void setIsExitableFromLeft(bool flag);
+    void setIsExitableFromRight(bool flag);
+    void setIsExitableFromTop(bool flag);
+    void setIsExitableFromBottom(bool flag);
+    
+    vector<NPCEnemy*> getEnemies();
+    int getNumOfCurrentEnemies();
+    void addEnemy(NPCEnemy &enemy);
     
     float getLeftEnterMinY() {
         return leftEnterMinY;
@@ -106,24 +131,31 @@ public:
     void setLeftEnterMinY(float y) {
         leftEnterMinY = y;
     }
+    
     void setLeftEnterMaxY(float y) {
         leftEnterMaxY = y;
     }
+    
     void setLeftExitMinY(float y) {
         leftExitMinY = y;
     }
+    
     void setLeftExitMaxY(float y) {
         leftExitMaxY = y;
     }
+    
     void setRightEnterMinY(float y) {
         rightEnterMinY = y;
     }
+    
     void setRightEnterMaxY(float y) {
         rightEnterMaxY = y;
     }
+    
     void setRightExitMinY(float y) {
         rightExitMinY = y;
     }
+    
     void setRightExitMaxY(float y) {
         rightExitMaxY = y;
     }
@@ -131,40 +163,38 @@ public:
     void setTopEnterMinX(float x) {
         topEnterMinX = x;
     }
+    
     void setTopEnterMaxX(float x) {
         topEnterMaxX = x;
     }
+    
     void setTopExitMinX(float x) {
         topExitMinX = x;
     }
+    
     void setTopExitMaxX(float x) {
         topExitMaxX = x;
     }
+    
     void setBottomEnterMinX(float x) {
         bottomEnterMinX = x;
     }
+    
     void setBottomEnterMaxX(float x) {
         bottomEnterMaxX = x;
     }
+    
     void setBottomExitMinX(float x) {
         bottomExitMinX = x;
     }
+    
     void setBottomExitMaxX(float x) {
         bottomExitMaxX = x;
     }
     
-    RectangleShape* getUnreachableAreasSprites();
-    int getNumOfUnreachableAreas();
-    void addUnreachableArea(FloatRect rect);
-    bool isExitableFromLeft();
-    bool isExitableFromRight();
-    bool isExitableFromTop();
-    bool isExitableFromBottom();
-    void setIsExitableFromLeft(bool flag);
-    void setIsExitableFromRight(bool flag);
-    void setIsExitableFromTop(bool flag);
-    void setIsExitableFromBottom(bool flag);
     // setters for reachable from direction
+    
+    bool operator == (const GameMap& map);
 };
 
 #endif /* GameMap_hpp */

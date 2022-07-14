@@ -1,4 +1,5 @@
-#pragma once
+//#pragma once
+
 #ifndef Weapon_hpp
 #define Weapon_hpp
 

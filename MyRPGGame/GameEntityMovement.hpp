@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #ifndef GameEntityMovement_hpp
 #define GameEntityMovement_hpp

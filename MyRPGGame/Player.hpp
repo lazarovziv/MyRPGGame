@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #ifndef Player_hpp
 #define Player_hpp
@@ -34,6 +34,7 @@ public:
     void levelUpStrengthPoints();
     void levelUpIntelligencePoints();
     void levelUpCriticalHitsPoints();
+    void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
 };
 

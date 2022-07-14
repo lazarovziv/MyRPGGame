@@ -9,7 +9,8 @@ GameEntityMovement::GameEntityMovement(GameEntity* entity) {
 }
 
 bool GameEntityMovement::move(MoveDirection direction) {
-    GameMap* map = Game::getInstance()->getCurrentGameMap();
+    GameMap* map = Game::getInstance()->getWorldMap()[Game::getInstance()->getCurrentWorldMapRow()][Game::getInstance()->getCurrentWorldMapCol()];
+//    GameMap* map = Game::getInstance()->getCurrentGameMap();
     
     float entitySpeed = entity->getSpeed();
     FloatRect entityRect = entity->getRectangle();
@@ -56,7 +57,8 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
             if (entityX + tileSize/2 <= map->getTopExitMaxX() && entityX - tileSize/2 >= map->getTopExitMinX()) {
                 cout << "Reached Top Exit" << endl;
                 // set current map to map above
-                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapRow() - 1);
+                Game::getInstance()->changeCurrentMap(map->getWorldMapRow() - 1, map->getWorldMapCol());
+//                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapRow() - 1);
                 // set entity position to down enter point (changed current map)
                 entity->setPosition(entityX, screenHeight - tileSize/2);
                 return true;
@@ -92,7 +94,8 @@ bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, fl
             if (entityX + tileSize/2 <= map->getBottomExitMaxX() && entityX - tileSize/2 >= map->getBottomExitMinX()) {
                 cout << "Reached Bottom Exit" << endl;
                 // set current map to map below
-                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapRow() + 1);
+                Game::getInstance()->changeCurrentMap(map->getWorldMapRow() + 1, map->getWorldMapCol());
+//                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapRow() + 1);
                 // set entity position to top enter point (changed current map)
                 entity->setPosition(entityX, tileSize/2);
                 return true;
@@ -128,7 +131,8 @@ bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, f
             if (entityY + tileSize/2 <= map->getRightExitMinY() && entityY - tileSize/2 >= map->getRightExitMaxY()) {
                 cout << "Reached Right Exit" << endl;
                 // set current map to map to the right
-                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapCol() + 1);
+                Game::getInstance()->changeCurrentMap(map->getWorldMapRow(), map->getWorldMapCol() + 1);
+//                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapCol() + 1);
                 // set entity position to right enter point (changed current map)
                 entity->setPosition(tileSize/2, entityY);
                 return true;
@@ -164,7 +168,8 @@ bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, fl
             if (entityY + tileSize/2 <= map->getLeftExitMinY() && entityY - tileSize/2 >= map->getLeftExitMaxY()) {
                 cout << "Reached Left Exit" << endl;
                 // set current map to map to the left
-                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapCol() - 1);
+                Game::getInstance()->changeCurrentMap(map->getWorldMapRow(), map->getWorldMapCol() - 1);
+//                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapCol() - 1);
                 // set entity position to left enter point (changed current map)
                 entity->setPosition(screenWidth - tileSize/2, entityY);
                 return true;

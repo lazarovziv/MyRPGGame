@@ -1,4 +1,5 @@
 #include "GameMap.hpp"
+//class NPCEnemy;
 
 GameMap::GameMap(int row, int col) {
     worldMapRow = row;
@@ -22,6 +23,10 @@ int GameMap::getWorldMapCol() {
     return worldMapCol;
 }
 
+int GameMap::getNumOfCurrentEnemies() {
+    return numOfCurrentEnemies;
+}
+
 bool GameMap::isExitableFromLeft() {
     return exitableFromLeft;
 }
@@ -36,6 +41,10 @@ bool GameMap::isExitableFromTop() {
 
 bool GameMap::isExitableFromBottom() {
     return exitableFromBottom;
+}
+
+vector<NPCEnemy*> GameMap::getEnemies() {
+    return enemies;
 }
 
 void GameMap::setIsExitableFromLeft(bool flag) {
@@ -69,4 +78,19 @@ void GameMap::addUnreachableArea(FloatRect rect) {
     rectShape.setFillColor(Color::Red);
     unreachableAreasSprites[numOfUnreachableAreas] = rectShape;
     numOfUnreachableAreas++;
+}
+
+void GameMap::init() {
+    // TODO: init random number of enemies and initialize all landscape and unreachable areas
+    NPCEnemy* enemy = new NPCEnemy(NPCEnemy::WORM, 500, 550);
+//    NPCEnemy enemy(NPCEnemy::WORM, 400, 300);
+    addEnemy(*enemy);
+}
+
+void GameMap::addEnemy(NPCEnemy &enemy) {
+    enemies.push_back(&enemy);
+}
+
+bool GameMap::operator==(const GameMap &map) {
+    return map.worldMapRow == worldMapRow && map.worldMapCol == worldMapCol;
 }

@@ -4,7 +4,7 @@ NPCEnemy::NPCEnemy() {
     
 }
 
-NPCEnemy::NPCEnemy(EnemyType type, float x, float y) {
+NPCEnemy::NPCEnemy(int type, float x, float y) {
     this->type = type;
     level = 1;
     maxHealthPoints = 20;
@@ -15,6 +15,7 @@ NPCEnemy::NPCEnemy(EnemyType type, float x, float y) {
     defencePoints = 1;
     currentDefencePoints = defencePoints;
     speed = 1.f;
+    expPointsWorth = 10;
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::UP;
@@ -37,6 +38,9 @@ NPCEnemy::NPCEnemy(EnemyType type, float x, float y) {
 //            attackPoints = 2;
 //            defencePoints = 1;
 //            speed = 1.f;
+    
+//            expPointsWorth = 10;
+    
 //            inBattle = false;
 //            moveDirection = MoveDirection::UP;
 //            Texture texture;
@@ -88,7 +92,11 @@ float NPCEnemy::getBattleAreaRadius() {
     return battleAreaRadius;
 }
 
-EnemyType NPCEnemy::getType() {
+int NPCEnemy::getExpPointsWorth() {
+    return expPointsWorth;
+}
+
+int NPCEnemy::getType() {
     return type;
 }
 

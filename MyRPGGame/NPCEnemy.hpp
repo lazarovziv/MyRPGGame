@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 
 #ifndef NPCEnemy_hpp
 #define NPCEnemy_hpp
@@ -19,16 +19,24 @@ private:
     // radius for area to battle player after engaging (needs to be bigger than wander)
     float battleAreaRadius;
     // type of enemy
-    EnemyType type;
+    int type;
+    
+    int expPointsWorth;
     
 public:
+    static const int WORM = 1;
+    static const int SNAKE = 2;
+    static const int BIRD = 3;
+    static const int ETC = 4;
+    
     NPCEnemy();
-    NPCEnemy(EnemyType type, float x, float y);
+    NPCEnemy(int type, float x, float y);
     ~NPCEnemy() = default;
     int getBattleTimeout();
     float getWanderAreaRadius();
     float getBattleAreaRadius();
-    EnemyType getType();
+    int getExpPointsWorth();
+    int getType();
     
     void spawn(float x, float y);
 };

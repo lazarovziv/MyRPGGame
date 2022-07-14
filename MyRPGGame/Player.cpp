@@ -1,5 +1,5 @@
 #include "Player.hpp"
-#include "Game.hpp"
+//#include "Game.hpp"
 //#include "TextureLoader.hpp"
 
 Player::Player() : GameEntity() {
@@ -9,7 +9,7 @@ Player::Player() : GameEntity() {
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
     sprite.setTexture(playerTexture);
-    sprite.setOrigin(Game::TILE_SIZE/2, Game::TILE_SIZE/2);
+    sprite.setOrigin(32, 32);
     sprite.setPosition(position);
 }
 
@@ -27,6 +27,11 @@ int Player::getCriticalHitPoints() {
 
 int Player::getExpPoints() {
     return expPoints;
+}
+
+void Player::incrementExpPoints(int amount) {
+    // TODO: add logic for handling leveling up
+    expPoints += amount;
 }
 
 void Player::levelUpStrengthPoints() {
