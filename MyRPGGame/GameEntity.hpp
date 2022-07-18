@@ -88,6 +88,9 @@ public:
     void decreaseCurrentDefencePoints(int amount);
     
     bool isEntityInAttackRange(GameEntity &entity);
+    bool intersects(GameEntity &entity);
+    Circle* getCircle();
+    Circle* getAttackRangeCircle();
     
     void attack(GameEntity &entity);
     

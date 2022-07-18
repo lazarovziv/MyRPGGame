@@ -37,6 +37,7 @@ private:
     // enemies in current
 //    NPCEnemy* enemies;
     vector<NPCEnemy*> enemies;
+    NPCEnemy enemies0[100];
     
     
 public:
@@ -61,8 +62,10 @@ public:
     void setIsExitableFromBottom(bool flag);
     
     vector<NPCEnemy*> getEnemies();
+    NPCEnemy* getEnemies0();
     int getNumOfCurrentEnemies();
-    void addEnemy(NPCEnemy &enemy);
+    void addEnemy(NPCEnemy* enemy);
+    void removeEnemyAtIndex(int i);
     
     float getLeftEnterMinY() {
         return leftEnterMinY;

@@ -25,6 +25,7 @@ private:
     
 public:
     Player();
+    Player(PlayerType type);
     ~Player() = default;
     int getStrengthPoints();
     int getIntelligencePoints();

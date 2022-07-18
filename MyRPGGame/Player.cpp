@@ -13,6 +13,20 @@ Player::Player() : GameEntity() {
     sprite.setPosition(position);
 }
 
+Player::Player(PlayerType type) : GameEntity() {
+    expPoints = 0;
+    
+//    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
+    Texture playerTexture;
+    playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
+    sprite.setTexture(playerTexture);
+    sprite.setOrigin(32, 32);
+    sprite.setPosition(position);
+    setPlayerType(type);
+    entityCircle = new Circle(position.x, position.y, 45);
+    attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
+}
+
 int Player::getStrengthPoints() {
     return strengthPoints;
 }

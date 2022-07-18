@@ -81,13 +81,13 @@ void GameEntity::setPosition(float x, float y) {
 
 void GameEntity::setWeapon(WeaponType type) {
     weapon = new Weapon(type);
-    // initializing attackRangeCircle according to weapon
-    if (attackRangeCircle != nullptr) {
-        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
-    } else {
-        attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
-        cout << attackRangeCircle->getCenter()->getX() << endl;
-    }
+//    // initializing attackRangeCircle according to weapon
+//    if (attackRangeCircle != nullptr) {
+//        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
+//    } else {
+//        attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
+//        cout << attackRangeCircle->getCenter()->getX() << endl;
+//    }
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
@@ -214,6 +214,18 @@ void GameEntity::attack(GameEntity &entity) {
 
 bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
     return attackRangeCircle->intersects(*(entity.entityCircle));
+}
+
+bool GameEntity::intersects(GameEntity &entity) {
+    return entityCircle->intersects(*(entity.entityCircle));
+}
+
+Circle* GameEntity::getCircle() {
+    return entityCircle;
+}
+
+Circle* GameEntity::getAttackRangeCircle() {
+    return attackRangeCircle;
 }
 
 void GameEntity::update() {

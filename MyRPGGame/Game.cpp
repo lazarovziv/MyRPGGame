@@ -21,12 +21,10 @@ Game::Game(const char* str) {
     
     state = GameState::PAUSED;
     
-//    currentGameMapRow = 1;
-//    currentGameMapCol = 1;
-    
     int rows = 3;
     int cols = 3;
     worldMap = new GameMap**[rows];
+    
     for (int r = 0; r < rows; r++) {
         worldMap[r] = new GameMap*[cols];
         for (int c = 0; c < cols; c++) {
@@ -56,16 +54,18 @@ Game::Game(const char* str) {
         }
     }
     
-    changeCurrentMap(1, 1);
+    currentGameMapRow = 1;
+    currentGameMapCol = 1;
     
-    this->player = new Player();
+//    changeCurrentMap(1, 1);
+    
+    this->player = new Player(PlayerType::KNIGHT);
     
     player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-    player->setPlayerType(PlayerType::KNIGHT);
     
     initWorldMap();
     // init first map
-    worldMap[currentGameMapRow][currentGameMapCol]->init();
+    getCurrentGameMap()->init();
 }
 
 void Game::render() {
@@ -75,9 +75,9 @@ void Game::render() {
     for (int i = 0; i < map->getNumOfUnreachableAreas(); i++) {
         window->draw(map->getUnreachableAreasSprites()[i]);
     }
-    for (int i = 0; i < map->getEnemies().size(); i++) {
-        if (!map->getEnemies()[i]->isDead()) {
-            window->draw(map->getEnemies()[i]->getSprite());
+    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+        if (!map->getEnemies0()[i].isDead()) {
+            window->draw(map->getEnemies0()[i].getSprite());
         }
     }
     window->draw(player->getSprite());
@@ -85,7 +85,7 @@ void Game::render() {
 }
 
 void Game::start() {
-    player->increaseSpeed(15);
+    player->increaseSpeed(7);
     GameEntityMovement playerMovement(player);
     
     bool canMove = false;
@@ -126,16 +126,16 @@ void Game::start() {
                         canMove = false;
                         // pressing x for attacking
                     } else if (eventKeyCode == Keyboard::X) {
-                        for (int i = 0; i < map->getEnemies().size(); i++) {
-                            if (!map->getEnemies()[i]->isDead()) {
-                                player->attack(*(map->getEnemies()[i]));
+                        for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+                            if (!map->getEnemies0()[i].isDead()) {
+                                player->attack(map->getEnemies0()[i]);
                             }
                         }
                     }
                     if (canMove) {
-                        for (int i = 0; i < map->getEnemies().size(); i++) {
-                            if (map->getEnemies()[i] == nullptr) continue;
-                        }
+//                        for (int i = 0; i < map->getEnemies().size(); i++) {
+//                            if (map->getEnemies()[i] == nullptr) continue;
+//                        }
                     }
                     // update player data
                     update();
@@ -185,16 +185,17 @@ void Game::update() {
     player->update();
     // updating enemies states
     GameMap* map = getCurrentGameMap();
-    for (int i = 0; i < map->getEnemies().size(); i++) {
+    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
         // setting dead enemy in last index of array and subtracting size
-        if (map->getEnemies()[i]->isDead()) {
+        if (map->getEnemies0()[i].isDead()) {
             // swapping current with last and popping last element (erase doesn't work well for some reason)
-            std::swap(map->getEnemies()[i], map->getEnemies()[map->getEnemies().size() - 1]);
-            map->getEnemies().pop_back();
+            map->removeEnemyAtIndex(i);
+//            std::swap(map->getEnemies()[i], map->getEnemies()[map->getEnemies().size() - 1]);
+//            map->getEnemies().pop_back();
             continue;
         }
         // if enemy is still alive
-        map->getEnemies()[i]->update();
+        map->getEnemies0()[i].update();
     }
 }
 
@@ -242,7 +243,9 @@ void Game::setCurrentWorldMapCol(int col) {
 void Game::changeCurrentMap(int row, int col) {
     GameMap* map = getCurrentGameMap();
     // delete enemies because current map has changed
-    map->getEnemies().clear();
+    delete [] map->getEnemies0();
+    delete [] map->getEnemies0();
+//    map->getEnemies().clear();
     
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);

@@ -69,9 +69,18 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
     }
     // temp rectangle for moving up
     FloatRect rect(entityRect.left, entityRect.top - entitySpeed, entityRect.width, entityRect.height);
+    // temp circle for moving up
+    Circle circle(entity->getCircle()->getCenter()->getX(), entity->getCircle()->getCenter()->getY() - entitySpeed, entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check for collisions with enemies
+    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -106,9 +115,18 @@ bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, fl
     }
     // temp rectangle for moving down
     FloatRect rect(entityRect.left, entityRect.top + entitySpeed, entityRect.width, entityRect.height);
+    // temp circle for moving down
+    Circle circle(entity->getCircle()->getCenter()->getX(), entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check for collisions with enemies
+    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -143,9 +161,18 @@ bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, f
     }
     // temp rectangle for moving right
     FloatRect rect(entityRect.left + entitySpeed, entityRect.top, entityRect.width, entityRect.height);
+    // temp circle for moving right
+    Circle circle(entity->getCircle()->getCenter()->getX() + entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check for collisions with enemies
+    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -180,9 +207,18 @@ bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, fl
     }
     // temp rectangle for moving left
     FloatRect rect(entityRect.left - entitySpeed, entityRect.top, entityRect.width, entityRect.height);
+    // temp circle for moving left
+    Circle circle(entity->getCircle()->getCenter()->getX() - entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check for collisions with enemies
+    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
