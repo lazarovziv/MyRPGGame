@@ -36,8 +36,8 @@ private:
     RectangleShape unreachableAreasSprites[100];
     // enemies in current
 //    NPCEnemy* enemies;
-    vector<NPCEnemy*> enemies;
-    NPCEnemy enemies0[100];
+//    vector<NPCEnemy*> enemies;
+    NPCEnemy enemies[100];
     
     
 public:
@@ -61,8 +61,8 @@ public:
     void setIsExitableFromTop(bool flag);
     void setIsExitableFromBottom(bool flag);
     
-    vector<NPCEnemy*> getEnemies();
-    NPCEnemy* getEnemies0();
+//    vector<NPCEnemy*> getEnemies();
+    NPCEnemy* getEnemies();
     int getNumOfCurrentEnemies();
     void addEnemy(NPCEnemy* enemy);
     void removeEnemyAtIndex(int i);

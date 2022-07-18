@@ -80,7 +80,7 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
     }
     // check for collisions with enemies
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
+        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -126,7 +126,7 @@ bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, fl
     }
     // check for collisions with enemies
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
+        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -172,7 +172,7 @@ bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, f
     }
     // check for collisions with enemies
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
+        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -218,7 +218,7 @@ bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, fl
     }
     // check for collisions with enemies
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies0()[i].getCircle()->intersects(circle)) {
+        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }

@@ -23,8 +23,8 @@ Player::Player(PlayerType type) : GameEntity() {
     sprite.setOrigin(32, 32);
     sprite.setPosition(position);
     setPlayerType(type);
-    entityCircle = new Circle(position.x, position.y, 45);
-    attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
+    entityCircle = new Circle(position.x, position.y, 32);
+    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * 5/3) + weapon->getHitRadius());
 }
 
 int Player::getStrengthPoints() {

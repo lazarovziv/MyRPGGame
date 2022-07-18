@@ -43,9 +43,9 @@ bool GameMap::isExitableFromBottom() {
     return exitableFromBottom;
 }
 
-vector<NPCEnemy*> GameMap::getEnemies() {
-    return enemies;
-}
+//vector<NPCEnemy*> GameMap::getEnemies() {
+//    return enemies;
+//}
 
 void GameMap::setIsExitableFromLeft(bool flag) {
     exitableFromLeft = flag;
@@ -80,8 +80,8 @@ void GameMap::addUnreachableArea(FloatRect rect) {
     numOfUnreachableAreas++;
 }
 
-NPCEnemy* GameMap::getEnemies0() {
-    return enemies0;
+NPCEnemy* GameMap::getEnemies() {
+    return enemies;
 }
 
 void GameMap::init() {
@@ -93,13 +93,13 @@ void GameMap::init() {
 
 void GameMap::addEnemy(NPCEnemy *enemy) {
 //    enemies.push_back(&enemy);
-    enemies0[numOfCurrentEnemies] = *enemy;
+    enemies[numOfCurrentEnemies] = *enemy;
     numOfCurrentEnemies++;
 }
 
 void GameMap::removeEnemyAtIndex(int i) {
     // delete object from memory
-    enemies0[i].~NPCEnemy();
+    enemies[i].~NPCEnemy();
     // subtract num of enemies
     numOfCurrentEnemies--;
 }

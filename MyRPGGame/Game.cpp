@@ -76,8 +76,8 @@ void Game::render() {
         window->draw(map->getUnreachableAreasSprites()[i]);
     }
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (!map->getEnemies0()[i].isDead()) {
-            window->draw(map->getEnemies0()[i].getSprite());
+        if (!map->getEnemies()[i].isDead()) {
+            window->draw(map->getEnemies()[i].getSprite());
         }
     }
     window->draw(player->getSprite());
@@ -127,8 +127,8 @@ void Game::start() {
                         // pressing x for attacking
                     } else if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-                            if (!map->getEnemies0()[i].isDead()) {
-                                player->attack(map->getEnemies0()[i]);
+                            if (!map->getEnemies()[i].isDead()) {
+                                player->attack(map->getEnemies()[i]);
                             }
                         }
                     }
@@ -187,7 +187,7 @@ void Game::update() {
     GameMap* map = getCurrentGameMap();
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
         // setting dead enemy in last index of array and subtracting size
-        if (map->getEnemies0()[i].isDead()) {
+        if (map->getEnemies()[i].isDead()) {
             // swapping current with last and popping last element (erase doesn't work well for some reason)
             map->removeEnemyAtIndex(i);
 //            std::swap(map->getEnemies()[i], map->getEnemies()[map->getEnemies().size() - 1]);
@@ -195,7 +195,7 @@ void Game::update() {
             continue;
         }
         // if enemy is still alive
-        map->getEnemies0()[i].update();
+        map->getEnemies()[i].update();
     }
 }
 
@@ -241,14 +241,13 @@ void Game::setCurrentWorldMapCol(int col) {
 }
 
 void Game::changeCurrentMap(int row, int col) {
-    GameMap* map = getCurrentGameMap();
+//    GameMap* map = getCurrentGameMap();
     // delete enemies because current map has changed
-    delete [] map->getEnemies0();
-    delete [] map->getEnemies0();
+    
 //    map->getEnemies().clear();
     
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);
     // initialize map
-//    worldMap[currentGameMapRow][currentGameMapCol]->init();
+    worldMap[currentGameMapRow][currentGameMapCol]->init();
 }

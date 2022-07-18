@@ -26,8 +26,8 @@ NPCEnemy::NPCEnemy(int type, float x, float y) {
     sprite.setOrigin(32, 32);
     sprite.setPosition(x, y);
     weapon = new Weapon(WeaponType::BARE_HANDED);
-    entityCircle = new Circle(position.x, position.y, 45);
-    attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
+    entityCircle = new Circle(position.x, position.y, 32);
+    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * 5/3) + weapon->getHitRadius());
     /*
      switch (type) {
          case EnemyType::WORM:
