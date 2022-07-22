@@ -1,19 +1,12 @@
 #include <iostream>
-#include <SFML/Graphics.hpp>
 #include "Game.hpp"
-#include "GameMap.hpp"
-#include "Player.hpp"
-#include "GameEntityMovement.hpp"
 
 using namespace std;
 using namespace sf;
 
 int main() {
-    Game game("MyRPGGame", 320, 240);
-    Player player;
+    Game* game = Game::getInstance();
+    game->start();
     
-    game.setPlayer(&player);
-    
-    game.start();
     return 0;
 }

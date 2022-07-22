@@ -1,3 +1,5 @@
+//#pragma once
+
 #ifndef Player_hpp
 #define Player_hpp
 
@@ -23,6 +25,7 @@ private:
     
 public:
     Player();
+    Player(PlayerType type);
     ~Player() = default;
     int getStrengthPoints();
     int getIntelligencePoints();
@@ -32,9 +35,8 @@ public:
     void levelUpStrengthPoints();
     void levelUpIntelligencePoints();
     void levelUpCriticalHitsPoints();
+    void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
-    
-    void update();
 };
 
 #endif /* Player_hpp */

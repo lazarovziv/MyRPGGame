@@ -1,9 +1,15 @@
+//#pragma once
+
 #ifndef GameEntity_hpp
 #define GameEntity_hpp
 
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
-#include "GameMap.hpp"
+#include "Weapon.hpp"
+#include "Circle.hpp"
+//#include "GameEntityMovement.hpp"
+//class GameEntityMovement;
+class GameEntityMovemennt;
 
 enum class MoveDirection { UP, DOWN, RIGHT, LEFT };
 
@@ -25,13 +31,20 @@ protected:
     int maxManaPoints;
     int attackPoints;
     int defencePoints;
+    int currentDefencePoints;
     float speed;
     bool inBattle;
+    bool dead = false;
     MoveDirection moveDirection;
     Vector2f position;
     Sprite sprite; // maybe VertexArray for each direction
-    GameMap* currentGameMap;
-//    FloatRect rectangle; for intersecting with unreachable areas
+    Circle* entityCircle = nullptr;
+    Circle* attackRangeCircle = nullptr;
+//    GameMap* currentGameMap;
+    Weapon* weapon;
+    
+private:
+//    GameEntityMovement* movement;
     
 public:
     GameEntity();
@@ -47,12 +60,13 @@ public:
     int getCurrentManaPoints();
     int getAttackPoints();
     int getDefencePoints();
+    int getCurrentDefencePoints();
     float getSpeed();
     bool isInBattle();
+    bool isDead();
     MoveDirection getMoveDirection();
     Vector2f getPosition();
     Sprite getSprite();
-    GameMap* getCurrentGameMap();
     FloatRect getRectangle(); // sprite.getGlobalBounds()
     
     void increaseLevel(int amount);
@@ -63,14 +77,30 @@ public:
     void increaseDefencePoints(int amount);
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
+    void setX(float x);
+    void setY(float y);
     void setPosition(float x, float y);
-    void setCurrentGameMap(GameMap &map);
+    void setWeapon(WeaponType type);
+
     // for situations where changing for worse equipment (adding logic for negative base values)
     void decreaseMaxHealthPoints(int amount);
     void decreaseMaxManaPoints(int amount);
+    void decreaseCurrentHealthPoints(int amount);
+    void decreaseCurrentManaPoints(int amount);
     void decreaseSpeed(float speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
+    void decreaseCurrentDefencePoints(int amount);
+    
+    bool isEntityInAttackRange(GameEntity &entity);
+    bool intersects(GameEntity &entity);
+    Circle* getCircle();
+    Circle* getAttackRangeCircle();
+    
+    void attack(GameEntity &entity);
+    bool move(MoveDirection direction);
+    
+    void update();
 };
 
 #endif /* GameEntity_hpp */
