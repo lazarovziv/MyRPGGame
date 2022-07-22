@@ -19,6 +19,11 @@
 		DFB8C8952874EBDC0091D212 /* GameEntityMovement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8932874EBDC0091D212 /* GameEntityMovement.cpp */; };
 		DFB8C8982874EF1F0091D212 /* GameMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8962874EF1F0091D212 /* GameMap.cpp */; };
 		DFB8C89B2874F3900091D212 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8992874F3900091D212 /* Game.cpp */; };
+		DFB8C8A12877257A0091D212 /* LandscapeEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C89F2877257A0091D212 /* LandscapeEntity.cpp */; };
+		DFB8C8A7287DC9230091D212 /* Weapon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8A5287DC9230091D212 /* Weapon.cpp */; };
+		DFB8C8AA287E23B50091D212 /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8A8287E23B50091D212 /* Point.cpp */; };
+		DFB8C8AD287E247E0091D212 /* Circle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8AB287E247E0091D212 /* Circle.cpp */; };
+		DFB8C8B12886FA9B0091D212 /* Projectile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB8C8AF2886FA9B0091D212 /* Projectile.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +58,17 @@
 		DFB8C8972874EF1F0091D212 /* GameMap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameMap.hpp; sourceTree = "<group>"; };
 		DFB8C8992874F3900091D212 /* Game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Game.cpp; sourceTree = "<group>"; };
 		DFB8C89A2874F3900091D212 /* Game.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Game.hpp; sourceTree = "<group>"; };
+		DFB8C89F2877257A0091D212 /* LandscapeEntity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LandscapeEntity.cpp; sourceTree = "<group>"; };
+		DFB8C8A02877257A0091D212 /* LandscapeEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LandscapeEntity.hpp; sourceTree = "<group>"; };
+		DFB8C8A5287DC9230091D212 /* Weapon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Weapon.cpp; sourceTree = "<group>"; };
+		DFB8C8A6287DC9230091D212 /* Weapon.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Weapon.hpp; sourceTree = "<group>"; };
+		DFB8C8A8287E23B50091D212 /* Point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
+		DFB8C8A9287E23B50091D212 /* Point.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Point.hpp; sourceTree = "<group>"; };
+		DFB8C8AB287E247E0091D212 /* Circle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Circle.cpp; sourceTree = "<group>"; };
+		DFB8C8AC287E247E0091D212 /* Circle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Circle.hpp; sourceTree = "<group>"; };
+		DFB8C8AE2885D5130091D212 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		DFB8C8AF2886FA9B0091D212 /* Projectile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Projectile.cpp; sourceTree = "<group>"; };
+		DFB8C8B02886FA9B0091D212 /* Projectile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Projectile.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,17 +109,28 @@
 			children = (
 				DFB8C8782874E0350091D212 /* main.cpp */,
 				DFB8C8932874EBDC0091D212 /* GameEntityMovement.cpp */,
+				DFB8C8AF2886FA9B0091D212 /* Projectile.cpp */,
+				DFB8C8B02886FA9B0091D212 /* Projectile.hpp */,
 				DFB8C8992874F3900091D212 /* Game.cpp */,
+				DFB8C89F2877257A0091D212 /* LandscapeEntity.cpp */,
+				DFB8C8A02877257A0091D212 /* LandscapeEntity.hpp */,
 				DFB8C89A2874F3900091D212 /* Game.hpp */,
 				DFB8C8962874EF1F0091D212 /* GameMap.cpp */,
 				DFB8C8972874EF1F0091D212 /* GameMap.hpp */,
 				DFB8C8942874EBDC0091D212 /* GameEntityMovement.hpp */,
 				DFB8C88A2874E1730091D212 /* GameEntity.cpp */,
+				DFB8C8A8287E23B50091D212 /* Point.cpp */,
+				DFB8C8AB287E247E0091D212 /* Circle.cpp */,
+				DFB8C8AC287E247E0091D212 /* Circle.hpp */,
+				DFB8C8A9287E23B50091D212 /* Point.hpp */,
+				DFB8C8A5287DC9230091D212 /* Weapon.cpp */,
+				DFB8C8A6287DC9230091D212 /* Weapon.hpp */,
 				DFB8C88B2874E1730091D212 /* GameEntity.hpp */,
 				DFB8C88D2874E8C90091D212 /* Player.cpp */,
 				DFB8C8902874EA300091D212 /* NPCEnemy.cpp */,
 				DFB8C8912874EA300091D212 /* NPCEnemy.hpp */,
 				DFB8C88E2874E8C90091D212 /* Player.hpp */,
+				DFB8C8AE2885D5130091D212 /* Constants.h */,
 			);
 			path = MyRPGGame;
 			sourceTree = "<group>";
@@ -179,10 +206,15 @@
 			files = (
 				DFB8C8922874EA300091D212 /* NPCEnemy.cpp in Sources */,
 				DFB8C88C2874E1730091D212 /* GameEntity.cpp in Sources */,
+				DFB8C8AD287E247E0091D212 /* Circle.cpp in Sources */,
+				DFB8C8AA287E23B50091D212 /* Point.cpp in Sources */,
 				DFB8C8792874E0350091D212 /* main.cpp in Sources */,
 				DFB8C8952874EBDC0091D212 /* GameEntityMovement.cpp in Sources */,
+				DFB8C8A12877257A0091D212 /* LandscapeEntity.cpp in Sources */,
 				DFB8C8982874EF1F0091D212 /* GameMap.cpp in Sources */,
+				DFB8C8B12886FA9B0091D212 /* Projectile.cpp in Sources */,
 				DFB8C88F2874E8C90091D212 /* Player.cpp in Sources */,
+				DFB8C8A7287DC9230091D212 /* Weapon.cpp in Sources */,
 				DFB8C89B2874F3900091D212 /* Game.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
