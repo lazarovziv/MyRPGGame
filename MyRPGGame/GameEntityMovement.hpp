@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include "GameEntity.hpp"
 #include "GameMap.hpp"
+//class GameEntity;
+//class MoveDirection;
+//class GameMap;
 
 class GameEntityMovement {
 private:

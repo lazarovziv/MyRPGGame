@@ -1,16 +1,16 @@
 #include "GameEntityMovement.hpp"
 #include "Game.hpp"
+#include "Constants.h"
 
 GameEntityMovement::GameEntityMovement(GameEntity* entity) {
     this->entity = entity;
-    screenWidth = Game::SCREEN_WIDTH;
-    screenHeight = Game::SCREEN_HEIGHT;
-    tileSize = Game::TILE_SIZE;
+    screenWidth = Constants::SCREEN_WIDTH;
+    screenHeight = Constants::SCREEN_HEIGHT;
+    tileSize = Constants::TILE_SIZE;
 }
 
 bool GameEntityMovement::move(MoveDirection direction) {
-    GameMap* map = Game::getInstance()->getWorldMap()[Game::getInstance()->getCurrentWorldMapRow()][Game::getInstance()->getCurrentWorldMapCol()];
-//    GameMap* map = Game::getInstance()->getCurrentGameMap();
+    GameMap* map = Game::getInstance()->getCurrentGameMap();
     
     float entitySpeed = entity->getSpeed();
     FloatRect entityRect = entity->getRectangle();
@@ -89,7 +89,7 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
         // in legal boundaries
         entity->setPosition(entityX, entityY - entitySpeed);
     }
-    return canCollide;
+    return !canCollide;
 }
 
 bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
@@ -135,7 +135,7 @@ bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, fl
         // in legal boundaries
         entity->setPosition(entityX, entityY + entitySpeed);
     }
-    return canCollide;
+    return !canCollide;
 }
 
 bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
@@ -181,7 +181,7 @@ bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, f
         // in legal boundaries
         entity->setPosition(entityX + entitySpeed, entityY);
     }
-    return canCollide;
+    return !canCollide;
 }
 
 bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
@@ -227,5 +227,5 @@ bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, fl
         // in legal boundaries
         entity->setPosition(entityX - entitySpeed, entityY);
     }
-    return canCollide;
+    return !canCollide;
 }

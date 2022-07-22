@@ -15,6 +15,8 @@ GameEntity::GameEntity() {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
+    
+//    movement = new GameEntityMovement(this);
 }
 
 void GameEntity::increaseLevel(int amount) {
@@ -210,6 +212,10 @@ void GameEntity::attack(GameEntity &entity) {
             entity.decreaseCurrentHealthPoints(attackPoints);
         }
     }
+}
+
+bool GameEntity::move(MoveDirection direction) {
+    return false;
 }
 
 bool GameEntity::isEntityInAttackRange(GameEntity &entity) {

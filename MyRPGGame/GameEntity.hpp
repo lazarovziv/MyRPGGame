@@ -5,9 +5,11 @@
 
 #include <stdio.h>
 #include <SFML/Graphics.hpp>
-//#include "GameMap.hpp"
 #include "Weapon.hpp"
 #include "Circle.hpp"
+//#include "GameEntityMovement.hpp"
+//class GameEntityMovement;
+class GameEntityMovemennt;
 
 enum class MoveDirection { UP, DOWN, RIGHT, LEFT };
 
@@ -40,6 +42,9 @@ protected:
     Circle* attackRangeCircle = nullptr;
 //    GameMap* currentGameMap;
     Weapon* weapon;
+    
+private:
+//    GameEntityMovement* movement;
     
 public:
     GameEntity();
@@ -93,6 +98,7 @@ public:
     Circle* getAttackRangeCircle();
     
     void attack(GameEntity &entity);
+    bool move(MoveDirection direction);
     
     void update();
 };

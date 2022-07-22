@@ -85,9 +85,58 @@ NPCEnemy* GameMap::getEnemies() {
 }
 
 void GameMap::init() {
-    // TODO: init random number of enemies and initialize all landscape and unreachable areas
-    NPCEnemy* enemy = new NPCEnemy(NPCEnemy::WORM, 500, 550);
-//    NPCEnemy enemy(NPCEnemy::WORM, 400, 300);
+    float randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
+    float randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+//    printf("x = %f, y = %f\n", randX, randY);
+    FloatRect rect(randX, randY, Constants::TILE_SIZE, Constants::TILE_SIZE);
+    Circle circle(randX, randY, Constants::TILE_SIZE/2);
+    // assuming position is invalid
+    bool validations[numOfUnreachableAreas];
+    for (int i = 0; i < numOfUnreachableAreas; i++) {
+        validations[i] = false;
+    }
+    // true if validations filled with true
+    bool validPosition = false;
+    while (!validPosition) {
+        // checking all unreachable areas and exits
+        for (int i = 0; i < numOfUnreachableAreas; i++) {
+            if (!unreachableAreasSprites[i].getGlobalBounds().intersects(rect)
+                /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
+                && !circle.intersects(*leftExitCircle) && !circle.intersects(*rightExitCircle)*/) {
+                validations[i] = true;
+            } else {
+                // generating a new position
+                randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
+                randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+                // updating rect position
+                rect.left = randX;
+                rect.top = randY;
+                validations[i] = false;
+                // checking previous areas
+                for (int j = 0; j <= i; j++) {
+                    if (!unreachableAreasSprites[j].getGlobalBounds().intersects(rect)
+                        /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
+                        && !circle.intersects(*leftExitCircle) && !circle.intersects(*rightExitCircle)*/) {
+                        validations[j] = true;
+                    } else {
+                        validations[j] = false;
+                        i = i - 1;
+                        break;
+                    }
+                }
+            }
+            // reached end of array, validating if all is well
+            if (i == numOfUnreachableAreas - 1) {
+                bool check = true;
+                for (int k = 0; k < numOfUnreachableAreas; k++) {
+                    if (!validations[k]) check = false;
+                }
+                validPosition = check;
+            }
+        }
+    }
+    
+    NPCEnemy* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
     addEnemy(enemy);
 }
 
@@ -102,6 +151,14 @@ void GameMap::removeEnemyAtIndex(int i) {
     enemies[i].~NPCEnemy();
     // subtract num of enemies
     numOfCurrentEnemies--;
+}
+
+float GameMap::generateRandom(float min, float max) {
+//    float random = ((float) rand()) / (float) RAND_MAX;
+//    float diff = max - min;
+//    float r = random * diff;
+//    return min + r;
+    return min + ((((float) rand()) / (float) RAND_MAX) * (max - min));
 }
 
 bool GameMap::operator==(const GameMap &map) {

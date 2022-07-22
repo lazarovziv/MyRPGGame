@@ -110,15 +110,16 @@ void Game::start() {
                     canMove = true;
                 }
                 if (state == GameState::PLAYING) {
+                    bool moved = false;
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
-                        playerMovement.move(MoveDirection::UP);
+                        moved = playerMovement.move(MoveDirection::UP);
                     } else if (eventKeyCode == Keyboard::Down && canMove) {
-                        playerMovement.move(MoveDirection::DOWN);
+                        moved = playerMovement.move(MoveDirection::DOWN);
                     } else if (eventKeyCode == Keyboard::Right && canMove) {
-                        playerMovement.move(MoveDirection::RIGHT);
+                        moved = playerMovement.move(MoveDirection::RIGHT);
                     } else if (eventKeyCode == Keyboard::Left && canMove) {
-                        playerMovement.move(MoveDirection::LEFT);
+                        moved = playerMovement.move(MoveDirection::LEFT);
                         // pressing I sends to menu (not implemented menu yet)
                     } else if (eventKeyCode == Keyboard::I) {
                         changeState(GameState::IN_MENU);
@@ -132,10 +133,9 @@ void Game::start() {
                             }
                         }
                     }
-                    if (canMove) {
-//                        for (int i = 0; i < map->getEnemies().size(); i++) {
-//                            if (map->getEnemies()[i] == nullptr) continue;
-//                        }
+                    // do something if player moved
+                    if (moved) {
+//                        cout << "Moved" << endl;
                     }
                     // update player data
                     update();
@@ -186,12 +186,10 @@ void Game::update() {
     // updating enemies states
     GameMap* map = getCurrentGameMap();
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        // setting dead enemy in last index of array and subtracting size
+        // checking if enemy is dead
         if (map->getEnemies()[i].isDead()) {
-            // swapping current with last and popping last element (erase doesn't work well for some reason)
+            // remove it from currentEnemies
             map->removeEnemyAtIndex(i);
-//            std::swap(map->getEnemies()[i], map->getEnemies()[map->getEnemies().size() - 1]);
-//            map->getEnemies().pop_back();
             continue;
         }
         // if enemy is still alive
@@ -202,8 +200,9 @@ void Game::update() {
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
     GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
-    map->setTopExitMinX(400);
-    map->setTopExitMaxX(500);
+    map->setTopExit(400, 500);
+//    map->setTopExitMinX(400);
+//    map->setTopExitMaxX(500);
     map->setTopEnterMinX(400);
     map->setTopEnterMaxX(500);
     
@@ -220,8 +219,9 @@ void Game::initWorldMap() {
     
     mapTop->setBottomEnterMinX(400);
     mapTop->setBottomEnterMaxX(500);
-    mapTop->setBottomExitMinX(400);
-    mapTop->setBottomExitMaxX(500);
+    mapTop->setBottomExit(400, 500);
+//    mapTop->setBottomExitMinX(400);
+//    mapTop->setBottomExitMaxX(500);
 }
 
 int Game::getCurrentWorldMapRow() {
@@ -243,9 +243,10 @@ void Game::setCurrentWorldMapCol(int col) {
 void Game::changeCurrentMap(int row, int col) {
 //    GameMap* map = getCurrentGameMap();
     // delete enemies because current map has changed
-    
-//    map->getEnemies().clear();
-    
+    for (int i = 0; i < getCurrentGameMap()->getNumOfCurrentEnemies(); i++) {
+        getCurrentGameMap()->removeEnemyAtIndex(i);
+    }
+    // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);
     // initialize map

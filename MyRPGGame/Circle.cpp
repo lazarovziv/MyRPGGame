@@ -18,6 +18,11 @@ void Circle::setRadius(float r) {
     radius = r;
 }
 
+void Circle::setCenter(float x, float y) {
+    center->setX(x);
+    center->setY(y);
+}
+
 bool Circle::intersects(Circle c) {
     float distance = center->distance(*(c.getCenter()));
     // they don't intersect

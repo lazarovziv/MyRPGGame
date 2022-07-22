@@ -5,6 +5,8 @@
 
 #include <stdio.h>
 #include "GameEntity.hpp"
+#include "Circle.hpp"
+//#include "GameEntityMovement.hpp"
 
 using namespace sf;
 
@@ -20,8 +22,16 @@ private:
     float battleAreaRadius;
     // type of enemy
     int type;
+    // movement intervals
+//    float lastTimeMoved;
+//    float moveInterval;
+    
+    // movement handler
+//    GameEntityMovement* movement;
     
     int expPointsWorth;
+    
+    Circle* spawnArea = nullptr;
     
 public:
     static const int WORM = 1;
@@ -37,6 +47,27 @@ public:
     float getBattleAreaRadius();
     int getExpPointsWorth();
     int getType();
+    
+//    float getLastTimeMoved() {
+//        return lastTimeMoved;
+//    }
+//    
+//    float getMoveInterval() {
+//        return moveInterval;
+//    }
+//    
+//    void setLastTimeMoved(float time) {
+//        lastTimeMoved = time;
+//    }
+//    
+//    void setMoveInterval(float time) {
+//        moveInterval = time;
+//    }
+    
+//    bool move();
+    
+    Circle* getSpawnArea();
+    void setSpawnArea(float centerX, float centerY, float radius);
     
     void spawn(float x, float y);
 };

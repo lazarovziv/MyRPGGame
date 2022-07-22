@@ -7,7 +7,10 @@
 #include <SFML/Graphics.hpp>
 #include "NPCEnemy.hpp"
 #include <vector>
-//class NPCEnemy;
+#include "Circle.hpp"
+#include "Constants.h"
+//#include "GameEntityMovement.hpp"
+class NPCEnemy;
 
 using namespace sf;
 using namespace std;
@@ -30,6 +33,11 @@ private:
     float topExitMinX, topExitMaxX;
     float bottomExitMinX, bottomExitMaxX;
     
+    Circle* leftExitCircle;
+    Circle* rightExitCircle;
+    Circle* topExitCircle;
+    Circle* bottomExitCircle;
+    
     int numOfCurrentEnemies = 0;
     // areas where entities cannot move or reach by walking
     int numOfUnreachableAreas = 0;
@@ -38,7 +46,6 @@ private:
 //    NPCEnemy* enemies;
 //    vector<NPCEnemy*> enemies;
     NPCEnemy enemies[100];
-    
     
 public:
     GameMap(int row, int col);
@@ -66,6 +73,36 @@ public:
     int getNumOfCurrentEnemies();
     void addEnemy(NPCEnemy* enemy);
     void removeEnemyAtIndex(int i);
+    
+    float generateRandom(float min, float max);
+    
+    void setTopExit(float minX, float maxX) {
+        topExitMinX = minX;
+        topExitMaxX = maxX;
+        // top side of screen
+        topExitCircle = new Circle((topExitMinX + topExitMaxX)/2, 0, (topExitMinX - topExitMaxX)/2);
+    }
+    
+    void setBottomExit(float minX, float maxX) {
+        bottomExitMinX = minX;
+        bottomExitMaxX = maxX;
+        // bottom side of screen
+        bottomExitCircle = new Circle((topExitMinX + topExitMaxX)/2, (float) Constants::SCREEN_HEIGHT, (topExitMinX - topExitMaxX)/2);
+    }
+    
+    void setLeftExit(float minY, float maxY) {
+        leftExitMinY = minY;
+        leftExitMaxY = maxY;
+        // left side of screen
+        leftExitCircle = new Circle(0, (leftExitMinY + leftExitMaxY)/2, (leftExitMinY - leftExitMaxY)/2);
+    }
+    
+    void setRightExit(float minY, float maxY) {
+        rightExitMinY = minY;
+        rightExitMaxY = maxY;
+        // right side of screen
+        rightExitCircle = new Circle(Constants::SCREEN_WIDTH, (rightExitMinY + rightExitMaxY)/2, (rightExitMinY - rightExitMaxY)/2);
+    }
     
     float getLeftEnterMinY() {
         return leftEnterMinY;
@@ -194,8 +231,6 @@ public:
     void setBottomExitMaxX(float x) {
         bottomExitMaxX = x;
     }
-    
-    // setters for reachable from direction
     
     bool operator == (const GameMap& map);
 };

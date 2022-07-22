@@ -28,6 +28,8 @@ NPCEnemy::NPCEnemy(int type, float x, float y) {
     weapon = new Weapon(WeaponType::BARE_HANDED);
     entityCircle = new Circle(position.x, position.y, 32);
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * 5/3) + weapon->getHitRadius());
+    
+//    movement = new GameEntityMovement(this);
     /*
      switch (type) {
          case EnemyType::WORM:
@@ -105,3 +107,31 @@ int NPCEnemy::getType() {
 void NPCEnemy::spawn(float x, float y) {
     this->setPosition(x, y);
 }
+
+Circle* NPCEnemy::getSpawnArea() {
+    return spawnArea;
+}
+
+void NPCEnemy::setSpawnArea(float centerX, float centerY, float radius) {
+    if (spawnArea == nullptr) {
+        spawnArea = new Circle(centerX, centerY, radius);
+        return;
+    }
+    spawnArea->setCenter(centerX, centerY);
+    spawnArea->setRadius(radius);
+}
+
+// direction is chosen randomly
+//bool NPCEnemy::move() {
+//    // TODO: choose direction randomally
+//    MoveDirection direction = MoveDirection::UP;
+//    float nowTime = 0; // TODO: get current time
+//    // checking if entity can move due to moveInterval value
+//    if (nowTime - lastTimeMoved >= moveInterval) {
+////        movement->move(direction);
+//        // updating lastTimeMoved to latest move made time
+//        lastTimeMoved = nowTime;
+//        return true;
+//    }
+//    return false;
+//}

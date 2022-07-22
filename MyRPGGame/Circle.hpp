@@ -18,6 +18,7 @@ public:
     Point* getCenter();
     float getRadius();
     void setRadius(float r);
+    void setCenter(float x, float y);
     bool intersects(Circle c);
 };
 
