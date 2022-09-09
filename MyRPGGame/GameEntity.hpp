@@ -81,6 +81,8 @@ public:
     void setY(float y);
     void setPosition(float x, float y);
     void setWeapon(WeaponType type);
+    
+    void setIsInBattle(bool inBattle);
 
     // for situations where changing for worse equipment (adding logic for negative base values)
     void decreaseMaxHealthPoints(int amount);

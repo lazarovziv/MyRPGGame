@@ -92,6 +92,10 @@ void GameEntity::setWeapon(WeaponType type) {
 //    }
 }
 
+void GameEntity::setIsInBattle(bool inBattle) {
+    this->inBattle = inBattle;
+}
+
 void GameEntity::decreaseMaxHealthPoints(int amount) {
     // don't let it decrease (throw an error)
     if (maxHealthPoints - amount <= 0) return;
@@ -202,14 +206,28 @@ FloatRect GameEntity::getRectangle() {
 void GameEntity::attack(GameEntity &entity) {
     // attack only if entity is in range
     if (isEntityInAttackRange(entity)) {
+        // setting entities' battle state
+        inBattle = true;
+        entity.setIsInBattle(true);
         std::cout << "In attack range!" << endl;
         if (entity.currentDefencePoints > 0) {
-            if (entity.currentDefencePoints - attackPoints < 0) {
-                entity.currentDefencePoints = 0;
+            int defenceAttackPtsDiff = attackPoints - entity.currentDefencePoints;
+            // if attack will break entity's defence
+            if (defenceAttackPtsDiff > 0) {
+                // zeroing defence points
+                entity.decreaseCurrentDefencePoints(entity.currentDefencePoints);
+                // decrease entity's health points by difference
+                entity.decreaseCurrentHealthPoints(defenceAttackPtsDiff);
+                // decrease defence points by attack points
             } else entity.decreaseCurrentDefencePoints(attackPoints);
             // broke defence points
         } else {
             entity.decreaseCurrentHealthPoints(attackPoints);
+            // changing battle state for entities
+            if (entity.isDead()) {
+                entity.setIsInBattle(false);
+                inBattle = false;
+            }
         }
     }
 }

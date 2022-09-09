@@ -130,6 +130,8 @@ void Game::start() {
                         for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
                             if (!map->getEnemies()[i].isDead()) {
                                 player->attack(map->getEnemies()[i]);
+                                cout << "Health: " << map->getEnemies()[i].getCurrentHealthPoints() << endl;
+                                cout << "Defence: " << map->getEnemies()[i].getCurrentDefencePoints() << endl;
                             }
                         }
                     }
