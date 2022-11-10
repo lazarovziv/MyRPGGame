@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include "GameEntityMovement.hpp"
+#include "GameEntityBattle.hpp"
 //#include "TextureLoader.hpp"
 
 using namespace std;
@@ -75,6 +76,7 @@ void Game::render() {
     for (int i = 0; i < map->getNumOfUnreachableAreas(); i++) {
         window->draw(map->getUnreachableAreasSprites()[i]);
     }
+    // drawing undead enemies
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
         if (!map->getEnemies()[i].isDead()) {
             window->draw(map->getEnemies()[i].getSprite());
@@ -85,8 +87,10 @@ void Game::render() {
 }
 
 void Game::start() {
-    player->increaseSpeed(7);
+    // initialize player's systems
+    player->increaseSpeed(13);
     GameEntityMovement playerMovement(player);
+    GameEntityBattle playerBattle(player);
     
     bool canMove = false;
     
@@ -129,7 +133,8 @@ void Game::start() {
                     } else if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
                             if (!map->getEnemies()[i].isDead()) {
-                                player->attack(map->getEnemies()[i]);
+                                playerBattle.attack(map->getEnemies()[i]);
+//                                player->attack(map->getEnemies()[i]);
                                 cout << "Health: " << map->getEnemies()[i].getCurrentHealthPoints() << endl;
                                 cout << "Defence: " << map->getEnemies()[i].getCurrentDefencePoints() << endl;
                             }

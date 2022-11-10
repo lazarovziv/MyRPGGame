@@ -1,13 +1,21 @@
-//
-//  GameEntityBattle.hpp
-//  MyRPGGame
-//
-//  Created by Ziv Lazarov on 07/11/2022.
-//
-
 #ifndef GameEntityBattle_hpp
 #define GameEntityBattle_hpp
 
 #include <stdio.h>
+#include "GameEntity.hpp"
+#include "GameMap.hpp"
+
+using namespace std;
+
+class GameEntityBattle {
+private:
+    GameEntity* entity;
+    
+public:
+    GameEntityBattle(GameEntity* entity);
+    ~GameEntityBattle() = default;
+    bool attack(GameEntity &enemy);
+    bool isInAttackRange(GameEntity &enemy);
+};
 
 #endif /* GameEntityBattle_hpp */

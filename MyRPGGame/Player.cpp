@@ -4,7 +4,7 @@
 
 Player::Player() : GameEntity() {
     expPoints = 0;
-    
+    speed = 2.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
@@ -15,7 +15,7 @@ Player::Player() : GameEntity() {
 
 Player::Player(PlayerType type) : GameEntity() {
     expPoints = 0;
-    
+//    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
     playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
