@@ -203,6 +203,8 @@ void GameEntity::attack(GameEntity &entity) {
     // attack only if entity is in range
     if (isEntityInAttackRange(entity)) {
         std::cout << "In attack range!" << endl;
+        std::cout << "Health Points: " << entity.currentHealthPoints << endl;
+        std::cout << "Defence Points: " << entity.currentDefencePoints << endl;
         if (entity.currentDefencePoints > 0) {
             if (entity.currentDefencePoints - attackPoints < 0) {
                 entity.currentDefencePoints = 0;
