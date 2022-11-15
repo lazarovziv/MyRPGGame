@@ -1,2 +1,2 @@
-main : main
-	g++ -g $(find . -type f -iregex ".*\.cpp") -o main -lsfml-graphics -lsfml-system -lsfml-window -lm
+main : main.cpp Circle.cpp Game.cpp GameEntity.cpp GameEntityMovement.cpp GameMap.cpp Heap.cpp LandscapeEntity.cpp NPCEnemy.cpp Player.cpp Point.cpp Projectile.cpp Weapon.cpp GameEntityBattle.cpp Constants.h
+	g++ main.cpp Circle.cpp Game.cpp GameEntity.cpp GameEntityMovement.cpp GameMap.cpp Heap.cpp LandscapeEntity.cpp NPCEnemy.cpp Player.cpp Point.cpp Projectile.cpp Weapon.cpp GameEntityBattle.cpp Constants.h -o main -lm -lsfml-graphics -lsfml-window -lsfml-system
