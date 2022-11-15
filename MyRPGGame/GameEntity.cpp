@@ -15,6 +15,7 @@ GameEntity::GameEntity() {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
+    sprite = new Sprite();
     
 //    movement = new GameEntityMovement(this);
 }
@@ -53,6 +54,8 @@ void GameEntity::increaseAttackPoints(int amount) {
 
 void GameEntity::increaseDefencePoints(int amount) {
     defencePoints += amount;
+    // increasing current defence points altogether
+    currentDefencePoints += amount;
 }
 
 void GameEntity::changeInBattleState() {
@@ -90,6 +93,10 @@ void GameEntity::setWeapon(WeaponType type) {
 //        attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
 //        cout << attackRangeCircle->getCenter()->getX() << endl;
 //    }
+}
+
+void GameEntity::setIsInBattle(bool inBattle) {
+    this->inBattle = inBattle;
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
@@ -191,27 +198,41 @@ Vector2f GameEntity::getPosition() {
     return position;
 }
 
-Sprite GameEntity::getSprite() {
+Sprite* GameEntity::getSprite() {
     return sprite;
 }
 
 FloatRect GameEntity::getRectangle() {
-    return sprite.getGlobalBounds();
+    return sprite->getGlobalBounds();
 }
 
 void GameEntity::attack(GameEntity &entity) {
     // attack only if entity is in range
     if (isEntityInAttackRange(entity)) {
+        // setting entities' battle state
+        inBattle = true;
+        entity.setIsInBattle(true);
         std::cout << "In attack range!" << endl;
         std::cout << "Health Points: " << entity.currentHealthPoints << endl;
         std::cout << "Defence Points: " << entity.currentDefencePoints << endl;
         if (entity.currentDefencePoints > 0) {
-            if (entity.currentDefencePoints - attackPoints < 0) {
-                entity.currentDefencePoints = 0;
+            int defenceAttackPtsDiff = attackPoints - entity.currentDefencePoints;
+            // if attack will break entity's defence
+            if (defenceAttackPtsDiff > 0) {
+                // zeroing defence points
+                entity.decreaseCurrentDefencePoints(entity.currentDefencePoints);
+                // decrease entity's health points by difference
+                entity.decreaseCurrentHealthPoints(defenceAttackPtsDiff);
+                // decrease defence points by attack points
             } else entity.decreaseCurrentDefencePoints(attackPoints);
             // broke defence points
         } else {
             entity.decreaseCurrentHealthPoints(attackPoints);
+            // changing battle state for entities
+            if (entity.isDead()) {
+                entity.setIsInBattle(false);
+                inBattle = false;
+            }
         }
     }
 }
@@ -238,7 +259,7 @@ Circle* GameEntity::getAttackRangeCircle() {
 
 void GameEntity::update() {
     if (!dead) {
-        sprite.setPosition(position);
+        sprite->setPosition(position);
         // updating entity circle and attack circle
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);

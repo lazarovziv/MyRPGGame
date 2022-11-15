@@ -9,6 +9,7 @@
 #include "GameMap.hpp"
 #include "Player.hpp"
 #include "NPCEnemy.hpp"
+#include "Constants.h"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
@@ -32,8 +33,8 @@ public:
     Game(Game& game) = delete;
     ~Game() = default;
     void operator=(const Game&) = delete;
-    static const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
-    static const int TILE_SIZE = 64;
+    static const int SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;
+    static const int TILE_SIZE = Constants::TILE_SIZE;
     static Game* getInstance();
     RenderWindow* getWindow();
     GameMap*** getWorldMap();
