@@ -85,6 +85,7 @@ NPCEnemy* GameMap::getEnemies() {
 }
 
 void GameMap::init() {
+    srand((unsigned int) time(NULL));
     float randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
     float randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
 //    printf("x = %f, y = %f\n", randX, randY);
@@ -137,6 +138,8 @@ void GameMap::init() {
     }
     
     NPCEnemy* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
+    enemy->increaseMaxHealthPoints(50);
+    enemy->increaseDefencePoints(20);
     addEnemy(enemy);
 }
 

@@ -7,10 +7,10 @@ Player::Player() : GameEntity() {
     speed = 2.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
-    playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
-    sprite.setTexture(playerTexture);
-    sprite.setOrigin(32, 32);
-    sprite.setPosition(position);
+    playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
+    sprite->setTexture(playerTexture);
+    sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+    sprite->setPosition(position);
 }
 
 Player::Player(PlayerType type) : GameEntity() {
@@ -18,12 +18,15 @@ Player::Player(PlayerType type) : GameEntity() {
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
-    playerTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
-    sprite.setTexture(playerTexture);
-    sprite.setOrigin(32, 32);
-    sprite.setPosition(position);
+    if (!playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png")) {
+        std::cout << "Texture NOT loaded properly!" << endl;
+    } else std::cout << "Texture loaded properly." << endl;
+    // playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
+    sprite->setTexture(playerTexture);
+    sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+    sprite->setPosition(position);
     setPlayerType(type);
-    entityCircle = new Circle(position.x, position.y, 32);
+    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/2);
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * 5/3) + weapon->getHitRadius());
 }
 

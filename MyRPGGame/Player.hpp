@@ -4,7 +4,9 @@
 #define Player_hpp
 
 #include <stdio.h>
+#include <iostream>
 #include "GameEntity.hpp"
+#include "Constants.h"
 
 enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 

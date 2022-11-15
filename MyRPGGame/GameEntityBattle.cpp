@@ -30,7 +30,12 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
                 entity->setIsInBattle(false);
             }
         }
-    } else return false;
+    } else {
+        std::cout << "NOT in attack range!" << endl;
+        return false;
+    }
+    cout << "Health: " << enemy.getCurrentHealthPoints() << endl;
+    cout << "Defence: " << enemy.getCurrentDefencePoints() << endl;
     return true;
 }
 

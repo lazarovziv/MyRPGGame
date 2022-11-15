@@ -15,6 +15,7 @@ GameEntity::GameEntity() {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
+    sprite = new Sprite();
     
 //    movement = new GameEntityMovement(this);
 }
@@ -53,6 +54,8 @@ void GameEntity::increaseAttackPoints(int amount) {
 
 void GameEntity::increaseDefencePoints(int amount) {
     defencePoints += amount;
+    // increasing current defence points altogether
+    currentDefencePoints += amount;
 }
 
 void GameEntity::changeInBattleState() {
@@ -195,12 +198,12 @@ Vector2f GameEntity::getPosition() {
     return position;
 }
 
-Sprite GameEntity::getSprite() {
+Sprite* GameEntity::getSprite() {
     return sprite;
 }
 
 FloatRect GameEntity::getRectangle() {
-    return sprite.getGlobalBounds();
+    return sprite->getGlobalBounds();
 }
 
 void GameEntity::attack(GameEntity &entity) {
@@ -254,7 +257,7 @@ Circle* GameEntity::getAttackRangeCircle() {
 
 void GameEntity::update() {
     if (!dead) {
-        sprite.setPosition(position);
+        sprite->setPosition(position);
         // updating entity circle and attack circle
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);

@@ -62,7 +62,7 @@ Game::Game(const char* str) {
     
     this->player = new Player(PlayerType::KNIGHT);
     
-    player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+    player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/4);
     
     initWorldMap();
     // init first map
@@ -79,10 +79,10 @@ void Game::render() {
     // drawing undead enemies
     for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
         if (!map->getEnemies()[i].isDead()) {
-            window->draw(map->getEnemies()[i].getSprite());
+            window->draw(*(map->getEnemies()[i].getSprite()));
         }
     }
-    window->draw(player->getSprite());
+    window->draw(*(player->getSprite()));
     window->display();
 }
 
@@ -127,16 +127,13 @@ void Game::start() {
                         // pressing I sends to menu (not implemented menu yet)
                     } else if (eventKeyCode == Keyboard::I) {
                         changeState(GameState::IN_MENU);
-                        cout << "In Menu" << endl;
+                        cout << "In Menu (Press Enter to exit menu)" << endl;
                         canMove = false;
                         // pressing x for attacking
                     } else if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
                             if (!map->getEnemies()[i].isDead()) {
                                 playerBattle.attack(map->getEnemies()[i]);
-//                                player->attack(map->getEnemies()[i]);
-                                cout << "Health: " << map->getEnemies()[i].getCurrentHealthPoints() << endl;
-                                cout << "Defence: " << map->getEnemies()[i].getCurrentDefencePoints() << endl;
                             }
                         }
                     }
@@ -207,26 +204,37 @@ void Game::update() {
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
     GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
-    map->setTopExit(400, 500);
+    map->setTopExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    //map->setTopExit(400, 500);
 //    map->setTopExitMinX(400);
 //    map->setTopExitMaxX(500);
-    map->setTopEnterMinX(400);
-    map->setTopEnterMaxX(500);
+
+    map->setTopEnterMinX(SCREEN_WIDTH/2);
+    map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    //map->setTopEnterMinX(400);
+    //map->setTopEnterMaxX(500);
     
-    FloatRect unreachableArea0(200, 100, 100, 100);
-    FloatRect unreachableArea1(400, 400, 100, 100);
+    FloatRect unreachableArea0(SCREEN_WIDTH/4, SCREEN_HEIGHT/6, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+    FloatRect unreachableArea1(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+    // FloatRect unreachableArea0(200, 100, 100, 100);
+    // FloatRect unreachableArea1(400, 400, 100, 100);
     map->addUnreachableArea(unreachableArea0);
     map->addUnreachableArea(unreachableArea1);
     
     GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
-    FloatRect unreachableArea2(100, 150, 100, 100);
-    FloatRect unreachableArea3(200, 400, 100, 100);
+    FloatRect unreachableArea2(SCREEN_WIDTH/8, SCREEN_HEIGHT/4, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+    FloatRect unreachableArea3(SCREEN_WIDTH/4, 2*SCREEN_HEIGHT/3, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+    // FloatRect unreachableArea2(100, 150, 100, 100);
+    // FloatRect unreachableArea3(200, 400, 100, 100);
     mapTop->addUnreachableArea(unreachableArea2);
     mapTop->addUnreachableArea(unreachableArea3);
     
-    mapTop->setBottomEnterMinX(400);
-    mapTop->setBottomEnterMaxX(500);
-    mapTop->setBottomExit(400, 500);
+    mapTop->setBottomEnterMinX(SCREEN_WIDTH/2);
+    mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    // mapTop->setBottomEnterMinX(400);
+    // mapTop->setBottomEnterMaxX(500);
+    mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    // mapTop->setBottomExit(400, 500);
 //    mapTop->setBottomExitMinX(400);
 //    mapTop->setBottomExitMaxX(500);
 }

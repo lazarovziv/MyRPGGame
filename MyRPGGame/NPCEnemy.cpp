@@ -21,12 +21,12 @@ NPCEnemy::NPCEnemy(int type, float x, float y) {
     moveDirection = MoveDirection::UP;
     spawn(x, y);
     Texture texture;
-    texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/player.png");
-    sprite.setTexture(texture);
-    sprite.setOrigin(32, 32);
-    sprite.setPosition(x, y);
+    texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
+    sprite->setTexture(texture);
+    sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+    sprite->setPosition(x, y);
     weapon = new Weapon(WeaponType::BARE_HANDED);
-    entityCircle = new Circle(position.x, position.y, 32);
+    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/2);
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * 5/3) + weapon->getHitRadius());
     
 //    movement = new GameEntityMovement(this);

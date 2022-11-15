@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
 #include "Circle.hpp"
+#include "Constants.h"
 //#include "GameEntityMovement.hpp"
 //class GameEntityMovement;
 class GameEntityMovemennt;
@@ -37,7 +38,7 @@ protected:
     bool dead = false;
     MoveDirection moveDirection;
     Vector2f position;
-    Sprite sprite; // maybe VertexArray for each direction
+    Sprite* sprite; // maybe VertexArray for each direction
     Circle* entityCircle = nullptr;
     Circle* attackRangeCircle = nullptr;
 //    GameMap* currentGameMap;
@@ -66,7 +67,7 @@ public:
     bool isDead();
     MoveDirection getMoveDirection();
     Vector2f getPosition();
-    Sprite getSprite();
+    Sprite* getSprite();
     FloatRect getRectangle(); // sprite.getGlobalBounds()
     
     void increaseLevel(int amount);
