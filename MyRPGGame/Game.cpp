@@ -87,6 +87,9 @@ void Game::render() {
 }
 
 void Game::start() {
+    cout << "Press Enter to start" << endl;
+    cout << "Press I to enter menu" << endl;
+    cout << "Press X near an enemy to attack" << endl;
     // initialize player's systems
     player->increaseSpeed(13);
     GameEntityMovement playerMovement(player);

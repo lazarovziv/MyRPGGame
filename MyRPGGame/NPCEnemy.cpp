@@ -27,7 +27,7 @@ NPCEnemy::NPCEnemy(int type, float x, float y) {
     sprite->setPosition(x, y);
     weapon = new Weapon(WeaponType::BARE_HANDED);
     entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/2);
-    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * 5/3) + weapon->getHitRadius());
+    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 5/3) + weapon->getHitRadius());
     
 //    movement = new GameEntityMovement(this);
     /*
