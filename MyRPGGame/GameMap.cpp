@@ -157,6 +157,12 @@ void GameMap::removeEnemyAtIndex(int i) {
     numOfCurrentEnemies--;
 }
 
+void GameMap::removeAllEnemies() {
+    for (int i = 0; i < numOfCurrentEnemies; i++) {
+        removeEnemyAtIndex(i);
+    }
+}
+
 float GameMap::generateRandom(float min, float max) {
 //    float random = ((float) rand()) / (float) RAND_MAX;
 //    float diff = max - min;

@@ -12,6 +12,7 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
 //        std::cout << "In attack range!" << endl;
         if (enemy.getCurrentDefencePoints() > 0) {
             int defenceAttackPtsDiff = entity->getAttackPoints() - enemy.getCurrentDefencePoints();
+            // TODO: insert attack interval for game entity
             // if attack will break enemy's defence
             if (defenceAttackPtsDiff > 0) {
                 // zeroing defence points

@@ -58,8 +58,6 @@ Game::Game(const char* str) {
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
-//    changeCurrentMap(1, 1);
-    
     this->player = new Player(PlayerType::KNIGHT);
     
     player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/4);
@@ -261,9 +259,7 @@ void Game::setCurrentWorldMapCol(int col) {
 void Game::changeCurrentMap(int row, int col) {
 //    GameMap* map = getCurrentGameMap();
     // delete enemies because current map has changed
-    for (int i = 0; i < getCurrentGameMap()->getNumOfCurrentEnemies(); i++) {
-        getCurrentGameMap()->removeEnemyAtIndex(i);
-    }
+    getCurrentGameMap()->removeAllEnemies();
     // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);

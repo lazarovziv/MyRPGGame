@@ -58,7 +58,6 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
                 cout << "Reached Top Exit" << endl;
                 // set current map to map above
                 Game::getInstance()->changeCurrentMap(map->getWorldMapRow() - 1, map->getWorldMapCol());
-//                Game::getInstance()->setCurrentWorldMapRow(map->getWorldMapRow() - 1);
                 // set entity position to down enter point (changed current map)
                 entity->setPosition(entityX, screenHeight - tileSize/2);
                 return true;

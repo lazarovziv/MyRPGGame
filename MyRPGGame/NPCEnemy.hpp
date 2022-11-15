@@ -7,7 +7,6 @@
 #include "GameEntity.hpp"
 #include "Circle.hpp"
 #include "Constants.h"
-//#include "GameEntityMovement.hpp"
 
 using namespace sf;
 

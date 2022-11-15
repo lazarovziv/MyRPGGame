@@ -73,6 +73,7 @@ public:
     int getNumOfCurrentEnemies();
     void addEnemy(NPCEnemy* enemy);
     void removeEnemyAtIndex(int i);
+    void removeAllEnemies();
     
     float generateRandom(float min, float max);
     
