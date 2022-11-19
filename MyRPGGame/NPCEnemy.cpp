@@ -21,7 +21,7 @@ NPCEnemy::NPCEnemy(int type, float x, float y) {
     moveDirection = MoveDirection::UP;
     spawn(x, y);
     Texture texture;
-    texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
+    texture.loadFromFile("../graphics/player.png");
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(x, y);

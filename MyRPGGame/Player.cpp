@@ -7,7 +7,7 @@ Player::Player() : GameEntity() {
     speed = 2.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
-    playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player64.png");
+    playerTexture.loadFromFile("../graphics/player.png");
     sprite->setTexture(playerTexture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position);
@@ -18,7 +18,7 @@ Player::Player(PlayerType type) : GameEntity() {
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     Texture playerTexture;
-    if (!playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player64.png")) {
+    if (!playerTexture.loadFromFile("../graphics/player.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         playerTexture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
