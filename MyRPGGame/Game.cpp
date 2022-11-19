@@ -75,9 +75,9 @@ void Game::render() {
         window->draw(map->getUnreachableAreasSprites()[i]);
     }
     // drawing undead enemies
-    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (!map->getEnemies()[i].isDead()) {
-            window->draw(*(map->getEnemies()[i].getSprite()));
+    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
+        if (!map->getEnemiesVector()[i].isDead()) {
+            window->draw(*(map->getEnemiesVector()[i].getSprite()));
         }
     }
     window->draw(*(player->getSprite()));
@@ -132,9 +132,9 @@ void Game::start() {
                         canMove = false;
                         // pressing x for attacking
                     } else if (eventKeyCode == Keyboard::X) {
-                        for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-                            if (!map->getEnemies()[i].isDead()) {
-                                playerBattle.attack(map->getEnemies()[i]);
+                        for (int i = 0; i < map->getEnemiesVector().size(); i++) {
+                            if (!map->getEnemiesVector()[i].isDead()) {
+                                playerBattle.attack(map->getEnemiesVector()[i]);
                             }
                         }
                     }
@@ -190,15 +190,15 @@ void Game::update() {
     player->update();
     // updating enemies states
     GameMap* map = getCurrentGameMap();
-    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
+    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
         // checking if enemy is dead
-        if (map->getEnemies()[i].isDead()) {
+        if (map->getEnemiesVector()[i].isDead()) {
             // remove it from currentEnemies
-            map->removeEnemyAtIndex(i);
+            map->removeEnemyAtIndexFromVector(i);
             continue;
         }
         // if enemy is still alive
-        map->getEnemies()[i].update();
+        map->getEnemiesVector()[i].update();
     }
 }
 

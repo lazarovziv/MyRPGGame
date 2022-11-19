@@ -84,6 +84,10 @@ NPCEnemy* GameMap::getEnemies() {
     return enemies;
 }
 
+vector<NPCEnemy*> GameMap::getEnemiesVector() {
+    return enemiesVector;
+} 
+
 void GameMap::init() {
     // seeding
     srand((unsigned int) time(NULL));
@@ -142,6 +146,7 @@ void GameMap::init() {
     enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(50);
     addEnemy(enemy);
+    addEnemyToVector(enemy);
 }
 
 void GameMap::addEnemy(NPCEnemy *enemy) {
@@ -152,7 +157,7 @@ void GameMap::addEnemy(NPCEnemy *enemy) {
 
 void GameMap::removeEnemyAtIndex(int i) {
     // delete object from memory
-    enemies[i].~NPCEnemy();
+    delete enemies[i];
     // subtract num of enemies
     numOfCurrentEnemies--;
 }
@@ -162,6 +167,21 @@ void GameMap::removeAllEnemies() {
         removeEnemyAtIndex(i);
     }
 }
+
+void GameMap::addEnemyToVector(NPCEnemy* enemy) {
+    enemiesVector.push_back(enemy);
+}
+
+void GameMap::removeEnemyAtIndexFromVector(int i) {
+    delete enemiesVector[i];
+    enemiesVector.erase(enemiesVector.begin() + i);
+    enemiesVector.shrink_to_fit();
+}
+
+void GameMap::removeAllEnemies() {
+    enemiesVector.clear();
+    enemiesVector.shrink_to_fit();
+}   
 
 float GameMap::generateRandom(float min, float max) {
 //    float random = ((float) rand()) / (float) RAND_MAX;

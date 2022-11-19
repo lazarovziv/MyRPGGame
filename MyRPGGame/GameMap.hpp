@@ -46,6 +46,7 @@ private:
 //    NPCEnemy* enemies;
 //    vector<NPCEnemy*> enemies;
     NPCEnemy enemies[100];
+    vector<NPCEnemy*> enemiesVector;
     
 public:
     GameMap(int row, int col);
@@ -70,10 +71,14 @@ public:
     
 //    vector<NPCEnemy*> getEnemies();
     NPCEnemy* getEnemies();
+    vector<NPCEnemy*> getEnemiesVector();
     int getNumOfCurrentEnemies();
     void addEnemy(NPCEnemy* enemy);
     void removeEnemyAtIndex(int i);
     void removeAllEnemies();
+    void addEnemyToVector(NPCEnemy* enemy);
+    void removeEnemyAtIndexFromVector(int i);
+    void removeAllEnemiesFromVector();
     
     float generateRandom(float min, float max);
     
