@@ -76,8 +76,8 @@ void Game::render() {
     }
     // drawing undead enemies
     for (int i = 0; i < map->getEnemiesVector().size(); i++) {
-        if (!map->getEnemiesVector()[i].isDead()) {
-            window->draw(*(map->getEnemiesVector()[i].getSprite()));
+        if (!map->getEnemiesVector()[i]->isDead()) {
+            window->draw(*(map->getEnemiesVector()[i]->getSprite()));
         }
     }
     window->draw(*(player->getSprite()));
@@ -133,8 +133,8 @@ void Game::start() {
                         // pressing x for attacking
                     } else if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < map->getEnemiesVector().size(); i++) {
-                            if (!map->getEnemiesVector()[i].isDead()) {
-                                playerBattle.attack(map->getEnemiesVector()[i]);
+                            if (!map->getEnemiesVector()[i]->isDead()) {
+                                playerBattle.attack(*(map->getEnemiesVector()[i]));
                             }
                         }
                     }
@@ -192,13 +192,13 @@ void Game::update() {
     GameMap* map = getCurrentGameMap();
     for (int i = 0; i < map->getEnemiesVector().size(); i++) {
         // checking if enemy is dead
-        if (map->getEnemiesVector()[i].isDead()) {
+        if (map->getEnemiesVector()[i]->isDead()) {
             // remove it from currentEnemies
             map->removeEnemyAtIndexFromVector(i);
             continue;
         }
         // if enemy is still alive
-        map->getEnemiesVector()[i].update();
+        map->getEnemiesVector()[i]->update();
     }
 }
 
@@ -259,7 +259,7 @@ void Game::setCurrentWorldMapCol(int col) {
 void Game::changeCurrentMap(int row, int col) {
 //    GameMap* map = getCurrentGameMap();
     // delete enemies because current map has changed
-    getCurrentGameMap()->removeAllEnemies();
+    // getCurrentGameMap()->removeAllEnemiesFromVector();
     // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);

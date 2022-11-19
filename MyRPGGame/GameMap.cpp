@@ -145,7 +145,6 @@ void GameMap::init() {
     NPCEnemy* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
     enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(50);
-    addEnemy(enemy);
     addEnemyToVector(enemy);
 }
 
@@ -157,7 +156,7 @@ void GameMap::addEnemy(NPCEnemy *enemy) {
 
 void GameMap::removeEnemyAtIndex(int i) {
     // delete object from memory
-    delete enemies[i];
+    delete enemiesVector[i];
     // subtract num of enemies
     numOfCurrentEnemies--;
 }
@@ -173,14 +172,12 @@ void GameMap::addEnemyToVector(NPCEnemy* enemy) {
 }
 
 void GameMap::removeEnemyAtIndexFromVector(int i) {
-    delete enemiesVector[i];
+    enemiesVector[i]->~NPCEnemy();
     enemiesVector.erase(enemiesVector.begin() + i);
-    enemiesVector.shrink_to_fit();
 }
 
-void GameMap::removeAllEnemies() {
+void GameMap::removeAllEnemiesFromVector() {
     enemiesVector.clear();
-    enemiesVector.shrink_to_fit();
 }   
 
 float GameMap::generateRandom(float min, float max) {

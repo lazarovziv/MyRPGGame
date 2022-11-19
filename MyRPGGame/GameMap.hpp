@@ -43,8 +43,6 @@ private:
     int numOfUnreachableAreas = 0;
     RectangleShape unreachableAreasSprites[100];
     // enemies in current
-//    NPCEnemy* enemies;
-//    vector<NPCEnemy*> enemies;
     NPCEnemy enemies[100];
     vector<NPCEnemy*> enemiesVector;
     
