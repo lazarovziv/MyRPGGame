@@ -20,9 +20,10 @@ NPCEnemy::NPCEnemy(int type, float x, float y) {
     dead = false;
     moveDirection = MoveDirection::UP;
     spawn(x, y);
-    Texture texture;
-    texture.loadFromFile("../graphics/player.png");
+    texture.loadFromFile("../graphics/dorio_64.png");
     sprite->setTexture(texture);
+    sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
+    // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(x, y);
     weapon = new Weapon(WeaponType::BARE_HANDED);

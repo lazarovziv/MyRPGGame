@@ -6,9 +6,8 @@ Player::Player() : GameEntity() {
     expPoints = 0;
     speed = 2.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    Texture playerTexture;
-    playerTexture.loadFromFile("../graphics/player.png");
-    sprite->setTexture(playerTexture);
+    texture.loadFromFile("../graphics/player_down_1_64.png");
+    sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position);
 }
@@ -17,13 +16,14 @@ Player::Player(PlayerType type) : GameEntity() {
     expPoints = 0;
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    Texture playerTexture;
-    if (!playerTexture.loadFromFile("../graphics/player.png")) {
+    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
-        playerTexture.setSmooth(true);
+        texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
     // playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
-    sprite->setTexture(playerTexture);
+    sprite->setTexture(texture);
+    sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
+    // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position);
     setPlayerType(type);

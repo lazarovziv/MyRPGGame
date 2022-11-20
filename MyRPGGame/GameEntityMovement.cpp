@@ -22,24 +22,40 @@ bool GameEntityMovement::move(MoveDirection direction) {
         // try and move up, if false, collided with something
         if (moveUp(map, entityX, entityY, entitySpeed, entityRect)) {
             entity->setMoveDirection(MoveDirection::UP);
+            entity->incrementStep();
+            entity->getSprite()->setTextureRect(sf::IntRect(
+                entity->getStep()*Constants::TILE_SIZE, entity->getMoveDirectionsSpritesMap()[direction]*Constants::TILE_SIZE,
+                 Constants::TILE_SIZE, Constants::TILE_SIZE));
             return true;
         } else return false;
     } else if (direction == MoveDirection::DOWN) {
         // try and move down, if false, collided with something
         if (moveDown(map, entityX, entityY, entitySpeed, entityRect)) {
             entity->setMoveDirection(MoveDirection::DOWN);
+            entity->incrementStep();
+            entity->getSprite()->setTextureRect(sf::IntRect(
+                entity->getStep()*Constants::TILE_SIZE, entity->getMoveDirectionsSpritesMap()[direction]*Constants::TILE_SIZE,
+                 Constants::TILE_SIZE, Constants::TILE_SIZE));
             return true;
         } else return false;
     } else if (direction == MoveDirection::RIGHT) {
         // try and move right, if false, collided with something
         if (moveRight(map, entityX, entityY, entitySpeed, entityRect)) {
             entity->setMoveDirection(MoveDirection::RIGHT);
+            entity->incrementStep();
+            entity->getSprite()->setTextureRect(sf::IntRect(
+                entity->getStep()*Constants::TILE_SIZE, entity->getMoveDirectionsSpritesMap()[direction]*Constants::TILE_SIZE,
+                 Constants::TILE_SIZE, Constants::TILE_SIZE));
             return true;
         } else return false;
     } else if (direction == MoveDirection::LEFT) {
         // try and move left, if false, collided with something
         if (moveLeft(map, entityX, entityY, entitySpeed, entityRect)) {
             entity->setMoveDirection(MoveDirection::LEFT);
+            entity->incrementStep();
+            entity->getSprite()->setTextureRect(sf::IntRect(
+                entity->getStep()*Constants::TILE_SIZE, entity->getMoveDirectionsSpritesMap()[direction]*Constants::TILE_SIZE,
+                 Constants::TILE_SIZE, Constants::TILE_SIZE));
             return true;
         } else return false;
     }
@@ -78,8 +94,8 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
         }
     }
     // check for collisions with enemies
-    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
+    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
+        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -124,8 +140,8 @@ bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, fl
         }
     }
     // check for collisions with enemies
-    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
+    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
+        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -170,8 +186,8 @@ bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, f
         }
     }
     // check for collisions with enemies
-    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
+    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
+        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -216,8 +232,8 @@ bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, fl
         }
     }
     // check for collisions with enemies
-    for (int i = 0; i < map->getNumOfCurrentEnemies(); i++) {
-        if (map->getEnemies()[i].getCircle()->intersects(circle)) {
+    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
+        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }

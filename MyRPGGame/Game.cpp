@@ -259,7 +259,7 @@ void Game::setCurrentWorldMapCol(int col) {
 void Game::changeCurrentMap(int row, int col) {
 //    GameMap* map = getCurrentGameMap();
     // delete enemies because current map has changed
-    // getCurrentGameMap()->removeAllEnemiesFromVector();
+    getCurrentGameMap()->removeAllEnemiesFromVector();
     // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);

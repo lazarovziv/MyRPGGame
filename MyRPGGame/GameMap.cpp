@@ -104,7 +104,7 @@ void GameMap::init() {
     // true if validations filled with true
     bool validPosition = false;
     while (!validPosition) {
-        // checking all unreachable areas and exits
+        // checking all unreachable areas and exits (TODO: add other enemies)
         for (int i = 0; i < numOfUnreachableAreas; i++) {
             if (!unreachableAreasSprites[i].getGlobalBounds().intersects(rect)
                 /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
@@ -118,25 +118,36 @@ void GameMap::init() {
                 rect.left = randX;
                 rect.top = randY;
                 validations[i] = false;
-                // checking previous areas
-                for (int j = 0; j <= i; j++) {
-                    if (!unreachableAreasSprites[j].getGlobalBounds().intersects(rect)
-                        /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
-                        && !circle.intersects(*leftExitCircle) && !circle.intersects(*rightExitCircle)*/) {
-                        validations[j] = true;
-                    } else {
-                        validations[j] = false;
-                        i = i - 1;
-                        break;
-                    }
-                }
+                // setting to -1 because i is incremented by 1
+                i = -1;
+                // // checking previous areas
+                // for (int j = 0; j <= i; j++) {
+                //     if (!unreachableAreasSprites[j].getGlobalBounds().intersects(rect)
+                //         /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
+                //         && !circle.intersects(*leftExitCircle) && !circle.intersects(*rightExitCircle)*/) {
+                //         validations[j] = true;
+                //     } else {
+                //         validations[j] = false;
+                //         i = i - 1;
+                //         break;
+                //     }
+                // }
             }
             // reached end of array, validating if all is well
             if (i == numOfUnreachableAreas - 1) {
                 bool check = true;
+                // check enemies positions
+                for (int j = 0; j < enemiesVector.size(); j++) {
+                    if (enemiesVector[j]->getRectangle().intersects(rect)) {
+                        // start over
+                        for (int k = 0; k < numOfUnreachableAreas; k++) validations[k] = false;
+                    }
+                }
+
                 for (int k = 0; k < numOfUnreachableAreas; k++) {
                     if (!validations[k]) check = false;
                 }
+                
                 validPosition = check;
             }
         }
