@@ -4,6 +4,7 @@
 #define GameEntity_hpp
 
 #include <stdio.h>
+#include <map>
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
 #include "Circle.hpp"
@@ -12,7 +13,7 @@
 //class GameEntityMovement;
 class GameEntityMovemennt;
 
-enum class MoveDirection { UP, DOWN, RIGHT, LEFT };
+enum class MoveDirection { DOWN, RIGHT, LEFT, UP };
 
 using namespace std;
 using namespace sf;
@@ -37,7 +38,9 @@ protected:
     bool inBattle;
     bool dead = false;
     MoveDirection moveDirection;
+    map<MoveDirection, int> moveDirectionsSpritesMap;
     Vector2f position;
+    Texture texture;
     Sprite* sprite; // maybe VertexArray for each direction
     Circle* entityCircle = nullptr;
     Circle* attackRangeCircle = nullptr;
@@ -63,9 +66,13 @@ public:
     int getDefencePoints();
     int getCurrentDefencePoints();
     float getSpeed();
+    int getStep();
     bool isInBattle();
     bool isDead();
     MoveDirection getMoveDirection();
+    map<MoveDirection, int> getMoveDirectionsSpritesMap();
+    // counter for sprite change (0 to 3)
+    int step = 0;
     Vector2f getPosition();
     Sprite* getSprite();
     FloatRect getRectangle(); // sprite.getGlobalBounds()
@@ -78,6 +85,7 @@ public:
     void increaseDefencePoints(int amount);
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
+    void incrementStep();
     void setX(float x);
     void setY(float y);
     void setPosition(float x, float y);

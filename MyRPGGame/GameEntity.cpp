@@ -16,6 +16,11 @@ GameEntity::GameEntity() {
     dead = false;
     moveDirection = MoveDirection::RIGHT;
     sprite = new Sprite();
+
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 0;
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 1;
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
+    moveDirectionsSpritesMap[MoveDirection::UP] = 3;
     
 //    movement = new GameEntityMovement(this);
 }
@@ -64,6 +69,11 @@ void GameEntity::changeInBattleState() {
 
 void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
+}
+
+void GameEntity::incrementStep() {
+    if (step <= 2) step++;
+    else step = 0;
 }
 
 void GameEntity::setX(float x) {
@@ -182,6 +192,10 @@ float GameEntity::getSpeed() {
     return speed;
 }
 
+int GameEntity::getStep() {
+    return step;
+}
+
 bool GameEntity::isInBattle() {
     return inBattle;
 }
@@ -192,6 +206,10 @@ bool GameEntity::isDead() {
 
 MoveDirection GameEntity::getMoveDirection() {
     return moveDirection;
+}
+
+map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() {
+    return moveDirectionsSpritesMap;
 }
 
 Vector2f GameEntity::getPosition() {
