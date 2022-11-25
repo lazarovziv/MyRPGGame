@@ -7,13 +7,13 @@
 
 class Circle {
 private:
-    Point* center;
+    Point* center = nullptr;
     float radius;
     
 public:
     Circle();
     Circle(int x, int y, float r);
-    ~Circle() = default;
+    ~Circle();
     
     Point* getCenter();
     float getRadius();

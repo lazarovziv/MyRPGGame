@@ -38,7 +38,7 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
 NPCEnemy::~NPCEnemy() {
     delete sprite;
     delete texture;
-//    delete moveDirectionsSpritesMap;
+    delete weapon;
     delete entityCircle;
     delete attackRangeCircle;
     delete spawnArea;

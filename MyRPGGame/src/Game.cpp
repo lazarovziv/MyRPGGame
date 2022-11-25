@@ -8,7 +8,8 @@ using namespace std;
 Game* Game::instance = NULL;
 
 Game* Game::getInstance() {
-    if (instance == NULL) {
+    if (instance == nullptr) {
+        std::cout << "Initializing game..." << endl;
         instance = new Game("MyRPGGame");
     }
     return instance;
@@ -16,7 +17,7 @@ Game* Game::getInstance() {
 
 void Game::disposeInstance() {
     delete instance;
-    instance = NULL;
+    instance = nullptr;
 }
 
 Game::~Game() {
@@ -288,6 +289,12 @@ void Game::initWorldMap() {
     // mapTop->setBottomExit(400, 500);
 //    mapTop->setBottomExitMinX(400);
 //    mapTop->setBottomExitMaxX(500);
+
+    // deallocate memory
+    delete unreachableArea0;
+    delete unreachableArea1;
+    delete unreachableArea2;
+    delete unreachableArea3;
 }
 
 int Game::getCurrentWorldMapRow() {

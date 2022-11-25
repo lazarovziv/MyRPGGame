@@ -6,6 +6,10 @@ Circle::Circle(int x, int y, float r) {
     radius = r;
 }
 
+Circle::~Circle() {
+    delete center;
+}
+
 Point* Circle::getCenter() {
     return center;
 }

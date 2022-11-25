@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <map>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
 #include "Circle.hpp"
@@ -42,8 +43,8 @@ protected:
     Vector2i position;
     Texture* texture;
     Sprite* sprite; // maybe VertexArray for each direction
-    Circle* entityCircle = NULL;
-    Circle* attackRangeCircle = NULL;
+    Circle* entityCircle = nullptr;
+    Circle* attackRangeCircle = nullptr;
 //    GameMap* currentGameMap;
     Weapon* weapon;
     

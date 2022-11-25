@@ -87,11 +87,12 @@ void GameEntity::setY(int y) {
 void GameEntity::setPosition(int x, int y) {
     position.x = x;
     position.y = y;
-    if (entityCircle != NULL) {
+    if (entityCircle != nullptr) {
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);
         // if not created
-    } else entityCircle = new Circle(position.x, position.y, (float) 3*Constants::TILE_SIZE/4);
+    }
+//    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
 }
 
 void GameEntity::setWeapon(WeaponType type) {

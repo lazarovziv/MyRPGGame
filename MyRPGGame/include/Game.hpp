@@ -16,12 +16,12 @@ enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 class Game {
 private:
     static Game* instance;
-    RenderWindow* window;
+    RenderWindow* window = nullptr;
     const char* title;
     GameState state;
     
     // entities
-    Player* player;
+    Player* player = nullptr;
     
     GameMap*** worldMap;
     int currentGameMapRow, currentGameMapCol;
@@ -29,9 +29,9 @@ private:
     Game(const char* str);
     
 public:
-    Game(Game& game) = delete;
+//    Game(Game& game) = delete;
     ~Game();
-    void operator=(const Game&) = delete;
+//    void operator=(const Game&) = delete;
     static const int SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;
     static const int TILE_SIZE = Constants::TILE_SIZE;
     static Game* getInstance();

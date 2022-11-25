@@ -13,12 +13,12 @@ enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 class Player : public GameEntity {
 private:
     // for knight
-    int* strengthPoints;
+    int* strengthPoints = nullptr;
     // for wizard
-    int* intelligencePoints;
+    int* intelligencePoints = nullptr;
     // for dual wielder
-    int* criticalHitsPoints;
-    int* expPoints;
+    int* criticalHitsPoints = nullptr;
+    int* expPoints = nullptr;
     // Weapon currentWeapon
     // Helmet helmet
     // Braces braces

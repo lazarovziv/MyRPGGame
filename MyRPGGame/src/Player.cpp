@@ -7,7 +7,7 @@ Player::Player() : GameEntity() {
     speed = 2;
     texture = new Texture();
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    texture->loadFromFile("../graphics/player_down_1_64.png");
+    texture->loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player_down_1_64.png");
     sprite->setTexture(*texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
@@ -17,6 +17,7 @@ Player::Player(PlayerType type) : GameEntity() {
     expPoints = 0;
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
+    texture = new Texture();
     if (!texture->loadFromFile("../graphics/johnny_64.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture->setSmooth(true);
@@ -37,11 +38,11 @@ Player::~Player() {
     delete texture;
     delete entityCircle;
     delete attackRangeCircle;
-    delete weapon;
-    delete strengthPoints;
-    delete intelligencePoints;
-    delete criticalHitsPoints;
-    delete expPoints;
+    if (weapon) delete weapon;
+    if (strengthPoints) delete strengthPoints;
+    if (intelligencePoints) delete intelligencePoints;
+    if (criticalHitsPoints) delete criticalHitsPoints;
+    if (expPoints) delete expPoints;
 }
 
 int Player::getStrengthPoints() {

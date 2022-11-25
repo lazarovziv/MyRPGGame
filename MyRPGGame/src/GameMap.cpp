@@ -18,17 +18,17 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
 
 GameMap::~GameMap() {
     for (int i = 0; i < unreachableAreasSprites.size(); i++) {
-        delete unreachableAreasSprites.at(i);
+        if (unreachableAreasSprites.at(i)) delete unreachableAreasSprites.at(i);
     }
 
     for (int i = 0; i < enemiesVector.size(); i++) {
         delete enemiesVector.at(i);
     }
 
-    delete leftExitCircle;
-    delete rightExitCircle;
-    delete topExitCircle;
-    delete bottomExitCircle;
+    if (leftExitCircle) delete leftExitCircle;
+    if (rightExitCircle) delete rightExitCircle;
+    if (topExitCircle) delete topExitCircle;
+    if (bottomExitCircle) delete bottomExitCircle;
 }
 
 int GameMap::getWorldMapRow() {

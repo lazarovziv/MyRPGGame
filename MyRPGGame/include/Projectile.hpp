@@ -13,7 +13,7 @@ private:
     float velocity;
     ProjectileType type;
     Vector2f position;
-    Sprite* sprite;
+    Sprite* sprite = nullptr;
     
 public:
     Projectile();

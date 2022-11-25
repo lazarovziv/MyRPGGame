@@ -32,10 +32,10 @@ private:
     float topExitMinX, topExitMaxX;
     float bottomExitMinX, bottomExitMaxX;
     
-    Circle* leftExitCircle;
-    Circle* rightExitCircle;
-    Circle* topExitCircle;
-    Circle* bottomExitCircle;
+    Circle* leftExitCircle = nullptr;
+    Circle* rightExitCircle = nullptr;
+    Circle* topExitCircle = nullptr;
+    Circle* bottomExitCircle = nullptr;
     
     int numOfCurrentEnemies = 0;
     const int NUM_OF_MAX_ENEMIES = 3;
