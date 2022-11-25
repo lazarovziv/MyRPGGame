@@ -21,9 +21,9 @@ void Game::disposeInstance() {
 }
 
 Game::~Game() {
-    delete player;
-    delete worldMap;
-    delete window;
+    if (player) delete player;
+    if (worldMap) delete worldMap;
+    if (window) delete window;
 }
 
 Game::Game(const char* str) {
