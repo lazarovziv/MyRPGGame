@@ -31,11 +31,12 @@ private:
     
 public:
     Game(Game& game) = delete;
-    ~Game() = default;
+    ~Game();
     void operator=(const Game&) = delete;
     static const int SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;
     static const int TILE_SIZE = Constants::TILE_SIZE;
     static Game* getInstance();
+    static void disposeInstance();
     RenderWindow* getWindow();
     GameMap*** getWorldMap();
     GameState getState();

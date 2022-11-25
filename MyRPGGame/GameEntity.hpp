@@ -34,12 +34,12 @@ protected:
     int attackPoints;
     int defencePoints;
     int currentDefencePoints;
-    float speed;
+    int speed;
     bool inBattle;
     bool dead = false;
     MoveDirection moveDirection;
     map<MoveDirection, int> moveDirectionsSpritesMap;
-    Vector2f position;
+    Vector2i position;
     Texture texture;
     Sprite* sprite; // maybe VertexArray for each direction
     Circle* entityCircle = nullptr;
@@ -65,7 +65,7 @@ public:
     int getAttackPoints();
     int getDefencePoints();
     int getCurrentDefencePoints();
-    float getSpeed();
+    int getSpeed();
     int getStep();
     bool isInBattle();
     bool isDead();
@@ -73,22 +73,22 @@ public:
     map<MoveDirection, int> getMoveDirectionsSpritesMap();
     // counter for sprite change (0 to 3)
     int step = 0;
-    Vector2f getPosition();
+    Vector2i getPosition();
     Sprite* getSprite();
-    FloatRect getRectangle(); // sprite.getGlobalBounds()
+    IntRect getRectangle(); // sprite.getGlobalBounds()
     
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
     void increaseMaxManaPoints(int amount);
-    void increaseSpeed(float amount);
+    void increaseSpeed(int amount);
     void increaseAttackPoints(int amount);
     void increaseDefencePoints(int amount);
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
     void incrementStep();
-    void setX(float x);
-    void setY(float y);
-    void setPosition(float x, float y);
+    void setX(int x);
+    void setY(int y);
+    void setPosition(int x, int y);
     void setWeapon(WeaponType type);
     
     void setIsInBattle(bool inBattle);
@@ -98,7 +98,7 @@ public:
     void decreaseMaxManaPoints(int amount);
     void decreaseCurrentHealthPoints(int amount);
     void decreaseCurrentManaPoints(int amount);
-    void decreaseSpeed(float speed);
+    void decreaseSpeed(int speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
     void decreaseCurrentDefencePoints(int amount);

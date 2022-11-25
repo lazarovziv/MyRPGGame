@@ -2,21 +2,30 @@
 #include "Game.hpp"
 #include "Constants.h"
 
-GameEntityMovement::GameEntityMovement(GameEntity* entity) {
+GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player) {
     this->entity = entity;
+    isPlayer = player;
     screenWidth = Constants::SCREEN_WIDTH;
     screenHeight = Constants::SCREEN_HEIGHT;
     tileSize = Constants::TILE_SIZE;
 }
 
+//GameEntityMovement::~GameEntityMovement() {
+//    delete entity;
+//}
+
 bool GameEntityMovement::move(MoveDirection direction) {
     GameMap* map = Game::getInstance()->getCurrentGameMap();
     
-    float entitySpeed = entity->getSpeed();
-    FloatRect entityRect = entity->getRectangle();
+    int entitySpeed = entity->getSpeed();
+    IntRect entityRect = entity->getRectangle();
     
-    float entityX = entity->getPosition().x;
-    float entityY = entity->getPosition().y;
+    int entityX = entity->getPosition().x;
+    int entityY = entity->getPosition().y;
+
+//    if (isPlayer) {
+//        cout << "Player Position: (" << entityX << ", " << entityY << ")" << endl;
+//    } else cout << "Enemy Position: (" << entityX << ", " << entityY << ")" << endl;
     
     if (direction == MoveDirection::UP) {
         // try and move up, if false, collided with something
@@ -62,7 +71,7 @@ bool GameEntityMovement::move(MoveDirection direction) {
     return false;
 }
 
-bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
+bool GameEntityMovement::moveUp(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
     int unreachableAreasSize = map->getNumOfUnreachableAreas();
     bool canCollide = false;
     // reached top of screen
@@ -83,31 +92,39 @@ bool GameEntityMovement::moveUp(GameMap* map, float entityX, float entityY, floa
         return false;
     }
     // temp rectangle for moving up
-    FloatRect rect(entityRect.left, entityRect.top - entitySpeed, entityRect.width, entityRect.height);
+    FloatRect* rect = new FloatRect(entityRect.left, entityRect.top - entitySpeed, entityRect.width, entityRect.height);
     // temp circle for moving up
-    Circle circle(entity->getCircle()->getCenter()->getX(), entity->getCircle()->getCenter()->getY() - entitySpeed, entity->getCircle()->getRadius());
+    Circle* circle = new Circle(entity->getCircle()->getCenter()->getX(),
+                                entity->getCircle()->getCenter()->getY() - entitySpeed,
+                                entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
             canCollide = true;
             break;
         }
     }
-    // check for collisions with enemies
-    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
-        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
-            canCollide = true;
-            break;
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+                canCollide = true;
+                break;
+            }
         }
     }
+
     if (!canCollide) {
         // in legal boundaries
         entity->setPosition(entityX, entityY - entitySpeed);
     }
+    // TODO: check whether using free or delete
+    delete rect;
+    delete circle;
     return !canCollide;
 }
 
-bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
+bool GameEntityMovement::moveDown(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
     int unreachableAreasSize = map->getNumOfUnreachableAreas();
     bool canCollide = false;
     // reached bottom of screen
@@ -129,31 +146,38 @@ bool GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, fl
         return false;
     }
     // temp rectangle for moving down
-    FloatRect rect(entityRect.left, entityRect.top + entitySpeed, entityRect.width, entityRect.height);
+    FloatRect* rect = new FloatRect(entityRect.left, entityRect.top + entitySpeed, entityRect.width, entityRect.height);
     // temp circle for moving down
-    Circle circle(entity->getCircle()->getCenter()->getX(), entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
+    Circle* circle = new Circle(entity->getCircle()->getCenter()->getX(), entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
             canCollide = true;
             break;
         }
     }
-    // check for collisions with enemies
-    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
-        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
-            canCollide = true;
-            break;
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+                canCollide = true;
+                break;
+            }
         }
     }
+
     if (!canCollide) {
         // in legal boundaries
         entity->setPosition(entityX, entityY + entitySpeed);
     }
+    // TODO: check whether using free or delete
+    delete rect;
+    delete circle;
     return !canCollide;
 }
 
-bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
+bool GameEntityMovement::moveRight(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
     int unreachableAreasSize = map->getNumOfUnreachableAreas();
     bool canCollide = false;
     // reached right of screen
@@ -175,31 +199,38 @@ bool GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, f
         return false;
     }
     // temp rectangle for moving right
-    FloatRect rect(entityRect.left + entitySpeed, entityRect.top, entityRect.width, entityRect.height);
+    FloatRect* rect = new FloatRect(entityRect.left + entitySpeed, entityRect.top, entityRect.width, entityRect.height);
     // temp circle for moving right
-    Circle circle(entity->getCircle()->getCenter()->getX() + entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
+    Circle* circle = new Circle(entity->getCircle()->getCenter()->getX() + entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
             canCollide = true;
             break;
         }
     }
-    // check for collisions with enemies
-    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
-        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
-            canCollide = true;
-            break;
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+                canCollide = true;
+                break;
+            }
         }
     }
+
     if (!canCollide) {
         // in legal boundaries
         entity->setPosition(entityX + entitySpeed, entityY);
     }
+    // TODO: check whether using free or delete
+    delete rect;
+    delete circle;
     return !canCollide;
 }
 
-bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, float entitySpeed, FloatRect &entityRect) {
+bool GameEntityMovement::moveLeft(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
     int unreachableAreasSize = map->getNumOfUnreachableAreas();
     bool canCollide = false;
     // reached left of screen
@@ -221,26 +252,41 @@ bool GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, fl
         return false;
     }
     // temp rectangle for moving left
-    FloatRect rect(entityRect.left - entitySpeed, entityRect.top, entityRect.width, entityRect.height);
+    FloatRect* rect = new FloatRect(entityRect.left - entitySpeed, entityRect.top, entityRect.width, entityRect.height);
     // temp circle for moving left
-    Circle circle(entity->getCircle()->getCenter()->getX() - entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
+    Circle* circle = new Circle(entity->getCircle()->getCenter()->getX() - entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can ovelap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i].getGlobalBounds().intersects(rect)) {
+        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
             canCollide = true;
             break;
         }
     }
-    // check for collisions with enemies
-    for (int i = 0; i < map->getEnemiesVector().size(); i++) {
-        if (map->getEnemiesVector()[i]->getCircle()->intersects(circle)) {
-            canCollide = true;
-            break;
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+                canCollide = true;
+                break;
+            }
         }
     }
+
     if (!canCollide) {
         // in legal boundaries
         entity->setPosition(entityX - entitySpeed, entityY);
     }
+    // TODO: check whether using free or delete
+    delete rect;
+    delete circle;
     return !canCollide;
+}
+
+void GameEntityMovement::setEntity(GameEntity &e) {
+    this->entity = &e;
+}
+
+GameEntity* GameEntityMovement::getEntity() {
+    return entity;
 }

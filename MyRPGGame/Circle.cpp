@@ -1,9 +1,9 @@
 #include "Circle.hpp"
 #include <cmath>
 
-Circle::Circle(float x, float y, float radius) {
+Circle::Circle(float x, float y, float r) {
     center = new Point(x, y);
-    this->radius = radius;
+    radius = r;
 }
 
 Point* Circle::getCenter() {
@@ -18,18 +18,18 @@ void Circle::setRadius(float r) {
     radius = r;
 }
 
-void Circle::setCenter(float x, float y) {
+void Circle::setCenter(int x, int y) {
     center->setX(x);
     center->setY(y);
 }
 
-bool Circle::intersects(Circle c) {
-    float distance = center->distance(*(c.getCenter()));
+bool Circle::intersects(Circle* c) {
+    float distance = center->distance(*(c->getCenter()));
     // they don't intersect
-    if (distance > radius + c.radius) return false;
+    if (distance > radius + c->radius) return false;
     // they intersect
-    if (distance < radius + c.radius) return true;
-    // if one is containes within another (shouldn't reach this point
-    if (distance < abs(radius - c.radius)) return true;
+    if (distance < radius + c->radius) return true;
+    // if one is contains within another (shouldn't reach this point
+    if (distance < std::abs(radius - c->radius)) return true;
     return false;
 }

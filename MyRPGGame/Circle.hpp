@@ -12,14 +12,14 @@ private:
     
 public:
     Circle();
-    Circle(float x, float y, float radius);
+    Circle(float x, float y, float r);
     ~Circle() = default;
     
     Point* getCenter();
     float getRadius();
     void setRadius(float r);
-    void setCenter(float x, float y);
-    bool intersects(Circle c);
+    void setCenter(int x, int y);
+    bool intersects(Circle* c);
 };
 
 #endif /* Circle_hpp */

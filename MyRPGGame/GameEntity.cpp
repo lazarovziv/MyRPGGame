@@ -11,7 +11,7 @@ GameEntity::GameEntity() {
     attackPoints = 1;
     defencePoints = 5;
     currentDefencePoints = defencePoints;
-    speed = 1.f;
+    speed = 16;
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
@@ -45,7 +45,7 @@ void GameEntity::increaseMaxManaPoints(int amount) {
     } else currentManaPoints += amount;
 }
 
-void GameEntity::increaseSpeed(float amount) {
+void GameEntity::increaseSpeed(int amount) {
     // setting upper limit to 3
 //    if (speed + amount < 3) {
 //        speed += amount;
@@ -76,22 +76,22 @@ void GameEntity::incrementStep() {
     else step = 0;
 }
 
-void GameEntity::setX(float x) {
+void GameEntity::setX(int x) {
     position.x = x;
 }
 
-void GameEntity::setY(float y) {
+void GameEntity::setY(int y) {
     position.y = y;
 }
 
-void GameEntity::setPosition(float x, float y) {
+void GameEntity::setPosition(int x, int y) {
     position.x = x;
     position.y = y;
     if (entityCircle != nullptr) {
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);
         // if not created
-    } else entityCircle = new Circle(position.x, position.y, 45);
+    } else entityCircle = new Circle(position.x, position.y, (float) 3*Constants::TILE_SIZE/4);
 }
 
 void GameEntity::setWeapon(WeaponType type) {
@@ -128,7 +128,7 @@ void GameEntity::decreaseMaxManaPoints(int amount) {
     maxManaPoints -= amount;
 }
 
-void GameEntity::decreaseSpeed(float speed) {
+void GameEntity::decreaseSpeed(int speed) {
     if (this->speed - speed <= 0) this->speed = 0;
     this->speed -= speed;
 }
@@ -188,7 +188,7 @@ int GameEntity::getCurrentDefencePoints() {
     return currentDefencePoints;
 }
 
-float GameEntity::getSpeed() {
+int GameEntity::getSpeed() {
     return speed;
 }
 
@@ -212,7 +212,7 @@ map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() {
     return moveDirectionsSpritesMap;
 }
 
-Vector2f GameEntity::getPosition() {
+Vector2i GameEntity::getPosition() {
     return position;
 }
 
@@ -220,8 +220,8 @@ Sprite* GameEntity::getSprite() {
     return sprite;
 }
 
-FloatRect GameEntity::getRectangle() {
-    return sprite->getGlobalBounds();
+IntRect GameEntity::getRectangle() {
+    return (IntRect) sprite->getGlobalBounds();
 }
 
 void GameEntity::attack(GameEntity &entity) {
@@ -260,11 +260,11 @@ bool GameEntity::move(MoveDirection direction) {
 }
 
 bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
-    return attackRangeCircle->intersects(*(entity.entityCircle));
+    return attackRangeCircle->intersects(entity.entityCircle);
 }
 
 bool GameEntity::intersects(GameEntity &entity) {
-    return entityCircle->intersects(*(entity.entityCircle));
+    return entityCircle->intersects(entity.entityCircle);
 }
 
 Circle* GameEntity::getCircle() {
@@ -277,7 +277,7 @@ Circle* GameEntity::getAttackRangeCircle() {
 
 void GameEntity::update() {
     if (!dead) {
-        sprite->setPosition(position);
+        sprite->setPosition(position.x, position.y);
         // updating entity circle and attack circle
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);

@@ -3,13 +3,13 @@
 //#include "TextureLoader.hpp"
 
 Player::Player() : GameEntity() {
-    expPoints = 0;
-    speed = 2.f;
+    *expPoints = 0;
+    speed = 2;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     texture.loadFromFile("../graphics/player_down_1_64.png");
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-    sprite->setPosition(position);
+    sprite->setPosition(position.x, position.y);
 }
 
 Player::Player(PlayerType type) : GameEntity() {
@@ -25,48 +25,59 @@ Player::Player(PlayerType type) : GameEntity() {
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-    sprite->setPosition(position);
+    sprite->setPosition(position.x, position.y);
     setPlayerType(type);
-    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/2);
-    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float)5/3) + weapon->getHitRadius());
+    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/4);
+    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 13/3) + weapon->getHitRadius());
+}
+
+Player::~Player() {
+    delete sprite;
+    delete entityCircle;
+    delete attackRangeCircle;
+    delete weapon;
+    delete strengthPoints;
+    delete intelligencePoints;
+    delete criticalHitsPoints;
+    delete expPoints;
 }
 
 int Player::getStrengthPoints() {
-    return strengthPoints;
+    return *strengthPoints;
 }
 
 int Player::getIntelligencePoints() {
-    return intelligencePoints;
+    return *intelligencePoints;
 }
 
 int Player::getCriticalHitPoints() {
-    return criticalHitsPoints;
+    return *criticalHitsPoints;
 }
 
 int Player::getExpPoints() {
-    return expPoints;
+    return *expPoints;
 }
 
 void Player::incrementExpPoints(int amount) {
     // TODO: add logic for handling leveling up
-    expPoints += amount;
+    *expPoints += amount;
 }
 
 void Player::levelUpStrengthPoints() {
-    strengthPoints++;
+    (*strengthPoints)++;
 }
 
 void Player::levelUpIntelligencePoints() {
-    intelligencePoints++;
+    (*intelligencePoints)++;
 }
 
 void Player::levelUpCriticalHitsPoints() {
-    criticalHitsPoints++;
+    (*criticalHitsPoints)++;
 }
 
-void Player::setPlayerType(PlayerType type) {
-    this->type = type;
-    switch (this->type) {
+void Player::setPlayerType(PlayerType t) {
+    type = t;
+    switch (type) {
         case PlayerType::KNIGHT:
             setWeapon(WeaponType::SWORD);
             break;
@@ -77,6 +88,6 @@ void Player::setPlayerType(PlayerType type) {
             setWeapon(WeaponType::STAFF);
             break;
     }
-    // increase player stats with it's weapon's stats (maybe defence points for some?)
+    // increase player stats with its' weapon's stats (maybe defence points for some?)
     increaseAttackPoints(weapon->getAttackPoints());
 }

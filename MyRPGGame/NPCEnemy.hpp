@@ -4,9 +4,13 @@
 #define NPCEnemy_hpp
 
 #include <stdio.h>
+#include <iostream>
+#include <sys/time.h>
+#include <ctime>
 #include "GameEntity.hpp"
 #include "Circle.hpp"
 #include "Constants.h"
+#include <time.h>
 
 using namespace sf;
 
@@ -23,8 +27,8 @@ private:
     // type of enemy
     int type;
     // movement intervals
-//    float lastTimeMoved;
-//    float moveInterval;
+    std::clock_t lastTimeMoved;
+    float moveInterval = 1;
     
     // movement handler
 //    GameEntityMovement* movement;
@@ -40,36 +44,20 @@ public:
     static const int ETC = 4;
     
     NPCEnemy();
-    NPCEnemy(int type, float x, float y);
-    ~NPCEnemy() = default;
+    NPCEnemy(int type, int x, int y);
+    ~NPCEnemy();
     int getBattleTimeout();
     float getWanderAreaRadius();
     float getBattleAreaRadius();
     int getExpPointsWorth();
     int getType();
     
-//    float getLastTimeMoved() {
-//        return lastTimeMoved;
-//    }
-//    
-//    float getMoveInterval() {
-//        return moveInterval;
-//    }
-//    
-//    void setLastTimeMoved(float time) {
-//        lastTimeMoved = time;
-//    }
-//    
-//    void setMoveInterval(float time) {
-//        moveInterval = time;
-//    }
-    
-//    bool move();
+    bool canMove();
     
     Circle* getSpawnArea();
-    void setSpawnArea(float centerX, float centerY, float radius);
+    void setSpawnArea(int centerX, int centerY, float radius);
     
-    void spawn(float x, float y);
+    void spawn(int x, int y);
 };
 
 #endif /* NPCEnemy_hpp */

@@ -4,12 +4,15 @@ GameEntityBattle::GameEntityBattle(GameEntity* entity) {
     this->entity = entity;
 }
 
+//GameEntityBattle::~GameEntityBattle() {
+////    delete entity;
+//}
+
 bool GameEntityBattle::attack(GameEntity &enemy) {
     if (isInAttackRange(enemy)) {
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
-//        std::cout << "In attack range!" << endl;
         if (enemy.getCurrentDefencePoints() > 0) {
             int defenceAttackPtsDiff = entity->getAttackPoints() - enemy.getCurrentDefencePoints();
             // TODO: insert attack interval for game entity
@@ -29,6 +32,7 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
             if (enemy.isDead()) {
                 enemy.setIsInBattle(false);
                 entity->setIsInBattle(false);
+                // TODO: increase player's XP
             }
         }
     } else {
@@ -41,5 +45,5 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
 }
 
 bool GameEntityBattle::isInAttackRange(GameEntity &enemy) {
-    return entity->getAttackRangeCircle()->intersects(*(enemy.getCircle()));
+    return entity->getAttackRangeCircle()->intersects(enemy.getCircle());
 }

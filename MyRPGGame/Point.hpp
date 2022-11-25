@@ -6,18 +6,18 @@
 
 class Point {
 private:
-    float x;
-    float y;
+    int x;
+    int y;
     
 public:
     Point();
-    Point(float x, float y);
+    Point(int x, int y);
     ~Point() = default;
     
-    float getX();
-    float getY();
-    void setX(float X);
-    void setY(float Y);
+    int getX();
+    int getY();
+    void setX(int X);
+    void setY(int Y);
     float distance(Point p);
 };
 

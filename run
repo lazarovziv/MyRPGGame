@@ -1,4 +1,5 @@
 #!/bin/bash
 cd MyRPGGame
+rm main.out
 make
 ./main.out

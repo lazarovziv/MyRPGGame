@@ -1,27 +1,28 @@
 #include "Point.hpp"
 #include <cmath>
 
-Point::Point(float X, float Y) {
+Point::Point(int X, int Y) {
     x = X;
     y = Y;
 }
 
-float Point::getX() {
+int Point::getX() {
     return x;
 }
 
-float Point::getY() {
+int Point::getY() {
     return y;
 }
 
-void Point::setX(float X) {
+// memory leak, use pointers
+void Point::setX(int X) {
     x = X;
 }
-
-void Point::setY(float Y) {
+// likewise
+void Point::setY(int Y) {
     y = Y;
 }
-
+// probably here too
 float Point::distance(Point p) {
     return sqrt(pow(x - p.x, 2) + pow(y - p.y, 2));
 }

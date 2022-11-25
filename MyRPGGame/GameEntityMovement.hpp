@@ -10,17 +10,21 @@
 class GameEntityMovement {
 private:
     GameEntity* entity;
+    bool isPlayer;
     int screenWidth, screenHeight;
     int tileSize;
     
-    bool moveUp(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
-    bool moveDown(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
-    bool moveRight(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
-    bool moveLeft(GameMap* currentMap, float entityX, float entityY, float entitySpeed, FloatRect &entityRect);
+    bool moveUp(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
+    bool moveDown(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
+    bool moveRight(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
+    bool moveLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
 public:
-    GameEntityMovement(GameEntity* entity);
+    GameEntityMovement(GameEntity* entity, bool player);
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
+
+    void setEntity(GameEntity &entity);
+    GameEntity* getEntity();
 };
 
 #endif /* GameEntityMovement_hpp */

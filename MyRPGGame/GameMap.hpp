@@ -9,7 +9,6 @@
 #include <vector>
 #include "Circle.hpp"
 #include "Constants.h"
-//#include "GameEntityMovement.hpp"
 class NPCEnemy;
 
 using namespace sf;
@@ -39,25 +38,27 @@ private:
     Circle* bottomExitCircle;
     
     int numOfCurrentEnemies = 0;
+    const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
     int numOfUnreachableAreas = 0;
-    RectangleShape unreachableAreasSprites[100];
+//    RectangleShape unreachableAreasSprites[100];
+    vector<RectangleShape*> unreachableAreasSprites;
     // enemies in current
-    NPCEnemy enemies[100];
+//    NPCEnemy enemies[100];
     vector<NPCEnemy*> enemiesVector;
     
 public:
     GameMap(int row, int col);
     GameMap(int row, int col, bool up, bool down, bool right, bool left);
-    ~GameMap() = default;
+    ~GameMap();
     int getWorldMapRow();
     int getWorldMapCol();
     
     void init();
     
-    RectangleShape* getUnreachableAreasSprites();
+    vector<RectangleShape*> getUnreachableAreasSprites();
     int getNumOfUnreachableAreas();
-    void addUnreachableArea(FloatRect rect);
+    void addUnreachableArea(IntRect* rect);
     bool isExitableFromLeft();
     bool isExitableFromRight();
     bool isExitableFromTop();
@@ -66,19 +67,13 @@ public:
     void setIsExitableFromRight(bool flag);
     void setIsExitableFromTop(bool flag);
     void setIsExitableFromBottom(bool flag);
-    
-//    vector<NPCEnemy*> getEnemies();
-    NPCEnemy* getEnemies();
-    vector<NPCEnemy*> getEnemiesVector();
-    int getNumOfCurrentEnemies();
+
+    vector<NPCEnemy*> getEnemies();
     void addEnemy(NPCEnemy* enemy);
     void removeEnemyAtIndex(int i);
     void removeAllEnemies();
-    void addEnemyToVector(NPCEnemy* enemy);
-    void removeEnemyAtIndexFromVector(int i);
-    void removeAllEnemiesFromVector();
     
-    float generateRandom(float min, float max);
+    int generateRandom(int min, int max);
     
     void setTopExit(float minX, float maxX) {
         topExitMinX = minX;
