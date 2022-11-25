@@ -40,10 +40,10 @@ protected:
     MoveDirection moveDirection;
     map<MoveDirection, int> moveDirectionsSpritesMap;
     Vector2i position;
-    Texture texture;
+    Texture* texture;
     Sprite* sprite; // maybe VertexArray for each direction
-    Circle* entityCircle = nullptr;
-    Circle* attackRangeCircle = nullptr;
+    Circle* entityCircle = NULL;
+    Circle* attackRangeCircle = NULL;
 //    GameMap* currentGameMap;
     Weapon* weapon;
     

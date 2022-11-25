@@ -1,4 +1,4 @@
-#include "NPCEnemy.hpp"
+#include "../include/NPCEnemy.hpp"
 
 NPCEnemy::NPCEnemy() {
     
@@ -19,8 +19,10 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
     dead = false;
     moveDirection = MoveDirection::UP;
     spawn(x, y);
-    texture.loadFromFile("../graphics/dorio_64.png");
-    sprite->setTexture(texture);
+
+    texture = new Texture();
+    texture->loadFromFile("../graphics/dorio_64.png");
+    sprite->setTexture(*texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
@@ -30,12 +32,13 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 11/3) + weapon->getHitRadius());
 
     lastTimeMoved = std::clock();
-
      // TODO: choose random floats in defined location radius for each enemy in map
 }
 
 NPCEnemy::~NPCEnemy() {
     delete sprite;
+    delete texture;
+//    delete moveDirectionsSpritesMap;
     delete entityCircle;
     delete attackRangeCircle;
     delete spawnArea;

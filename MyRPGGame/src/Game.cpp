@@ -1,14 +1,14 @@
-#include "Game.hpp"
-#include "GameEntityMovement.hpp"
-#include "GameEntityBattle.hpp"
+#include "../include/Game.hpp"
+#include "../include/GameEntityMovement.hpp"
+#include "../include/GameEntityBattle.hpp"
 //#include "TextureLoader.hpp"
 
 using namespace std;
 
-Game* Game::instance = nullptr;
+Game* Game::instance = NULL;
 
 Game* Game::getInstance() {
-    if (instance == nullptr) {
+    if (instance == NULL) {
         instance = new Game("MyRPGGame");
     }
     return instance;
@@ -22,15 +22,14 @@ void Game::disposeInstance() {
 Game::~Game() {
     delete player;
     delete worldMap;
-    delete videoMode;
     delete window;
 }
 
 Game::Game(const char* str) {
     title = str;
-    this->videoMode = new VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
+    VideoMode videoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
     std::string s(title);
-    this->window = new RenderWindow(*videoMode, s);
+    this->window = new RenderWindow(videoMode, s);
     
     state = GameState::PAUSED;
     
@@ -297,6 +296,10 @@ int Game::getCurrentWorldMapRow() {
 
 int Game::getCurrentWorldMapCol() {
     return currentGameMapCol;
+}
+
+Player* Game::getPlayer() {
+    return player;
 }
 
 void Game::setCurrentWorldMapRow(int row) {

@@ -1,6 +1,6 @@
-#include "GameEntityMovement.hpp"
-#include "Game.hpp"
-#include "Constants.h"
+#include "../include/GameEntityMovement.hpp"
+#include "../include/Game.hpp"
+#include "../include/Constants.h"
 
 GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player) {
     this->entity = entity;
@@ -112,7 +112,7 @@ bool GameEntityMovement::moveUp(GameMap* map, int entityX, int entityY, int enti
                 break;
             }
         }
-    }
+    } else canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries
@@ -165,7 +165,7 @@ bool GameEntityMovement::moveDown(GameMap* map, int entityX, int entityY, int en
                 break;
             }
         }
-    }
+    } else canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries
@@ -218,7 +218,7 @@ bool GameEntityMovement::moveRight(GameMap* map, int entityX, int entityY, int e
                 break;
             }
         }
-    }
+    } else canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries
@@ -271,7 +271,7 @@ bool GameEntityMovement::moveLeft(GameMap* map, int entityX, int entityY, int en
                 break;
             }
         }
-    }
+    } else canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries

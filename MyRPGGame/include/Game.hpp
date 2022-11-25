@@ -17,7 +17,6 @@ class Game {
 private:
     static Game* instance;
     RenderWindow* window;
-    VideoMode* videoMode;
     const char* title;
     GameState state;
     
@@ -40,6 +39,7 @@ public:
     RenderWindow* getWindow();
     GameMap*** getWorldMap();
     GameState getState();
+    Player* getPlayer();
     void changeState(GameState state);
     GameMap* getCurrentGameMap();
     void setPlayer(Player* player);

@@ -1,4 +1,4 @@
-#include "GameEntity.hpp"
+#include "../include/GameEntity.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -87,7 +87,7 @@ void GameEntity::setY(int y) {
 void GameEntity::setPosition(int x, int y) {
     position.x = x;
     position.y = y;
-    if (entityCircle != nullptr) {
+    if (entityCircle != NULL) {
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);
         // if not created

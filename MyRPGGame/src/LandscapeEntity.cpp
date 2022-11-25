@@ -1,4 +1,4 @@
-#include "LandscapeEntity.hpp"
+#include "../include/LandscapeEntity.hpp"
 
 LandscapeEntity::LandscapeEntity(LandscapeType type, float x, float y) {
     position.x = x;

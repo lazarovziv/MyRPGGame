@@ -1,7 +1,7 @@
-#include "Circle.hpp"
+#include "../include/Circle.hpp"
 #include <cmath>
 
-Circle::Circle(float x, float y, float r) {
+Circle::Circle(int x, int y, float r) {
     center = new Point(x, y);
     radius = r;
 }

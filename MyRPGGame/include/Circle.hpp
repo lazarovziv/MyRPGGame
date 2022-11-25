@@ -12,7 +12,7 @@ private:
     
 public:
     Circle();
-    Circle(float x, float y, float r);
+    Circle(int x, int y, float r);
     ~Circle() = default;
     
     Point* getCenter();

@@ -1,4 +1,4 @@
-#include "GameEntityBattle.hpp"
+#include "../include/GameEntityBattle.hpp"
 
 GameEntityBattle::GameEntityBattle(GameEntity* entity) {
     this->entity = entity;

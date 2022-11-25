@@ -1,13 +1,14 @@
-#include "Player.hpp"
+#include "../include/Player.hpp"
 //#include "Game.hpp"
 //#include "TextureLoader.hpp"
 
 Player::Player() : GameEntity() {
     *expPoints = 0;
     speed = 2;
+    texture = new Texture();
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    texture.loadFromFile("../graphics/player_down_1_64.png");
-    sprite->setTexture(texture);
+    texture->loadFromFile("../graphics/player_down_1_64.png");
+    sprite->setTexture(*texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
 }
@@ -16,12 +17,12 @@ Player::Player(PlayerType type) : GameEntity() {
     expPoints = 0;
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
+    if (!texture->loadFromFile("../graphics/johnny_64.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
-        texture.setSmooth(true);
+        texture->setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
     // playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
-    sprite->setTexture(texture);
+    sprite->setTexture(*texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
@@ -33,6 +34,7 @@ Player::Player(PlayerType type) : GameEntity() {
 
 Player::~Player() {
     delete sprite;
+    delete texture;
     delete entityCircle;
     delete attackRangeCircle;
     delete weapon;

@@ -1,4 +1,4 @@
-#include "GameMap.hpp"
+#include "../include/GameMap.hpp"
 #include <iostream>
 //class NPCEnemy;
 
@@ -165,7 +165,7 @@ void GameMap::init() {
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
-    addEnemy(enemy);
+    enemiesVector.push_back(enemy);
 }
 
 void GameMap::addEnemy(NPCEnemy* enemy) {
