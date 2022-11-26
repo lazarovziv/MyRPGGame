@@ -1,6 +1,4 @@
 #include "../include/GameEntityMovement.hpp"
-#include "../include/Game.hpp"
-#include "../include/Constants.h"
 
 GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player) {
     this->entity = entity;
@@ -9,10 +7,6 @@ GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player) {
     screenHeight = Constants::SCREEN_HEIGHT;
     tileSize = Constants::TILE_SIZE;
 }
-
-//GameEntityMovement::~GameEntityMovement() {
-//    delete entity;
-//}
 
 bool GameEntityMovement::move(MoveDirection direction) {
     GameMap* map = Game::getInstance()->getCurrentGameMap();
@@ -118,9 +112,10 @@ bool GameEntityMovement::moveUp(GameMap* map, int entityX, int entityY, int enti
         // in legal boundaries
         entity->setPosition(entityX, entityY - entitySpeed);
     }
-    // TODO: check whether using free or delete
+
     delete rect;
     delete circle;
+
     return !canCollide;
 }
 
@@ -171,9 +166,10 @@ bool GameEntityMovement::moveDown(GameMap* map, int entityX, int entityY, int en
         // in legal boundaries
         entity->setPosition(entityX, entityY + entitySpeed);
     }
-    // TODO: check whether using free or delete
+
     delete rect;
     delete circle;
+
     return !canCollide;
 }
 
@@ -224,9 +220,10 @@ bool GameEntityMovement::moveRight(GameMap* map, int entityX, int entityY, int e
         // in legal boundaries
         entity->setPosition(entityX + entitySpeed, entityY);
     }
-    // TODO: check whether using free or delete
+
     delete rect;
     delete circle;
+
     return !canCollide;
 }
 
@@ -277,9 +274,10 @@ bool GameEntityMovement::moveLeft(GameMap* map, int entityX, int entityY, int en
         // in legal boundaries
         entity->setPosition(entityX - entitySpeed, entityY);
     }
-    // TODO: check whether using free or delete
+
     delete rect;
     delete circle;
+
     return !canCollide;
 }
 

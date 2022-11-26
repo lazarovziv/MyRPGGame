@@ -37,13 +37,12 @@ private:
     Circle* rightExitCircle = nullptr;
     Circle* topExitCircle = nullptr;
     Circle* bottomExitCircle = nullptr;
+
+    Sprite* backgroundSprite;
     
     int numOfCurrentEnemies = 0;
     const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
-    int numOfUnreachableAreas = 0;
-//    RectangleShape unreachableAreasSprites[100];
-    vector<RectangleShape*> unreachableAreasSprites;
     vector<LandscapeEntity*> landscapes;
     // enemies in current
 //    NPCEnemy enemies[100];
@@ -57,11 +56,8 @@ public:
     int getWorldMapCol();
     
     void init();
-    
-    vector<RectangleShape*> getUnreachableAreasSprites();
+
     vector<LandscapeEntity*> getLandscapes();
-    int getNumOfUnreachableAreas();
-    void addUnreachableArea(IntRect* rect);
     void addLandscape(LandscapeEntity* entity);
     bool isExitableFromLeft();
     bool isExitableFromRight();

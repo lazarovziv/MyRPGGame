@@ -37,4 +37,5 @@ LandscapeEntity::~LandscapeEntity() {
     delete sprite;
     delete entityCircle;
     delete attackRangeCircle;
+    delete weapon;
 }
