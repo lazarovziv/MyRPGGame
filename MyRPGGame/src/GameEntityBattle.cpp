@@ -5,7 +5,7 @@ GameEntityBattle::GameEntityBattle(GameEntity* entity) {
 }
 
 //GameEntityBattle::~GameEntityBattle() {
-////    delete entity;
+//    delete entity;
 //}
 
 bool GameEntityBattle::attack(GameEntity &enemy) {
@@ -36,7 +36,9 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
             }
         }
     } else {
-        std::cout << "NOT in attack range!" << endl;
+        // TODO: fix changing battle states for entities regardless attack attempt
+        enemy.setIsInBattle(false);
+        entity->setIsInBattle(false);
         return false;
     }
     cout << "Health: " << enemy.getCurrentHealthPoints() << endl;

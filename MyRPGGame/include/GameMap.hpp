@@ -9,6 +9,7 @@
 #include <vector>
 #include "Circle.hpp"
 #include "Constants.h"
+#include "LandscapeEntity.hpp"
 class NPCEnemy;
 
 using namespace sf;
@@ -43,6 +44,7 @@ private:
     int numOfUnreachableAreas = 0;
 //    RectangleShape unreachableAreasSprites[100];
     vector<RectangleShape*> unreachableAreasSprites;
+    vector<LandscapeEntity*> landscapes;
     // enemies in current
 //    NPCEnemy enemies[100];
     vector<NPCEnemy*> enemiesVector;
@@ -57,8 +59,10 @@ public:
     void init();
     
     vector<RectangleShape*> getUnreachableAreasSprites();
+    vector<LandscapeEntity*> getLandscapes();
     int getNumOfUnreachableAreas();
     void addUnreachableArea(IntRect* rect);
+    void addLandscape(LandscapeEntity* entity);
     bool isExitableFromLeft();
     bool isExitableFromRight();
     bool isExitableFromTop();

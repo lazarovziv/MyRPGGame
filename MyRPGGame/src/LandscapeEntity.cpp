@@ -1,32 +1,40 @@
 #include "../include/LandscapeEntity.hpp"
 
-LandscapeEntity::LandscapeEntity(LandscapeType type, float x, float y) {
+LandscapeEntity::LandscapeEntity(LandscapeType type, int x, int y) {
     position.x = x;
     position.y = y;
     this->type = type;
 //    RectangleShape rectangle0(Vector2f(200, 200));
-    Texture landscapeTexture;
+    sprite = new Sprite();
 
     switch (this->type) {
         case LandscapeType::TREE:
-            landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/tree.png");
+            if (texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/trees/maple_64.png")) std::cout << "Tree loaded." << endl;
             id = 1; // totally arbitrary
             break;
         case LandscapeType::GRASS:
-            landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/grass.png");
+            texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/grass.png");
             id = 2; // totally arbitrary
             break;
         case LandscapeType::FLOWER:
-            landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/flower.png");
+            texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/flower.png");
             id = 3; // totally arbitrary
             break;
         case LandscapeType::HOUSE:
-            landscapeTexture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/house.png");
+            texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/house.png");
             id = 4; // totally arbitrary
             break;
     }
-    sprite.setTexture(landscapeTexture);
-    sprite.setOrigin(32, 32); // or set texture.size / 2, texture.size / 2
-    sprite.setPosition(position);
 
+    texture.setSmooth(true);
+    sprite->setTexture(texture);
+    sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2); // or set texture.size / 2, texture.size / 2
+    sprite->setPosition(position.x, position.y);
+    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/4);
+}
+
+LandscapeEntity::~LandscapeEntity() {
+    delete sprite;
+    delete entityCircle;
+    delete attackRangeCircle;
 }

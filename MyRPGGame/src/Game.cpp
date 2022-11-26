@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Game* Game::instance = NULL;
+Game* Game::instance = nullptr;
 
 Game* Game::getInstance() {
     if (instance == nullptr) {
@@ -30,7 +30,7 @@ Game::Game(const char* str) {
     title = str;
     VideoMode videoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
     std::string s(title);
-    this->window = new RenderWindow(videoMode, s);
+    window = new RenderWindow(videoMode, s);
     
     state = GameState::PAUSED;
     
@@ -83,8 +83,8 @@ void Game::render() {
     window->clear();
     GameMap* map = getCurrentGameMap();
     // drawing unreachable areas
-    for (int i = 0; i < map->getNumOfUnreachableAreas(); i++) {
-        window->draw(*(map->getUnreachableAreasSprites()[i]));
+    for (int i = 0; i < map->getLandscapes().size(); i++) {
+        window->draw(*(map->getLandscapes()[i]->getSprite()));
     }
     // drawing undead enemies
     for (int i = 0; i < map->getEnemies().size(); i++) {
@@ -104,7 +104,7 @@ void Game::start() {
 //    player->increaseSpeed(13);
     GameEntityMovement* playerMovement = new GameEntityMovement(player, true);
     GameEntityBattle* playerBattle = new GameEntityBattle(player);
-    GameEntityMovement* enemiesMovement = new GameEntityMovement(NULL, false);
+    GameEntityMovement* enemiesMovement = new GameEntityMovement(nullptr, false);
     
     bool canMove = false;
     
@@ -172,7 +172,7 @@ void Game::start() {
         if (state == GameState::PLAYING) {
             // make enemies move
             for (int i = 0; i < map->getEnemies().size(); i++) {
-                if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove()) {
+                if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
                     // choose random direction
@@ -208,6 +208,9 @@ void Game::start() {
         delete worldMap[i];
     }
 
+//    free(playerMovement);
+//    free(enemiesMovement);
+//    free(playerBattle);
     delete playerMovement;
     delete enemiesMovement;
     delete playerBattle;
@@ -266,21 +269,26 @@ void Game::initWorldMap() {
     //map->setTopEnterMinX(400);
     //map->setTopEnterMaxX(500);
     
-    IntRect* unreachableArea0 = new IntRect(SCREEN_WIDTH/4, SCREEN_HEIGHT/6, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-    IntRect* unreachableArea1 = new IntRect(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-    // FloatRect unreachableArea0(200, 100, 100, 100);
-    // FloatRect unreachableArea1(400, 400, 100, 100);
-    map->addUnreachableArea(unreachableArea0);
-    map->addUnreachableArea(unreachableArea1);
+//    IntRect* unreachableArea0 = new IntRect(SCREEN_WIDTH/4, SCREEN_HEIGHT/6, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+//    IntRect* unreachableArea1 = new IntRect(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+//    map->addUnreachableArea(unreachableArea0);
+//    map->addUnreachableArea(unreachableArea1);
+    LandscapeEntity* unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
+    LandscapeEntity* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 5*(SCREEN_WIDTH/16), SCREEN_HEIGHT/3);
+    map->addLandscape(unreachableTree0);
+    map->addLandscape(unreachableTree1);
     
     GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
-    IntRect* unreachableArea2 = new IntRect(SCREEN_WIDTH/8, SCREEN_HEIGHT/4, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-    IntRect* unreachableArea3 = new IntRect(SCREEN_WIDTH/4, 2*SCREEN_HEIGHT/3, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-    // FloatRect unreachableArea2(100, 150, 100, 100);
-    // FloatRect unreachableArea3(200, 400, 100, 100);
-    mapTop->addUnreachableArea(unreachableArea2);
-    mapTop->addUnreachableArea(unreachableArea3);
-    
+
+//    IntRect* unreachableArea2 = new IntRect(SCREEN_WIDTH/8, SCREEN_HEIGHT/4, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+//    IntRect* unreachableArea3 = new IntRect(SCREEN_WIDTH/4, 2*SCREEN_HEIGHT/3, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
+//    mapTop->addUnreachableArea(unreachableArea2);
+//    mapTop->addUnreachableArea(unreachableArea3);
+    LandscapeEntity* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
+    LandscapeEntity* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 5*(SCREEN_HEIGHT/12));
+    mapTop->addLandscape(unreachableTree2);
+    mapTop->addLandscape(unreachableTree3);
+
     mapTop->setBottomEnterMinX(SCREEN_WIDTH/2);
     mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // mapTop->setBottomEnterMinX(400);
@@ -291,10 +299,10 @@ void Game::initWorldMap() {
 //    mapTop->setBottomExitMaxX(500);
 
     // deallocate memory
-    delete unreachableArea0;
-    delete unreachableArea1;
-    delete unreachableArea2;
-    delete unreachableArea3;
+//    delete unreachableArea0;
+//    delete unreachableArea1;
+//    delete unreachableArea2;
+//    delete unreachableArea3;
 }
 
 int Game::getCurrentWorldMapRow() {

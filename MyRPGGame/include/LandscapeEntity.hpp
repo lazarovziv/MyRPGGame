@@ -4,26 +4,25 @@
 #define LandscapeEntity_hpp
 
 #include <stdio.h>
+#include <iostream>
 #include <SFML/Graphics.hpp>
+#include "../include/Constants.h"
+#include "../include/GameEntity.hpp"
 
 using namespace sf;
 
 enum class LandscapeType { TREE, GRASS, FLOWER, HOUSE }; // add more
 
-class LandscapeEntity {
+class LandscapeEntity : public GameEntity {
 private:
     long id;
-    Vector2f position;
-    Sprite sprite;
     LandscapeType type;
     
 public:
     LandscapeEntity();
-    LandscapeEntity(LandscapeType type, float x, float y);
-    ~LandscapeEntity() = default;
+    LandscapeEntity(LandscapeType type, int x, int y);
+    ~LandscapeEntity();
     long getID();
-    Vector2f getPosition();
-    Sprite getSprite();
     LandscapeType getType();
     
 };

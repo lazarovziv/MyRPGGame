@@ -87,6 +87,10 @@ vector<RectangleShape*> GameMap::getUnreachableAreasSprites() {
     return unreachableAreasSprites;
 }
 
+vector<LandscapeEntity*> GameMap::getLandscapes() {
+    return landscapes;
+}
+
 void GameMap::addUnreachableArea(IntRect* rect) {
     // creating drawable for unreachable area
     RectangleShape* rectShape = new RectangleShape(Vector2f((int) rect->width, (int) rect->height));
@@ -94,6 +98,10 @@ void GameMap::addUnreachableArea(IntRect* rect) {
     rectShape->setFillColor(Color::Red);
     unreachableAreasSprites.push_back(rectShape);
     numOfUnreachableAreas++;
+}
+
+void GameMap::addLandscape(LandscapeEntity *entity) {
+    landscapes.push_back(entity);
 }
 
 //NPCEnemy* GameMap::getEnemies() {
@@ -115,16 +123,16 @@ void GameMap::init() {
     IntRect* rect = new IntRect (randX, randY, Constants::TILE_SIZE, Constants::TILE_SIZE);
     Circle* circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
     // assuming position is invalid
-    bool validations[unreachableAreasSprites.size()];
-    for (int i = 0; i < unreachableAreasSprites.size(); i++) {
+    bool validations[landscapes.size()];
+    for (int i = 0; i < landscapes.size(); i++) {
         validations[i] = false;
     }
     // true if validations filled with true
     bool validPosition = false;
     while (!validPosition) {
         // checking all unreachable areas and exits (TODO: add other enemies)
-        for (int i = 0; i < unreachableAreasSprites.size(); i++) {
-            if (!(((IntRect) unreachableAreasSprites[i]->getGlobalBounds()).intersects(*rect))
+        for (int i = 0; i < landscapes.size(); i++) {
+            if (!(((IntRect) landscapes[i]->getRectangle()).intersects(*rect))
                 /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
                 && !circle.intersects(*leftExitCircle) && !circle.intersects(*rightExitCircle)*/) {
                 validations[i] = true;
@@ -140,17 +148,17 @@ void GameMap::init() {
                 i = -1;
             }
             // reached end of array, validating if all is well
-            if (i == unreachableAreasSprites.size() - 1) {
+            if (i == landscapes.size() - 1) {
                 bool check = true;
                 // check enemies positions
                 for (int j = 0; j < enemiesVector.size(); j++) {
                     if (enemiesVector[j]->getRectangle().intersects(*rect)) {
                         // start over
-                        for (int k = 0; k < unreachableAreasSprites.size(); k++) validations[k] = false;
+                        for (int k = 0; k < landscapes.size(); k++) validations[k] = false;
                     }
                 }
 
-                for (int k = 0; k < unreachableAreasSprites.size(); k++) {
+                for (int k = 0; k < landscapes.size(); k++) {
                     if (!validations[k]) check = false;
                 }
                 validPosition = check;

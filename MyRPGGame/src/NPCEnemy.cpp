@@ -20,9 +20,11 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
     moveDirection = MoveDirection::UP;
     spawn(x, y);
 
-    texture = new Texture();
-    texture->loadFromFile("../graphics/dorio_64.png");
-    sprite->setTexture(*texture);
+//    texture = new Texture();
+    sprite = new Sprite();
+    texture.loadFromFile("../graphics/dorio_64.png");
+    texture.setSmooth(true);
+    sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
@@ -37,7 +39,7 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
 
 NPCEnemy::~NPCEnemy() {
     delete sprite;
-    delete texture;
+//    delete texture;
     delete weapon;
     delete entityCircle;
     delete attackRangeCircle;

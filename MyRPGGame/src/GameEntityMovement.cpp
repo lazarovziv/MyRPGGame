@@ -72,7 +72,7 @@ bool GameEntityMovement::move(MoveDirection direction) {
 }
 
 bool GameEntityMovement::moveUp(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
-    int unreachableAreasSize = map->getNumOfUnreachableAreas();
+    int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached top of screen
     if (entityY - entitySpeed <= tileSize/2) {
@@ -92,14 +92,14 @@ bool GameEntityMovement::moveUp(GameMap* map, int entityX, int entityY, int enti
         return false;
     }
     // temp rectangle for moving up
-    FloatRect* rect = new FloatRect(entityRect.left, entityRect.top - entitySpeed, entityRect.width, entityRect.height);
+    IntRect* rect = new IntRect(entityRect.left, entityRect.top - entitySpeed, entityRect.width, entityRect.height);
     // temp circle for moving up
     Circle* circle = new Circle(entity->getCircle()->getCenter()->getX(),
                                 entity->getCircle()->getCenter()->getY() - entitySpeed,
                                 entity->getCircle()->getRadius());
-    // check if the move can ovelap with any of the unreachable areas
+    // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
             canCollide = true;
             break;
         }
@@ -125,7 +125,7 @@ bool GameEntityMovement::moveUp(GameMap* map, int entityX, int entityY, int enti
 }
 
 bool GameEntityMovement::moveDown(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
-    int unreachableAreasSize = map->getNumOfUnreachableAreas();
+    int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached bottom of screen
     if (entityY + entitySpeed >= screenHeight - tileSize/2) {
@@ -146,12 +146,12 @@ bool GameEntityMovement::moveDown(GameMap* map, int entityX, int entityY, int en
         return false;
     }
     // temp rectangle for moving down
-    FloatRect* rect = new FloatRect(entityRect.left, entityRect.top + entitySpeed, entityRect.width, entityRect.height);
+    IntRect* rect = new IntRect(entityRect.left, entityRect.top + entitySpeed, entityRect.width, entityRect.height);
     // temp circle for moving down
     Circle* circle = new Circle(entity->getCircle()->getCenter()->getX(), entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
-    // check if the move can ovelap with any of the unreachable areas
+    // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
             canCollide = true;
             break;
         }
@@ -178,7 +178,7 @@ bool GameEntityMovement::moveDown(GameMap* map, int entityX, int entityY, int en
 }
 
 bool GameEntityMovement::moveRight(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
-    int unreachableAreasSize = map->getNumOfUnreachableAreas();
+    int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached right of screen
     if (entityX + entitySpeed >= screenWidth - tileSize/2) {
@@ -199,12 +199,12 @@ bool GameEntityMovement::moveRight(GameMap* map, int entityX, int entityY, int e
         return false;
     }
     // temp rectangle for moving right
-    FloatRect* rect = new FloatRect(entityRect.left + entitySpeed, entityRect.top, entityRect.width, entityRect.height);
+    IntRect* rect = new IntRect(entityRect.left + entitySpeed, entityRect.top, entityRect.width, entityRect.height);
     // temp circle for moving right
     Circle* circle = new Circle(entity->getCircle()->getCenter()->getX() + entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
-    // check if the move can ovelap with any of the unreachable areas
+    // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
             canCollide = true;
             break;
         }
@@ -231,7 +231,7 @@ bool GameEntityMovement::moveRight(GameMap* map, int entityX, int entityY, int e
 }
 
 bool GameEntityMovement::moveLeft(GameMap* map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
-    int unreachableAreasSize = map->getNumOfUnreachableAreas();
+    int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached left of screen
     if (entityX - entitySpeed <= tileSize/2) {
@@ -252,12 +252,12 @@ bool GameEntityMovement::moveLeft(GameMap* map, int entityX, int entityY, int en
         return false;
     }
     // temp rectangle for moving left
-    FloatRect* rect = new FloatRect(entityRect.left - entitySpeed, entityRect.top, entityRect.width, entityRect.height);
+    IntRect* rect = new IntRect(entityRect.left - entitySpeed, entityRect.top, entityRect.width, entityRect.height);
     // temp circle for moving left
     Circle* circle = new Circle(entity->getCircle()->getCenter()->getX() - entitySpeed, entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
-    // check if the move can ovelap with any of the unreachable areas
+    // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getUnreachableAreasSprites()[i]->getGlobalBounds().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
             canCollide = true;
             break;
         }

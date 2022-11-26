@@ -10,6 +10,7 @@
 #include "Player.hpp"
 #include "NPCEnemy.hpp"
 #include "Constants.h"
+#include "../include/LandscapeEntity.hpp"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
