@@ -82,6 +82,8 @@ Game::Game(const char* str) {
 void Game::render() {
     window->clear();
     GameMap* map = getCurrentGameMap();
+    // draw background
+    window->draw(*(map->getBackgroundSprite()));
     // drawing unreachable areas
     for (int i = 0; i < map->getLandscapes().size(); i++) {
         window->draw(*(map->getLandscapes()[i]->getSprite()));
@@ -158,7 +160,7 @@ void Game::start() {
                         for (int i = 0; i < map->getEnemies().size(); i++) {
                             if (map->getEnemies()[i]->isInBattle()) {
                                 // if enemy not in range of player's attacks
-                                if (!player->getAttackRangeCircle()->intersects(map->getEnemies()[i]->getAttackRangeCircle())) {
+                                if (!player->getAttackRangeCircle()->intersects(map->getEnemies()[i]->getCircle())) {
                                     map->getEnemies()[i]->setIsInBattle(false);
                                 }
                             }

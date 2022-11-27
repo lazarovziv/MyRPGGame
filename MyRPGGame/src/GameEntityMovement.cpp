@@ -8,6 +8,14 @@ GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player) {
     tileSize = Constants::TILE_SIZE;
 }
 
+bool GameEntityMovement::moveTowardsEntity(GameEntity* gameEntity) {
+    while (entity->getPosition().x != gameEntity->getPosition().x &&
+    entity->getPosition().y != gameEntity->getPosition().y) {
+
+    }
+    return false;
+}
+
 bool GameEntityMovement::move(MoveDirection direction) {
     GameMap* map = Game::getInstance()->getCurrentGameMap();
     

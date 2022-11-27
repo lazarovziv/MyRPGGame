@@ -38,6 +38,7 @@ private:
     Circle* topExitCircle = nullptr;
     Circle* bottomExitCircle = nullptr;
 
+    Texture texture;
     Sprite* backgroundSprite;
     
     int numOfCurrentEnemies = 0;
@@ -56,6 +57,8 @@ public:
     int getWorldMapCol();
     
     void init();
+
+    Sprite* getBackgroundSprite();
 
     vector<LandscapeEntity*> getLandscapes();
     void addLandscape(LandscapeEntity* entity);

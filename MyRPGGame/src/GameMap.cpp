@@ -14,6 +14,14 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromBottom = down;
     exitableFromRight = right;
     exitableFromLeft = left;
+    backgroundSprite = new Sprite();
+    if (texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/trees/grass-800x600.png")) {
+        std::cout << "Background loaded properly." << endl;
+    } else std::cout << "Background NOT loaded." << endl;
+//    texture.setSmooth(true);
+    backgroundSprite->setTexture(texture);
+    backgroundSprite->setOrigin(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
+    backgroundSprite->setPosition(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
 }
 
 GameMap::~GameMap() {
@@ -40,9 +48,9 @@ int GameMap::getWorldMapCol() {
     return worldMapCol;
 }
 
-//int GameMap::getNumOfCurrentEnemies() {
-//    return numOfCurrentEnemies;
-//}
+Sprite* GameMap::getBackgroundSprite() {
+    return backgroundSprite;
+}
 
 bool GameMap::isExitableFromLeft() {
     return exitableFromLeft;
