@@ -27,7 +27,7 @@ Player::Player(PlayerType type) : GameEntity() {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
-    // playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
+    // TextureLoader.getInstance()->loadFromFile("player.png");
     sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
