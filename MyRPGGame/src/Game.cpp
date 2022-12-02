@@ -82,6 +82,8 @@ Game::Game(const char* str) {
 void Game::render() {
     window->clear();
     GameMap* map = getCurrentGameMap();
+    // draw background
+    window->draw(*(map->getBackgroundSprite()));
     // drawing unreachable areas
     for (int i = 0; i < map->getLandscapes().size(); i++) {
         window->draw(*(map->getLandscapes()[i]->getSprite()));
@@ -154,10 +156,16 @@ void Game::start() {
                     }
                     // do something if player moved
                     if (moved) {
-//                        cout << "Moved" << endl;
+                        // TODO: make enemies drawn to player???
+                        for (int i = 0; i < map->getEnemies().size(); i++) {
+                            if (map->getEnemies()[i]->isInBattle()) {
+                                // if enemy not in range of player's attacks
+                                if (!player->getAttackRangeCircle()->intersects(map->getEnemies()[i]->getCircle())) {
+                                    map->getEnemies()[i]->setIsInBattle(false);
+                                }
+                            }
+                        }
                     }
-                    // update player data
-//                    update();
                 } else if (state == GameState::IN_MENU) {
                     // exiting menu by pressing I again
                     if (eventKeyCode == Keyboard::I) {
@@ -208,9 +216,6 @@ void Game::start() {
         delete worldMap[i];
     }
 
-//    free(playerMovement);
-//    free(enemiesMovement);
-//    free(playerBattle);
     delete playerMovement;
     delete enemiesMovement;
     delete playerBattle;
@@ -259,50 +264,29 @@ void Game::update() {
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
     GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
+    // setting exit and enter points
     map->setTopExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
-    //map->setTopExit(400, 500);
-//    map->setTopExitMinX(400);
-//    map->setTopExitMaxX(500);
-
     map->setTopEnterMinX(SCREEN_WIDTH/2);
     map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
-    //map->setTopEnterMinX(400);
-    //map->setTopEnterMaxX(500);
-    
-//    IntRect* unreachableArea0 = new IntRect(SCREEN_WIDTH/4, SCREEN_HEIGHT/6, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-//    IntRect* unreachableArea1 = new IntRect(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-//    map->addUnreachableArea(unreachableArea0);
-//    map->addUnreachableArea(unreachableArea1);
+    // adding unreachable areas and landscapes
     LandscapeEntity* unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
     LandscapeEntity* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 5*(SCREEN_WIDTH/16), SCREEN_HEIGHT/3);
     map->addLandscape(unreachableTree0);
     map->addLandscape(unreachableTree1);
     
     GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
-
-//    IntRect* unreachableArea2 = new IntRect(SCREEN_WIDTH/8, SCREEN_HEIGHT/4, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-//    IntRect* unreachableArea3 = new IntRect(SCREEN_WIDTH/4, 2*SCREEN_HEIGHT/3, SCREEN_WIDTH/8, SCREEN_HEIGHT/6);
-//    mapTop->addUnreachableArea(unreachableArea2);
-//    mapTop->addUnreachableArea(unreachableArea3);
+    // setting exit and enter points
+    mapTop->setBottomEnterMinX(SCREEN_WIDTH/2);
+    mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    // adding unreachable areas and landscapes
     LandscapeEntity* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
     LandscapeEntity* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 5*(SCREEN_HEIGHT/12));
     mapTop->addLandscape(unreachableTree2);
     mapTop->addLandscape(unreachableTree3);
 
-    mapTop->setBottomEnterMinX(SCREEN_WIDTH/2);
-    mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
-    // mapTop->setBottomEnterMinX(400);
-    // mapTop->setBottomEnterMaxX(500);
-    mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
-    // mapTop->setBottomExit(400, 500);
-//    mapTop->setBottomExitMinX(400);
-//    mapTop->setBottomExitMaxX(500);
 
-    // deallocate memory
-//    delete unreachableArea0;
-//    delete unreachableArea1;
-//    delete unreachableArea2;
-//    delete unreachableArea3;
+    // deallocate memory if needed
 }
 
 int Game::getCurrentWorldMapRow() {

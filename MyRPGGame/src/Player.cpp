@@ -35,7 +35,7 @@ Player::Player(PlayerType type) : GameEntity() {
     sprite->setPosition(position.x, position.y);
     setPlayerType(type);
     entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/4);
-    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 13/3) + weapon->getHitRadius());
+    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
 }
 
 Player::~Player() {

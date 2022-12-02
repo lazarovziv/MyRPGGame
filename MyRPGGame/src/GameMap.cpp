@@ -14,11 +14,20 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromBottom = down;
     exitableFromRight = right;
     exitableFromLeft = left;
+    backgroundSprite = new Sprite();
+    if (texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/trees/grass-800x600.png")) {
+        std::cout << "Background loaded properly." << endl;
+    } else std::cout << "Background NOT loaded." << endl;
+//    texture.setSmooth(true);
+    backgroundSprite->setTexture(texture);
+    backgroundSprite->setOrigin(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
+    backgroundSprite->setPosition(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
 }
 
 GameMap::~GameMap() {
-    for (int i = 0; i < unreachableAreasSprites.size(); i++) {
-        if (unreachableAreasSprites.at(i)) delete unreachableAreasSprites.at(i);
+    if (backgroundSprite) delete backgroundSprite;
+    for (int i = 0; i < landscapes.size(); i++) {
+        if (landscapes.at(i)) delete landscapes.at(i);
     }
 
     for (int i = 0; i < enemiesVector.size(); i++) {
@@ -39,9 +48,9 @@ int GameMap::getWorldMapCol() {
     return worldMapCol;
 }
 
-//int GameMap::getNumOfCurrentEnemies() {
-//    return numOfCurrentEnemies;
-//}
+Sprite* GameMap::getBackgroundSprite() {
+    return backgroundSprite;
+}
 
 bool GameMap::isExitableFromLeft() {
     return exitableFromLeft;
@@ -79,34 +88,13 @@ void GameMap::setIsExitableFromBottom(bool flag) {
     exitableFromBottom = flag;
 }
 
-int GameMap::getNumOfUnreachableAreas() {
-    return unreachableAreasSprites.size();
-}
-
-vector<RectangleShape*> GameMap::getUnreachableAreasSprites() {
-    return unreachableAreasSprites;
-}
-
 vector<LandscapeEntity*> GameMap::getLandscapes() {
     return landscapes;
-}
-
-void GameMap::addUnreachableArea(IntRect* rect) {
-    // creating drawable for unreachable area
-    RectangleShape* rectShape = new RectangleShape(Vector2f((int) rect->width, (int) rect->height));
-    rectShape->setPosition(rect->left, rect->top);
-    rectShape->setFillColor(Color::Red);
-    unreachableAreasSprites.push_back(rectShape);
-    numOfUnreachableAreas++;
 }
 
 void GameMap::addLandscape(LandscapeEntity *entity) {
     landscapes.push_back(entity);
 }
-
-//NPCEnemy* GameMap::getEnemies() {
-//    return enemies;
-//}
 
 vector<NPCEnemy*> GameMap::getEnemies() {
     return enemiesVector;
