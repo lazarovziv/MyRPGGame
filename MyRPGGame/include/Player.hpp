@@ -7,10 +7,11 @@
 #include <iostream>
 #include "GameEntity.hpp"
 #include "Constants.h"
+#include "MovementSubject.hpp"
 
 enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 
-class Player : public GameEntity {
+class Player : public GameEntity, public MovementSubject {
 private:
     // for knight
     int* strengthPoints = nullptr;
@@ -27,7 +28,7 @@ private:
     
 public:
     Player();
-    Player(PlayerType type);
+    explicit Player(PlayerType type);
     ~Player();
     int getStrengthPoints();
     int getIntelligencePoints();
@@ -39,6 +40,8 @@ public:
     void levelUpCriticalHitsPoints();
     void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
+
+    void update() override;
 };
 
 #endif /* Player_hpp */

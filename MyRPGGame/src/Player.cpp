@@ -98,3 +98,15 @@ void Player::setPlayerType(PlayerType t) {
     // increase player stats with its' weapon's stats (maybe defence points for some?)
     increaseAttackPoints(weapon->getAttackPoints());
 }
+
+void Player::update() {
+    if (!dead) {
+        sprite->setPosition(position.x, position.y);
+        // updating entity circle and attack circle
+        entityCircle->getCenter()->setX(position.x);
+        entityCircle->getCenter()->setY(position.y);
+        attackRangeCircle->getCenter()->setX(position.x);
+        attackRangeCircle->getCenter()->setY(position.y);
+    }
+    notifyAll();
+}
