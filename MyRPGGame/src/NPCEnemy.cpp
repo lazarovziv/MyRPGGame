@@ -22,7 +22,8 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
 
 //    texture = new Texture();
     sprite = new Sprite();
-    texture.loadFromFile("../graphics/dorio_64.png");
+    // TextureLoader.getInstance()->loadTexture("dorio_64.png");
+    texture.loadFromFile("../../graphics/dorio_64.png");
     texture.setSmooth(true);
     sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));

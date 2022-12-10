@@ -21,9 +21,10 @@ void Game::disposeInstance() {
 }
 
 Game::~Game() {
-    if (player) delete player;
-    if (worldMap) delete worldMap;
-    if (window) delete window;
+    delete player;
+    delete worldMap;
+    delete window;
+    delete title;
 }
 
 Game::Game(const char* str) {
@@ -77,6 +78,8 @@ Game::Game(const char* str) {
     initWorldMap();
     // init first map
     getCurrentGameMap()->init();
+
+    start();
 }
 
 void Game::render() {
@@ -116,6 +119,7 @@ void Game::start() {
         Event event;
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
+                state = GameState::EXITING;
                 // add save game and exit message confirmation
                 window->close();
             }
@@ -124,6 +128,7 @@ void Game::start() {
                 int eventKeyCode = event.key.code;
                 // exit the game
                 if (eventKeyCode == Keyboard::Escape) {
+                    state = GameState::EXITING;
                     window->close();
                     // starting the game by pressing enter
                 } else if (eventKeyCode == Keyboard::Enter) {
@@ -213,7 +218,7 @@ void Game::start() {
         for (int j = 0; j < 3; j++) {
             delete worldMap[i][j];
         }
-        delete worldMap[i];
+        delete[] worldMap[i];
     }
 
     delete playerMovement;

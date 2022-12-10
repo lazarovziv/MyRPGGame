@@ -8,7 +8,7 @@ Player::Player() : GameEntity() {
 //    texture = new Texture();
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
     sprite = new Sprite();
-    texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player_down_1_64.png");
+    texture.loadFromFile("../graphics/player_down_1_64.png");
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
@@ -23,11 +23,11 @@ Player::Player(PlayerType type) : GameEntity() {
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
 //    texture = new Texture();
     sprite = new Sprite();
-    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
+    if (!texture.loadFromFile("../../graphics/johnny_64.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
-    // playerTexture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player.png");
+    // TextureLoader.getInstance()->loadFromFile("player.png");
     sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
@@ -97,4 +97,16 @@ void Player::setPlayerType(PlayerType t) {
     }
     // increase player stats with its' weapon's stats (maybe defence points for some?)
     increaseAttackPoints(weapon->getAttackPoints());
+}
+
+void Player::update() {
+    if (!dead) {
+        sprite->setPosition(position.x, position.y);
+        // updating entity circle and attack circle
+        entityCircle->getCenter()->setX(position.x);
+        entityCircle->getCenter()->setY(position.y);
+        attackRangeCircle->getCenter()->setX(position.x);
+        attackRangeCircle->getCenter()->setY(position.y);
+    }
+    notifyAll();
 }
