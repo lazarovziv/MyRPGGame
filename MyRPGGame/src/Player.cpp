@@ -1,6 +1,6 @@
 #include "../include/Player.hpp"
 //#include "Game.hpp"
-//#include "TextureLoader.hpp"
+#include "../include/TextureLoader.hpp"
 
 Player::Player() : GameEntity() {
     expPoints = 0;
@@ -19,11 +19,12 @@ Player::Player(PlayerType type) : GameEntity() {
     strengthPoints = 0;
     intelligencePoints = 0;
     criticalHitsPoints = 0;
+    this->type = type;
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
 //    texture = new Texture();
     sprite = new Sprite();
-    if (!texture.loadFromFile("../../graphics/johnny_64.png")) {
+    if (!texture.loadFromFile("graphics/johnny_64.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
@@ -42,7 +43,7 @@ Player::~Player() {
     delete sprite;
     delete entityCircle;
     delete attackRangeCircle;
-    if (weapon) delete weapon;
+    delete weapon;
     delete strengthPoints;
     delete intelligencePoints;
     delete criticalHitsPoints;

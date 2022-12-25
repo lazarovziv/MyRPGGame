@@ -5,7 +5,7 @@
 
 class MovementSubject {
 private:
-    std::vector<shared_ptr<MovementObserver>> observers;
+    std::vector<std::shared_ptr<MovementObserver>> observers;
 
 public:
     void registerObserver(std::shared_ptr<MovementObserver> observer);

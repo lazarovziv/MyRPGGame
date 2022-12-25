@@ -112,7 +112,7 @@ public:
     void attack(GameEntity &entity);
     bool move(MoveDirection direction);
     
-    void update();
+    virtual void update();
 };
 
 #endif /* GameEntity_hpp */

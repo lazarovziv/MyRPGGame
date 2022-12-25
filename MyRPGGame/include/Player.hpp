@@ -40,6 +40,8 @@ public:
     void levelUpCriticalHitsPoints();
     void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
+
+    void update();
 };
 
 #endif /* Player_hpp */

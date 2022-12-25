@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd MyRPGGame
-rm main.out
-make
-valgrind --leak-check=full --track-origins=yes --log-file=/home/ziv/projects/cpp/MyRPGGame/valgrind-log.txt ./main.out MyRPGGame
-

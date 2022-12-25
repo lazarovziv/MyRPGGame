@@ -3,7 +3,7 @@
 #include "../include/GameEntityBattle.hpp"
 //#include "TextureLoader.hpp"
 
-using namespace std;
+//using namespace std;
 
 Game* Game::instance = nullptr;
 
@@ -79,7 +79,6 @@ Game::Game(const char* str) {
     // init first map
     getCurrentGameMap()->init();
 
-    start();
 }
 
 void Game::render() {
@@ -107,16 +106,18 @@ void Game::start() {
     cout << "Press X near an enemy to attack" << endl;
     // initialize player's systems
 //    player->increaseSpeed(13);
-    GameEntityMovement* playerMovement = new GameEntityMovement(player, true);
-    GameEntityBattle* playerBattle = new GameEntityBattle(player);
-    GameEntityMovement* enemiesMovement = new GameEntityMovement(nullptr, false);
+    auto* playerMovement = new GameEntityMovement(player, true);
+    auto* playerBattle = new GameEntityBattle(player);
+    auto* enemiesMovement = new GameEntityMovement(nullptr, false);
     
     bool canMove = false;
-    
+
+    GameMap* map = getCurrentGameMap();
+    Event event;
+
     // game loop
     while (window->isOpen()) {
-        GameMap* map = getCurrentGameMap();
-        Event event;
+        map = getCurrentGameMap();
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
                 state = GameState::EXITING;
@@ -140,19 +141,35 @@ void Game::start() {
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
                         moved = playerMovement->move(MoveDirection::UP);
+                        // adding diagonal movement
+                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::RIGHT);
+                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::LEFT);
                     } else if (eventKeyCode == Keyboard::Down && canMove) {
                         moved = playerMovement->move(MoveDirection::DOWN);
+                        // adding diagonal movement
+                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::RIGHT);
+                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::LEFT);
                     } else if (eventKeyCode == Keyboard::Right && canMove) {
                         moved = playerMovement->move(MoveDirection::RIGHT);
+                        // adding diagonal movement
+                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP);
+                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN);
                     } else if (eventKeyCode == Keyboard::Left && canMove) {
                         moved = playerMovement->move(MoveDirection::LEFT);
-                        // pressing I sends to menu (not implemented menu yet)
-                    } else if (eventKeyCode == Keyboard::I) {
+                        // adding diagonal movement
+                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP);
+                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN);
+                    }
+
+                    // pressing I sends to menu (not implemented menu yet)
+                    if (eventKeyCode == Keyboard::I) {
                         changeState(GameState::IN_MENU);
                         cout << "In Menu (Press Enter to exit menu)" << endl;
                         canMove = false;
                         // pressing x for attacking
-                    } else if (eventKeyCode == Keyboard::X) {
+                    }
+                    // attacking
+                    if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < map->getEnemies().size(); i++) {
                             if (!map->getEnemies()[i]->isDead()) {
                                 playerBattle->attack(*(map->getEnemies()[i]));
@@ -189,7 +206,7 @@ void Game::start() {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
                     // choose random direction
-                    int randomDirection = (int) rand() % 4;
+                    int randomDirection = ((int) random()) % 4;
                     // DOWN, RIGHT, LEFT, UP
                     switch (randomDirection) {
                         case 0:
@@ -203,6 +220,9 @@ void Game::start() {
                             break;
                         case 3:
                             enemiesMovement->move(MoveDirection::UP);
+                            break;
+                        default:
+                            // TODO: add error handling
                             break;
                     }
                 }
@@ -246,10 +266,6 @@ GameMap* Game::getCurrentGameMap() {
     return worldMap[currentGameMapRow][currentGameMapCol];
 }
 
-void Game::setPlayer(Player* player) {
-    this->player = player;
-}
-
 void Game::update() {
     // updating player state
     player->update();
@@ -274,8 +290,8 @@ void Game::initWorldMap() {
     map->setTopEnterMinX(SCREEN_WIDTH/2);
     map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    LandscapeEntity* unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
-    LandscapeEntity* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 5*(SCREEN_WIDTH/16), SCREEN_HEIGHT/3);
+    auto* unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
+    auto* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 5*(SCREEN_WIDTH/16), SCREEN_HEIGHT/3);
     map->addLandscape(unreachableTree0);
     map->addLandscape(unreachableTree1);
     
@@ -285,8 +301,8 @@ void Game::initWorldMap() {
     mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    LandscapeEntity* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
-    LandscapeEntity* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 5*(SCREEN_HEIGHT/12));
+    auto* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
+    auto* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 5*(SCREEN_HEIGHT/12));
     mapTop->addLandscape(unreachableTree2);
     mapTop->addLandscape(unreachableTree3);
 

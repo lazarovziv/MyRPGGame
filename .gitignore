@@ -1,4 +1,2 @@
-*.txt
 .DS_Store
 *.xcuserstate
-*.out

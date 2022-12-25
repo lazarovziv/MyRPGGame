@@ -44,7 +44,6 @@ public:
     Player* getPlayer();
     void changeState(GameState state);
     GameMap* getCurrentGameMap();
-    void setPlayer(Player* player);
     int getCurrentWorldMapRow();
     int getCurrentWorldMapCol();
     void setCurrentWorldMapRow(int row);

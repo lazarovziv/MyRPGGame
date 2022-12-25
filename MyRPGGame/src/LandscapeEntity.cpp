@@ -9,19 +9,19 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, int x, int y) {
 
     switch (this->type) {
         case LandscapeType::TREE:
-            if (texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/trees/maple_64.png")) std::cout << "Tree loaded." << endl;
+            if (texture.loadFromFile("graphics/trees/maple_64.png")) std::cout << "Tree loaded." << endl;
             id = 1; // totally arbitrary
             break;
         case LandscapeType::GRASS:
-            texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/grass.png");
+            texture.loadFromFile("graphics/grass.png");
             id = 2; // totally arbitrary
             break;
         case LandscapeType::FLOWER:
-            texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/flower.png");
+            texture.loadFromFile("graphics/flower.png");
             id = 3; // totally arbitrary
             break;
         case LandscapeType::HOUSE:
-            texture.loadFromFile("/Users/zivlazarov/Projects/C++/MyRPGGame/graphics/house.png");
+            texture.loadFromFile("graphics/house.png");
             id = 4; // totally arbitrary
             break;
     }

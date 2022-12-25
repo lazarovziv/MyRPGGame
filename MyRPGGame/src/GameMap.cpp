@@ -15,7 +15,7 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromRight = right;
     exitableFromLeft = left;
     backgroundSprite = new Sprite();
-    if (texture.loadFromFile("../../graphics/trees/grass-800x600.png")) {
+    if (texture.loadFromFile("graphics/trees/grass-800x600.png")) {
         std::cout << "Background loaded properly." << endl;
     } else std::cout << "Background NOT loaded." << endl;
 //    texture.setSmooth(true);

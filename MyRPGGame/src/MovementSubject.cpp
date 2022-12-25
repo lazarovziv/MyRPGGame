@@ -13,6 +13,6 @@ void MovementSubject::registerObserver(std::shared_ptr<MovementObserver> observe
 
 void MovementSubject::unregisterObserver(std::shared_ptr<MovementObserver> observer) {
     if (std::find(observers.begin(), observers.end(), observer) != observers.end()) {
-        observers.erase(observer);
+//        observers.erase(observer);
     }
 }  
