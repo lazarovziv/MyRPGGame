@@ -603,12 +603,12 @@ CMakeFiles/main.out.dir/MyRPGGame/src/Game.cpp.o: MyRPGGame/src/Game.cpp \
   MyRPGGame/include/Circle.hpp \
   MyRPGGame/include/Point.hpp \
   MyRPGGame/include/Constants.h \
+  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp \
   MyRPGGame/include/Constants.h \
   MyRPGGame/include/GameEntity.hpp \
   MyRPGGame/include/Player.hpp \
   MyRPGGame/include/MovementSubject.hpp \
-  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp \
   MyRPGGame/include/GameEntityMovement.hpp \
   MyRPGGame/include/Game.hpp \
@@ -1628,6 +1628,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameEntityBattle.cpp.o: MyRPGGame/src/Game
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/time.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_types/_timeval64.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_select.h \
+  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp \
   MyRPGGame/include/Constants.h \
   MyRPGGame/include/GameEntity.hpp
@@ -2140,13 +2141,13 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameEntityMovement.cpp.o: MyRPGGame/src/Ga
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/time.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_types/_timeval64.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_select.h \
+  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp \
   MyRPGGame/include/Constants.h \
   MyRPGGame/include/GameEntity.hpp \
   MyRPGGame/include/Game.hpp \
   MyRPGGame/include/Player.hpp \
   MyRPGGame/include/MovementSubject.hpp \
-  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp
 
 CMakeFiles/main.out.dir/MyRPGGame/src/GameMap.cpp.o: MyRPGGame/src/GameMap.cpp \
@@ -2656,6 +2657,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameMap.cpp.o: MyRPGGame/src/GameMap.cpp \
   MyRPGGame/include/Circle.hpp \
   MyRPGGame/include/Point.hpp \
   MyRPGGame/include/Constants.h \
+  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp \
   MyRPGGame/include/Constants.h \
   MyRPGGame/include/GameEntity.hpp
@@ -4520,7 +4522,8 @@ CMakeFiles/main.out.dir/MyRPGGame/src/NPCEnemy.cpp.o: MyRPGGame/src/NPCEnemy.cpp
   MyRPGGame/include/Weapon.hpp \
   MyRPGGame/include/Circle.hpp \
   MyRPGGame/include/Point.hpp \
-  MyRPGGame/include/Constants.h
+  MyRPGGame/include/Constants.h \
+  MyRPGGame/include/MovementObserver.hpp
 
 CMakeFiles/main.out.dir/MyRPGGame/src/Player.cpp.o: MyRPGGame/src/Player.cpp \
   MyRPGGame/include/Player.hpp \
@@ -7124,12 +7127,12 @@ CMakeFiles/main.out.dir/MyRPGGame/src/main.cpp.o: MyRPGGame/src/main.cpp \
   MyRPGGame/include/Circle.hpp \
   MyRPGGame/include/Point.hpp \
   MyRPGGame/include/Constants.h \
+  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp \
   MyRPGGame/include/Constants.h \
   MyRPGGame/include/GameEntity.hpp \
   MyRPGGame/include/Player.hpp \
   MyRPGGame/include/MovementSubject.hpp \
-  MyRPGGame/include/MovementObserver.hpp \
   MyRPGGame/include/LandscapeEntity.hpp
 
 

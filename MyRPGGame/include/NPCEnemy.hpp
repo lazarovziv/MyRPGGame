@@ -10,13 +10,14 @@
 #include "GameEntity.hpp"
 #include "Circle.hpp"
 #include "Constants.h"
+#include "MovementObserver.hpp"
 #include <time.h>
 
 using namespace sf;
 
 enum class EnemyType { WORM, SNAKE, BIRD, ETC }; // add more
 
-class NPCEnemy : public GameEntity {
+class NPCEnemy : public GameEntity, public MovementObserver {
 private:
     // duration of "chasing" player after engaged close
     int battleTimeout;
@@ -58,6 +59,8 @@ public:
     void setSpawnArea(int centerX, int centerY, float radius);
     
     void spawn(int x, int y);
+
+    void notify();
 };
 
 #endif /* NPCEnemy_hpp */

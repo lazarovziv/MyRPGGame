@@ -9,6 +9,6 @@ private:
 
 public:
     void registerObserver(std::shared_ptr<MovementObserver> observer);
-    void unregisterObserver(std::shared_ptr<MovementObserver> observer);
+    void unregisterObserver(std::shared_ptr<MovementObserver> observer, int idx);
     void notifyAll();
 }; 

@@ -654,6 +654,7 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
                 break;
             }
         }
+        ((Player*) entity)->notifyAll();
     } else canCollide = downCircle->intersects(Game::getInstance()->getPlayer()->getCircle()) ||
                         leftCircle->intersects(Game::getInstance()->getPlayer()->getCircle());
 

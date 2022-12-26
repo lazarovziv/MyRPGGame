@@ -605,12 +605,12 @@ CMakeFiles/main.out.dir/MyRPGGame/src/Game.cpp.o
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Circle.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Point.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
+ /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/GameEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Player.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementSubject.hpp
- /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/GameEntityMovement.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Game.hpp
@@ -1632,6 +1632,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameEntityBattle.cpp.o
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/time.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_types/_timeval64.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_select.h
+ /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/GameEntity.hpp
@@ -2145,13 +2146,13 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameEntityMovement.cpp.o
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/time.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_types/_timeval64.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_select.h
+ /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/GameEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Game.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Player.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementSubject.hpp
- /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
 
 CMakeFiles/main.out.dir/MyRPGGame/src/GameMap.cpp.o
@@ -2662,6 +2663,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameMap.cpp.o
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Circle.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Point.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
+ /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/GameEntity.hpp
@@ -4531,6 +4533,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/NPCEnemy.cpp.o
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Circle.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Point.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
+ /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
 
 CMakeFiles/main.out.dir/MyRPGGame/src/Player.cpp.o
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/Player.cpp
@@ -7140,11 +7143,11 @@ CMakeFiles/main.out.dir/MyRPGGame/src/main.cpp.o
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Circle.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Point.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
+ /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Constants.h
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/GameEntity.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/Player.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementSubject.hpp
- /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/MovementObserver.hpp
  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/include/LandscapeEntity.hpp
 

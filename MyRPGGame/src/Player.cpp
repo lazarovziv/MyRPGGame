@@ -109,5 +109,4 @@ void Player::update() {
         attackRangeCircle->getCenter()->setX(position.x);
         attackRangeCircle->getCenter()->setY(position.y);
     }
-    notifyAll();
 }

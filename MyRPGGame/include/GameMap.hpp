@@ -77,6 +77,8 @@ public:
     void removeAllEnemies();
     
     int generateRandom(int min, int max);
+
+    void update();
     
     void setTopExit(float minX, float maxX) {
         topExitMinX = minX;

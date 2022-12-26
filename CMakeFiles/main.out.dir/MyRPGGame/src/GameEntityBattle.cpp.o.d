@@ -507,6 +507,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameEntityBattle.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/time.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_types/_timeval64.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/include/sys/_select.h \
+  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/MovementObserver.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/LandscapeEntity.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/Constants.h \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/GameEntity.hpp

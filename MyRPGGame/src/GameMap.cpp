@@ -185,7 +185,19 @@ int GameMap::generateRandom(int min, int max) {
 //    float diff = max - min;
 //    float r = random * diff;
 //    return min + r;
-    return min + (rand() % (max-min+1));
+    return min + (random() % (max-min+1));
+}
+
+void GameMap::update() {
+    for (int i = 0; i < enemiesVector.size(); i++) {
+        // checking if enemy is dead
+        if (enemiesVector[i]->isDead()) {
+            // remove it from currentEnemies
+            removeEnemyAtIndex(i);
+            continue;
+            // if enemy is still alive
+        } else enemiesVector[i]->update();
+    }
 }
 
 bool GameMap::operator==(const GameMap &map) {

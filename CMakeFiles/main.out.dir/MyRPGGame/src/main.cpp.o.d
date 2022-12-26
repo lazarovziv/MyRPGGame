@@ -507,10 +507,10 @@ CMakeFiles/main.out.dir/MyRPGGame/src/main.cpp.o: \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Circle.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Point.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Constants.h \
+  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/MovementObserver.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/LandscapeEntity.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/Constants.h \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/GameEntity.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Player.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/MovementSubject.hpp \
-  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/MovementObserver.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/LandscapeEntity.hpp

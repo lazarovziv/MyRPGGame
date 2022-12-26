@@ -97,3 +97,8 @@ bool NPCEnemy::canMove() {
     }
     return false;
 }
+
+// TODO: what to do here? how to use observers to my advantage
+void NPCEnemy::notify() {
+//    update();
+}

@@ -506,6 +506,7 @@ CMakeFiles/main.out.dir/MyRPGGame/src/GameMap.cpp.o: \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Circle.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Point.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Constants.h \
+  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/MovementObserver.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/LandscapeEntity.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/Constants.h \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/../include/GameEntity.hpp

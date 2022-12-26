@@ -274,17 +274,9 @@ GameMap* Game::getCurrentGameMap() {
 void Game::update() {
     // updating player state
     player->update();
-    // updating enemies states
+    // updating current map states
     GameMap* map = getCurrentGameMap();
-    for (int i = 0; i < map->getEnemies().size(); i++) {
-        // checking if enemy is dead
-        if (map->getEnemies()[i]->isDead()) {
-            // remove it from currentEnemies
-            map->removeEnemyAtIndex(i);
-            continue;
-            // if enemy is still alive
-        } else map->getEnemies()[i]->update();
-    }
+    map->update();
 }
 
 void Game::initWorldMap() {

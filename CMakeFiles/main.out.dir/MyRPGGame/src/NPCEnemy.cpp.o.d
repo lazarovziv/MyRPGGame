@@ -504,4 +504,5 @@ CMakeFiles/main.out.dir/MyRPGGame/src/NPCEnemy.cpp.o: \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Weapon.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Circle.hpp \
   /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Point.hpp \
-  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Constants.h
+  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/Constants.h \
+  /Users/zivlazarov/Projects/C++/MyRPGGame/MyRPGGame/src/../include/MovementObserver.hpp
