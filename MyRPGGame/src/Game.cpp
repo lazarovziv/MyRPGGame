@@ -112,7 +112,7 @@ void Game::start() {
     
     bool canMove = false;
 
-    GameMap* map = getCurrentGameMap();
+    GameMap* map;
     Event event;
 
     // game loop
@@ -140,25 +140,30 @@ void Game::start() {
                     bool moved = false;
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
-                        moved = playerMovement->move(MoveDirection::UP);
                         // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::RIGHT);
-                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::LEFT);
+                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::UP_RIGHT);
+                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::UP_LEFT);
+                        // no diagonal movement
+                        else moved = playerMovement->move(MoveDirection::UP);
+
                     } else if (eventKeyCode == Keyboard::Down && canMove) {
-                        moved = playerMovement->move(MoveDirection::DOWN);
                         // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::RIGHT);
-                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::LEFT);
+                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::DOWN_RIGHT);
+                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::DOWN_LEFT);
+                        else moved = playerMovement->move(MoveDirection::DOWN);
+
                     } else if (eventKeyCode == Keyboard::Right && canMove) {
-                        moved = playerMovement->move(MoveDirection::RIGHT);
                         // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP);
-                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN);
+                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP_RIGHT);
+                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN_RIGHT);
+                        else moved = playerMovement->move(MoveDirection::RIGHT);
+
                     } else if (eventKeyCode == Keyboard::Left && canMove) {
-                        moved = playerMovement->move(MoveDirection::LEFT);
                         // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP);
-                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN);
+                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP_LEFT);
+                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN_LEFT);
+                        // no diagonal movement
+                        else moved = playerMovement->move(MoveDirection::LEFT);
                     }
 
                     // pressing I sends to menu (not implemented menu yet)
@@ -205,7 +210,7 @@ void Game::start() {
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-                    // choose random direction
+                    // choose random direction (TODO: change to 8 as diagonal moves are to be added)
                     int randomDirection = ((int) random()) % 4;
                     // DOWN, RIGHT, LEFT, UP
                     switch (randomDirection) {

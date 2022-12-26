@@ -17,11 +17,16 @@ GameEntity::GameEntity() {
     moveDirection = MoveDirection::RIGHT;
     sprite = new Sprite();
 
+    // TODO: add diagonal keys and values
     moveDirectionsSpritesMap[MoveDirection::DOWN] = 0;
     moveDirectionsSpritesMap[MoveDirection::RIGHT] = 1;
     moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
     moveDirectionsSpritesMap[MoveDirection::UP] = 3;
-    
+    moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
+    moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
+    moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
+    moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
+
 //    movement = new GameEntityMovement(this);
 }
 

@@ -14,7 +14,7 @@
 //class GameEntityMovement;
 class GameEntityMovemennt;
 
-enum class MoveDirection { DOWN, RIGHT, LEFT, UP };
+enum class MoveDirection { DOWN, RIGHT, LEFT, UP, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT };
 
 using namespace std;
 using namespace sf;

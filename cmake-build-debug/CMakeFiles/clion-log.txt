@@ -1,4 +1,6 @@
 /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /Users/zivlazarov/Projects/C++/MyRPGGame -B /Users/zivlazarov/Projects/C++/MyRPGGame
+This is a Darwin system
+This is a Darwin system
 -- Found SFML 2.5.1 in /Library/Frameworks/SFML.framework/Resources/CMake
 -- Configuring done
 -- Generating done
