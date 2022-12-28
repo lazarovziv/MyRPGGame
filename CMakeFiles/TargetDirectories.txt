@@ -1,3 +1,2 @@
-/Users/zivlazarov/Projects/C++/MyRPGGame/CMakeFiles/main.out.dir
-/Users/zivlazarov/Projects/C++/MyRPGGame/CMakeFiles/edit_cache.dir
-/Users/zivlazarov/Projects/C++/MyRPGGame/CMakeFiles/rebuild_cache.dir
+/home/ziv/projects/cpp/MyRPGGame/CMakeFiles/edit_cache.dir
+/home/ziv/projects/cpp/MyRPGGame/CMakeFiles/rebuild_cache.dir

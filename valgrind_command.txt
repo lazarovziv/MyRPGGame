@@ -1,0 +1,1 @@
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=/home/ziv/projects/cpp/MyRPGGame/valgrind-log.txt ./main.out MyRPGGame
