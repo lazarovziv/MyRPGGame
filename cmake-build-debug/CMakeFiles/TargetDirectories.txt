@@ -1,3 +1,0 @@
-/Users/zivlazarov/Projects/C++/MyRPGGame/cmake-build-debug/CMakeFiles/MyRPGGame.dir
-/Users/zivlazarov/Projects/C++/MyRPGGame/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/zivlazarov/Projects/C++/MyRPGGame/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,3 @@
+/home/ziv/projects/cpp/MyRPGGame/build/CMakeFiles/main.out.dir
+/home/ziv/projects/cpp/MyRPGGame/build/CMakeFiles/edit_cache.dir
+/home/ziv/projects/cpp/MyRPGGame/build/CMakeFiles/rebuild_cache.dir

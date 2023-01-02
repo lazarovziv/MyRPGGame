@@ -32,7 +32,11 @@ Game::Game(const char* str) {
     VideoMode videoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
     std::string s(title);
     window = new RenderWindow(videoMode, s);
-    
+
+    window->setVerticalSyncEnabled(true);
+//    window->setFramerateLimit(Constants::FPS);
+    window->setFramerateLimit(0);
+
     state = GameState::PAUSED;
     
     int rows = 3;
@@ -104,8 +108,8 @@ void Game::start() {
     cout << "Press Enter to start" << endl;
     cout << "Press I to enter menu" << endl;
     cout << "Press X near an enemy to attack" << endl;
+
     // initialize player's systems
-//    player->increaseSpeed(13);
     auto* playerMovement = new GameEntityMovement(player, true);
     auto* playerBattle = new GameEntityBattle(player);
     auto* enemiesMovement = new GameEntityMovement(nullptr, false);
@@ -288,7 +292,7 @@ void Game::initWorldMap() {
     map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
     auto* unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
-    auto* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 5*(SCREEN_WIDTH/16), SCREEN_HEIGHT/3);
+    auto* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
     map->addLandscape(unreachableTree0);
     map->addLandscape(unreachableTree1);
     
@@ -298,8 +302,8 @@ void Game::initWorldMap() {
     mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    auto* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
-    auto* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 5*(SCREEN_HEIGHT/12));
+    auto* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, 6.5*SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
+    auto* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 7*(SCREEN_HEIGHT/12));
     mapTop->addLandscape(unreachableTree2);
     mapTop->addLandscape(unreachableTree3);
 

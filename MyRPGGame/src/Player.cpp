@@ -24,7 +24,7 @@ Player::Player(PlayerType type) : GameEntity() {
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
 //    texture = new Texture();
     sprite = new Sprite();
-    if (!texture.loadFromFile("graphics/johnny_64.png")) {
+    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;

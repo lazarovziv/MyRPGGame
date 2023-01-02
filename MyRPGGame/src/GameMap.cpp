@@ -15,7 +15,7 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromRight = right;
     exitableFromLeft = left;
     backgroundSprite = new Sprite();
-    if (texture.loadFromFile("graphics/trees/grass-800x600.png")) {
+    if (texture.loadFromFile("../graphics/trees/grass-800x600.png")) {
         std::cout << "Background loaded properly." << endl;
     } else std::cout << "Background NOT loaded." << endl;
 //    texture.setSmooth(true);
@@ -25,19 +25,19 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
 }
 
 GameMap::~GameMap() {
-    if (backgroundSprite) delete backgroundSprite;
+    delete backgroundSprite;
     for (int i = 0; i < landscapes.size(); i++) {
-        if (landscapes.at(i)) delete landscapes.at(i);
+        delete landscapes[i];
     }
 
     for (int i = 0; i < enemiesVector.size(); i++) {
-        delete enemiesVector.at(i);
+        delete enemiesVector[i];
     }
 
-    if (leftExitCircle) delete leftExitCircle;
-    if (rightExitCircle) delete rightExitCircle;
-    if (topExitCircle) delete topExitCircle;
-    if (bottomExitCircle) delete bottomExitCircle;
+    delete leftExitCircle;
+    delete rightExitCircle;
+    delete topExitCircle;
+    delete bottomExitCircle;
 }
 
 int GameMap::getWorldMapRow() {
@@ -67,10 +67,6 @@ bool GameMap::isExitableFromTop() {
 bool GameMap::isExitableFromBottom() {
     return exitableFromBottom;
 }
-
-//vector<NPCEnemy*> GameMap::getEnemies() {
-//    return enemies;
-//}
 
 void GameMap::setIsExitableFromLeft(bool flag) {
     exitableFromLeft = flag;
@@ -153,11 +149,12 @@ void GameMap::init() {
             }
         }
     }
+
     // deallocating memory
     delete rect;
     delete circle;
 
-    NPCEnemy* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
+    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
