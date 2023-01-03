@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(MyRPGGame)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+# For MacOS machine ONLY, uncomment line below
+#set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp
         MyRPGGame/src/Game.cpp MyRPGGame/src/GameEntity.cpp MyRPGGame/src/GameEntityBattle.cpp
