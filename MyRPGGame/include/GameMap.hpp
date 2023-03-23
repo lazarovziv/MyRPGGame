@@ -4,6 +4,7 @@
 #define GameMap_hpp
 
 #include <stdio.h>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "NPCEnemy.hpp"
 #include <vector>

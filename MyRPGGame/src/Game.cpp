@@ -1,6 +1,4 @@
 #include "../include/Game.hpp"
-#include "../include/GameEntityMovement.hpp"
-#include "../include/GameEntityBattle.hpp"
 //#include "TextureLoader.hpp"
 
 //using namespace std;
@@ -110,13 +108,13 @@ void Game::start() {
     cout << "Press X near an enemy to attack" << endl;
 
     // initialize player's systems
-    auto* playerMovement = new GameEntityMovement(player, true);
-    auto* playerBattle = new GameEntityBattle(player);
-    auto* enemiesMovement = new GameEntityMovement(nullptr, false);
+    auto *playerMovement = new GameEntityMovement(player, true);
+    auto *playerBattle = new GameEntityBattle(player);
+    auto *enemiesMovement = new GameEntityMovement(nullptr, false);
     
     bool canMove = false;
 
-    GameMap* map;
+    GameMap *map;
     Event event;
 
     // game loop
@@ -279,20 +277,20 @@ void Game::update() {
     // updating player state
     player->update();
     // updating current map states
-    GameMap* map = getCurrentGameMap();
+    GameMap *map = getCurrentGameMap();
     map->update();
 }
 
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
-    GameMap* map = worldMap[currentGameMapRow][currentGameMapRow];
+    GameMap *map = worldMap[currentGameMapRow][currentGameMapRow];
     // setting exit and enter points
     map->setTopExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
     map->setTopEnterMinX(SCREEN_WIDTH/2);
     map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    auto* unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
-    auto* unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
+    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
+    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
     map->addLandscape(unreachableTree0);
     map->addLandscape(unreachableTree1);
     
@@ -302,8 +300,8 @@ void Game::initWorldMap() {
     mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    auto* unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, 6.5*SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
-    auto* unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 7*(SCREEN_HEIGHT/12));
+    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, 6.5*SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
+    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 7*(SCREEN_HEIGHT/12));
     mapTop->addLandscape(unreachableTree2);
     mapTop->addLandscape(unreachableTree3);
 
@@ -319,7 +317,7 @@ int Game::getCurrentWorldMapCol() {
     return currentGameMapCol;
 }
 
-Player* Game::getPlayer() {
+Player *Game::getPlayer() {
     return player;
 }
 

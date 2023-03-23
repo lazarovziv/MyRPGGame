@@ -1,5 +1,4 @@
 #include "../include/Point.hpp"
-#include <cmath>
 
 Point::Point(int X, int Y) {
     x = X;

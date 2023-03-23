@@ -10,7 +10,9 @@
 #include "Player.hpp"
 #include "NPCEnemy.hpp"
 #include "Constants.h"
-#include "../include/LandscapeEntity.hpp"
+#include "LandscapeEntity.hpp"
+#include "GameEntityMovement.hpp"
+#include "GameEntityBattle.hpp"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
@@ -22,16 +24,17 @@ private:
     GameState state;
     
     // entities
-    Player* player = nullptr;
+     Player *player = nullptr;
+    // Player player();
     
-    GameMap*** worldMap;
+    GameMap ***worldMap;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
-    Game(const char* str);
+    Game(const char *str);
     
 public:
-    Game(Game& game) = delete;
+    Game(Game &game) = delete;
     ~Game();
     void operator=(const Game&) = delete;
     static const int SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;

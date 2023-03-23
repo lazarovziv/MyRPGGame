@@ -1,5 +1,5 @@
 #include "../include/Circle.hpp"
-#include <cmath>
+
 
 Circle::Circle(int x, int y, float r) {
     center = new Point(x, y);

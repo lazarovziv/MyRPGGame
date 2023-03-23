@@ -3,6 +3,7 @@
 #define Point_hpp
 
 #include <stdio.h>
+#include <cmath>
 
 class Point {
 private:

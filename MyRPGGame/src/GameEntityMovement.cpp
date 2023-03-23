@@ -9,10 +9,7 @@ GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player) {
 }
 
 bool GameEntityMovement::moveTowardsEntity(GameEntity* gameEntity) {
-    while (entity->getPosition().x != gameEntity->getPosition().x &&
-    entity->getPosition().y != gameEntity->getPosition().y) {
-
-    }
+    // TODO: implement depth first search or A*
     return false;
 }
 

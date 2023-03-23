@@ -4,6 +4,7 @@
 #define GameEntity_hpp
 
 #include <stdio.h>
+#include <cmath>
 #include <map>
 #include <iostream>
 #include <SFML/Graphics.hpp>

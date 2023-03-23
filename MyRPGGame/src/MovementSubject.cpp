@@ -1,5 +1,4 @@
 #include "../include/MovementSubject.hpp"
-#include <algorithm>
 
 void MovementSubject::notifyAll() {
     for (auto itr = observers.begin(); itr != observers.end(); itr++) (*itr)->notify();

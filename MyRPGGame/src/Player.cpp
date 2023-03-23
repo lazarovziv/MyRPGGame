@@ -1,6 +1,5 @@
 #include "../include/Player.hpp"
 //#include "Game.hpp"
-#include "../include/TextureLoader.hpp"
 
 Player::Player() : GameEntity() {
     expPoints = 0;

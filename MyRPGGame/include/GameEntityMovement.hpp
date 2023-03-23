@@ -21,7 +21,7 @@ private:
     bool moveRight(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     bool moveLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     // diagonal moves
-    bool moveUpRight(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
+    bool moveUpRight(GameMap  *currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     bool moveUpLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     bool moveDownRight(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     bool moveDownLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);

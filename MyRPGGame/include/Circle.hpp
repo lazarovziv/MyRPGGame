@@ -3,6 +3,7 @@
 #define Circle_hpp
 
 #include <stdio.h>
+#include <cmath>
 #include "Point.hpp"
 
 class Circle {

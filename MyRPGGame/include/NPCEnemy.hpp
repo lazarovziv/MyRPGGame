@@ -5,13 +5,12 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <sys/time.h>
 #include <ctime>
 #include "GameEntity.hpp"
 #include "Circle.hpp"
 #include "Constants.h"
 #include "MovementObserver.hpp"
-#include <time.h>
+#include <ctime>
 
 using namespace sf;
 
@@ -36,7 +35,7 @@ private:
     
     int expPointsWorth;
     
-    Circle* spawnArea = nullptr;
+    Circle *spawnArea = nullptr;
     
 public:
     static const int WORM = 1;

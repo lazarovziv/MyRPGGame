@@ -1,6 +1,4 @@
 #include "../include/GameEntity.hpp"
-#include <cmath>
-#include <iostream>
 
 GameEntity::GameEntity() {
     level = 1;
