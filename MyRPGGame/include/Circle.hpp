@@ -8,7 +8,7 @@
 
 class Circle {
 private:
-    Point* center = nullptr;
+    Point *center = nullptr;
     float radius;
     
 public:

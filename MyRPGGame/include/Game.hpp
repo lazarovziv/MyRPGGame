@@ -18,9 +18,9 @@ enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
 class Game {
 private:
-    static Game* instance;
-    RenderWindow* window = nullptr;
-    const char* title;
+    static Game *instance;
+    RenderWindow *window = nullptr;
+    const char *title;
     GameState state;
     
     // entities

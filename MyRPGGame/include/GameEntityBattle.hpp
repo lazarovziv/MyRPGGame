@@ -10,7 +10,7 @@ using namespace std;
 
 class GameEntityBattle {
 private:
-    GameEntity* entity;
+    GameEntity *entity;
     
 public:
     GameEntityBattle(GameEntity* entity);

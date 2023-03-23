@@ -11,7 +11,7 @@
 
 class GameEntityMovement {
 private:
-    GameEntity* entity;
+    GameEntity *entity;
     bool isPlayer;
     int screenWidth, screenHeight;
     int tileSize;

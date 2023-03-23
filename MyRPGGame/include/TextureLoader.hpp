@@ -4,7 +4,7 @@
 
 class TextureLoader {
 private:
-    static TextureLoader* instance;
+    static TextureLoader *instance;
     TextureLoader();
     
 public:

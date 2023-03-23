@@ -14,7 +14,7 @@ private:
     int velocity;
     ProjectileType type;
     Vector2i position;
-    Sprite* sprite = nullptr;
+    Sprite *sprite = nullptr;
     
 public:
     Projectile();

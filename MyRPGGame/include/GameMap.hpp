@@ -34,13 +34,13 @@ private:
     float topExitMinX, topExitMaxX;
     float bottomExitMinX, bottomExitMaxX;
     
-    Circle* leftExitCircle = nullptr;
-    Circle* rightExitCircle = nullptr;
-    Circle* topExitCircle = nullptr;
-    Circle* bottomExitCircle = nullptr;
+    Circle *leftExitCircle = nullptr;
+    Circle *rightExitCircle = nullptr;
+    Circle *topExitCircle = nullptr;
+    Circle *bottomExitCircle = nullptr;
 
     Texture texture;
-    Sprite* backgroundSprite;
+    Sprite *backgroundSprite;
     
     int numOfCurrentEnemies = 0;
     const int NUM_OF_MAX_ENEMIES = 3;
