@@ -2,3 +2,4 @@
 *.xcuserstate
 *.o
 token.txt
+db_creds.txt
