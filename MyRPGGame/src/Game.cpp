@@ -117,26 +117,31 @@ void Game::start() {
     auto *enemiesMovement = new GameEntityMovement(nullptr, false);
     
     bool canMove = false;
+    int running = window->isOpen();
 
     GameMap *map;
     Event event;
 
+    int eventKeyCode;
+
     // game loop
-    while (window->isOpen()) {
+    while (/*window->isOpen() && */running) {
         map = getCurrentGameMap();
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
                 state = GameState::EXITING;
                 // add save game and exit message confirmation
-                window->close();
+//                window->close();
+                running = false;
             }
 
             if (event.type == Event::KeyPressed) {
-                int eventKeyCode = event.key.code;
+                eventKeyCode = event.key.code;
                 // exit the game
                 if (eventKeyCode == Keyboard::Escape) {
                     state = GameState::EXITING;
-                    window->close();
+//                    window->close();
+                    running = false;
                     // starting the game by pressing enter
                 } else if (eventKeyCode == Keyboard::Enter) {
                     changeState(GameState::PLAYING);
@@ -182,7 +187,7 @@ void Game::start() {
                     // attacking
                     if (eventKeyCode == Keyboard::X) {
                         for (int i = 0; i < map->getEnemies().size(); i++) {
-                            if (!map->getEnemies()[i]->isDead()) {
+                            if (!map->getEnemies().at(i)->isDead()) {
                                 playerBattle->attack(*(map->getEnemies()[i]));
                             }
                         }
@@ -191,10 +196,10 @@ void Game::start() {
                     if (moved) {
                         // TODO: make enemies drawn to player???
                         for (int i = 0; i < map->getEnemies().size(); i++) {
-                            if (map->getEnemies()[i]->isInBattle()) {
+                            if (map->getEnemies().at(i)->isInBattle()) {
                                 // if enemy not in range of player's attacks
-                                if (!player->getAttackRangeCircle()->intersects(map->getEnemies()[i]->getCircle())) {
-                                    map->getEnemies()[i]->setIsInBattle(false);
+                                if (!player->getAttackRangeCircle()->intersects(map->getEnemies().at(i)->getCircle())) {
+                                    map->getEnemies().at(i)->setIsInBattle(false);
                                 }
                             }
                         }
@@ -216,8 +221,8 @@ void Game::start() {
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-                    // choose random direction (TODO: change to 8 as diagonal moves are to be added)
-                    int randomDirection = ((int) random()) % 4;
+                    // choose random direction
+                    int randomDirection = ((int) random()) % 8;
                     // DOWN, RIGHT, LEFT, UP
                     switch (randomDirection) {
                         case 0:
@@ -231,6 +236,18 @@ void Game::start() {
                             break;
                         case 3:
                             enemiesMovement->move(MoveDirection::UP);
+                            break;
+                        case 4:
+                            enemiesMovement->move(MoveDirection::DOWN_RIGHT);
+                            break;
+                        case 5:
+                            enemiesMovement->move(MoveDirection::DOWN_LEFT);
+                            break;
+                        case 6:
+                            enemiesMovement->move(MoveDirection::UP_RIGHT);
+                            break;
+                        case 7:
+                            enemiesMovement->move(MoveDirection::UP_LEFT);
                             break;
                         default:
                             // TODO: add error handling
@@ -255,6 +272,8 @@ void Game::start() {
     delete playerMovement;
     delete enemiesMovement;
     delete playerBattle;
+
+    disposeInstance();
 }
 
 void Game::changeState(GameState state) {
