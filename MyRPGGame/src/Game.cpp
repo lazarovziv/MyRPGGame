@@ -19,6 +19,12 @@ void Game::disposeInstance() {
 }
 
 Game::~Game() {
+    for (int row = 0; row < Constants::NUM_ROWS; row++) {
+        for (int col = 0; col < Constants::NUM_COLS; col++) {
+            delete worldMap[row][col];
+        }
+        delete[] worldMap[row];
+    }
     delete player;
     delete worldMap;
     delete window;
@@ -36,17 +42,15 @@ Game::Game(const char* str) {
     window->setFramerateLimit(0);
 
     state = GameState::PAUSED;
+
+    worldMap = new GameMap**[Constants::NUM_ROWS];
     
-    int rows = 3;
-    int cols = 3;
-    worldMap = new GameMap**[rows];
-    
-    for (int r = 0; r < rows; r++) {
-        worldMap[r] = new GameMap*[cols];
-        for (int c = 0; c < cols; c++) {
+    for (int r = 0; r < Constants::NUM_ROWS; r++) {
+        worldMap[r] = new GameMap*[Constants::NUM_COLS];
+        for (int c = 0; c < Constants::NUM_COLS; c++) {
             worldMap[r][c] = new GameMap(r, c);
             // cant go down but can go right, left and up
-            if (r == rows - 1) {
+            if (r == Constants::NUM_ROWS - 1) {
                 worldMap[r][c] = new GameMap(r, c, true, false, true, true);
                 continue;
             }
@@ -56,7 +60,7 @@ Game::Game(const char* str) {
                 continue;
             }
             // cant go right but can go down, up and left
-            if (c == cols - 1) {
+            if (c == Constants::NUM_COLS - 1) {
                 worldMap[r][c] = new GameMap(r, c, true, true, false, true);
                 continue;
             }
