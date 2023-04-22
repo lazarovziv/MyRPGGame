@@ -8,8 +8,15 @@ template<typename T1> struct greaterPair {
 
 Graph::Graph() = default;
 
-void Graph::addVertex(GameEntity * vertex) {
+void Graph::addVertex(GameEntity *vertex) {
     adjVertices[vertex] = new std::vector<std::pair<GameEntity *, int>>();
+    vertices.push_back(vertex);
+}
+
+void Graph::removeVertex(GameEntity *vertex) {
+//    auto iterator = adjVertices.find(vertex);
+    adjVertices.erase(vertex);
+    vertices.erase(std::find(vertices.begin(), vertices.end(), vertex));
 }
 
 void Graph::addEdge(GameEntity * vertex1, GameEntity * vertex2, int edge) {
@@ -61,12 +68,23 @@ std::map<GameEntity *, GameEntity *> Graph::dijkstra(GameEntity * source) {
 
 void Graph::clear() {
     adjVertices.clear();
+    vertices.clear();
 }
 
 std::vector<std::pair<GameEntity *, int>> *Graph::getNeighbors(GameEntity *vertex) {
     return adjVertices[vertex];
 }
 
+std::vector<GameEntity *> Graph::getVertices() {
+    return vertices;
+}
+
 int Graph::getSize() {
     return adjVertices.size();
+}
+
+void Graph::printPath(const std::map<GameEntity *, GameEntity *>& path) {
+    for (auto &pair : path) {
+        cout << "(" << pair.second->getPosition().x << ", " << pair.second->getPosition().y << ") -> (" << pair.first->getPosition().x << ", " << pair.first->getPosition().y << ")" << endl;
+    }
 }
