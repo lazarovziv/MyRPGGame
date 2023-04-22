@@ -85,6 +85,30 @@ Game::Game(const char* str) {
     // init first map
     getCurrentGameMap()->init();
 
+    Graph graph;
+    graph.addVertex(player);
+    NPCEnemy enemy0(0, 100, 100);
+    NPCEnemy enemy1(0, 100, 200);
+    NPCEnemy enemy2(0, 200, 100);
+    NPCEnemy enemy3(0, 200, 200);
+    graph.addVertex(&enemy0);
+    graph.addVertex(&enemy1);
+    graph.addVertex(&enemy2);
+    graph.addVertex(&enemy3);
+    graph.addEdge(player, &enemy0, 10);
+    graph.addEdge(player, &enemy1, 20);
+    graph.addEdge(player, &enemy2, 3);
+    graph.addEdge(player, &enemy3, 13);
+    graph.addEdge(&enemy0, &enemy1, 5);
+    graph.addEdge(&enemy0, &enemy2, 5);
+    graph.addEdge(&enemy1, &enemy3, 5);
+    graph.addEdge(&enemy2, &enemy3, 5);
+
+    std::map<GameEntity *, GameEntity *> paths = graph.dijkstra(player);
+    for (auto &pair : paths) {
+        cout << "(" << pair.second->getPosition().x << ", " << pair.second->getPosition().y << ") -> (" << pair.first->getPosition().x << ", " << pair.first->getPosition().y << ")" << endl;
+    }
+
 }
 
 void Game::render() {
@@ -222,37 +246,9 @@ void Game::start() {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
                     // choose random direction
-                    int randomDirection = ((int) random()) % 8;
-                    // DOWN, RIGHT, LEFT, UP
-                    switch (randomDirection) {
-                        case 0:
-                            enemiesMovement->move(MoveDirection::DOWN);
-                            break;
-                        case 1:
-                            enemiesMovement->move(MoveDirection::RIGHT);
-                            break;
-                        case 2:
-                            enemiesMovement->move(MoveDirection::LEFT);
-                            break;
-                        case 3:
-                            enemiesMovement->move(MoveDirection::UP);
-                            break;
-                        case 4:
-                            enemiesMovement->move(MoveDirection::DOWN_RIGHT);
-                            break;
-                        case 5:
-                            enemiesMovement->move(MoveDirection::DOWN_LEFT);
-                            break;
-                        case 6:
-                            enemiesMovement->move(MoveDirection::UP_RIGHT);
-                            break;
-                        case 7:
-                            enemiesMovement->move(MoveDirection::UP_LEFT);
-                            break;
-                        default:
-                            // TODO: add error handling
-                            break;
-                    }
+                    int randomDirection = ((int) random()) % 4;
+                    // TODO: create moveRandomly function in GameMovementEntity
+                    enemiesMovement->moveRandomly(randomDirection);
                 }
             }
             update();

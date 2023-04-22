@@ -3,7 +3,6 @@
 #ifndef Game_hpp
 #define Game_hpp
 
-#include <stdio.h>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "GameMap.hpp"
@@ -13,6 +12,7 @@
 #include "LandscapeEntity.hpp"
 #include "GameEntityMovement.hpp"
 #include "GameEntityBattle.hpp"
+#include "Graph.hpp"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
 
