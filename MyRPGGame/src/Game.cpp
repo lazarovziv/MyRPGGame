@@ -43,10 +43,10 @@ Game::Game(const char* str) {
 
     state = GameState::PAUSED;
 
-    worldMap = new GameMap**[Constants::NUM_ROWS];
-    
+    // init world map
+    worldMap = new GameMap **[Constants::NUM_ROWS];
     for (int r = 0; r < Constants::NUM_ROWS; r++) {
-        worldMap[r] = new GameMap*[Constants::NUM_COLS];
+        worldMap[r] = new GameMap *[Constants::NUM_COLS];
         for (int c = 0; c < Constants::NUM_COLS; c++) {
             worldMap[r][c] = new GameMap(r, c);
             // cant go down but can go right, left and up
@@ -73,7 +73,16 @@ Game::Game(const char* str) {
             worldMap[r][c] = new GameMap(r, c, true, true, true, true);
         }
     }
-    
+
+    // init points
+    points = new Point **[Constants::SCREEN_HEIGHT];
+    for (int x = 0; x < Constants::SCREEN_HEIGHT; x++) {
+        points[x] = new Point *[Constants::SCREEN_WIDTH];
+        for (int y = 0; y < Constants::SCREEN_WIDTH; y++) {
+            points[x][y] = new Point(x, y);
+        }
+    }
+
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
@@ -85,29 +94,60 @@ Game::Game(const char* str) {
     // init first map
     getCurrentGameMap()->init();
 
-    Graph graph;
-    graph.addVertex(player);
-    NPCEnemy enemy0(0, 100, 100);
-    NPCEnemy enemy1(0, 100, 200);
-    NPCEnemy enemy2(0, 200, 100);
-    NPCEnemy enemy3(0, 200, 200);
-    graph.addVertex(&enemy0);
-    graph.addVertex(&enemy1);
-    graph.addVertex(&enemy2);
-    graph.addVertex(&enemy3);
-    graph.addEdge(player, &enemy0, 10);
-    graph.addEdge(player, &enemy1, 20);
-    graph.addEdge(player, &enemy2, 3);
-    graph.addEdge(player, &enemy3, 13);
-    graph.addEdge(&enemy0, &enemy1, 5);
-    graph.addEdge(&enemy0, &enemy2, 5);
-    graph.addEdge(&enemy1, &enemy3, 5);
-    graph.addEdge(&enemy2, &enemy3, 5);
+    Graph<Point *> graph;
+    bool occupied = false;
+    // add vertices
+    for (int x = 0; x < Constants::SCREEN_HEIGHT; x += Constants::BASE_ENTITY_SPEED) {
+        for (int y = 0; y < Constants::SCREEN_WIDTH; y += Constants::BASE_ENTITY_SPEED) {
+            for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
+                if (landscape->getCircle()->getCenter()->getX() == x && landscape->getCircle()->getCenter()->getY() == y) occupied = true;
+            }
 
-    std::map<GameEntity *, GameEntity *> paths = graph.dijkstra(player);
-    for (auto &pair : paths) {
-        cout << "(" << pair.second->getPosition().x << ", " << pair.second->getPosition().y << ") -> (" << pair.first->getPosition().x << ", " << pair.first->getPosition().y << ")" << endl;
+            if (!occupied) graph.addVertex(points[x][y]);
+            occupied = false;
+        }
     }
+
+    cout << "Size: " << graph.getSize() << endl;
+
+    // add edges
+    for (int x = 0; x < Constants::SCREEN_HEIGHT; x += Constants::BASE_ENTITY_SPEED) {
+        for (int y = 0; y < Constants::SCREEN_WIDTH; y += Constants::BASE_ENTITY_SPEED) {
+            if (!graph.isInGraph(points[x][y])) continue;
+            // top row
+            if (x == 0) {
+                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph.isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                if (graph.isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                continue;
+            }
+            // bottom row
+            if (x == Constants::SCREEN_HEIGHT - 1 - Constants::BASE_ENTITY_SPEED) {
+                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph.isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                if (graph.isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+            }
+            // left side
+            if (y == 0) {
+                if (graph.isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph.isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+            }
+            // right side
+            if (y == Constants::SCREEN_WIDTH - 1 - Constants::BASE_ENTITY_SPEED) {
+                if (graph.isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x-1][y])) graph.addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph.isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+            }
+        }
+    }
+
+    std::map<Point *, Point *> paths = graph.dijkstra(player->getCircle()->getCenter());
+    for (auto &pair : paths) {
+        cout << "(" << pair.second->getX() << ", " << pair.second->getY() << ") -> (" << pair.first->getX() << ", " << pair.first->getY() << ")" << endl;
+    }
+
+    cout << "Player: (" << player->getCircle()->getCenter()->getX() << ", " << player->getCircle()->getCenter()->getY() << ")" << endl;
 
 }
 
@@ -136,9 +176,9 @@ void Game::start() {
     cout << "Press X near an enemy to attack" << endl;
 
     // initialize player's systems
-    auto *playerMovement = new GameEntityMovement(player, true);
+    auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap());
     auto *playerBattle = new GameEntityBattle(player);
-    auto *enemiesMovement = new GameEntityMovement(nullptr, false);
+    auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap());
     
     bool canMove = false;
     int running = window->isOpen();
@@ -357,4 +397,7 @@ void Game::changeCurrentMap(int row, int col) {
     setCurrentWorldMapCol(col);
     // initialize map
     worldMap[currentGameMapRow][currentGameMapCol]->init();
+    // graph->clear();
+    // initGraphVertices();
+    // initGraphEdges();
 }

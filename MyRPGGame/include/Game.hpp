@@ -26,7 +26,7 @@ private:
     // entities
      Player *player = nullptr;
     // Player player();
-    
+    Point ***points;
     GameMap ***worldMap;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
