@@ -19,7 +19,7 @@ public:
     //Add edge between two nodes
     void addEdge(GameEntity * vertex1, GameEntity * vertex2, int edge);
 
-    std::map<GameEntity *, int> dijkstra(GameEntity * source);
+    std::map<GameEntity *, GameEntity *> dijkstra(GameEntity * source);
 
     void clear();
 

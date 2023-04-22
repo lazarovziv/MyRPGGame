@@ -16,7 +16,7 @@ void Graph::addEdge(GameEntity * vertex1, GameEntity * vertex2, int edge) {
     adjVertices[vertex1]->push_back(make_pair(vertex2, edge));
 }
 
-std::map<GameEntity *, int> Graph::dijkstra(GameEntity * source) {
+std::map<GameEntity *, GameEntity *> Graph::dijkstra(GameEntity * source) {
     std::map<GameEntity *, int> distances;
     std::map<GameEntity *, GameEntity *> previous;
     std::map<GameEntity *, bool> visited;
@@ -56,7 +56,7 @@ std::map<GameEntity *, int> Graph::dijkstra(GameEntity * source) {
         countVisited++;
     }
 
-    return distances;
+    return previous;
 }
 
 void Graph::clear() {
