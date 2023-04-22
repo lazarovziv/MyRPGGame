@@ -3,7 +3,6 @@
 #ifndef Player_hpp
 #define Player_hpp
 
-#include <stdio.h>
 #include <iostream>
 #include "GameEntity.hpp"
 #include "Constants.h"
@@ -42,7 +41,7 @@ public:
     void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
 
-    void update();
+    void update() override;
 };
 
 #endif /* Player_hpp */

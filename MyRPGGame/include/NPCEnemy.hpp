@@ -3,14 +3,12 @@
 #ifndef NPCEnemy_hpp
 #define NPCEnemy_hpp
 
-#include <stdio.h>
 #include <iostream>
 #include <ctime>
 #include "GameEntity.hpp"
 #include "Circle.hpp"
 #include "Constants.h"
 #include "MovementObserver.hpp"
-#include <ctime>
 
 using namespace sf;
 
@@ -28,7 +26,7 @@ private:
     int type;
     // movement intervals
     std::clock_t lastTimeMoved;
-    float moveInterval = 1;
+    float moveInterval = 0.25;
     
     // movement handler
 //    GameEntityMovement* movement;
@@ -59,7 +57,7 @@ public:
     
     void spawn(int x, int y);
 
-    void notify();
+    void notify() override;
 };
 
 #endif /* NPCEnemy_hpp */
