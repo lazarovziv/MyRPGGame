@@ -3,7 +3,6 @@
 #ifndef GameEntityMovement_hpp
 #define GameEntityMovement_hpp
 
-#include <stdio.h>
 #include "GameEntity.hpp"
 #include "GameMap.hpp"
 #include "../include/Game.hpp"
@@ -12,6 +11,7 @@
 class GameEntityMovement {
 private:
     GameEntity *entity;
+    GameMap *currentMap;
     bool isPlayer;
     int screenWidth, screenHeight;
     int tileSize;
@@ -28,7 +28,7 @@ private:
 
     bool moveTowardsEntity(GameEntity* gameEntity);
 public:
-    GameEntityMovement(GameEntity* entity, bool player);
+    GameEntityMovement(GameEntity* entity, bool player, GameMap *map);
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
 
