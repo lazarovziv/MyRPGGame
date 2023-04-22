@@ -3,7 +3,6 @@
 #ifndef GameMap_hpp
 #define GameMap_hpp
 
-#include <stdio.h>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "NPCEnemy.hpp"
@@ -11,6 +10,7 @@
 #include "Circle.hpp"
 #include "Constants.h"
 #include "LandscapeEntity.hpp"
+#include "Graph.hpp"
 class NPCEnemy;
 
 using namespace sf;
@@ -41,6 +41,8 @@ private:
 
     Texture texture;
     Sprite *backgroundSprite;
+
+    Graph *graph;
     
     int numOfCurrentEnemies = 0;
     const int NUM_OF_MAX_ENEMIES = 3;
@@ -80,6 +82,9 @@ public:
     int generateRandom(int min, int max);
 
     void update();
+
+    void addVertexToGraph(GameEntity *entity);
+    void addEdgeToGraph(GameEntity *first, GameEntity *second);
     
     void setTopExit(float minX, float maxX) {
         topExitMinX = minX;

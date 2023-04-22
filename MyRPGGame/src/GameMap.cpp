@@ -21,6 +21,8 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     backgroundSprite->setTexture(texture);
     backgroundSprite->setOrigin(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
     backgroundSprite->setPosition(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
+
+    graph = new Graph();
 }
 
 GameMap::~GameMap() {
@@ -157,14 +159,22 @@ void GameMap::init() {
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
-    enemiesVector.push_back(enemy);
+    addEnemy(enemy);
+    for (auto entity : graph->getVertices()) {
+        graph->addEdge(enemy, entity, 1);
+    }
+
+    std::map<GameEntity *, GameEntity *> path = graph->dijkstra(enemy);
+    graph->printPath(path);
 }
 
 void GameMap::addEnemy(NPCEnemy* enemy) {
     enemiesVector.push_back(enemy);
+    graph->addVertex(enemy);
 }
 
 void GameMap::removeEnemyAtIndex(int i) {
+    graph->removeVertex(enemiesVector[i]);
     delete enemiesVector[i];
     enemiesVector.erase(enemiesVector.begin() + i);
 }
@@ -194,6 +204,15 @@ void GameMap::update() {
             // if enemy is still alive
         } else enemiesVector[i]->update();
     }
+}
+
+void GameMap::addVertexToGraph(GameEntity *entity) {
+    graph->addVertex(entity);
+}
+
+void GameMap::addEdgeToGraph(GameEntity *first, GameEntity *second) {
+    graph->addEdge(first, second, 1);
+    graph->addEdge(second, first, 1);
 }
 
 bool GameMap::operator==(const GameMap &map) {
