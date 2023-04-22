@@ -668,6 +668,42 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
     return !canCollide;
 }
 
+bool GameEntityMovement::moveRandomly(int randomDirection) {
+    // DOWN, RIGHT, LEFT, UP
+    switch (randomDirection) {
+        case 0:
+            return move(MoveDirection::DOWN);
+            break;
+        case 1:
+            return move(MoveDirection::RIGHT);
+            break;
+        case 2:
+            return move(MoveDirection::LEFT);
+            break;
+        case 3:
+            return move(MoveDirection::UP);
+            break;
+            /*
+        case 4:
+            enemiesMovement->move(MoveDirection::DOWN_RIGHT);
+            break;
+        case 5:
+            enemiesMovement->move(MoveDirection::DOWN_LEFT);
+            break;
+        case 6:
+            enemiesMovement->move(MoveDirection::UP_RIGHT);
+            break;
+        case 7:
+            enemiesMovement->move(MoveDirection::UP_LEFT);
+            break;
+             */
+        default:
+            // TODO: add error handling
+            break;
+    }
+    return false;
+}
+
 void GameEntityMovement::setEntity(GameEntity &e) {
     this->entity = &e;
 }

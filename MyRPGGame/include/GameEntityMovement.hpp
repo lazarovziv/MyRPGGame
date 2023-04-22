@@ -32,6 +32,8 @@ public:
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
 
+    bool moveRandomly(int randomDirection);
+
     void setEntity(GameEntity &entity);
     GameEntity* getEntity();
 };
