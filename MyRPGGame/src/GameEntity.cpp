@@ -9,7 +9,7 @@ GameEntity::GameEntity() {
     attackPoints = 1;
     defencePoints = 5;
     currentDefencePoints = defencePoints;
-    speed = 16;
+    speed = Constants::BASE_ENTITY_SPEED;
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
