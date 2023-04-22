@@ -17,8 +17,8 @@ template<typename T1> struct greaterPair {
 template <class V>
 class Graph {
 private:
-    std::map<GameEntity *, std::vector<std::pair<GameEntity *, int>> *> adjVertices;
-    std::vector<GameEntity *> vertices;
+//    std::map<GameEntity *, std::vector<std::pair<GameEntity *, int>> *> adjVertices;
+//    std::vector<GameEntity *> vertices;
 
     std::map<V, std::vector<std::pair<V, int>> *> genericGraph;
     std::vector<V> genericVertices;
@@ -35,6 +35,10 @@ public:
 //    auto iterator = adjVertices.find(vertex);
         genericGraph.erase(vertex);
         genericVertices.erase(std::find(genericVertices.begin(), genericVertices.end(), vertex));
+    }
+
+    bool isInGraph(V vertex) {
+        return genericGraph[vertex] != nullptr;
     }
     //Add edge between two nodes
 //    void addEdge(GameEntity *vertex1, GameEntity *vertex2, int edge);
@@ -87,8 +91,8 @@ public:
     }
 
     void clear() {
-        adjVertices.clear();
-        vertices.clear();
+//        adjVertices.clear();
+//        vertices.clear();
         genericGraph.clear();
         genericVertices.clear();
     }
@@ -100,7 +104,8 @@ public:
     }
 //    std::vector<GameEntity *> getVertices();
     std::vector<V> getVertices() {
-        return vertices;
+        return genericVertices;
+//        return vertices;
     }
 
     //returns the number of vertices in the graph
