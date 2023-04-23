@@ -9,10 +9,46 @@ GameEntityMovement::GameEntityMovement(GameEntity* entity, bool player, GameMap 
     tileSize = Constants::TILE_SIZE;
 }
 
-bool GameEntityMovement::moveTowardsEntity(GameEntity* gameEntity) {
-    // TODO: implement depth first search or A*
+bool GameEntityMovement::moveTowardsEntity(GameEntity* gameEntity, Graph<Point *> *graph, Point ***points) {
+    std::map<Point *, Point *> paths = graph->dijkstra(points[entity->getPosition().x][entity->getPosition().y]);
+    std::vector<Point *> path;
+    Point *current = nullptr;
+    // find target
+    for (auto &pair : paths) {
+        if (pair.first->isEqual(gameEntity->getCircle()->getCenter())) {
+            current = pair.first;
+            break;
+        }
+    }
+    // path not found
+    if (current == nullptr) return false;
 
-    return false;
+    while (current != nullptr) {
+        if (current->isEqual(entity->getCircle()->getCenter())) break;
+        path.push_back(current);
+        current = paths[current];
+    }
+
+    // reversing path to start from entity
+    std::reverse(path.begin(), path.end());
+    // walking the path
+    for (auto &point : path) {
+        cout << "(" << point->getX() << ", " << point->getY() << ")" << endl;
+        // same row, can go up or down
+        if (point->getX() == entity->getCircle()->getCenter()->getX()) {
+            // go down
+            if (point->getY() > entity->getCircle()->getCenter()->getY()) move(MoveDirection::DOWN);
+                // go up
+            else move(MoveDirection::UP);
+            continue;
+        }
+        // same col, can go right or left
+        // go right
+        if (point->getX() > entity->getCircle()->getCenter()->getX()) move(MoveDirection::RIGHT);
+            // go left
+        else move(MoveDirection::LEFT);
+    }
+    return true;
 }
 
 // TODO: add diagonal movement (going "both" right/left and up/down is an overkill visually)

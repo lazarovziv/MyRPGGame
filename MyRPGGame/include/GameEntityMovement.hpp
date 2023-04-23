@@ -25,14 +25,13 @@ private:
     bool moveUpLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     bool moveDownRight(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
     bool moveDownLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
-
-    bool moveTowardsEntity(GameEntity* gameEntity);
 public:
     GameEntityMovement(GameEntity* entity, bool player, GameMap *map);
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
 
     bool moveRandomly(int randomDirection);
+    bool moveTowardsEntity(GameEntity* gameEntity, Graph<Point *> *graph, Point ***points);
 
     void setEntity(GameEntity &entity);
     GameEntity* getEntity();
