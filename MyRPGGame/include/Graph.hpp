@@ -4,6 +4,7 @@
 #define Graph_hpp
 
 #include <map>
+#include <set>
 #include <iostream>
 #include <queue>
 #include "GameEntity.hpp"
@@ -17,36 +18,94 @@ template<typename T1> struct greaterPair {
 template <class V>
 class Graph {
 private:
-//    std::map<GameEntity *, std::vector<std::pair<GameEntity *, int>> *> adjVertices;
-//    std::vector<GameEntity *> vertices;
-
     std::map<V, std::vector<std::pair<V, int>> *> genericGraph;
     std::vector<V> genericVertices;
 public:
     Graph() = default;
-    //add the node to the graph
-//    void addVertex(GameEntity *vertex);
+    // add the node to graph
     void addVertex(V vertex) {
         genericGraph[vertex] = new std::vector<std::pair<V, int>>();
         genericVertices.push_back(vertex);
     }
-//    void removeVertex(GameEntity *vertex);
+    // remove node from graph
     void removeVertex(V vertex) {
-//    auto iterator = adjVertices.find(vertex);
         genericGraph.erase(vertex);
         genericVertices.erase(std::find(genericVertices.begin(), genericVertices.end(), vertex));
     }
 
+    // is node in graph
     bool isInGraph(V vertex) {
         return genericGraph[vertex] != nullptr;
     }
-    //Add edge between two nodes
-//    void addEdge(GameEntity *vertex1, GameEntity *vertex2, int edge);
+    // add edge between two nodes with its' weight
     void addEdge(V vertex1, V vertex2, int edge) {
         genericGraph[vertex1]->push_back(make_pair(vertex2, edge));
     }
 
-//    std::map<GameEntity *, GameEntity *> dijkstra(GameEntity * source);
+    int h(V first, V second) {
+        return first - second;
+    }
+
+    std::vector<V> *reconstructPath(std::map<V, V> cameFrom, V current) {
+        std::vector<V> *totalPath = new std::vector<V>();
+        while (isInGraph(current)) {
+            current = cameFrom[current];
+            totalPath->push_back(current);
+        }
+        return totalPath;
+    }
+
+    // A* algorithm
+    std::vector<V> *findPathTo(V source, V target) {
+        std::priority_queue<std::pair<V, int>, std::vector<std::pair<V, int>>, greaterPair<V>> openQueue;
+        std::set<V> openSet;
+        std::map<V, V> cameFrom;
+        std::map<V, int> gScore;
+        std::map<V, int> fScore;
+        std::pair<V, int> current, neighbor;
+        int tentativeGScore;
+
+        // inserting source with distance from itself as 0 to queue
+        openQueue.emplace(source, 0);
+        openSet.insert(source);
+        for (auto &item : genericGraph) {
+            if (item.first != source) {
+                gScore[item.first] = INT32_MAX;
+                fScore[item.first] = INT32_MAX;
+            }
+        }
+
+        gScore[source] = 0;
+        fScore[source] = 0;
+
+        while (!openQueue.empty()) {
+            current = openQueue.top();
+            openQueue.pop();
+            openSet.erase(current.first);
+            // reached goal
+            if (current.first == target) return reconstructPath(cameFrom, current.first);
+
+            for (int i = 0; i < genericGraph[current.first]->size(); i++) {
+                neighbor = genericGraph[current.first]->at(i);
+                tentativeGScore = gScore[current.first] + neighbor.second; // second is the weight of edge (current, generic[current]->at(i).first)
+                // if path is better
+                if (tentativeGScore < gScore[neighbor.first]) {
+                    cameFrom[neighbor.first] = current.first;
+                    gScore[neighbor.first] = tentativeGScore;
+                    fScore[neighbor.first] = tentativeGScore + h(source, neighbor.first);
+
+                    if (std::find(openSet.begin(), openSet.end(), neighbor.first) != openSet.end()) {
+                        openQueue.emplace(neighbor.first, gScore[neighbor.first]);
+                        openSet.insert(neighbor.first);
+                    }
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    // dijkstra algorithm from source node (TODO: add function for specific target)
     std::map<V, V> dijkstra(V source) {
         std::map<V, int> distances;
         std::map<V, V> previous;
@@ -90,32 +149,25 @@ public:
         return previous;
     }
 
+    // clears graph
     void clear() {
-//        adjVertices.clear();
-//        vertices.clear();
         genericGraph.clear();
         genericVertices.clear();
     }
 
-    //returns all the vertices connected to it
-//    std::vector<std::pair<GameEntity *, int>> *getNeighbors(GameEntity *vertex);
+    // returns all the vertices connected to given node
     std::vector<std::pair<V, int>> *getNeighbors(V vertex) {
         return genericGraph[vertex];
     }
-//    std::vector<GameEntity *> getVertices();
+
     std::vector<V> getVertices() {
         return genericVertices;
-//        return vertices;
     }
 
-    //returns the number of vertices in the graph
-//    int getSize();
+    // returns the number of vertices in the graph
     int getSize() {
         return genericGraph.size();
     }
-
-//    void printPath(const std::map<GameEntity *, GameEntity *>& path);
-//    void printPath(const std::map<V, V>& path);
 };
 
 #endif //Graph_HPP
