@@ -103,6 +103,9 @@ void GameMap::init() {
     int randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
     int randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
 
+    randX = (randX/16) * 16;
+    randY = (randY/16) * 16;
+
     IntRect* rect = new IntRect (randX, randY, Constants::TILE_SIZE, Constants::TILE_SIZE);
     Circle* circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
     // assuming position is invalid
@@ -123,6 +126,8 @@ void GameMap::init() {
                 // generating a new position
                 randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
                 randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+                randX = (randX/16) * 16;
+                randY = (randY/16) * 16;
                 // updating rect position
                 rect->left = randX;
                 rect->top = randY;
