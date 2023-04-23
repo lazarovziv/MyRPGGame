@@ -41,6 +41,8 @@ Game::Game(const char* str) {
 //    window->setFramerateLimit(Constants::FPS);
     window->setFramerateLimit(0);
 
+    graph = new Graph<Point *>();
+
     state = GameState::PAUSED;
 
     // init world map
@@ -88,13 +90,10 @@ Game::Game(const char* str) {
     
     this->player = new Player(PlayerType::KNIGHT);
     
-    player->setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/4);
-    
     initWorldMap();
     // init first map
     getCurrentGameMap()->init();
 
-    Graph<Point *> graph;
     bool occupied = false;
     // add vertices
     for (int x = 0; x < Constants::SCREEN_HEIGHT; x += Constants::BASE_ENTITY_SPEED) {
@@ -103,51 +102,42 @@ Game::Game(const char* str) {
                 if (landscape->getCircle()->getCenter()->getX() == x && landscape->getCircle()->getCenter()->getY() == y) occupied = true;
             }
 
-            if (!occupied) graph.addVertex(points[x][y]);
+            if (!occupied) graph->addVertex(points[x][y]);
             occupied = false;
         }
     }
 
-    cout << "Size: " << graph.getSize() << endl;
-
     // add edges
     for (int x = 0; x < Constants::SCREEN_HEIGHT; x += Constants::BASE_ENTITY_SPEED) {
         for (int y = 0; y < Constants::SCREEN_WIDTH; y += Constants::BASE_ENTITY_SPEED) {
-            if (!graph.isInGraph(points[x][y])) continue;
+            if (!graph->isInGraph(points[x][y])) continue;
             // top row
             if (x == 0) {
-                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph.isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                if (graph.isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph->isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                if (graph->isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
                 continue;
             }
             // bottom row
             if (x == Constants::SCREEN_HEIGHT - 1 - Constants::BASE_ENTITY_SPEED) {
-                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph.isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                if (graph.isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph->isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                if (graph->isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
             }
             // left side
             if (y == 0) {
-                if (graph.isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph.isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                if (graph->isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph->isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
             }
             // right side
             if (y == Constants::SCREEN_WIDTH - 1 - Constants::BASE_ENTITY_SPEED) {
-                if (graph.isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph.addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph.isInGraph(points[x-1][y])) graph.addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph.isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph.addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                if (graph->isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x-1][y])) graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph->isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
             }
         }
     }
-
-    std::map<Point *, Point *> paths = graph.dijkstra(player->getCircle()->getCenter());
-    for (auto &pair : paths) {
-        cout << "(" << pair.second->getX() << ", " << pair.second->getY() << ") -> (" << pair.first->getX() << ", " << pair.first->getY() << ")" << endl;
-    }
-
-    cout << "Player: (" << player->getCircle()->getCenter()->getX() << ", " << player->getCircle()->getCenter()->getY() << ")" << endl;
 
 }
 
@@ -182,6 +172,8 @@ void Game::start() {
     
     bool canMove = false;
     int running = window->isOpen();
+
+    bool calculatingPath = false;
 
     GameMap *map;
     Event event;
@@ -285,10 +277,13 @@ void Game::start() {
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
+                    if (!calculatingPath) {
+                        enemiesMovement->moveTowardsEntity(player, graph, points);
+                        calculatingPath = true;
+                    }
                     // choose random direction
-                    int randomDirection = ((int) random()) % 4;
-                    // TODO: create moveRandomly function in GameMovementEntity
-                    enemiesMovement->moveRandomly(randomDirection);
+//                    int randomDirection = ((int) random()) % 4;
+//                    enemiesMovement->moveRandomly(randomDirection);
                 }
             }
             update();

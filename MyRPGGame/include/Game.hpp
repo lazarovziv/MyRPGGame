@@ -24,10 +24,12 @@ private:
     GameState state;
     
     // entities
-     Player *player = nullptr;
+    Player *player = nullptr;
     // Player player();
     Point ***points;
     GameMap ***worldMap;
+
+    Graph<Point *> *graph;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
