@@ -29,6 +29,7 @@ public:
     }
     // remove node from graph
     void removeVertex(V vertex) {
+        if (!isInGraph(vertex)) return;
         genericGraph.erase(vertex);
         genericVertices.erase(std::find(genericVertices.begin(), genericVertices.end(), vertex));
     }
@@ -47,7 +48,7 @@ public:
     }
 
     std::vector<V> *reconstructPath(std::map<V, V> cameFrom, V current) {
-        std::vector<V> *totalPath = new std::vector<V>();
+        auto *totalPath = new std::vector<V>();
         while (isInGraph(current)) {
             current = cameFrom[current];
             totalPath->push_back(current);
@@ -78,7 +79,7 @@ public:
         gScore[source] = 0;
         fScore[source] = 0;
 
-        while (!openQueue.empty()) {
+        while (!openSet.empty()) {
             current = openQueue.top();
             openQueue.pop();
             openSet.erase(current.first);
@@ -131,7 +132,6 @@ public:
         while (countVisited != verticesSize) {
             u = queue.top().first;
             queue.pop();
-
             for (int i = 0; i < genericGraph[u]->size(); i++) {
                 v = genericGraph[u]->at(i).first;
                 weight = genericGraph[u]->at(i).second;
@@ -145,7 +145,6 @@ public:
             }
             countVisited++;
         }
-
         return previous;
     }
 
@@ -166,7 +165,7 @@ public:
 
     // returns the number of vertices in the graph
     int getSize() {
-        return genericGraph.size();
+        return genericVertices.size();
     }
 };
 
