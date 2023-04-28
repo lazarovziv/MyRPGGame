@@ -49,7 +49,7 @@ public:
 
     std::vector<V> *reconstructPath(std::map<V, V> cameFrom, V current) {
         auto *totalPath = new std::vector<V>();
-        while (isInGraph(current)) {
+        while (current != nullptr) {
             current = cameFrom[current];
             totalPath->push_back(current);
         }
@@ -65,10 +65,8 @@ public:
         std::map<V, int> fScore;
         std::pair<V, int> current, neighbor;
         int tentativeGScore;
+        cameFrom[source] = nullptr;
 
-        // inserting source with distance from itself as 0 to queue
-        openQueue.emplace(source, 0);
-        openSet.insert(source);
         for (auto &item : genericGraph) {
             if (item.first != source) {
                 gScore[item.first] = INT32_MAX;
@@ -79,10 +77,15 @@ public:
         gScore[source] = 0;
         fScore[source] = 0;
 
+        // inserting source with distance from itself as 0 to queue
+        openQueue.emplace(source, fScore[source]);
+        openSet.insert(source);
+
         while (!openSet.empty()) {
             current = openQueue.top();
             openQueue.pop();
             openSet.erase(current.first);
+//            cout << "First: " << current.first << " <=> " << target << endl;
             // reached goal
             if (current.first == target) return reconstructPath(cameFrom, current.first);
 
@@ -95,7 +98,7 @@ public:
                     gScore[neighbor.first] = tentativeGScore;
                     fScore[neighbor.first] = tentativeGScore + h(source, neighbor.first);
 
-                    if (std::find(openSet.begin(), openSet.end(), neighbor.first) != openSet.end()) {
+                    if (std::find(openSet.begin(), openSet.end(), neighbor.first) == openSet.end()) {
                         openQueue.emplace(neighbor.first, gScore[neighbor.first]);
                         openSet.insert(neighbor.first);
                     }
@@ -112,6 +115,7 @@ public:
         std::map<V, V> previous;
         std::map<V, bool> visited;
         std::priority_queue<std::pair<V, int>, std::vector<std::pair<V, int>>, greaterPair<V>> queue;
+        std::priority_queue<std::pair<V,int>, std::vector<std::pair<V, int>>, greaterPair<V>> tempQueue;
         V u, v;
         int weight = 0;
         int countVisited = 0;
@@ -140,7 +144,21 @@ public:
                 if (alt < distances[v]) {
                     distances[v] = alt;
                     previous[v] = u;
-                    queue.emplace(v, alt);
+
+                    // reinserting v to the queue
+                    while (!queue.empty()){
+                        auto item = queue.top();
+                        queue.pop();
+                        if(item.first == v) tempQueue.push(std::make_pair(v, alt));
+                        else tempQueue.push(item);
+                    }
+                    // emptying temp queue and reinserting updated values to queue
+                    while (!tempQueue.empty()) {
+                        queue.push(tempQueue.top());
+                        tempQueue.pop();
+                    }
+                    // what was before
+//                    queue.emplace(v, alt);
                 }
             }
             countVisited++;
