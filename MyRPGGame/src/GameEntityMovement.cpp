@@ -19,70 +19,37 @@ GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, GameMap 
     gameMapsPoints = points;
 }
 
-bool GameEntityMovement::moveTowardsEntitySimple(GameEntity *gameEntity) {
-    while (!entity->getCircle()->intersects(gameEntity->getCircle())) {
-        // same row, can go up or down
-        if (gameEntity->getCircle()->getCenter()->getX() == entity->getCircle()->getCenter()->getX()) {
-            // go down
-            if (gameEntity->getCircle()->getCenter()->getY() > entity->getCircle()->getCenter()->getY())
-                move(MoveDirection::DOWN);
-                // go up
-            else if (dynamic_cast<NPCEnemy *>(entity)->canMove()) move(MoveDirection::UP);
-            continue;
-        }
-        // same col, can go right or left
-        // go right
-        if (gameEntity->getCircle()->getCenter()->getX() > entity->getCircle()->getCenter()->getX())
-            move(MoveDirection::RIGHT);
-            // go left
-        else if (dynamic_cast<NPCEnemy *>(entity)->canMove()) move(MoveDirection::LEFT);
+bool GameEntityMovement::moveTowardsEntity(GameEntity *gameEntity, Graph<Point *> *graph) {
+    // using A* algorithm as dijkstra was really memory inefficient (maybe my implementation wasn't good enough)
+    std::vector<Point *> *paths = graph->findPathTo(entity->getCircle()->getCenter(), gameEntity->getCircle()->getCenter());
+    if (paths == nullptr) return false;
+    // calling this function means gameEntity has repositioned
+    entity->clearMoveStack();
+    // insert all points
+    for (auto &pair: *paths) {
+        if (pair == nullptr) break;
+        entity->pushToMoveStack(pair);
     }
-    return true;
+    // return first move to be made and whether it was successful
+    return moveBasedOnPoint(entity->popMove());
 }
 
-bool GameEntityMovement::moveTowardsEntity(GameEntity *gameEntity, Graph<Point *> *graph) {
-    std::map<Point *, Point *> paths = graph->dijkstra(entity->getCircle()->getCenter());
-    std::vector<Point *> path;
-    Point *current = nullptr;
-    // find target
-    for (auto &pair: paths) {
-        // if there's a vertex from which there's a path to target
-        if (pair.second == gameEntity->getCircle()->getCenter()) {
-            current = pair.second;
-            break;
-        }
-    }
-    // path not found
-    if (current == nullptr) return false;
-
-    while (current != nullptr) {
-        path.push_back(current);
-        current = paths[current];
-    }
-
-    // reversing path to start from entity
-    std::reverse(path.begin(), path.end());
-    // if no path is available
-    if (path.size() <= 1) return false;
-
+bool GameEntityMovement::moveBasedOnPoint(Point *point) {
     // same row, can go up or down
-    if (path.at(1)->getX() == entity->getCircle()->getCenter()->getX()) {
+    if (point->getX() == entity->getCircle()->getCenter()->getX()) {
         // go down
-        if (path.at(1)->getY() > entity->getCircle()->getCenter()->getY()) return move(MoveDirection::DOWN);
-            // go up
+        if (point->getY() > entity->getCircle()->getCenter()->getY()) return move(MoveDirection::DOWN);
+        // go up
         return move(MoveDirection::UP);
     } else {
         // same col, can go right or left
         // go right
-        if (path.at(1)->getX() > entity->getCircle()->getCenter()->getX()) return move(MoveDirection::RIGHT);
-            // go left
+        if (point->getX() > entity->getCircle()->getCenter()->getX()) return move(MoveDirection::RIGHT);
+        // go left
         return move(MoveDirection::LEFT);
     }
-
-    return true;
 }
 
-// TODO: add diagonal movement (going "both" right/left and up/down is an overkill visually)
 bool GameEntityMovement::move(MoveDirection direction) {
     GameMap *map = Game::getInstance()->getCurrentGameMap();
 

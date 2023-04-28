@@ -34,7 +34,7 @@ public:
 
     bool moveRandomly(int randomDirection);
     bool moveTowardsEntity(GameEntity* gameEntity, Graph<Point *> *graph);
-    bool moveTowardsEntitySimple(GameEntity* gameEntity);
+    bool moveBasedOnPoint(Point *point);
 
     void setEntity(GameEntity &entity);
     GameEntity* getEntity();
