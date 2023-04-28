@@ -100,8 +100,6 @@ Game::Game(const char* str) {
         }
     }
 
-    cout << "vertices" << endl;
-
     // add edges
     bool toAdd = true;
     for (int x = Constants::BASE_ENTITY_SPEED; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
@@ -146,8 +144,6 @@ Game::Game(const char* str) {
         }
     }
 
-    cout << "finished" << endl;
-
     // remove all vertices which are occupied by landscapes
     for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
         for (int row = landscape->getCircle()->getCenter()->getX();
@@ -159,8 +155,7 @@ Game::Game(const char* str) {
         }
     }
 
-    cout << "Graph size: " << graph->getSize() << endl;
-
+    cout << "START!" << endl;
 }
 
 void Game::render() {
@@ -195,12 +190,11 @@ void Game::start() {
     bool canMove = false;
     int running = window->isOpen();
 
-    bool calculatingPath = false;
-
     GameMap *map;
     Event event;
 
     int eventKeyCode;
+    bool moved = false;
 
     // game loop
     while (/*window->isOpen() && */running) {
@@ -226,7 +220,6 @@ void Game::start() {
                     canMove = true;
                 }
                 if (state == GameState::PLAYING) {
-                    bool moved = false;
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
                         // adding diagonal movement
@@ -296,20 +289,23 @@ void Game::start() {
         if (state == GameState::PLAYING) {
             // make enemies move
             for (int i = 0; i < map->getEnemies().size(); i++) {
+                // TODO: make enemies which are in battle to move towards player. otherwise, move randomly. if outside of wander circle, go back there and move randomly there
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-
-                    if (!enemiesMovement->moveTowardsEntity(player, graph)) {
-                        // choose random direction if not path to player exists
+                    // if route was calculated already, execute it
+                    if (enemiesMovement->getEntity()->numOfMovesAvailable() > 0) enemiesMovement->moveBasedOnPoint(enemiesMovement->getEntity()->popMove());
+                    else enemiesMovement->moveTowardsEntity(player, graph);
+                    // choose random direction if not path to player exists
 //                        int randomDirection = ((int) random()) % 4;
 //                        enemiesMovement->moveRandomly(randomDirection);
-                    }
                 }
             }
             update();
             // render only when playing
             render();
+            // resetting moved for enemies movement
+            if (moved) moved = false;
         }
     }
 
