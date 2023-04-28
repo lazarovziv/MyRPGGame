@@ -45,99 +45,121 @@ Game::Game(const char* str) {
 
     state = GameState::PAUSED;
 
+    // init all possible points
+    points = new Point **[Constants::SCREEN_HEIGHT];
+    for (int row = 0; row < Constants::SCREEN_HEIGHT; row++) {
+        points[row] = new Point *[Constants::SCREEN_WIDTH];
+        for (int col = 0; col < Constants::SCREEN_WIDTH; col++) {
+            points[row][col] = new Point(col, row);
+        }
+    }
+
     // init world map
     worldMap = new GameMap **[Constants::NUM_ROWS];
     for (int r = 0; r < Constants::NUM_ROWS; r++) {
         worldMap[r] = new GameMap *[Constants::NUM_COLS];
         for (int c = 0; c < Constants::NUM_COLS; c++) {
-            worldMap[r][c] = new GameMap(r, c);
             // cant go down but can go right, left and up
             if (r == Constants::NUM_ROWS - 1) {
-                worldMap[r][c] = new GameMap(r, c, true, false, true, true);
+                worldMap[r][c] = new GameMap(r, c, true, false, true, true, points);
                 continue;
             }
             // cant go up but can go down, right, left
             if (r == 0) {
-                worldMap[r][c] = new GameMap(r, c, false, true, true, true);
+                worldMap[r][c] = new GameMap(r, c, false, true, true, true, points);
                 continue;
             }
             // cant go right but can go down, up and left
             if (c == Constants::NUM_COLS - 1) {
-                worldMap[r][c] = new GameMap(r, c, true, true, false, true);
+                worldMap[r][c] = new GameMap(r, c, true, true, false, true, points);
                 continue;
             }
             // cant go left but can go right, up and down
             if (c == 0) {
-                worldMap[r][c] = new GameMap(r, c, true, true, true, false);
+                worldMap[r][c] = new GameMap(r, c, true, true, true, false, points);
                 continue;
-
             }
-            worldMap[r][c] = new GameMap(r, c, true, true, true, true);
-        }
-    }
-
-    // init points
-    points = new Point **[Constants::SCREEN_HEIGHT];
-    for (int x = 0; x < Constants::SCREEN_HEIGHT; x++) {
-        points[x] = new Point *[Constants::SCREEN_WIDTH];
-        for (int y = 0; y < Constants::SCREEN_WIDTH; y++) {
-            points[x][y] = new Point(x, y);
+            worldMap[r][c] = new GameMap(r, c, true, true, true, true, points);
         }
     }
 
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
-    this->player = new Player(PlayerType::KNIGHT);
+    this->player = new Player(PlayerType::KNIGHT, points[SCREEN_HEIGHT/2][SCREEN_WIDTH/2]);
     
     initWorldMap();
     // init first map
     getCurrentGameMap()->init();
 
     bool occupied = false;
-    // add vertices
-    for (int x = 0; x < Constants::SCREEN_HEIGHT; x += Constants::BASE_ENTITY_SPEED) {
-        for (int y = 0; y < Constants::SCREEN_WIDTH; y += Constants::BASE_ENTITY_SPEED) {
-            for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
-                if (landscape->getCircle()->getCenter()->getX() == x && landscape->getCircle()->getCenter()->getY() == y) occupied = true;
-            }
-
-            if (!occupied) graph->addVertex(points[x][y]);
-            occupied = false;
+    // add vertices (in relevant points)
+    for (int x = 0; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
+        for (int y = 0; y <= Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
+            graph->addVertex(points[x][y]);
         }
     }
+
+    cout << "vertices" << endl;
 
     // add edges
-    for (int x = 0; x < Constants::SCREEN_HEIGHT; x += Constants::BASE_ENTITY_SPEED) {
-        for (int y = 0; y < Constants::SCREEN_WIDTH; y += Constants::BASE_ENTITY_SPEED) {
-            if (!graph->isInGraph(points[x][y])) continue;
-            // top row
-            if (x == 0) {
-                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph->isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                if (graph->isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                continue;
+    bool toAdd = true;
+    for (int x = Constants::BASE_ENTITY_SPEED; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
+        for (int y = Constants::BASE_ENTITY_SPEED; y <= Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
+            toAdd = true;
+            // down, right, left
+            if (x == Constants::BASE_ENTITY_SPEED) {
+                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                toAdd = false;
             }
-            // bottom row
-            if (x == Constants::SCREEN_HEIGHT - 1 - Constants::BASE_ENTITY_SPEED) {
-                if (y+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_WIDTH && graph->isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                if (y-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                if (graph->isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+            // up, right, left
+            else if (x == Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED) {
+                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                toAdd = false;
             }
-            // left side
-            if (y == 0) {
-                if (graph->isInGraph(points[x][y+Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x-Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph->isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+            // up, down, left
+            else if (y == Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED) {
+                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                toAdd = false;
             }
-            // right side
-            if (y == Constants::SCREEN_WIDTH - 1 - Constants::BASE_ENTITY_SPEED) {
-                if (graph->isInGraph(points[x][y-Constants::BASE_ENTITY_SPEED])) graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                if (x-Constants::BASE_ENTITY_SPEED >= 0 && graph->isInGraph(points[x-1][y])) graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                if (x+Constants::BASE_ENTITY_SPEED < Constants::SCREEN_HEIGHT && graph->isInGraph(points[x+Constants::BASE_ENTITY_SPEED][y])) graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+            // up, down, right
+            else if (y == Constants::BASE_ENTITY_SPEED) {
+                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                toAdd = false;
+            }
+
+            // up, down, right, left
+            if (toAdd) {
+                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
             }
         }
     }
+
+    cout << "finished" << endl;
+
+    // remove all vertices which are occupied by landscapes
+    for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
+        for (int row = landscape->getCircle()->getCenter()->getX();
+             row < landscape->getCircle()->getCenter()->getX() + TILE_SIZE/4; row++) {
+            for (int col = landscape->getCircle()->getCenter()->getY();
+                 col < landscape->getCircle()->getCenter()->getY() + TILE_SIZE/4; col++) {
+                graph->removeVertex(points[row][col]);
+            }
+        }
+    }
+
+    cout << "Graph size: " << graph->getSize() << endl;
 
 }
 
@@ -166,9 +188,9 @@ void Game::start() {
     cout << "Press X near an enemy to attack" << endl;
 
     // initialize player's systems
-    auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap());
+    auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap(), points);
     auto *playerBattle = new GameEntityBattle(player);
-    auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap());
+    auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
     
     bool canMove = false;
     int running = window->isOpen();
@@ -277,13 +299,12 @@ void Game::start() {
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-                    if (!calculatingPath) {
-                        enemiesMovement->moveTowardsEntity(player, graph, points);
-                        calculatingPath = true;
+
+                    if (!enemiesMovement->moveTowardsEntity(player, graph)) {
+                        // choose random direction if not path to player exists
+//                        int randomDirection = ((int) random()) % 4;
+//                        enemiesMovement->moveRandomly(randomDirection);
                     }
-                    // choose random direction
-//                    int randomDirection = ((int) random()) % 4;
-//                    enemiesMovement->moveRandomly(randomDirection);
                 }
             }
             update();
@@ -343,8 +364,10 @@ void Game::initWorldMap() {
     map->setTopEnterMinX(SCREEN_WIDTH/2);
     map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
-    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
+//    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
+    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, points[SCREEN_HEIGHT/6][3*SCREEN_WIDTH/16]);
+//    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
+    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][9*SCREEN_WIDTH/16]);
     map->addLandscape(unreachableTree0);
     map->addLandscape(unreachableTree1);
     
@@ -354,8 +377,10 @@ void Game::initWorldMap() {
     mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
     mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
     // adding unreachable areas and landscapes
-    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, 6.5*SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
-    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 7*(SCREEN_HEIGHT/12));
+//    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, 6.5*SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
+    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, points[5*SCREEN_HEIGHT/24][(int)6.5*SCREEN_WIDTH/8]);
+//    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 7*(SCREEN_HEIGHT/12));
+    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, points[7*SCREEN_HEIGHT/12][3*SCREEN_WIDTH/16]);
     mapTop->addLandscape(unreachableTree2);
     mapTop->addLandscape(unreachableTree3);
 

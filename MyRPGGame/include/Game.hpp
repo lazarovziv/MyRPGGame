@@ -33,7 +33,7 @@ private:
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
-    Game(const char *str);
+    explicit Game(const char *str);
     
 public:
     Game(Game &game) = delete;
