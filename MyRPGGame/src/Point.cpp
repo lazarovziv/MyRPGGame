@@ -34,7 +34,3 @@ float Point::distance(Point p) {
 int Point::operator-(const Point &other) const {
     return abs(x - other.x) + abs(y - other.y);
 }
-
-bool Point::isEqual(Point *other) {
-    return x == other->getX() && y == other->getY();
-}
