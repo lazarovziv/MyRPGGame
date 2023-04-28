@@ -21,13 +21,15 @@ private:
     int battleTimeout;
     // radius for area to wander when not engaged with player
     float wanderAreaRadius;
+    Circle *wanderAreaCircle = nullptr;
     // radius for area to battle player after engaging (needs to be bigger than wander)
     float battleAreaRadius;
+    Circle *battleAreaCircle = nullptr;
     // type of enemy
     int type;
     // movement intervals
     std::clock_t lastTimeMoved;
-    float moveInterval = 0.25;
+    float moveInterval = 0.2;
     
     // movement handler
 //    GameEntityMovement* movement;
@@ -35,8 +37,6 @@ private:
     int expPointsWorth;
     
     Circle *spawnArea = nullptr;
-
-    stack<Point *> pathToPlayer;
     
 public:
     static const int WORM = 1;
@@ -55,8 +55,6 @@ public:
     int getType();
     
     bool canMove();
-    void addToPath(Point *point);
-    void clearPath();
     
     Circle* getSpawnArea();
     void setSpawnArea(int centerX, int centerY, float radius);

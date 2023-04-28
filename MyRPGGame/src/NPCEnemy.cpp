@@ -127,14 +127,6 @@ bool NPCEnemy::canMove() {
     return false;
 }
 
-void NPCEnemy::addToPath(Point *point) {
-    pathToPlayer.push(point);
-}
-
-void NPCEnemy::clearPath() {
-    while (!pathToPlayer.empty()) pathToPlayer.pop();
-}
-
 // TODO: what to do here? how to use observers to my advantage
 void NPCEnemy::notify() {
 //    update();
