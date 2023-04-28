@@ -12,6 +12,7 @@ class GameEntityMovement {
 private:
     GameEntity *entity;
     GameMap *currentMap;
+    Point ***gameMapsPoints;
     bool isPlayer;
     int screenWidth, screenHeight;
     int tileSize;
@@ -27,11 +28,13 @@ private:
     bool moveDownLeft(GameMap* currentMap, int entityX, int entityY, int entitySpeed, IntRect &entityRect);
 public:
     GameEntityMovement(GameEntity* entity, bool player, GameMap *map);
+    GameEntityMovement(GameEntity* entity, bool player, GameMap *map, Point ***points);
     ~GameEntityMovement() = default;
     bool move(MoveDirection direction);
 
     bool moveRandomly(int randomDirection);
-    bool moveTowardsEntity(GameEntity* gameEntity, Graph<Point *> *graph, Point ***points);
+    bool moveTowardsEntity(GameEntity* gameEntity, Graph<Point *> *graph);
+    bool moveTowardsEntitySimple(GameEntity* gameEntity);
 
     void setEntity(GameEntity &entity);
     GameEntity* getEntity();
