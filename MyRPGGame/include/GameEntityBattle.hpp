@@ -1,10 +1,9 @@
 #ifndef GameEntityBattle_hpp
 #define GameEntityBattle_hpp
 
-#include <stdio.h>
 #include <iostream>
-#include "GameEntity.hpp"
 #include "GameMap.hpp"
+#include "Player.hpp"
 
 using namespace std;
 
