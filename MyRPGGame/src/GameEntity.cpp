@@ -343,3 +343,25 @@ void GameEntity::update() {
 //        attackRangeCircle->getCenter()->setY(position.y);
     }
 }
+
+void GameEntity::pushToMoveStack(Point *move) {
+    movesStack.push(move);
+}
+
+Point *GameEntity::popMove() {
+    auto *move = movesStack.top();
+    movesStack.pop();
+    return move;
+}
+
+int GameEntity::numOfMovesAvailable() {
+    return movesStack.size();
+}
+
+bool GameEntity::areAvailableMoves() {
+    return !movesStack.empty();
+}
+
+void GameEntity::clearMoveStack() {
+    while (!movesStack.empty()) movesStack.pop();
+}

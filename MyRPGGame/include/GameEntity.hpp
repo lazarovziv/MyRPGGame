@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <map>
+#include <stack>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
@@ -47,13 +48,15 @@ protected:
     Circle *attackRangeCircle = nullptr;
 //    GameMap* currentGameMap;
     Weapon *weapon;
+
+    stack<Point *> movesStack;
     
 private:
 //    GameEntityMovement* movement;
     
 public:
     GameEntity();
-    GameEntity(Point *center);
+    explicit GameEntity(Point *center);
     virtual ~GameEntity();
     // getters
     long getID();
@@ -113,6 +116,12 @@ public:
     
     void attack(GameEntity &entity);
     bool move(MoveDirection direction);
+
+    void pushToMoveStack(Point *move);
+    Point *popMove();
+    bool areAvailableMoves();
+    int numOfMovesAvailable();
+    void clearMoveStack();
     
     virtual void update();
 };
