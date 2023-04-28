@@ -23,6 +23,10 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     backgroundSprite->setPosition(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
 }
 
+GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left, Point ***points) : GameMap(row, col, up, down, right, left) {
+    gameMapPoints = points;
+}
+
 GameMap::~GameMap() {
     delete backgroundSprite;
     for (int i = 0; i < landscapes.size(); i++) {
@@ -99,15 +103,15 @@ void GameMap::init() {
     // don't add more enemies
     if (enemiesVector.size() >= NUM_OF_MAX_ENEMIES) return;
     // seeding
-    srand((unsigned int) time(NULL));
+    srand((unsigned int) time(nullptr));
     int randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
     int randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
 
     randX = (randX/16) * 16;
     randY = (randY/16) * 16;
 
-    IntRect* rect = new IntRect (randX, randY, Constants::TILE_SIZE, Constants::TILE_SIZE);
-    Circle* circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
+    auto *rect = new IntRect(randX, randY, Constants::TILE_SIZE, Constants::TILE_SIZE);
+    auto *circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
     // assuming position is invalid
     bool validations[landscapes.size()];
     for (int i = 0; i < landscapes.size(); i++) {
@@ -158,19 +162,20 @@ void GameMap::init() {
     delete rect;
     delete circle;
 
-    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
+//    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
+    auto *enemy = new NPCEnemy(NPCEnemy::WORM, gameMapPoints[randY][randX]);
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
     addEnemy(enemy);
 }
 
-void GameMap::addEnemy(NPCEnemy* enemy) {
+void GameMap::addEnemy(NPCEnemy *enemy) {
     enemiesVector.push_back(enemy);
 }
 
 void GameMap::removeEnemyAtIndex(int i) {
-    delete enemiesVector[i];
+//    delete enemiesVector[i];
     enemiesVector.erase(enemiesVector.begin() + i);
 }
 

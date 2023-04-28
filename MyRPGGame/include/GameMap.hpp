@@ -21,6 +21,7 @@ private:
     // in relation to the 2d array of world map
     int worldMapRow;
     int worldMapCol;
+    Point ***gameMapPoints;
     bool exitableFromLeft, exitableFromRight, exitableFromTop, exitableFromBottom;
     // enter coordinates
     // no need for x
@@ -45,14 +46,14 @@ private:
     int numOfCurrentEnemies = 0;
     const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
-    vector<LandscapeEntity*> landscapes;
-    // enemies in current
-//    NPCEnemy enemies[100];
-    vector<NPCEnemy*> enemiesVector;
+    vector<LandscapeEntity *> landscapes;
+    // enemies in current map
+    vector<NPCEnemy *> enemiesVector;
     
 public:
     GameMap(int row, int col);
     GameMap(int row, int col, bool up, bool down, bool right, bool left);
+    GameMap(int row, int col, bool up, bool down, bool right, bool left, Point ***points);
     ~GameMap();
     int getWorldMapRow();
     int getWorldMapCol();
@@ -61,7 +62,7 @@ public:
 
     Sprite* getBackgroundSprite();
 
-    vector<LandscapeEntity*> getLandscapes();
+    vector<LandscapeEntity *> getLandscapes();
     void addLandscape(LandscapeEntity* entity);
     bool isExitableFromLeft();
     bool isExitableFromRight();
@@ -72,8 +73,8 @@ public:
     void setIsExitableFromTop(bool flag);
     void setIsExitableFromBottom(bool flag);
 
-    vector<NPCEnemy*> getEnemies();
-    void addEnemy(NPCEnemy* enemy);
+    vector<NPCEnemy *> getEnemies();
+    void addEnemy(NPCEnemy *enemy);
     void removeEnemyAtIndex(int i);
     void removeAllEnemies();
     
