@@ -6,6 +6,11 @@ Circle::Circle(int x, int y, float r) {
     radius = r;
 }
 
+Circle::Circle(Point *center, float r) {
+    this->center = center;
+    radius = r;
+}
+
 Circle::~Circle() {
     delete center;
 }
@@ -27,6 +32,10 @@ void Circle::setCenter(int x, int y) {
     center->setY(y);
 }
 
+void Circle::setCenter(Point *newCenter) {
+    center = newCenter;
+}
+
 bool Circle::intersects(Circle* c) {
     float distance = center->distance(*(c->getCenter()));
     // they don't intersect
@@ -36,4 +45,8 @@ bool Circle::intersects(Circle* c) {
     // if one is contains within another (shouldn't reach this point
     if (distance < std::abs(radius - c->radius)) return true;
     return false;
+}
+
+bool Circle::operator==(const Circle &other) const {
+    return center == other.center && radius == other.radius;
 }
