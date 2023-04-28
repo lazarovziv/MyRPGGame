@@ -28,6 +28,47 @@ GameEntity::GameEntity() {
 //    movement = new GameEntityMovement(this);
 }
 
+GameEntity::GameEntity(Point *center) {
+    level = 1;
+    maxHealthPoints = 50;
+    currentHealthPoints = maxHealthPoints;
+    maxManaPoints = 30;
+    currentManaPoints = maxManaPoints;
+    attackPoints = 1;
+    defencePoints = 5;
+    currentDefencePoints = defencePoints;
+    speed = Constants::BASE_ENTITY_SPEED;
+    inBattle = false;
+    dead = false;
+    moveDirection = MoveDirection::RIGHT;
+    sprite = new Sprite();
+
+    // TODO: add diagonal keys and values
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 0;
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 1;
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
+    moveDirectionsSpritesMap[MoveDirection::UP] = 3;
+    moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
+    moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
+    moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
+    moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
+
+    entityCircle = new Circle(center, (float) Constants::TILE_SIZE/4);
+    attackRangeCircle = new Circle(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
+
+    position.x = entityCircle->getCenter()->getX();
+    position.y = entityCircle->getCenter()->getY();
+
+//    movement = new GameEntityMovement(this);
+}
+
+GameEntity::~GameEntity() {
+    delete sprite;
+//    delete weapon;
+    delete entityCircle;
+    delete attackRangeCircle;
+}
+
 void GameEntity::increaseLevel(int amount) {
     level += amount;
 }
@@ -94,6 +135,19 @@ void GameEntity::setPosition(int x, int y) {
         entityCircle->getCenter()->setX(position.x);
         entityCircle->getCenter()->setY(position.y);
         // if not created
+    }
+//    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
+}
+
+void GameEntity::setPosition(Point *point) {
+    position.x = point->getX();
+    position.y = point->getY();
+    if (entityCircle != nullptr) {
+        entityCircle->setCenter(point);
+        // if not created
+    }
+    if (attackRangeCircle != nullptr) {
+        attackRangeCircle->setCenter(point);
     }
 //    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
 }
@@ -283,9 +337,9 @@ void GameEntity::update() {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating entity circle and attack circle
-        entityCircle->getCenter()->setX(position.x);
-        entityCircle->getCenter()->setY(position.y);
-        attackRangeCircle->getCenter()->setX(position.x);
-        attackRangeCircle->getCenter()->setY(position.y);
+//        entityCircle->getCenter()->setX(position.x);
+//        entityCircle->getCenter()->setY(position.y);
+//        attackRangeCircle->getCenter()->setX(position.x);
+//        attackRangeCircle->getCenter()->setY(position.y);
     }
 }

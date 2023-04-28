@@ -21,6 +21,7 @@ private:
 public:
     LandscapeEntity();
     LandscapeEntity(LandscapeType type, int x, int y);
+    LandscapeEntity(LandscapeType type, Point *center);
     ~LandscapeEntity();
     long getID();
     LandscapeType getType();

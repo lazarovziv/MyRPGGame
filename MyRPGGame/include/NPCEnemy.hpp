@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <stack>
 #include "GameEntity.hpp"
 #include "Circle.hpp"
 #include "Constants.h"
@@ -34,6 +35,8 @@ private:
     int expPointsWorth;
     
     Circle *spawnArea = nullptr;
+
+    stack<Point *> pathToPlayer;
     
 public:
     static const int WORM = 1;
@@ -43,6 +46,7 @@ public:
     
     NPCEnemy();
     NPCEnemy(int type, int x, int y);
+    NPCEnemy(int type, Point *center);
     ~NPCEnemy();
     int getBattleTimeout();
     float getWanderAreaRadius();
@@ -51,6 +55,8 @@ public:
     int getType();
     
     bool canMove();
+    void addToPath(Point *point);
+    void clearPath();
     
     Circle* getSpawnArea();
     void setSpawnArea(int centerX, int centerY, float radius);

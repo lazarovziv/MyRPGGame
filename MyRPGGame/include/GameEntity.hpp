@@ -3,7 +3,6 @@
 #ifndef GameEntity_hpp
 #define GameEntity_hpp
 
-#include <stdio.h>
 #include <cmath>
 #include <map>
 #include <iostream>
@@ -54,7 +53,8 @@ private:
     
 public:
     GameEntity();
-    ~GameEntity() = default;
+    GameEntity(Point *center);
+    virtual ~GameEntity();
     // getters
     long getID();
     char* getName();
@@ -91,6 +91,7 @@ public:
     void setX(int x);
     void setY(int y);
     void setPosition(int x, int y);
+    void setPosition(Point *point);
     void setWeapon(WeaponType type);
     
     void setIsInBattle(bool inBattle);

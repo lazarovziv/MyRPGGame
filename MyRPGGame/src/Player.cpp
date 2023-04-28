@@ -38,48 +38,64 @@ Player::Player(PlayerType type) : GameEntity() {
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
 }
 
+Player::Player(PlayerType type, Point *center) : GameEntity(center) {
+    expPoints = 0;
+    strengthPoints = 0;
+    intelligencePoints = 0;
+    criticalHitsPoints = 0;
+    this->type = type;
+//    speed = 6.f;
+//    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
+//    texture = new Texture();
+    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
+        std::cout << "Texture NOT loaded properly!" << endl;
+        texture.setSmooth(true);
+    } else std::cout << "Texture loaded properly." << endl;
+    // TextureLoader.getInstance()->loadFromFile("player.png");
+    sprite->setTexture(texture);
+    sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
+    // sprite->scale(2.0, 2.0);
+    sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+    sprite->setPosition(position.x, position.y);
+    setPlayerType(type);
+    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
+}
+
 Player::~Player() {
-    delete sprite;
-    delete entityCircle;
-    delete attackRangeCircle;
     delete weapon;
-    delete strengthPoints;
-    delete intelligencePoints;
-    delete criticalHitsPoints;
-    delete expPoints;
 }
 
 int Player::getStrengthPoints() {
-    return *strengthPoints;
+    return strengthPoints;
 }
 
 int Player::getIntelligencePoints() {
-    return *intelligencePoints;
+    return intelligencePoints;
 }
 
 int Player::getCriticalHitPoints() {
-    return *criticalHitsPoints;
+    return criticalHitsPoints;
 }
 
 int Player::getExpPoints() {
-    return *expPoints;
+    return expPoints;
 }
 
 void Player::incrementExpPoints(int amount) {
     // TODO: add logic for handling leveling up
-    *expPoints += amount;
+    expPoints += amount;
 }
 
 void Player::levelUpStrengthPoints() {
-    (*strengthPoints)++;
+    strengthPoints++;
 }
 
 void Player::levelUpIntelligencePoints() {
-    (*intelligencePoints)++;
+    intelligencePoints++;
 }
 
 void Player::levelUpCriticalHitsPoints() {
-    (*criticalHitsPoints)++;
+    criticalHitsPoints++;
 }
 
 void Player::setPlayerType(PlayerType t) {
