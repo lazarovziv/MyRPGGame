@@ -5,37 +5,37 @@ Weapon::Weapon(WeaponType type) {
         case WeaponType::SWORD:
             name = "Sword";
             attackPoints = 10;
-            hitRadius = 5 * 1.5f;
+            hitRadius = 5 * 6.5f;
             numHitsPerSecond = 3;
             break;
         case WeaponType::DAGGER:
             name = "Dagger";
             attackPoints = 5;
-            hitRadius = 2 * 1.5f;
+            hitRadius = 2 * 4.5f;
             numHitsPerSecond = 7;
             break;
         case WeaponType::AXE:
             name = "Axe";
             attackPoints = 12;
-            hitRadius = 6.5f * 1.5f;
+            hitRadius = 6.5f * 6.5f;
             numHitsPerSecond = 2;
             break;
         case WeaponType::MACE:
             name = "Mace";
             attackPoints = 12;
-            hitRadius = 6.5f * 1.5f;
+            hitRadius = 6.5f * 6.5f;
             numHitsPerSecond = 2;
             break;
         case WeaponType::BARE_HANDED:
             name = "Bare Handed";
             attackPoints = 1;
-            hitRadius = 1 * 1.5f;
+            hitRadius = 1 * 3.5f;
             numHitsPerSecond = 12;
             break;
         case WeaponType::STAFF:
             name = "Staff";
             attackPoints = 2;
-            hitRadius = 3 * 1.5f;
+            hitRadius = 3 * 4.5f;
             numHitsPerSecond = 3;
             break;
     }
