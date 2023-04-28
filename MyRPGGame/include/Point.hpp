@@ -21,7 +21,7 @@ public:
     void setY(int Y);
     float distance(Point p);
     int operator-(const Point &other) const;
-    bool operator==(const Point& other) const;
+//    bool operator==(const Point& other) const;
 };
 
 #endif /* Point_hpp */

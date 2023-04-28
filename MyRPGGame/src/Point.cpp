@@ -35,6 +35,7 @@ int Point::operator-(const Point &other) const {
     return abs(x - other.x) + abs(y - other.y);
 }
 
+/*
 bool Point::operator==(const Point &other) const {
     return x == other.x && y == other.y;
-}
+}*/
