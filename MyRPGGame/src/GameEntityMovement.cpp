@@ -30,11 +30,12 @@ bool GameEntityMovement::moveTowardsEntity(GameEntity *gameEntity, Graph<Point *
         if (pair == nullptr) break;
         entity->pushToMoveStack(pair);
     }
-    // return first move to be made and whether it was successful
-    return moveBasedOnPoint(entity->popMove());
+    // return whether any move was generated
+    return entity->areAvailableMoves();
 }
 
 bool GameEntityMovement::moveBasedOnPoint(Point *point) {
+    if (point == nullptr) return false;
     // same row, can go up or down
     if (point->getX() == entity->getCircle()->getCenter()->getX()) {
         // go down
@@ -158,7 +159,7 @@ bool GameEntityMovement::moveUp(GameMap *map, int entityX, int entityY, int enti
     // reached top of screen
     if (entityY - entitySpeed <= tileSize / 2) {
         // check if top of screen is an exit point for current game map
-        if (map->isExitableFromTop()) {
+        if (isPlayer && map->isExitableFromTop()) {
             // check if we're at current map's top exit point
             if (entityX + tileSize / 2 <= map->getTopExitMaxX() && entityX - tileSize / 2 >= map->getTopExitMinX()) {
                 cout << "Reached Top Exit" << endl;
@@ -183,7 +184,8 @@ bool GameEntityMovement::moveUp(GameMap *map, int entityX, int entityY, int enti
                               entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+        map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -216,7 +218,7 @@ bool GameEntityMovement::moveDown(GameMap *map, int entityX, int entityY, int en
     // reached bottom of screen
     if (entityY + entitySpeed >= screenHeight - tileSize / 2) {
         // check if bottom of screen is an exit point for current game map
-        if (map->isExitableFromBottom()) {
+        if (isPlayer && map->isExitableFromBottom()) {
             // check if we're at current map's top exit point
             if (entityX + tileSize / 2 <= map->getBottomExitMaxX() &&
                 entityX - tileSize / 2 >= map->getBottomExitMinX()) {
@@ -242,7 +244,8 @@ bool GameEntityMovement::moveDown(GameMap *map, int entityX, int entityY, int en
                               entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -276,7 +279,7 @@ bool GameEntityMovement::moveRight(GameMap *map, int entityX, int entityY, int e
     // reached right of screen
     if (entityX + entitySpeed >= screenWidth - tileSize / 2) {
         // check if right of screen is an exit point for current game map
-        if (map->isExitableFromRight()) {
+        if (isPlayer && map->isExitableFromRight()) {
             // check if we're at current map's right exit point
             if (entityY + tileSize / 2 <= map->getRightExitMinY() &&
                 entityY - tileSize / 2 >= map->getRightExitMaxY()) {
@@ -302,7 +305,8 @@ bool GameEntityMovement::moveRight(GameMap *map, int entityX, int entityY, int e
                               entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -336,7 +340,7 @@ bool GameEntityMovement::moveLeft(GameMap *map, int entityX, int entityY, int en
     // reached left of screen
     if (entityX - entitySpeed <= tileSize / 2) {
         // check if left of screen is an exit point for current game map
-        if (map->isExitableFromLeft()) {
+        if (isPlayer && map->isExitableFromLeft()) {
             // check if we're at current map's left exit point
             if (entityY + tileSize / 2 <= map->getLeftExitMinY() && entityY - tileSize / 2 >= map->getLeftExitMaxY()) {
                 cout << "Reached Left Exit" << endl;
@@ -361,7 +365,8 @@ bool GameEntityMovement::moveLeft(GameMap *map, int entityX, int entityY, int en
                               entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect)) {
+        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
@@ -395,7 +400,7 @@ bool GameEntityMovement::moveUpRight(GameMap *map, int entityX, int entityY, int
     // reached right of screen
     if (entityX + entitySpeed >= screenWidth - tileSize / 2) {
         // check if right of screen is an exit point for current game map
-        if (map->isExitableFromRight()) {
+        if (isPlayer && map->isExitableFromRight()) {
             // check if we're at current map's right exit point
             if (entityY + tileSize / 2 <= map->getRightExitMinY() &&
                 entityY - tileSize / 2 >= map->getRightExitMaxY()) {
@@ -418,7 +423,7 @@ bool GameEntityMovement::moveUpRight(GameMap *map, int entityX, int entityY, int
     // reached top of the screen
     if (entityY - entitySpeed <= tileSize / 2) {
         // check if top of screen is an exit point for current game map
-        if (map->isExitableFromTop()) {
+        if (isPlayer && map->isExitableFromTop()) {
             // check if we're at current map's top exit point
             if (entityX + tileSize / 2 <= map->getTopExitMaxX() && entityX - tileSize / 2 >= map->getTopExitMinX()) {
                 cout << "Reached Top Exit" << endl;
@@ -450,7 +455,9 @@ bool GameEntityMovement::moveUpRight(GameMap *map, int entityX, int entityY, int
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getLandscapes()[i]->getRectangle().intersects(*rightRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*upRect)) {
+            map->getLandscapes()[i]->getRectangle().intersects(*upRect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(rightCircle) ||
+            map->getLandscapes()[i]->getCircle()->intersects(upCircle)) {
             canCollide = true;
             break;
         }
@@ -489,7 +496,7 @@ bool GameEntityMovement::moveUpLeft(GameMap *map, int entityX, int entityY, int 
     // reached top of screen
     if (entityY - entitySpeed <= tileSize / 2) {
         // check if top of screen is an exit point for current game map
-        if (map->isExitableFromTop()) {
+        if (isPlayer && map->isExitableFromTop()) {
             // check if we're at current map's top exit point
             if (entityX + tileSize / 2 <= map->getTopExitMaxX() && entityX - tileSize / 2 >= map->getTopExitMinX()) {
                 cout << "Reached Top Exit" << endl;
@@ -510,7 +517,7 @@ bool GameEntityMovement::moveUpLeft(GameMap *map, int entityX, int entityY, int 
     // reached left of screen
     if (entityX - entitySpeed <= tileSize / 2) {
         // check if left of screen is an exit point for current game map
-        if (map->isExitableFromLeft()) {
+        if (isPlayer && map->isExitableFromLeft()) {
             // check if we're at current map's left exit point
             if (entityY + tileSize / 2 <= map->getLeftExitMinY() && entityY - tileSize / 2 >= map->getLeftExitMaxY()) {
                 cout << "Reached Left Exit" << endl;
@@ -543,7 +550,9 @@ bool GameEntityMovement::moveUpLeft(GameMap *map, int entityX, int entityY, int 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getLandscapes()[i]->getRectangle().intersects(*leftRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*upRect)) {
+            map->getLandscapes()[i]->getRectangle().intersects(*upRect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(leftCircle) ||
+            map->getLandscapes()[i]->getCircle()->intersects(upCircle)) {
             canCollide = true;
             break;
         }
@@ -583,7 +592,7 @@ bool GameEntityMovement::moveDownRight(GameMap *map, int entityX, int entityY, i
     // reached bottom of screen
     if (entityY + entitySpeed >= screenHeight - tileSize / 2) {
         // check if bottom of screen is an exit point for current game map
-        if (map->isExitableFromBottom()) {
+        if (isPlayer && map->isExitableFromBottom()) {
             // check if we're at current map's top exit point
             if (entityX + tileSize / 2 <= map->getBottomExitMaxX() &&
                 entityX - tileSize / 2 >= map->getBottomExitMinX()) {
@@ -606,7 +615,7 @@ bool GameEntityMovement::moveDownRight(GameMap *map, int entityX, int entityY, i
     // reached right of screen
     if (entityX + entitySpeed >= screenWidth - tileSize / 2) {
         // check if right of screen is an exit point for current game map
-        if (map->isExitableFromRight()) {
+        if (isPlayer && map->isExitableFromRight()) {
             // check if we're at current map's right exit point
             if (entityY + tileSize / 2 <= map->getRightExitMinY() &&
                 entityY - tileSize / 2 >= map->getRightExitMaxY()) {
@@ -641,7 +650,9 @@ bool GameEntityMovement::moveDownRight(GameMap *map, int entityX, int entityY, i
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getLandscapes()[i]->getRectangle().intersects(*downRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*rightRect)) {
+            map->getLandscapes()[i]->getRectangle().intersects(*rightRect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(rightCircle) ||
+            map->getLandscapes()[i]->getCircle()->intersects(downCircle)) {
             canCollide = true;
             break;
         }
@@ -681,7 +692,7 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
     // reached bottom of screen
     if (entityY + entitySpeed >= screenHeight - tileSize / 2) {
         // check if bottom of screen is an exit point for current game map
-        if (map->isExitableFromBottom()) {
+        if (isPlayer && map->isExitableFromBottom()) {
             // check if we're at current map's top exit point
             if (entityX + tileSize / 2 <= map->getBottomExitMaxX() &&
                 entityX - tileSize / 2 >= map->getBottomExitMinX()) {
@@ -704,7 +715,7 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
     // reached left of screen
     if (entityX - entitySpeed <= tileSize / 2) {
         // check if left of screen is an exit point for current game map
-        if (map->isExitableFromLeft()) {
+        if (isPlayer && map->isExitableFromLeft()) {
             // check if we're at current map's left exit point
             if (entityY + tileSize / 2 <= map->getLeftExitMinY() && entityY - tileSize / 2 >= map->getLeftExitMaxY()) {
                 cout << "Reached Left Exit" << endl;
@@ -738,7 +749,9 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (map->getLandscapes()[i]->getRectangle().intersects(*downRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*leftRect)) {
+            map->getLandscapes()[i]->getRectangle().intersects(*leftRect) ||
+            map->getLandscapes()[i]->getCircle()->intersects(downCircle) ||
+            map->getLandscapes()[i]->getCircle()->intersects(leftCircle)) {
             canCollide = true;
             break;
         }
@@ -753,7 +766,8 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
                 break;
             }
         }
-        ((Player *) entity)->notifyAll();
+        dynamic_cast<Player *>(entity)->notifyAll();
+//        ((Player *) entity)->notifyAll();
     } else
         canCollide = downCircle->intersects(Game::getInstance()->getPlayer()->getCircle()) ||
                      leftCircle->intersects(Game::getInstance()->getPlayer()->getCircle());

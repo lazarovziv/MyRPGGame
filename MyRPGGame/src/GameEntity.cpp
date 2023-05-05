@@ -349,6 +349,7 @@ void GameEntity::pushToMoveStack(Point *move) {
 }
 
 Point *GameEntity::popMove() {
+    if (numOfMovesAvailable() == 0) return nullptr;
     auto *move = movesStack.top();
     movesStack.pop();
     return move;
