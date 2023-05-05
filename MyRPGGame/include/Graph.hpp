@@ -30,6 +30,27 @@ public:
     // remove node from graph
     void removeVertex(V vertex) {
         if (!isInGraph(vertex)) return;
+        std::pair<V, int> vertexPair = std::make_pair(vertex, 1);
+        // need to delete all edges with neighbors of vertex
+        // neighbors of vertex
+        for (int i = 0; i < genericGraph[vertex]->size(); i++) {
+            std::pair<V, int> pair = genericGraph[vertex]->at(i);
+            // deleting edges TO vertex
+            genericGraph[pair.first]->erase(
+                    std::find(genericGraph[pair.first]->begin(),
+                              genericGraph[pair.first]->end(),
+                              vertexPair));
+            // deleting edges TO vertex
+//            for (int j = 0; j < genericGraph[pair.first]->size(); j++) {
+//                if (genericGraph[pair.first]->at(j).first == vertex) {
+//                    genericGraph[pair.first]->erase(std::find(
+//                            genericGraph[pair.first]->begin(),
+//                            genericGraph[pair.first]->end(),
+//                            genericGraph[pair.first]->at(j)));
+//                }
+//            }
+        }
+        // deleting edges FROM vertex
         genericGraph.erase(vertex);
         genericVertices.erase(std::find(genericVertices.begin(), genericVertices.end(), vertex));
     }
