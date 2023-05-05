@@ -15,15 +15,12 @@ enum class LandscapeType { TREE, GRASS, FLOWER, HOUSE }; // add more
 
 class LandscapeEntity : public GameEntity {
 private:
-    long id;
     LandscapeType type;
     
 public:
-    LandscapeEntity();
+    LandscapeEntity() = default;
     LandscapeEntity(LandscapeType type, int x, int y);
     LandscapeEntity(LandscapeType type, Point *center);
-    ~LandscapeEntity();
-    long getID();
     LandscapeType getType();
     
 };
