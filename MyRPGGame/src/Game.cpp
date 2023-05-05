@@ -104,6 +104,7 @@ Game::Game(const char* str) {
     bool toAdd = true;
     for (int x = Constants::BASE_ENTITY_SPEED; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
         for (int y = Constants::BASE_ENTITY_SPEED; y <= Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
+            if (!graph->isInGraph(points[x][y])) continue;
             toAdd = true;
             // down, right, left
             if (x == Constants::BASE_ENTITY_SPEED) {
@@ -146,16 +147,17 @@ Game::Game(const char* str) {
 
     // remove all vertices which are occupied by landscapes
     for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
-        for (int row = landscape->getCircle()->getCenter()->getX();
-             row < landscape->getCircle()->getCenter()->getX() + TILE_SIZE/4; row++) {
-            for (int col = landscape->getCircle()->getCenter()->getY();
-                 col < landscape->getCircle()->getCenter()->getY() + TILE_SIZE/4; col++) {
-                graph->removeVertex(points[row][col]);
+        for (int row = 0; row < SCREEN_HEIGHT; row++) {
+            for (int col = 0; col < SCREEN_WIDTH; col++) {
+                if (::pow(row-landscape->getCircle()->getCenter()->getY(), 2) +
+                    ::pow(col-landscape->getCircle()->getCenter()->getX(), 2) <=
+                        ::pow(landscape->getCircle()->getRadius(), 2))
+                    graph->removeVertex(points[row][col]);
             }
         }
     }
 
-    cout << "START!" << endl;
+    cout << "Graph size: " << graph->getSize() << endl;
 }
 
 void Game::render() {
@@ -293,8 +295,16 @@ void Game::start() {
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-                    // if route was calculated already, execute it
-                    if (enemiesMovement->getEntity()->numOfMovesAvailable() > 0) enemiesMovement->moveBasedOnPoint(enemiesMovement->getEntity()->popMove());
+                    // if path was calculated already, execute it
+                    if (enemiesMovement->getEntity()->numOfMovesAvailable() > 0) {
+                        // regenerate path to player when it moved
+                        if (moved) {
+                            enemiesMovement->getEntity()->clearMoveStack();
+                            enemiesMovement->moveTowardsEntity(player, graph);
+                            continue;
+                        }
+                        enemiesMovement->moveBasedOnPoint(enemiesMovement->getEntity()->popMove());
+                    }
                     else enemiesMovement->moveTowardsEntity(player, graph);
                     // choose random direction if not path to player exists
 //                        int randomDirection = ((int) random()) % 4;
@@ -364,9 +374,13 @@ void Game::initWorldMap() {
     auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, points[SCREEN_HEIGHT/6][3*SCREEN_WIDTH/16]);
 //    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
     auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][9*SCREEN_WIDTH/16]);
+    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][7*SCREEN_WIDTH/16]);
+    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][5*SCREEN_WIDTH/16]);
     map->addLandscape(unreachableTree0);
     map->addLandscape(unreachableTree1);
-    
+    map->addLandscape(unreachableTree22);
+    map->addLandscape(unreachableTree33);
+
     GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
     // setting exit and enter points
     mapTop->setBottomEnterMinX(SCREEN_WIDTH/2);
