@@ -238,7 +238,7 @@ public:
         bottomExitMaxX = x;
     }
     
-    bool operator == (const GameMap& map);
+    bool operator == (const GameMap& map) const;
 };
 
 #endif /* GameMap_hpp */

@@ -206,6 +206,6 @@ void GameMap::update() {
     }
 }
 
-bool GameMap::operator==(const GameMap &map) {
+bool GameMap::operator==(const GameMap &map) const {
     return map.worldMapRow == worldMapRow && map.worldMapCol == worldMapCol;
 }
