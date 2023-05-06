@@ -33,7 +33,8 @@ public:
     bool move(MoveDirection direction);
 
     bool moveRandomly(int randomDirection);
-    bool moveTowardsEntity(GameEntity* gameEntity, Graph<Point *> *graph);
+    bool moveTowardsEntity(GameEntity *gameEntity, Graph<Point *> *graph);
+    bool moveTowardsPoint(Point *point, Graph<Point *> *graph);
     bool moveBasedOnPoint(Point *point);
 
     void setEntity(GameEntity &entity);

@@ -34,6 +34,21 @@ bool GameEntityMovement::moveTowardsEntity(GameEntity *gameEntity, Graph<Point *
     return entity->areAvailableMoves();
 }
 
+bool GameEntityMovement::moveTowardsPoint(Point *point, Graph<Point *> *graph) {
+    // using A* algorithm as dijkstra was really memory inefficient (maybe my implementation wasn't good enough)
+    std::vector<Point *> *paths = graph->findPathTo(entity->getCircle()->getCenter(), point);
+    if (paths == nullptr) return false;
+    // calling this function means gameEntity has repositioned
+    entity->clearMoveStack();
+    // insert all points
+    for (auto &pair: *paths) {
+        if (pair == nullptr) break;
+        entity->pushToMoveStack(pair);
+    }
+    // return whether any move was generated
+    return entity->areAvailableMoves();
+}
+
 bool GameEntityMovement::moveBasedOnPoint(Point *point) {
     if (point == nullptr) return false;
     // same row, can go up or down
