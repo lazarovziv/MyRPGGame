@@ -24,6 +24,8 @@ public:
     void setCenter(Point *newCenter);
     bool intersects(Circle* c);
 
+    bool isPointInCircle(Point *point);
+
     bool operator==(const Circle& other) const;
 };
 

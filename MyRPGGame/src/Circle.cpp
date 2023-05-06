@@ -41,10 +41,15 @@ bool Circle::intersects(Circle* c) {
     // they don't intersect
     if (distance > radius + c->radius) return false;
     // they intersect
-    if (distance < radius + c->radius) return true;
+    if (distance <= radius + c->radius) return true;
     // if one is contains within another (shouldn't reach this point
     if (distance < std::abs(radius - c->radius)) return true;
     return false;
+}
+
+bool Circle::isPointInCircle(Point *point) {
+    return ::pow(center->getX() - point->getX(), 2) +
+            ::pow(center->getY() - point->getY(), 2) <= ::pow(radius, 2);
 }
 
 bool Circle::operator==(const Circle &other) const {
