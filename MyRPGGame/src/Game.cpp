@@ -92,7 +92,6 @@ Game::Game(const char* str) {
     // init first map
     getCurrentGameMap()->init();
 
-    bool occupied = false;
     // add vertices (in relevant points)
     for (int x = 0; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
         for (int y = 0; y <= Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
@@ -188,7 +187,7 @@ void Game::start() {
     auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap(), points);
     auto *playerBattle = new GameEntityBattle(player);
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
-    
+
     bool canMove = false;
     int running = window->isOpen();
 
@@ -265,18 +264,6 @@ void Game::start() {
                             }
                         }
                     }
-                    // do something if player moved
-                    if (moved) {
-                        // TODO: make enemies drawn to player???
-                        for (int i = 0; i < map->getEnemies().size(); i++) {
-                            if (map->getEnemies().at(i)->isInBattle()) {
-                                // if enemy not in range of player's attacks
-                                if (!player->getAttackRangeCircle()->intersects(map->getEnemies().at(i)->getCircle())) {
-                                    map->getEnemies().at(i)->setIsInBattle(false);
-                                }
-                            }
-                        }
-                    }
                 } else if (state == GameState::IN_MENU) {
                     // exiting menu by pressing I again
                     if (eventKeyCode == Keyboard::I) {
@@ -291,24 +278,39 @@ void Game::start() {
         if (state == GameState::PLAYING) {
             // make enemies move
             for (int i = 0; i < map->getEnemies().size(); i++) {
-                // TODO: make enemies which are in battle to move towards player. otherwise, move randomly. if outside of wander circle, go back there and move randomly there
-                if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove() && !map->getEnemies().at(i)->isInBattle()) {
+                if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-                    // if path was calculated already, execute it
-                    if (enemiesMovement->getEntity()->numOfMovesAvailable() > 0) {
-                        // regenerate path to player when it moved
-                        if (moved) {
-                            enemiesMovement->getEntity()->clearMoveStack();
-                            enemiesMovement->moveTowardsEntity(player, graph);
-                            continue;
+                    // if enemy is in battle (and in battle circle), chase the player
+                    if (map->getEnemies().at(i)->isInBattle() && map->getEnemies().at(i)->isInBattleArea()) {
+                        // calculate path to player
+                        if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
+                            enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
+                        } else enemiesMovement->moveTowardsEntity(player, graph);
+                    } else if (map->getEnemies().at(i)->isInBattle()) {
+                        // in battle mode but went out of the battle area so regenerating path to wander area
+                        map->getEnemies().at(i)->setIsInBattle(false);
+                        map->getEnemies().at(i)->clearMoveStack();
+                        // generate path to wander area
+                        enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->getWanderAreaCircle()->getCenter());
+                    } else {
+                        // go to wander area and move random in there
+                        if (map->getEnemies().at(i)->isInWanderArea()) {
+                            // keep on going to center of wander area if haven't reached it
+                            if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
+                                enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
+                            } else {
+                                // move randomly
+                                int randomDirection = ((int) random()) % 4;
+                                enemiesMovement->moveRandomly(randomDirection);
+                            }
+                        } else {
+                            // go back to wander area
+                            if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
+                                enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
+                            } else enemiesMovement->moveTowardsPoint(map->getEnemies().at(i)->getWanderAreaCircle()->getCenter(), graph);
                         }
-                        enemiesMovement->moveBasedOnPoint(enemiesMovement->getEntity()->popMove());
                     }
-                    else enemiesMovement->moveTowardsEntity(player, graph);
-                    // choose random direction if not path to player exists
-//                        int randomDirection = ((int) random()) % 4;
-//                        enemiesMovement->moveRandomly(randomDirection);
                 }
             }
             update();
@@ -330,12 +332,10 @@ void Game::start() {
     delete playerMovement;
     delete enemiesMovement;
     delete playerBattle;
-
-    disposeInstance();
 }
 
-void Game::changeState(GameState state) {
-    this->state = state;
+void Game::changeState(GameState gameState) {
+    this->state = gameState;
 }
 
 RenderWindow* Game::getWindow() {
@@ -398,11 +398,11 @@ void Game::initWorldMap() {
     // deallocate memory if needed
 }
 
-int Game::getCurrentWorldMapRow() {
+int Game::getCurrentWorldMapRow() const {
     return currentGameMapRow;
 }
 
-int Game::getCurrentWorldMapCol() {
+int Game::getCurrentWorldMapCol() const {
     return currentGameMapCol;
 }
 

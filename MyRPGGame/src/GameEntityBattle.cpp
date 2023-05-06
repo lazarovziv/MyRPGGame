@@ -13,6 +13,7 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
+
         if (enemy.getCurrentDefencePoints() > 0) {
             int defenceAttackPtsDiff = entity->getAttackPoints() - enemy.getCurrentDefencePoints();
             // TODO: insert attack interval for game entity
@@ -37,7 +38,7 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
         }
     } else {
         // TODO: fix changing battle states for entities regardless attack attempt
-        enemy.setIsInBattle(false);
+//        enemy.setIsInBattle(false);
         entity->setIsInBattle(false);
         return false;
     }

@@ -47,10 +47,10 @@ public:
     GameMap*** getWorldMap();
     GameState getState();
     Player* getPlayer();
-    void changeState(GameState state);
+    void changeState(GameState gameState);
     GameMap* getCurrentGameMap();
-    int getCurrentWorldMapRow();
-    int getCurrentWorldMapCol();
+    int getCurrentWorldMapRow() const;
+    int getCurrentWorldMapCol() const;
     void setCurrentWorldMapRow(int row);
     void setCurrentWorldMapCol(int col);
     
