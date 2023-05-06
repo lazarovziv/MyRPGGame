@@ -35,6 +35,8 @@ NPCEnemy::NPCEnemy(int type, int x, int y) {
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 11/3) + weapon->getHitRadius());
 
     lastTimeMoved = std::clock();
+    lastTimeBattled = lastTimeMoved;
+    lastTimeWandered = lastTimeMoved;
      // TODO: choose random floats in defined location radius for each enemy in map
 }
 
@@ -66,8 +68,13 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     weapon = new Weapon(WeaponType::BARE_HANDED);
     spawnArea = new Circle(entityCircle->getCenter(), Constants::TILE_SIZE);
     attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
+    wanderAreaRadius = entityCircle->getRadius() * 12;
+    wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
+    battleAreaRadius = (float) (wanderAreaRadius * 1.5);
+    battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
 
     lastTimeMoved = std::clock();
+    lastTimeBattled = lastTimeMoved;
     // TODO: choose random floats in defined location radius for each enemy in map
 }
 
@@ -118,13 +125,53 @@ bool NPCEnemy::canMove() {
     std::clock_t nowTime = std::clock();
     // TODO: choose direction randomly
     // checking if entity can move due to moveInterval value
-    double diff = (nowTime - lastTimeMoved) / (double) CLOCKS_PER_SEC;
+    double diff = (double) (nowTime - lastTimeMoved) / (double) CLOCKS_PER_SEC;
     if (diff >= moveInterval) {
         // updating lastTimeMoved to latest move made time
         lastTimeMoved = nowTime;
         return true;
     }
     return false;
+}
+
+bool NPCEnemy::canGoToBattle() {
+    std::clock_t nowTime = std::clock();
+    double diff = (double) (nowTime - lastTimeBattled) / (double) CLOCKS_PER_SEC;
+    if (diff >= battleTimeout) {
+        lastTimeBattled = nowTime;
+        return true;
+    }
+    return false;
+}
+
+bool NPCEnemy::canGoToWanderArea() {
+    std::clock_t nowTime = std::clock();
+    double diff = (double) (nowTime - lastTimeWandered) / (double) CLOCKS_PER_SEC;
+    if (diff >= wanderTimeout) {
+        lastTimeWandered = nowTime;
+        return true;
+    }
+    return false;
+}
+
+bool NPCEnemy::isInBattleArea() {
+    return battleAreaCircle->isPointInCircle(entityCircle->getCenter());
+}
+
+bool NPCEnemy::isInWanderArea() {
+    return wanderAreaCircle->isPointInCircle(entityCircle->getCenter());
+}
+
+Circle *NPCEnemy::getWanderAreaCircle() {
+    return wanderAreaCircle;
+}
+
+Circle *NPCEnemy::getBattleAreaCircle() {
+    return battleAreaCircle;
+}
+
+void NPCEnemy::setMoveInterval(float interval) {
+    moveInterval = interval;
 }
 
 // TODO: what to do here? how to use observers to my advantage

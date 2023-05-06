@@ -17,19 +17,23 @@ enum class EnemyType { WORM, SNAKE, BIRD, ETC }; // add more
 
 class NPCEnemy : public GameEntity, public MovementObserver {
 private:
-    // duration of "chasing" player after engaged close
-    int battleTimeout;
     // radius for area to wander when not engaged with player
     float wanderAreaRadius;
     Circle *wanderAreaCircle = nullptr;
+    std::clock_t lastTimeWandered;
     // radius for area to battle player after engaging (needs to be bigger than wander)
     float battleAreaRadius;
     Circle *battleAreaCircle = nullptr;
+    std::clock_t lastTimeBattled;
+    // duration of "chasing" player after engaged close
+    int battleTimeout = 5;
     // type of enemy
     int type;
     // movement intervals
     std::clock_t lastTimeMoved;
-    float moveInterval = 0.2;
+    float moveInterval = MOVE_INTERVAL_DEFAULT;
+    // duration of regenerating path to wander area
+    int wanderTimeout = 7;
     
     // movement handler
 //    GameEntityMovement* movement;
@@ -43,6 +47,7 @@ public:
     static const int SNAKE = 2;
     static const int BIRD = 3;
     static const int ETC = 4;
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 0.25;
     
     NPCEnemy();
     NPCEnemy(int type, int x, int y);
@@ -55,11 +60,18 @@ public:
     int getType();
     
     bool canMove();
+    bool canGoToBattle();
+    bool canGoToWanderArea();
+    bool isInBattleArea();
+    bool isInWanderArea();
     
     Circle* getSpawnArea();
+    Circle *getWanderAreaCircle();
+    Circle *getBattleAreaCircle();
     void setSpawnArea(int centerX, int centerY, float radius);
     
     void spawn(int x, int y);
+    void setMoveInterval(float interval);
 
     void notify() override;
 };
