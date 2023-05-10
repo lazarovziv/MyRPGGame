@@ -93,6 +93,7 @@ vector<LandscapeEntity*> GameMap::getLandscapes() {
 
 void GameMap::addLandscape(LandscapeEntity *entity) {
     landscapes.push_back(entity);
+    entities.push_back(entity);
 }
 
 vector<NPCEnemy*> GameMap::getEnemies() {
@@ -172,11 +173,17 @@ void GameMap::init() {
 
 void GameMap::addEnemy(NPCEnemy *enemy) {
     enemiesVector.push_back(enemy);
+    entities.push_back(enemy);
 }
 
 void GameMap::removeEnemyAtIndex(int i) {
 //    delete enemiesVector[i];
     enemiesVector.erase(enemiesVector.begin() + i);
+}
+
+void GameMap::removeEnemy(NPCEnemy *enemy) {
+    enemiesVector.erase(std::find(enemiesVector.begin(), enemiesVector.end(), enemy));
+    entities.erase(std::find(entities.begin(), entities.end(), enemy));
 }
 
 void GameMap::removeAllEnemies() {
@@ -195,15 +202,25 @@ int GameMap::generateRandom(int min, int max) {
 }
 
 void GameMap::update() {
-    for (int i = 0; i < enemiesVector.size(); i++) {
+    for (auto & enemy : enemiesVector) {
         // checking if enemy is dead
-        if (enemiesVector[i]->isDead()) {
+        if (enemy->isDead()) {
             // remove it from currentEnemies
-            removeEnemyAtIndex(i);
-            continue;
-            // if enemy is still alive
-        } else enemiesVector[i]->update();
+            removeEnemy(enemy);
+        } else enemy->update(gameMapPoints); // if enemy is still alive
     }
+}
+
+void GameMap::removePlayer() {
+    player = nullptr;
+}
+
+void GameMap::setPlayer(Player *player) {
+    this->player = player;
+}
+
+Player *GameMap::getPlayer() {
+    return player;
 }
 
 bool GameMap::operator==(const GameMap &map) const {

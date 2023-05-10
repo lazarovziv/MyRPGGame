@@ -12,6 +12,7 @@
 #include "LandscapeEntity.hpp"
 #include "Graph.hpp"
 class NPCEnemy;
+class Player;
 
 using namespace sf;
 using namespace std;
@@ -49,6 +50,8 @@ private:
     vector<LandscapeEntity *> landscapes;
     // enemies in current map
     vector<NPCEnemy *> enemiesVector;
+    vector<GameEntity *> entities;
+    Player *player;
     
 public:
     GameMap(int row, int col);
@@ -73,12 +76,16 @@ public:
     void setIsExitableFromTop(bool flag);
     void setIsExitableFromBottom(bool flag);
 
+    Player *getPlayer();
+    void setPlayer(Player *player);
+    void removePlayer();
     vector<NPCEnemy *> getEnemies();
     void addEnemy(NPCEnemy *enemy);
     void removeEnemyAtIndex(int i);
+    void removeEnemy(NPCEnemy *enemy);
     void removeAllEnemies();
     
-    int generateRandom(int min, int max);
+    static int generateRandom(int min, int max);
 
     void update();
     
