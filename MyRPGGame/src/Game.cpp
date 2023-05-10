@@ -148,15 +148,16 @@ Game::Game(const char* str) {
     for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
         for (int row = 0; row < SCREEN_HEIGHT; row++) {
             for (int col = 0; col < SCREEN_WIDTH; col++) {
-                if (::pow(row-landscape->getCircle()->getCenter()->getY(), 2) +
-                    ::pow(col-landscape->getCircle()->getCenter()->getX(), 2) <=
-                        ::pow(landscape->getCircle()->getRadius(), 2))
+                if (landscape->getCircle()->isPointInCircle(points[row][col])) {
                     graph->removeVertex(points[row][col]);
+                }
             }
         }
     }
 
     cout << "Graph size: " << graph->getSize() << endl;
+
+//    playerRepository = new PlayerRepository(player, getCurrentGameMap());
 }
 
 void Game::render() {
@@ -187,6 +188,7 @@ void Game::start() {
     auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap(), points);
     auto *playerBattle = new GameEntityBattle(player);
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
+    auto *enemiesBattle = new GameEntityBattle(nullptr);
 
     bool canMove = false;
     int running = window->isOpen();
@@ -273,7 +275,7 @@ void Game::start() {
                     }
                 }
             }
-        }
+        } // end poll event while loop
 
         if (state == GameState::PLAYING) {
             // make enemies move
@@ -281,8 +283,11 @@ void Game::start() {
                 if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove()) {
                     // set enemy if not already set
                     if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
+                    if (enemiesBattle->getEntity() != map->getEnemies().at(i)) enemiesBattle->setEntity(map->getEnemies().at(i));
+                    enemiesBattle->attack(*player);
                     // if enemy is in battle (and in battle circle), chase the player
                     if (map->getEnemies().at(i)->isInBattle() && map->getEnemies().at(i)->isInBattleArea()) {
+                        if (moved) enemiesMovement->moveTowardsEntity(player, graph);
                         // calculate path to player
                         if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
                             enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
@@ -356,7 +361,7 @@ GameMap* Game::getCurrentGameMap() {
 
 void Game::update() {
     // updating player state
-    player->update();
+    player->update(points);
     // updating current map states
     GameMap *map = getCurrentGameMap();
     map->update();

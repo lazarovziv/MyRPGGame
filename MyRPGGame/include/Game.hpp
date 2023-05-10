@@ -10,8 +10,7 @@
 #include "NPCEnemy.hpp"
 #include "Constants.h"
 #include "LandscapeEntity.hpp"
-#include "GameEntityMovement.hpp"
-#include "GameEntityBattle.hpp"
+#include "PlayerRepository.hpp"
 #include "Graph.hpp"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
@@ -29,7 +28,9 @@ private:
     Point ***points;
     GameMap ***worldMap;
 
+    // TODO: make singleton?
     Graph<Point *> *graph;
+//    PlayerRepository *playerRepository;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
