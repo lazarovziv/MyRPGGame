@@ -14,6 +14,8 @@ private:
 public:
     GameEntityBattle(GameEntity* entity);
     ~GameEntityBattle() = default;
+    GameEntity *getEntity();
+    void setEntity(GameEntity *gameEntity);
     bool attack(GameEntity &enemy);
     bool isInAttackRange(GameEntity &enemy);
 };

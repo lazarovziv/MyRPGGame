@@ -8,12 +8,19 @@ GameEntityBattle::GameEntityBattle(GameEntity* entity) {
 //    delete entity;
 //}
 
+GameEntity *GameEntityBattle::getEntity() {
+    return entity;
+}
+
+void GameEntityBattle::setEntity(GameEntity *gameEntity) {
+    entity = gameEntity;
+}
+
 bool GameEntityBattle::attack(GameEntity &enemy) {
     if (isInAttackRange(enemy)) {
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
-
         if (enemy.getCurrentDefencePoints() > 0) {
             int defenceAttackPtsDiff = entity->getAttackPoints() - enemy.getCurrentDefencePoints();
             // TODO: insert attack interval for game entity
@@ -39,7 +46,7 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
     } else {
         // TODO: fix changing battle states for entities regardless attack attempt
 //        enemy.setIsInBattle(false);
-        entity->setIsInBattle(false);
+//        entity->setIsInBattle(false);
         return false;
     }
     cout << "Health: " << enemy.getCurrentHealthPoints() << endl;
