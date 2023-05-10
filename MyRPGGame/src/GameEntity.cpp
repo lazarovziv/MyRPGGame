@@ -333,9 +333,11 @@ Circle* GameEntity::getAttackRangeCircle() {
     return attackRangeCircle;
 }
 
-void GameEntity::update() {
+void GameEntity::update(Point ***points) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
+        entityCircle->setCenter(points[position.y][position.x]);
+        attackRangeCircle->setCenter(points[position.y][position.x]);
         // updating entity circle and attack circle
 //        entityCircle->getCenter()->setX(position.x);
 //        entityCircle->getCenter()->setY(position.y);

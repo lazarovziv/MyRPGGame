@@ -54,9 +54,7 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::UP;
-//    spawn(x, y);
 
-//    texture = new Texture();
     // TextureLoader.getInstance()->loadTexture("dorio_64.png");
     texture.loadFromFile("../graphics/dorio_64.png");
     texture.setSmooth(true);
@@ -70,7 +68,7 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
     wanderAreaRadius = entityCircle->getRadius() * 12;
     wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
-    battleAreaRadius = (float) (wanderAreaRadius * 1.5);
+    battleAreaRadius = (float) (wanderAreaRadius * 2.5);
     battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
 
     lastTimeMoved = std::clock();
@@ -172,6 +170,16 @@ Circle *NPCEnemy::getBattleAreaCircle() {
 
 void NPCEnemy::setMoveInterval(float interval) {
     moveInterval = interval;
+}
+
+// TODO: add more functionality or else use GameEntity's update method
+void NPCEnemy::update(Point ***points) {
+    if (!dead) {
+        sprite->setPosition(position.x, position.y);
+        // updating entity circle and attack circle
+        entityCircle->setCenter(points[position.y][position.x]);
+        attackRangeCircle->setCenter(points[position.y][position.x]);
+    }
 }
 
 // TODO: what to do here? how to use observers to my advantage

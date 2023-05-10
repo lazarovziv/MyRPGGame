@@ -73,6 +73,7 @@ public:
     void spawn(int x, int y);
     void setMoveInterval(float interval);
 
+    void update(Point ***points) override;
     void notify() override;
 };
 

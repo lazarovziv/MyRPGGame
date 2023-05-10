@@ -13,7 +13,7 @@
 #include "Constants.h"
 //#include "GameEntityMovement.hpp"
 //class GameEntityMovement;
-class GameEntityMovemennt;
+class GameEntityMovement;
 
 enum class MoveDirection { DOWN, RIGHT, LEFT, UP, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT };
 
@@ -123,7 +123,7 @@ public:
     int numOfMovesAvailable();
     void clearMoveStack();
     
-    virtual void update();
+    virtual void update(Point ***points);
 };
 
 #endif /* GameEntity_hpp */

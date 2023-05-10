@@ -115,13 +115,12 @@ void Player::setPlayerType(PlayerType t) {
     increaseAttackPoints(weapon->getAttackPoints());
 }
 
-void Player::update() {
+// TODO: add more functionality or else use GameEntity's update method
+void Player::update(Point ***points) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating entity circle and attack circle
-        entityCircle->getCenter()->setX(position.x);
-        entityCircle->getCenter()->setY(position.y);
-        attackRangeCircle->getCenter()->setX(position.x);
-        attackRangeCircle->getCenter()->setY(position.y);
+        entityCircle->setCenter(points[position.y][position.x]);
+        attackRangeCircle->setCenter(points[position.y][position.x]);
     }
 }

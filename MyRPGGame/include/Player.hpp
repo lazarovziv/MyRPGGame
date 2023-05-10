@@ -42,7 +42,7 @@ public:
     void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
 
-    void update() override;
+    void update(Point ***points) override;
 };
 
 #endif /* Player_hpp */
