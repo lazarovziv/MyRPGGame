@@ -10,6 +10,10 @@ public:
     static const int FPS = 60;
     static const int NUM_ROWS = 3;
     static const int NUM_COLS = 3;
+
+    static enum MoveSuccessValues {
+        FAILURE, SUCCESS, CHANGE_UP, CHANGE_DOWN, CHANGE_RIGHT, CHANGE_LEFT
+    };
 };
 
 #endif /* Constants_h */

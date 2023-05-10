@@ -5,8 +5,8 @@
 
 #include "GameEntity.hpp"
 #include "GameMap.hpp"
-#include "../include/Game.hpp"
-#include "../include/Constants.h"
+#include "Game.hpp"
+#include "Constants.h"
 
 class GameEntityMovement {
 private:

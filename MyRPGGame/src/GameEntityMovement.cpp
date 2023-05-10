@@ -168,6 +168,12 @@ bool GameEntityMovement::move(MoveDirection direction) {
     return false;
 }
 
+// TODO: create enum with 6 values for which 0 is unsuccessful move,
+// 1 is successful move,
+// 2 is to change map to up map
+// 3 is to change map to down map
+// 4 is to change map to right map
+// 5 is to change map to left map
 bool GameEntityMovement::moveUp(GameMap *map, int entityX, int entityY, int entitySpeed, IntRect &entityRect) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
@@ -179,6 +185,8 @@ bool GameEntityMovement::moveUp(GameMap *map, int entityX, int entityY, int enti
             if (entityX + tileSize / 2 <= map->getTopExitMaxX() && entityX - tileSize / 2 >= map->getTopExitMinX()) {
                 cout << "Reached Top Exit" << endl;
                 // set current map to map above
+                // TODO: make change world map as game repository or something
+                // TODO: remove player from map's entities vector
                 Game::getInstance()->changeCurrentMap(map->getWorldMapRow() - 1, map->getWorldMapCol());
                 currentMap = Game::getInstance()->getCurrentGameMap();
                 // set entity position to down enter point (changed current map)
@@ -199,12 +207,13 @@ bool GameEntityMovement::moveUp(GameMap *map, int entityX, int entityY, int enti
                               entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
         map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
         }
     }
+    // TODO: make for each game map a list of all entities for which we check if there's a collision instead of using the getPlayer method in Game class
     if (isPlayer) {
         // check for collisions with enemies
         for (int i = 0; i < map->getEnemies().size(); i++) {
@@ -213,8 +222,8 @@ bool GameEntityMovement::moveUp(GameMap *map, int entityX, int entityY, int enti
                 break;
             }
         }
-    } else canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
-
+    } else canCollide = circle->intersects(map->getPlayer()->getCircle()); // TODO: create a method in GameMap class for getPlayer to use it here (and set is to nullptr if player not in the map)
+//    canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
     if (!canCollide) {
         // in legal boundaries
 //        entity->setPosition(entityX, entityY - entitySpeed);
@@ -259,7 +268,7 @@ bool GameEntityMovement::moveDown(GameMap *map, int entityX, int entityY, int en
                               entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
@@ -320,7 +329,7 @@ bool GameEntityMovement::moveRight(GameMap *map, int entityX, int entityY, int e
                               entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
@@ -380,7 +389,7 @@ bool GameEntityMovement::moveLeft(GameMap *map, int entityX, int entityY, int en
                               entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(circle)) {
             canCollide = true;
             break;
@@ -469,8 +478,8 @@ bool GameEntityMovement::moveUpRight(GameMap *map, int entityX, int entityY, int
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*rightRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*upRect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rightRect) ||
+            map->getLandscapes()[i]->getRectangle().intersects(*upRect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(rightCircle) ||
             map->getLandscapes()[i]->getCircle()->intersects(upCircle)) {
             canCollide = true;
@@ -564,8 +573,8 @@ bool GameEntityMovement::moveUpLeft(GameMap *map, int entityX, int entityY, int 
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*leftRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*upRect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*leftRect) ||
+            map->getLandscapes()[i]->getRectangle().intersects(*upRect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(leftCircle) ||
             map->getLandscapes()[i]->getCircle()->intersects(upCircle)) {
             canCollide = true;
@@ -664,8 +673,8 @@ bool GameEntityMovement::moveDownRight(GameMap *map, int entityX, int entityY, i
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*downRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*rightRect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*downRect) ||
+            map->getLandscapes()[i]->getRectangle().intersects(*rightRect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(rightCircle) ||
             map->getLandscapes()[i]->getCircle()->intersects(downCircle)) {
             canCollide = true;
@@ -763,8 +772,8 @@ bool GameEntityMovement::moveDownLeft(GameMap *map, int entityX, int entityY, in
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (map->getLandscapes()[i]->getRectangle().intersects(*downRect) ||
-            map->getLandscapes()[i]->getRectangle().intersects(*leftRect) ||
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*downRect) ||
+            map->getLandscapes()[i]->getRectangle().intersects(*leftRect) ||*/
             map->getLandscapes()[i]->getCircle()->intersects(downCircle) ||
             map->getLandscapes()[i]->getCircle()->intersects(leftCircle)) {
             canCollide = true;
