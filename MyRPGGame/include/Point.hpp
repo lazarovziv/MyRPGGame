@@ -19,7 +19,7 @@ public:
     int getY();
     void setX(int X);
     void setY(int Y);
-    float distance(Point p);
+    float distance(Point p) const;
     int operator-(const Point &other) const;
 //    bool operator==(const Point& other) const;
 };

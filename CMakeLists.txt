@@ -13,7 +13,7 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp
         MyRPGGame/src/GameEntityMovement.cpp MyRPGGame/src/GameMap.cpp MyRPGGame/src/Heap.cpp
         MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/MovementSubject.cpp MyRPGGame/src/NPCEnemy.cpp
         MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp
-        MyRPGGame/src/Weapon.cpp MyRPGGame/src/Graph.cpp)
+        MyRPGGame/src/Weapon.cpp MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp)
 
 find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
 add_executable(main.out ${SOURCE_FILES})

@@ -27,8 +27,8 @@ void Point::setY(int Y) {
     y = Y;
 }
 // probably here too
-float Point::distance(Point p) {
-    return sqrt(pow(x - p.x, 2) + pow(y - p.y, 2));
+float Point::distance(Point p) const {
+    return (float) sqrt(pow(x - p.x, 2) + pow(y - p.y, 2));
 }
 
 int Point::operator-(const Point &other) const {

@@ -59,7 +59,7 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, Point *center) : GameEntity
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2); // or set texture.size / 2, texture.size / 2
     sprite->setPosition(position.x, position.y);
-    entityCircle->setRadius(entityCircle->getRadius()*3);
+    entityCircle->setRadius(entityCircle->getRadius()*2);
 }
 
 LandscapeType LandscapeEntity::getType() {
