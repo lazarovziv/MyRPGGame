@@ -6,13 +6,13 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "NPCEnemy.hpp"
+#include "Player.hpp"
 #include <vector>
 #include "Circle.hpp"
 #include "Constants.h"
 #include "LandscapeEntity.hpp"
 #include "Graph.hpp"
 class NPCEnemy;
-class Player;
 
 using namespace sf;
 using namespace std;
@@ -62,6 +62,7 @@ public:
     int getWorldMapCol();
     
     void init();
+    void initGraph(Graph<Point *> *graph);
 
     Sprite* getBackgroundSprite();
 

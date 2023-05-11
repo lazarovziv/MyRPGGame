@@ -171,6 +171,20 @@ void GameMap::init() {
     addEnemy(enemy);
 }
 
+void GameMap::initGraph(Graph<Point *> *graph) {
+    // TODO: refill all vertices and edges from original graph OR create new graph for every map
+    // remove all vertices which are occupied by landscapes
+    for (auto &landscape : landscapes) {
+        for (int row = 0; row < Constants::SCREEN_HEIGHT; row++) {
+            for (int col = 0; col < Constants::SCREEN_WIDTH; col++) {
+                if (landscape->getCircle()->isPointInCircle(gameMapPoints[row][col])) {
+                    graph->removeVertex(gameMapPoints[row][col]);
+                }
+            }
+        }
+    }
+}
+
 void GameMap::addEnemy(NPCEnemy *enemy) {
     enemiesVector.push_back(enemy);
     entities.push_back(enemy);
