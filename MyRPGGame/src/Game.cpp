@@ -89,8 +89,9 @@ Game::Game(const char* str) {
     this->player = new Player(PlayerType::KNIGHT, points[SCREEN_HEIGHT/2][SCREEN_WIDTH/2]);
     
     initWorldMap();
+    changeCurrentMap(currentGameMapRow, currentGameMapCol);
     // init first map
-    getCurrentGameMap()->init();
+//    getCurrentGameMap()->init();
 
     // add vertices (in relevant points)
     for (int x = 0; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
@@ -198,6 +199,7 @@ void Game::start() {
 
     int eventKeyCode;
     bool moved = false;
+    Constants::MoveSuccessValues moveSuccessValue;
 
     // game loop
     while (/*window->isOpen() && */running) {
@@ -225,30 +227,43 @@ void Game::start() {
                 if (state == GameState::PLAYING) {
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
-                        // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::UP_RIGHT);
-                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::UP_LEFT);
-                        // no diagonal movement
-                        else moved = playerMovement->move(MoveDirection::UP);
-
+                        moveSuccessValue = playerMovement->move(MoveDirection::UP);
+                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     } else if (eventKeyCode == Keyboard::Down && canMove) {
-                        // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Right)) moved = playerMovement->move(MoveDirection::DOWN_RIGHT);
-                        else if (Keyboard::isKeyPressed(Keyboard::Left)) moved = playerMovement->move(MoveDirection::DOWN_LEFT);
-                        else moved = playerMovement->move(MoveDirection::DOWN);
-
+                        moveSuccessValue = playerMovement->move(MoveDirection::DOWN);
+                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     } else if (eventKeyCode == Keyboard::Right && canMove) {
-                        // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP_RIGHT);
-                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN_RIGHT);
-                        else moved = playerMovement->move(MoveDirection::RIGHT);
-
+                        moveSuccessValue = playerMovement->move(MoveDirection::RIGHT);
+                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     } else if (eventKeyCode == Keyboard::Left && canMove) {
-                        // adding diagonal movement
-                        if (Keyboard::isKeyPressed(Keyboard::Up)) moved = playerMovement->move(MoveDirection::UP_LEFT);
-                        else if (Keyboard::isKeyPressed(Keyboard::Down)) moved = playerMovement->move(MoveDirection::DOWN_LEFT);
-                        // no diagonal movement
-                        else moved = playerMovement->move(MoveDirection::LEFT);
+                        moveSuccessValue = playerMovement->move(MoveDirection::LEFT);
+                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
+                    }
+
+                    // switching world map according to value returned from move function
+                    switch (moveSuccessValue) {
+                        case Constants::MoveSuccessValues::CHANGE_UP:
+                            changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
+                            enemiesMovement->setCurrentMap(getCurrentGameMap());
+                            playerMovement->setCurrentMap(getCurrentGameMap());
+                            break;
+                        case Constants::MoveSuccessValues::CHANGE_DOWN:
+                            changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
+                            enemiesMovement->setCurrentMap(getCurrentGameMap());
+                            playerMovement->setCurrentMap(getCurrentGameMap());
+                            break;
+                        case Constants::MoveSuccessValues::CHANGE_RIGHT:
+                            changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
+                            enemiesMovement->setCurrentMap(getCurrentGameMap());
+                            playerMovement->setCurrentMap(getCurrentGameMap());
+                            break;
+                        case Constants::MoveSuccessValues::CHANGE_LEFT:
+                            changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
+                            enemiesMovement->setCurrentMap(getCurrentGameMap());
+                            playerMovement->setCurrentMap(getCurrentGameMap());
+                            break;
+                        default:
+                            break;
                     }
 
                     // pressing I sends to menu (not implemented menu yet)
@@ -424,14 +439,14 @@ void Game::setCurrentWorldMapCol(int col) {
 }
 
 void Game::changeCurrentMap(int row, int col) {
-//    GameMap* map = getCurrentGameMap();
-    // delete enemies because current map has changed
-//    getCurrentGameMap()->removeAllEnemies();
+    // abandoning previous map and setting its player attribute to null
+    worldMap[currentGameMapRow][currentGameMapCol]->setPlayer(nullptr);
     // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);
     // initialize map
     worldMap[currentGameMapRow][currentGameMapCol]->init();
+    worldMap[currentGameMapRow][currentGameMapCol]->setPlayer(player);
     // graph->clear();
     // initGraphVertices();
     // initGraphEdges();
