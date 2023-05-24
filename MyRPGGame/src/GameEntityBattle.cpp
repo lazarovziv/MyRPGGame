@@ -4,10 +4,6 @@ GameEntityBattle::GameEntityBattle(GameEntity* entity) {
     this->entity = entity;
 }
 
-//GameEntityBattle::~GameEntityBattle() {
-//    delete entity;
-//}
-
 GameEntity *GameEntityBattle::getEntity() {
     return entity;
 }
@@ -17,13 +13,16 @@ void GameEntityBattle::setEntity(GameEntity *gameEntity) {
 }
 
 bool GameEntityBattle::attack(GameEntity &enemy) {
+    // checking attack interval
+    if (!entity->canAttack()) return false;
+    // checking attack range
     if (isInAttackRange(enemy)) {
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
+        // lower defence points before health points
         if (enemy.getCurrentDefencePoints() > 0) {
             int defenceAttackPtsDiff = entity->getAttackPoints() - enemy.getCurrentDefencePoints();
-            // TODO: insert attack interval for game entity
             // if attack will break enemy's defence
             if (defenceAttackPtsDiff > 0) {
                 // zeroing defence points
