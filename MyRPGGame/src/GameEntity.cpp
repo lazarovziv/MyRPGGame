@@ -59,6 +59,7 @@ GameEntity::GameEntity(Point *center) {
     position.x = entityCircle->getCenter()->getX();
     position.y = entityCircle->getCenter()->getY();
 
+    lastTimeBattled = std::clock();
 //    movement = new GameEntityMovement(this);
 }
 
@@ -313,6 +314,24 @@ void GameEntity::attack(GameEntity &entity) {
     }
 }
 
+bool GameEntity::canAttack() {
+    std::clock_t nowTime = std::clock();
+    double diff = (double) (nowTime - lastTimeBattled) / (double) CLOCKS_PER_SEC;
+    if (diff >= battleTimeout) {
+        lastTimeBattled = nowTime;
+        return true;
+    }
+    return false;
+}
+
+bool GameEntity::didJustMove() {
+    return justMoved;
+}
+
+void GameEntity::setJustMoved(bool flag) {
+    justMoved = flag;
+}
+
 bool GameEntity::move(MoveDirection direction) {
     return false;
 }
@@ -336,13 +355,9 @@ Circle* GameEntity::getAttackRangeCircle() {
 void GameEntity::update(Point ***points) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
+        // updating entity circle and attack circle
         entityCircle->setCenter(points[position.y][position.x]);
         attackRangeCircle->setCenter(points[position.y][position.x]);
-        // updating entity circle and attack circle
-//        entityCircle->getCenter()->setX(position.x);
-//        entityCircle->getCenter()->setY(position.y);
-//        attackRangeCircle->getCenter()->setX(position.x);
-//        attackRangeCircle->getCenter()->setY(position.y);
     }
 }
 

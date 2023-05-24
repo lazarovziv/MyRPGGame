@@ -37,7 +37,9 @@ protected:
     int defencePoints;
     int currentDefencePoints;
     int speed;
-    bool inBattle;
+    // counter for sprite change (0 to 3)
+    int step = 0;
+    bool inBattle = false;
     bool dead = false;
     MoveDirection moveDirection;
     map<MoveDirection, int> moveDirectionsSpritesMap;
@@ -48,6 +50,10 @@ protected:
     Circle *attackRangeCircle = nullptr;
 //    GameMap* currentGameMap;
     Weapon *weapon;
+
+    std::clock_t lastTimeBattled;
+    float battleTimeout = 0.35;
+    bool justMoved = false;
 
     stack<Point *> movesStack;
     
@@ -76,8 +82,6 @@ public:
     bool isDead();
     MoveDirection getMoveDirection();
     map<MoveDirection, int> getMoveDirectionsSpritesMap();
-    // counter for sprite change (0 to 3)
-    int step = 0;
     Vector2i getPosition();
     Sprite* getSprite();
     IntRect getRectangle(); // sprite.getGlobalBounds()
@@ -116,6 +120,10 @@ public:
     
     void attack(GameEntity &entity);
     bool move(MoveDirection direction);
+
+    bool canAttack();
+    bool didJustMove();
+    void setJustMoved(bool flag);
 
     void pushToMoveStack(Point *move);
     Point *popMove();
