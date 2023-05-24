@@ -85,10 +85,9 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction) {
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_UP) {
             entity->setMoveDirection(MoveDirection::UP);
             entity->incrementStep();
-            entity->getSprite()->setTextureRect(sf::IntRect(
-                    entity->getStep() * Constants::TILE_SIZE,
-                    entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
-                    Constants::TILE_SIZE, Constants::TILE_SIZE));
+            entity->setIntRectPosition(entity->getStep() * Constants::TILE_SIZE,
+                                       entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
+                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN) {
@@ -98,10 +97,9 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction) {
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_DOWN) {
             entity->setMoveDirection(MoveDirection::DOWN);
             entity->incrementStep();
-            entity->getSprite()->setTextureRect(sf::IntRect(
-                    entity->getStep() * Constants::TILE_SIZE,
-                    entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
-                    Constants::TILE_SIZE, Constants::TILE_SIZE));
+            entity->setIntRectPosition(entity->getStep() * Constants::TILE_SIZE,
+                                       entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
+                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::RIGHT) {
@@ -111,10 +109,9 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction) {
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT) {
             entity->setMoveDirection(MoveDirection::RIGHT);
             entity->incrementStep();
-            entity->getSprite()->setTextureRect(sf::IntRect(
-                    entity->getStep() * Constants::TILE_SIZE,
-                    entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
-                    Constants::TILE_SIZE, Constants::TILE_SIZE));
+            entity->setIntRectPosition(entity->getStep() * Constants::TILE_SIZE,
+                                       entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
+                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::LEFT) {
@@ -124,10 +121,9 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction) {
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT) {
             entity->setMoveDirection(MoveDirection::LEFT);
             entity->incrementStep();
-            entity->getSprite()->setTextureRect(sf::IntRect(
-                    entity->getStep() * Constants::TILE_SIZE,
-                    entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
-                    Constants::TILE_SIZE, Constants::TILE_SIZE));
+            entity->setIntRectPosition(entity->getStep() * Constants::TILE_SIZE,
+                                       entity->getMoveDirectionsSpritesMap()[direction] * Constants::TILE_SIZE,
+                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     }

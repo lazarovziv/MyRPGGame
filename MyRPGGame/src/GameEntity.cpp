@@ -283,6 +283,14 @@ IntRect GameEntity::getRectangle() {
     return (IntRect) sprite->getGlobalBounds();
 }
 
+void GameEntity::setIntRectPosition(int left, int top, int width, int height) {
+    spriteRect.left = left;
+    spriteRect.top = top;
+    spriteRect.width = width;
+    spriteRect.height = height;
+    sprite->setTextureRect(spriteRect);
+}
+
 void GameEntity::attack(GameEntity &entity) {
     // attack only if entity is in range
     if (isEntityInAttackRange(entity)) {

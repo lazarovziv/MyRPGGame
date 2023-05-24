@@ -46,6 +46,7 @@ protected:
     Vector2i position;
     Texture texture;
     Sprite *sprite; // maybe VertexArray for each direction
+    IntRect spriteRect;
     Circle *entityCircle = nullptr;
     Circle *attackRangeCircle = nullptr;
 //    GameMap* currentGameMap;
@@ -85,6 +86,7 @@ public:
     Vector2i getPosition();
     Sprite* getSprite();
     IntRect getRectangle(); // sprite.getGlobalBounds()
+    void setIntRectPosition(int left, int top, int width, int height);
     
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
