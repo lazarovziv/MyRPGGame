@@ -44,6 +44,11 @@ Game::Game(const char* str) {
     cameraView = new View(Vector2f(0, 0),
                           Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
+    std::vector<std::string> mainMenuItemsStrings = { "Start", "Settings", "Exit" };
+    std::vector<std::string> gameMenuItemsStrings = { "Resume", "Settings", "Exit" };
+    mainMenu = new MainMenu(mainMenuItemsStrings);
+    gameMenu = new Menu(gameMenuItemsStrings);
+
     state = GameState::PAUSED;
 
     // init all possible points
@@ -88,7 +93,7 @@ Game::Game(const char* str) {
     currentGameMapCol = 1;
     
     this->player = new Player(PlayerType::KNIGHT,
-                              points[Constants::FULL_SCREEN_HEIGHT/2][Constants::FULL_SCREEN_HEIGHT/2]);
+                              points[Constants::SCREEN_HEIGHT/2][Constants::SCREEN_WIDTH/2]);
     
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
@@ -96,28 +101,9 @@ Game::Game(const char* str) {
 //    getCurrentGameMap()->init();
 }
 
-void Game::render() {
-    window->clear();
-    GameMap* map = getCurrentGameMap();
-    // draw background
-    window->draw(*(map->getBackgroundSprite()));
-    // drawing unreachable areas
-    for (int i = 0; i < map->getLandscapes().size(); i++) {
-        window->draw(*(map->getLandscapes()[i]->getSprite()));
-    }
-    // drawing undead enemies
-    for (int i = 0; i < map->getEnemies().size(); i++) {
-        if (!map->getEnemies()[i]->isDead()) {
-            window->draw(*(map->getEnemies()[i]->getSprite()));
-        }
-    }
-    window->draw(*(player->getSprite()));
-    window->display();
-}
-
 void Game::start() {
     cout << "Press Enter to start" << endl;
-    cout << "Press I to enter menu" << endl;
+    cout << "Press I or Esc to enter menu" << endl;
     cout << "Press X near an enemy to attack" << endl;
 
     // initialize player's systems
@@ -132,9 +118,8 @@ void Game::start() {
                                             player, getCurrentGameMap());
 
     bool canMove = false;
-    int running = window->isOpen();
+    bool running = window->isOpen();
 
-    GameMap *map;
     Event event;
 
     int eventKeyCode;
@@ -142,28 +127,17 @@ void Game::start() {
     Constants::MoveSuccessValues moveSuccessValue;
 
     // game loop
-    while (/*window->isOpen() && */running) {
-        map = getCurrentGameMap();
+    while (running) {
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
                 state = GameState::EXITING;
                 // add save game and exit message confirmation
-//                window->close();
                 running = false;
             }
 
             if (event.type == Event::KeyPressed) {
                 eventKeyCode = event.key.code;
-                // exit the game
-                if (eventKeyCode == Keyboard::Escape) {
-                    state = GameState::EXITING;
-//                    window->close();
-                    running = false;
-                    // starting the game by pressing enter
-                } else if (eventKeyCode == Keyboard::Enter) {
-                    changeState(GameState::PLAYING);
-                    canMove = true;
-                }
+
                 if (state == GameState::PLAYING) {
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
@@ -185,31 +159,27 @@ void Game::start() {
                         case Constants::MoveSuccessValues::CHANGE_UP:
                             changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_DOWN:
                             changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_RIGHT:
                             changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_LEFT:
                             changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         default:
                             break;
                     }
 
                     // pressing I sends to menu (not implemented menu yet)
-                    if (eventKeyCode == Keyboard::I) {
+                    if (eventKeyCode == Keyboard::I || eventKeyCode == Keyboard::Escape) {
                         changeState(GameState::IN_MENU);
-                        cout << "In Menu (Press Enter to exit menu)" << endl;
+                        cout << "In Menu (Press Space to choose)" << endl;
                         canMove = false;
                     }
                     // pressing x for attacking
@@ -217,36 +187,45 @@ void Game::start() {
                         playerRepository->attack();
                     }
                 } else if (state == GameState::IN_MENU) {
-                    // exiting menu by pressing I again
-                    if (eventKeyCode == Keyboard::I) {
-                        state = GameState::PLAYING;
-                        cout << "Exited Menu" << endl;
-                        canMove = true;
+                    // moving with the arrows
+                    if (eventKeyCode == Keyboard::Up) {
+                        gameMenu->moveUp();
+                    } else if (eventKeyCode == Keyboard::Down) {
+                        gameMenu->moveDown();
+                    } else if (eventKeyCode == Keyboard::Space) {
+                        updateMenu(gameMenu, &running, &canMove);
+                    }
+                } else if (state == GameState::PAUSED) {
+                    // moving with the arrows
+                    if (eventKeyCode == Keyboard::Up) {
+                        mainMenu->moveUp();
+                    } else if (eventKeyCode == Keyboard::Down) {
+                        mainMenu->moveDown();
+                    } else if (eventKeyCode == Keyboard::Space) {
+                        updateMenu(mainMenu, &running, &canMove);
                     }
                 }
-            }
+            } // end key pressed
         } // end poll event while loop
 
         if (state == GameState::PLAYING) {
             // make enemies move
             enemiesRepository->move();
-            // update all entities' states
+            // update all entities' states when playing
             update(moveSuccessValue);
-            // render only when playing
-            render();
             // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
             if (moved) {
                 moved = false;
                 moveSuccessValue = Constants::MoveSuccessValues::FAILURE;
             } else moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
-        } /* else if (state == GameState::IN_MENU) {
-            renderMenu(); // TODO: make menu rendering function with functionality
-        } */
+        }
+        // render playing or main menu or game menu
+        render();
     }
 
     // deleting all maps from world map
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < Constants::NUM_ROWS; i++) {
+        for (int j = 0; j < Constants::NUM_COLS; j++) {
             delete worldMap[i][j];
         }
         delete[] worldMap[i];
@@ -259,10 +238,44 @@ void Game::start() {
 
 void Game::changeState(GameState gameState) {
     this->state = gameState;
+    // TODO: change running and canMove local variables in start method
 }
 
 GameMap* Game::getCurrentGameMap() {
     return worldMap[currentGameMapRow][currentGameMapCol];
+}
+
+void Game::render() {
+    // clear window
+    window->clear();
+    // draw based on game state
+    if (state == GameState::PAUSED) {
+        renderMenu(mainMenu);
+    } else if (state == GameState::IN_MENU) {
+        renderMenu(gameMenu);
+    } else if (state == GameState::PLAYING) {
+        GameMap* map = getCurrentGameMap();
+        // draw background
+        window->draw(*(map->getBackgroundSprite()));
+        // drawing unreachable areas
+        for (int i = 0; i < map->getLandscapes().size(); i++) {
+            window->draw(*(map->getLandscapes()[i]->getSprite()));
+        }
+        // drawing undead enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (!map->getEnemies()[i]->isDead()) {
+                window->draw(*(map->getEnemies()[i]->getSprite()));
+            }
+        }
+        window->draw(*(player->getSprite()));
+    }
+    // display all drawn sprites
+    window->display();
+}
+
+void Game::renderMenu(Menu *menu) {
+    menu->render(player->getCircle()->getCenter()->getX(),
+                 player->getCircle()->getCenter()->getY(), window);
 }
 
 void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue) {
@@ -272,6 +285,31 @@ void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue) {
     enemiesRepository->update();
     cameraView->setCenter((Vector2f) player->getPosition());
     window->setView(*cameraView);
+}
+
+void Game::updateMenu(Menu *menu, bool *run, bool *move) {
+    // executing command
+    switch (menu->execute()) {
+        case MenuActions::ACTION_RESUME: {
+            state = GameState::PLAYING;
+            cout << "Resuming..." << endl;
+            *move = true;
+            break;
+        }
+        case MenuActions::ACTION_SETTINGS: {
+            // TODO: create settings menu
+            cout << "Settings Menu" << endl;
+            break;
+        }
+        case MenuActions::ACTION_EXIT: {
+            state = GameState::EXITING;
+            cout << "Exiting Game..." << endl;
+            *run = false;
+            break;
+        }
+    }
+    // resetting idx
+    menu->resetMenuItemIdx();
 }
 
 void Game::initWorldMap() {

@@ -4,10 +4,9 @@
 #define Game_hpp
 
 #include <iostream>
-#include <SFML/Graphics.hpp>
+#include "MainMenu.hpp"
 #include "Player.hpp"
 #include "NPCEnemy.hpp"
-#include "Constants.h"
 #include "LandscapeEntity.hpp"
 #include "PlayerRepository.hpp"
 #include "EnemyRepository.hpp"
@@ -20,6 +19,8 @@ private:
     static Game *instance;
     RenderWindow *window = nullptr;
     View *cameraView = nullptr;
+    MainMenu *mainMenu;
+    Menu *gameMenu;
     const char *title;
     GameState state;
     
@@ -56,7 +57,9 @@ public:
     
     void initWorldMap();
     void render();
+    void renderMenu(Menu *menu);
     void update(Constants::MoveSuccessValues playerMoveSuccessValue);
+    void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
 };
 
