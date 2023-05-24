@@ -1,8 +1,10 @@
 #ifndef MovementObserver_hpp
 #define MovementObserver_hpp
 
-class MovementObserver {
+class Observer {
 public:
+    Observer() = default;
+    ~Observer() = default;
     virtual void notify() = 0;
 };
 

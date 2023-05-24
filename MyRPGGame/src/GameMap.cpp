@@ -19,35 +19,51 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     } else std::cout << "Background NOT loaded." << endl;
 //    texture.setSmooth(true);
     backgroundSprite->setTexture(texture);
-    backgroundSprite->setOrigin(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
-    backgroundSprite->setPosition(Constants::SCREEN_WIDTH/2, Constants::SCREEN_HEIGHT/2);
+    backgroundSprite->setOrigin(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
+    backgroundSprite->setPosition(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
 }
 
 GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left, Point ***points) : GameMap(row, col, up, down, right, left) {
     gameMapPoints = points;
+    mapGraph = new Graph<Point *>();
+}
+
+// setting circles as nullptr means player can't exit from that direction
+GameMap::GameMap(int row, int col, Circle *up,
+                 Circle *down, Circle *right,
+                 Circle *left, Point ***points) : GameMap(row, col,
+                                                          up != nullptr, down != nullptr,
+                                                          right != nullptr, left != nullptr) {
+    gameMapPoints = points;
+    topExitCircle = up;
+    bottomExitCircle = down;
+    rightExitCircle = right;
+    leftExitCircle = left;
 }
 
 GameMap::~GameMap() {
     delete backgroundSprite;
-    for (int i = 0; i < landscapes.size(); i++) {
-        delete landscapes[i];
+    for (auto & landscape : landscapes) {
+        delete landscape;
     }
 
-    for (int i = 0; i < enemiesVector.size(); i++) {
-        delete enemiesVector[i];
+    for (auto & enemy : enemiesVector) {
+        delete enemy;
     }
 
     delete leftExitCircle;
     delete rightExitCircle;
     delete topExitCircle;
     delete bottomExitCircle;
+
+    delete mapGraph;
 }
 
-int GameMap::getWorldMapRow() {
+int GameMap::getWorldMapRow() const {
     return worldMapRow;
 }
 
-int GameMap::getWorldMapCol() {
+int GameMap::getWorldMapCol() const {
     return worldMapCol;
 }
 
@@ -55,19 +71,19 @@ Sprite* GameMap::getBackgroundSprite() {
     return backgroundSprite;
 }
 
-bool GameMap::isExitableFromLeft() {
+bool GameMap::isExitableFromLeft() const {
     return exitableFromLeft;
 }
 
-bool GameMap::isExitableFromRight() {
+bool GameMap::isExitableFromRight() const {
     return exitableFromRight;
 }
 
-bool GameMap::isExitableFromTop() {
+bool GameMap::isExitableFromTop() const {
     return exitableFromTop;
 }
 
-bool GameMap::isExitableFromBottom() {
+bool GameMap::isExitableFromBottom() const {
     return exitableFromBottom;
 }
 
@@ -169,25 +185,91 @@ void GameMap::init() {
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
     addEnemy(enemy);
+
+    if (!initializedMapGraph) initGraph();
 }
 
-void GameMap::initGraph(Graph<Point *> *graph) {
-    // TODO: refill all vertices and edges from original graph OR create new graph for every map
+void GameMap::initGraph() {
+    initGraphVertices();
+    initGraphEdges();
     // remove all vertices which are occupied by landscapes
     for (auto &landscape : landscapes) {
-        for (int row = 0; row < Constants::SCREEN_HEIGHT; row++) {
-            for (int col = 0; col < Constants::SCREEN_WIDTH; col++) {
+        for (int row = 0; row < Constants::FULL_SCREEN_HEIGHT; row++) {
+            for (int col = 0; col < Constants::FULL_SCREEN_WIDTH; col++) {
                 if (landscape->getCircle()->isPointInCircle(gameMapPoints[row][col])) {
-                    graph->removeVertex(gameMapPoints[row][col]);
+                    mapGraph->removeVertex(gameMapPoints[row][col]);
                 }
+            }
+        }
+    }
+    initializedMapGraph = true;
+}
+
+void GameMap::initGraphVertices() {
+    // add vertices (in relevant points)
+    for (int x = 0; x <= Constants::FULL_SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
+        for (int y = 0; y <= Constants::FULL_SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
+            mapGraph->addVertex(gameMapPoints[x][y]);
+        }
+    }
+}
+
+void GameMap::initGraphEdges() {
+    // add edges
+    bool toAdd = true;
+    for (int x = Constants::BASE_ENTITY_SPEED; x <= Constants::FULL_SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
+        for (int y = Constants::BASE_ENTITY_SPEED; y <= Constants::FULL_SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
+            if (!mapGraph->isInGraph(gameMapPoints[x][y])) continue;
+            toAdd = true;
+            // down, right, left
+            if (x == Constants::BASE_ENTITY_SPEED) {
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                toAdd = false;
+            }
+                // up, right, left
+            else if (x == Constants::FULL_SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED) {
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                toAdd = false;
+            }
+                // up, down, left
+            else if (y == Constants::FULL_SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED) {
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+                toAdd = false;
+            }
+                // up, down, right
+            else if (y == Constants::BASE_ENTITY_SPEED) {
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                toAdd = false;
+            }
+
+            // up, down, right, left
+            if (toAdd) {
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
             }
         }
     }
 }
 
+Graph<Point *> *GameMap::getMapGraph() {
+    return mapGraph;
+}
+
 void GameMap::addEnemy(NPCEnemy *enemy) {
     enemiesVector.push_back(enemy);
     entities.push_back(enemy);
+    // registering observer
+    if (player != nullptr) player->registerObserver(enemy);
 }
 
 void GameMap::removeEnemyAtIndex(int i) {
@@ -198,11 +280,13 @@ void GameMap::removeEnemyAtIndex(int i) {
 void GameMap::removeEnemy(NPCEnemy *enemy) {
     enemiesVector.erase(std::find(enemiesVector.begin(), enemiesVector.end(), enemy));
     entities.erase(std::find(entities.begin(), entities.end(), enemy));
+    // unregistering enemy from player's observers
+    player->unregisterObserver(enemy);
 }
 
 void GameMap::removeAllEnemies() {
-    for (int i = 0; i < enemiesVector.size(); i++) {
-        delete enemiesVector[i];
+    for (auto &enemy : enemiesVector) {
+        delete enemy;
     }
     enemiesVector.clear();
 }   
@@ -216,10 +300,10 @@ int GameMap::generateRandom(int min, int max) {
 }
 
 void GameMap::update() {
-    for (auto & enemy : enemiesVector) {
+    for (auto &enemy : enemiesVector) {
         // checking if enemy is dead
         if (enemy->isDead()) {
-            // remove it from currentEnemies
+            // remove it from currentEnemies and unregistering it from subject's observers
             removeEnemy(enemy);
         } else enemy->update(gameMapPoints); // if enemy is still alive
     }
@@ -235,6 +319,38 @@ void GameMap::setPlayer(Player *player) {
 
 Player *GameMap::getPlayer() {
     return player;
+}
+
+void GameMap::setTopExitCircle(Circle *circle) {
+    topExitCircle = circle;
+}
+
+void GameMap::setBottomExitCircle(Circle *circle) {
+    bottomExitCircle = circle;
+}
+
+void GameMap::setRightExitCircle(Circle *circle) {
+    rightExitCircle = circle;
+}
+
+void GameMap::setLeftExitCircle(Circle *circle) {
+    leftExitCircle = circle;
+}
+
+Circle *GameMap::getTopExitCircle() {
+    return topExitCircle;
+}
+
+Circle *GameMap::getBottomExitCircle() {
+    return bottomExitCircle;
+}
+
+Circle *GameMap::getRightExitCircle() {
+    return rightExitCircle;
+}
+
+Circle *GameMap::getLeftExitCircle() {
+    return leftExitCircle;
 }
 
 bool GameMap::operator==(const GameMap &map) const {
