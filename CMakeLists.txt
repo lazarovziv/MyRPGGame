@@ -8,12 +8,14 @@ project(MyRPGGame)
 
 set(FULL_PATH_TO_CPP_MYSQL_CONNECTOR /usr/local/mysql-connector-c++-8.0.32)
 
-set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp
+set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/Menu.cpp
+        MyRPGGame/src/MainMenu.cpp
         MyRPGGame/src/Game.cpp MyRPGGame/src/GameEntity.cpp MyRPGGame/src/GameEntityBattle.cpp
         MyRPGGame/src/GameEntityMovement.cpp MyRPGGame/src/GameMap.cpp MyRPGGame/src/Heap.cpp
-        MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/MovementSubject.cpp MyRPGGame/src/NPCEnemy.cpp
-        MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp
-        MyRPGGame/src/Weapon.cpp MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp)
+        MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/Subject.cpp 
+        MyRPGGame/src/NPCEnemy.cpp MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp
+        MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
+        MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp)
 
 find_package(SFML 2.5.1 COMPONENTS system window graphics network audio REQUIRED)
 add_executable(main.out ${SOURCE_FILES})
