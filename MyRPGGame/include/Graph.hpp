@@ -40,15 +40,6 @@ public:
                     std::find(genericGraph[pair.first]->begin(),
                               genericGraph[pair.first]->end(),
                               vertexPair));
-            // deleting edges TO vertex
-//            for (int j = 0; j < genericGraph[pair.first]->size(); j++) {
-//                if (genericGraph[pair.first]->at(j).first == vertex) {
-//                    genericGraph[pair.first]->erase(std::find(
-//                            genericGraph[pair.first]->begin(),
-//                            genericGraph[pair.first]->end(),
-//                            genericGraph[pair.first]->at(j)));
-//                }
-//            }
         }
         // deleting edges FROM vertex
         genericGraph.erase(vertex);
@@ -59,7 +50,7 @@ public:
     bool isInGraph(V vertex) {
         return genericGraph[vertex] != nullptr;
     }
-    // add edge between two nodes with its' weight
+    // add edge between two nodes with its weight
     void addEdge(V vertex1, V vertex2, int edge) {
         genericGraph[vertex1]->push_back(make_pair(vertex2, edge));
     }
@@ -106,7 +97,6 @@ public:
             current = openQueue.top();
             openQueue.pop();
             openSet.erase(current.first);
-//            cout << "First: " << current.first << " <=> " << target << endl;
             // reached goal
             if (current.first == target) return reconstructPath(cameFrom, current.first);
 
@@ -130,7 +120,7 @@ public:
         return nullptr;
     }
 
-    // dijkstra algorithm from source node (TODO: add function for specific target)
+    // dijkstra algorithm from source node
     std::map<V, V> dijkstra(V source) {
         std::map<V, int> distances;
         std::map<V, V> previous;
