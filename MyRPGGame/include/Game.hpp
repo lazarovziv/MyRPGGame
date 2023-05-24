@@ -5,12 +5,12 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "GameMap.hpp"
 #include "Player.hpp"
 #include "NPCEnemy.hpp"
 #include "Constants.h"
 #include "LandscapeEntity.hpp"
 #include "PlayerRepository.hpp"
+#include "EnemyRepository.hpp"
 #include "Graph.hpp"
 
 enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
@@ -19,6 +19,7 @@ class Game {
 private:
     static Game *instance;
     RenderWindow *window = nullptr;
+    View *cameraView = nullptr;
     const char *title;
     GameState state;
     
@@ -28,9 +29,8 @@ private:
     Point ***points;
     GameMap ***worldMap;
 
-    // TODO: make singleton?
-    Graph<Point *> *graph;
-//    PlayerRepository *playerRepository;
+    PlayerRepository *playerRepository;
+    EnemyRepository *enemiesRepository;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
@@ -42,16 +42,13 @@ public:
     void operator=(const Game&) = delete;
     static const int SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;
     static const int TILE_SIZE = Constants::TILE_SIZE;
+    static const int FULL_SCREEN_WIDTH = Constants::FULL_SCREEN_WIDTH;
+    static const int FULL_SCREEN_HEIGHT = Constants::FULL_SCREEN_HEIGHT;
     static Game* getInstance();
     static void disposeInstance();
-    RenderWindow* getWindow();
-    GameMap*** getWorldMap();
-    GameState getState();
-    Player* getPlayer();
+
     void changeState(GameState gameState);
     GameMap* getCurrentGameMap();
-    int getCurrentWorldMapRow() const;
-    int getCurrentWorldMapCol() const;
     void setCurrentWorldMapRow(int row);
     void setCurrentWorldMapCol(int col);
     
@@ -59,7 +56,7 @@ public:
     
     void initWorldMap();
     void render();
-    void update();
+    void update(Constants::MoveSuccessValues playerMoveSuccessValue);
     void start();
 };
 

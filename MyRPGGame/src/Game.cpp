@@ -41,15 +41,16 @@ Game::Game(const char* str) {
 //    window->setFramerateLimit(Constants::FPS);
     window->setFramerateLimit(0);
 
-    graph = new Graph<Point *>();
+    cameraView = new View(Vector2f(0, 0),
+                          Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
     state = GameState::PAUSED;
 
     // init all possible points
-    points = new Point **[Constants::SCREEN_HEIGHT];
-    for (int row = 0; row < Constants::SCREEN_HEIGHT; row++) {
-        points[row] = new Point *[Constants::SCREEN_WIDTH];
-        for (int col = 0; col < Constants::SCREEN_WIDTH; col++) {
+    points = new Point **[Constants::FULL_SCREEN_HEIGHT];
+    for (int row = 0; row < Constants::FULL_SCREEN_HEIGHT; row++) {
+        points[row] = new Point *[Constants::FULL_SCREEN_WIDTH];
+        for (int col = 0; col < Constants::FULL_SCREEN_WIDTH; col++) {
             points[row][col] = new Point(col, row);
         }
     }
@@ -86,79 +87,13 @@ Game::Game(const char* str) {
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
-    this->player = new Player(PlayerType::KNIGHT, points[SCREEN_HEIGHT/2][SCREEN_WIDTH/2]);
+    this->player = new Player(PlayerType::KNIGHT,
+                              points[Constants::FULL_SCREEN_HEIGHT/2][Constants::FULL_SCREEN_HEIGHT/2]);
     
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
     // init first map
 //    getCurrentGameMap()->init();
-
-    // add vertices (in relevant points)
-    for (int x = 0; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
-        for (int y = 0; y <= Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
-            graph->addVertex(points[x][y]);
-        }
-    }
-
-    // add edges
-    bool toAdd = true;
-    for (int x = Constants::BASE_ENTITY_SPEED; x <= Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
-        for (int y = Constants::BASE_ENTITY_SPEED; y <= Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
-            if (!graph->isInGraph(points[x][y])) continue;
-            toAdd = true;
-            // down, right, left
-            if (x == Constants::BASE_ENTITY_SPEED) {
-                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                toAdd = false;
-            }
-            // up, right, left
-            else if (x == Constants::SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED) {
-                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                toAdd = false;
-            }
-            // up, down, left
-            else if (y == Constants::SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED) {
-                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-                toAdd = false;
-            }
-            // up, down, right
-            else if (y == Constants::BASE_ENTITY_SPEED) {
-                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                toAdd = false;
-            }
-
-            // up, down, right, left
-            if (toAdd) {
-                graph->addEdge(points[x][y], points[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                graph->addEdge(points[x][y], points[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                graph->addEdge(points[x][y], points[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                graph->addEdge(points[x][y], points[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
-            }
-        }
-    }
-
-    // remove all vertices which are occupied by landscapes
-    for (auto &landscape : getCurrentGameMap()->getLandscapes()) {
-        for (int row = 0; row < SCREEN_HEIGHT; row++) {
-            for (int col = 0; col < SCREEN_WIDTH; col++) {
-                if (landscape->getCircle()->isPointInCircle(points[row][col])) {
-                    graph->removeVertex(points[row][col]);
-                }
-            }
-        }
-    }
-
-    cout << "Graph size: " << graph->getSize() << endl;
-
-//    playerRepository = new PlayerRepository(player, getCurrentGameMap());
 }
 
 void Game::render() {
@@ -190,6 +125,11 @@ void Game::start() {
     auto *playerBattle = new GameEntityBattle(player);
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
     auto *enemiesBattle = new GameEntityBattle(nullptr);
+
+    playerRepository = new PlayerRepository(player, playerMovement,
+                                            playerBattle, getCurrentGameMap());
+    enemiesRepository = new EnemyRepository(enemiesMovement, enemiesBattle,
+                                            player, getCurrentGameMap());
 
     bool canMove = false;
     int running = window->isOpen();
@@ -227,16 +167,16 @@ void Game::start() {
                 if (state == GameState::PLAYING) {
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
-                        moveSuccessValue = playerMovement->move(MoveDirection::UP);
+                        moveSuccessValue = playerRepository->move(MoveDirection::UP);
                         moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     } else if (eventKeyCode == Keyboard::Down && canMove) {
-                        moveSuccessValue = playerMovement->move(MoveDirection::DOWN);
+                        moveSuccessValue = playerRepository->move(MoveDirection::DOWN);
                         moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     } else if (eventKeyCode == Keyboard::Right && canMove) {
-                        moveSuccessValue = playerMovement->move(MoveDirection::RIGHT);
+                        moveSuccessValue = playerRepository->move(MoveDirection::RIGHT);
                         moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     } else if (eventKeyCode == Keyboard::Left && canMove) {
-                        moveSuccessValue = playerMovement->move(MoveDirection::LEFT);
+                        moveSuccessValue = playerRepository->move(MoveDirection::LEFT);
                         moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     }
 
@@ -245,22 +185,22 @@ void Game::start() {
                         case Constants::MoveSuccessValues::CHANGE_UP:
                             changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-                            playerMovement->setCurrentMap(getCurrentGameMap());
+//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_DOWN:
                             changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-                            playerMovement->setCurrentMap(getCurrentGameMap());
+//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_RIGHT:
                             changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-                            playerMovement->setCurrentMap(getCurrentGameMap());
+//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_LEFT:
                             changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
                             enemiesMovement->setCurrentMap(getCurrentGameMap());
-                            playerMovement->setCurrentMap(getCurrentGameMap());
+//                            playerMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         default:
                             break;
@@ -271,15 +211,10 @@ void Game::start() {
                         changeState(GameState::IN_MENU);
                         cout << "In Menu (Press Enter to exit menu)" << endl;
                         canMove = false;
-                        // pressing x for attacking
                     }
-                    // attacking
+                    // pressing x for attacking
                     if (eventKeyCode == Keyboard::X) {
-                        for (int i = 0; i < map->getEnemies().size(); i++) {
-                            if (!map->getEnemies().at(i)->isDead()) {
-                                playerBattle->attack(*(map->getEnemies()[i]));
-                            }
-                        }
+                        playerRepository->attack();
                     }
                 } else if (state == GameState::IN_MENU) {
                     // exiting menu by pressing I again
@@ -294,51 +229,19 @@ void Game::start() {
 
         if (state == GameState::PLAYING) {
             // make enemies move
-            for (int i = 0; i < map->getEnemies().size(); i++) {
-                if (!map->getEnemies().at(i)->isDead() && map->getEnemies().at(i)->canMove()) {
-                    // set enemy if not already set
-                    if (enemiesMovement->getEntity() != map->getEnemies().at(i)) enemiesMovement->setEntity(*(map->getEnemies().at(i)));
-                    if (enemiesBattle->getEntity() != map->getEnemies().at(i)) enemiesBattle->setEntity(map->getEnemies().at(i));
-                    enemiesBattle->attack(*player);
-                    // if enemy is in battle (and in battle circle), chase the player
-                    if (map->getEnemies().at(i)->isInBattle() && map->getEnemies().at(i)->isInBattleArea()) {
-                        if (moved) enemiesMovement->moveTowardsEntity(player, graph);
-                        // calculate path to player
-                        if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
-                            enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
-                        } else enemiesMovement->moveTowardsEntity(player, graph);
-                    } else if (map->getEnemies().at(i)->isInBattle()) {
-                        // in battle mode but went out of the battle area so regenerating path to wander area
-                        map->getEnemies().at(i)->setIsInBattle(false);
-                        map->getEnemies().at(i)->clearMoveStack();
-                        // generate path to wander area
-                        enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->getWanderAreaCircle()->getCenter());
-                    } else {
-                        // go to wander area and move random in there
-                        if (map->getEnemies().at(i)->isInWanderArea()) {
-                            // keep on going to center of wander area if haven't reached it
-                            if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
-                                enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
-                            } else {
-                                // move randomly
-                                int randomDirection = ((int) random()) % 4;
-                                enemiesMovement->moveRandomly(randomDirection);
-                            }
-                        } else {
-                            // go back to wander area
-                            if (map->getEnemies().at(i)->numOfMovesAvailable() > 0) {
-                                enemiesMovement->moveBasedOnPoint(map->getEnemies().at(i)->popMove());
-                            } else enemiesMovement->moveTowardsPoint(map->getEnemies().at(i)->getWanderAreaCircle()->getCenter(), graph);
-                        }
-                    }
-                }
-            }
-            update();
+            enemiesRepository->move();
+            // update all entities' states
+            update(moveSuccessValue);
             // render only when playing
             render();
-            // resetting moved for enemies movement
-            if (moved) moved = false;
-        }
+            // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
+            if (moved) {
+                moved = false;
+                moveSuccessValue = Constants::MoveSuccessValues::FAILURE;
+            } else moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
+        } /* else if (state == GameState::IN_MENU) {
+            renderMenu(); // TODO: make menu rendering function with functionality
+        } */
     }
 
     // deleting all maps from world map
@@ -358,76 +261,51 @@ void Game::changeState(GameState gameState) {
     this->state = gameState;
 }
 
-RenderWindow* Game::getWindow() {
-    return window;
-}
-
-GameState Game::getState() {
-    return state;
-}
-
-GameMap*** Game::getWorldMap() {
-    return worldMap;
-}
-
 GameMap* Game::getCurrentGameMap() {
     return worldMap[currentGameMapRow][currentGameMapCol];
 }
 
-void Game::update() {
+void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue) {
     // updating player state
-    player->update(points);
+    playerRepository->update(points, playerMoveSuccessValue);
     // updating current map states
-    GameMap *map = getCurrentGameMap();
-    map->update();
+    enemiesRepository->update();
+    cameraView->setCenter((Vector2f) player->getPosition());
+    window->setView(*cameraView);
 }
 
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
-    GameMap *map = worldMap[currentGameMapRow][currentGameMapRow];
-    // setting exit and enter points
-    map->setTopExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
-    map->setTopEnterMinX(SCREEN_WIDTH/2);
-    map->setTopEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    GameMap *startMap = worldMap[currentGameMapRow][currentGameMapRow];
+    // top exit circle
+    auto *startMapTopExitCircle = new Circle(points[TILE_SIZE / 2][FULL_SCREEN_WIDTH / 2 + TILE_SIZE],
+                                             TILE_SIZE / 2);
+    startMap->setTopExitCircle(startMapTopExitCircle);
     // adding unreachable areas and landscapes
-//    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), SCREEN_HEIGHT/6);
-    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, points[SCREEN_HEIGHT/6][3*SCREEN_WIDTH/16]);
-//    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, 9*(SCREEN_WIDTH/16), 1.7*SCREEN_HEIGHT/3);
-    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][9*SCREEN_WIDTH/16]);
-    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][7*SCREEN_WIDTH/16]);
-    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*SCREEN_HEIGHT/3][5*SCREEN_WIDTH/16]);
-    map->addLandscape(unreachableTree0);
-    map->addLandscape(unreachableTree1);
-    map->addLandscape(unreachableTree22);
-    map->addLandscape(unreachableTree33);
+    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, points[FULL_SCREEN_HEIGHT/6][3*FULL_SCREEN_WIDTH/16]);
+    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*FULL_SCREEN_HEIGHT/3][9*FULL_SCREEN_WIDTH/16]);
+    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*FULL_SCREEN_HEIGHT/3][7*FULL_SCREEN_WIDTH/16]);
+    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*FULL_SCREEN_HEIGHT/3][5*FULL_SCREEN_WIDTH/16]);
+    startMap->addLandscape(unreachableTree0);
+    startMap->addLandscape(unreachableTree1);
+    startMap->addLandscape(unreachableTree22);
+    startMap->addLandscape(unreachableTree33);
 
-    GameMap* mapTop = worldMap[currentGameMapRow - 1][currentGameMapCol];
-    // setting exit and enter points
-    mapTop->setBottomEnterMinX(SCREEN_WIDTH/2);
-    mapTop->setBottomEnterMaxX(SCREEN_WIDTH/2 + 2*TILE_SIZE);
-    mapTop->setBottomExit(SCREEN_WIDTH/2, SCREEN_WIDTH/2 + 2*TILE_SIZE);
+    GameMap* topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
+    // bottom exit circle
+    auto *topMapBottomExitCircle = new Circle(
+            points[FULL_SCREEN_HEIGHT-TILE_SIZE/2][FULL_SCREEN_WIDTH/2 + TILE_SIZE],TILE_SIZE/2);
+    topMap->setBottomExitCircle(topMapBottomExitCircle);
     // adding unreachable areas and landscapes
-//    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, 6.5*SCREEN_WIDTH/8, 5*(SCREEN_HEIGHT/24));
-    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE, points[5*SCREEN_HEIGHT/24][(int)6.5*SCREEN_WIDTH/8]);
-//    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, 3*(SCREEN_WIDTH/16), 7*(SCREEN_HEIGHT/12));
-    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE, points[7*SCREEN_HEIGHT/12][3*SCREEN_WIDTH/16]);
-    mapTop->addLandscape(unreachableTree2);
-    mapTop->addLandscape(unreachableTree3);
+    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE,
+                                                 points[5*FULL_SCREEN_HEIGHT/24][(int)6.5*FULL_SCREEN_WIDTH/8]);
+    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE,
+                                                 points[7*FULL_SCREEN_HEIGHT/12][3*FULL_SCREEN_WIDTH/16]);
+    topMap->addLandscape(unreachableTree2);
+    topMap->addLandscape(unreachableTree3);
 
 
     // deallocate memory if needed
-}
-
-int Game::getCurrentWorldMapRow() const {
-    return currentGameMapRow;
-}
-
-int Game::getCurrentWorldMapCol() const {
-    return currentGameMapCol;
-}
-
-Player *Game::getPlayer() {
-    return player;
 }
 
 void Game::setCurrentWorldMapRow(int row) {
@@ -439,6 +317,8 @@ void Game::setCurrentWorldMapCol(int col) {
 }
 
 void Game::changeCurrentMap(int row, int col) {
+    if (row < 0 || row >= Constants::NUM_ROWS) return;
+    if (col < 0 || col >= Constants::NUM_COLS) return;
     // abandoning previous map and setting its player attribute to null
     worldMap[currentGameMapRow][currentGameMapCol]->setPlayer(nullptr);
     // change current map
@@ -446,8 +326,6 @@ void Game::changeCurrentMap(int row, int col) {
     setCurrentWorldMapCol(col);
     // initialize map
     worldMap[currentGameMapRow][currentGameMapCol]->init();
-    worldMap[currentGameMapRow][currentGameMapCol]->setPlayer(player);
-    // graph->clear();
-    // initGraphVertices();
-    // initGraphEdges();
+    if (playerRepository != nullptr) playerRepository->setGameMap(getCurrentGameMap());
+    if (enemiesRepository != nullptr) enemiesRepository->setGameMap(getCurrentGameMap());
 }
