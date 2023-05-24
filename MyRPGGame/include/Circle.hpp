@@ -14,11 +14,11 @@ private:
 public:
     Circle();
     Circle(int x, int y, float r);
-    Circle(Point *center, float r);
+    explicit Circle(Point *center, float r);
     ~Circle();
     
     Point* getCenter();
-    float getRadius();
+    float getRadius() const;
     void setRadius(float r);
     void setCenter(int x, int y);
     void setCenter(Point *newCenter);
