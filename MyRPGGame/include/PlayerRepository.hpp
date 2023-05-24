@@ -12,13 +12,15 @@ private:
     GameMap *map;
 
 public:
-    explicit PlayerRepository(Player *player, GameMap *gameMap);
+    explicit PlayerRepository(Player *player, GameEntityMovement *movement,
+                              GameEntityBattle *battle, GameMap *gameMap);
     ~PlayerRepository() = default;
 
     void setGameMap(GameMap *gameMap);
 
-    bool move(MoveDirection direction);
-    bool attack(GameEntity &enemy);
+    Constants::MoveSuccessValues move(MoveDirection direction);
+    bool attack();
+    void update(Point ***points, Constants::MoveSuccessValues moveSuccessValue);
 };
 
 #endif //MYRPGGAME_PLAYERREPOSITORY_HPP
