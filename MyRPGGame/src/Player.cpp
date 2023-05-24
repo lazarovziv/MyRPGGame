@@ -59,6 +59,7 @@ Player::Player(PlayerType type, Point *center) : GameEntity(center) {
     sprite->setPosition(position.x, position.y);
     setPlayerType(type);
     attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
+    battleTimeout = 0.15;
 }
 
 Player::~Player() {
@@ -122,5 +123,7 @@ void Player::update(Point ***points) {
         // updating entity circle and attack circle
         entityCircle->setCenter(points[position.y][position.x]);
         attackRangeCircle->setCenter(points[position.y][position.x]);
+        // notifying all observers (enemies) in current map
+        notifyAll();
     }
 }

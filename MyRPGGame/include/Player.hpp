@@ -6,12 +6,12 @@
 #include <iostream>
 #include "GameEntity.hpp"
 #include "Constants.h"
-#include "MovementSubject.hpp"
+#include "Subject.hpp"
 #include "../include/TextureLoader.hpp"
 
 enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 
-class Player : public GameEntity, public MovementSubject {
+class Player : public GameEntity, public Subject {
 private:
     // for knight
     int strengthPoints;
@@ -29,7 +29,7 @@ private:
 public:
     Player();
     Player(PlayerType type);
-    Player(PlayerType type, Point *center);
+    explicit Player(PlayerType type, Point *center);
     ~Player();
     int getStrengthPoints();
     int getIntelligencePoints();
