@@ -1,3 +1,5 @@
+//#pragma once
+
 #ifndef MYRPGGAME_MAINMENU_HPP
 #define MYRPGGAME_MAINMENU_HPP
 
@@ -5,7 +7,7 @@
 
 class MainMenu : public Menu {
 public:
-    MainMenu(std::vector<std::string> itemsStrings);
+    explicit MainMenu(std::vector<std::string> itemsStrings);
 
     MenuActions execute() override;
 };
