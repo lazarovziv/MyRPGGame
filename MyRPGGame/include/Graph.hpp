@@ -32,9 +32,10 @@ public:
         if (!isInGraph(vertex)) return;
         std::pair<V, int> vertexPair = std::make_pair(vertex, 1);
         // need to delete all edges with neighbors of vertex
+        std::pair<V, int> pair;
         // neighbors of vertex
         for (int i = 0; i < genericGraph[vertex]->size(); i++) {
-            std::pair<V, int> pair = genericGraph[vertex]->at(i);
+            pair = genericGraph[vertex]->at(i);
             // deleting edges TO vertex
             genericGraph[pair.first]->erase(
                     std::find(genericGraph[pair.first]->begin(),
