@@ -1,3 +1,5 @@
+//#pragma once
+
 #ifndef MYRPGGAME_MENU_HPP
 #define MYRPGGAME_MENU_HPP
 

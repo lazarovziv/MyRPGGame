@@ -24,6 +24,7 @@ void Menu::render(int currentWindowX, int currentWindowY, sf::RenderWindow *wind
         // center all items
         menuItems[i].setPosition(currentWindowX, currentWindowY + (i-1) * Constants::TILE_SIZE);
         menuItems[i].setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+        menuItems[i].setStyle(sf::Text::Bold | sf::Text::Italic);
         window->draw(menuItems[i]);
     }
 }
