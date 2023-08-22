@@ -38,15 +38,17 @@ Game::Game(const char* str) {
     window = new RenderWindow(videoMode, s);
 
     window->setVerticalSyncEnabled(true);
-//    window->setFramerateLimit(Constants::FPS);
+    window->setFramerateLimit(Constants::FPS);
     window->setFramerateLimit(0);
 
     cameraView = new View(Vector2f(0, 0),
                           Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
     std::vector<std::string> mainMenuItemsStrings = { "Start", "Settings", "Exit" };
-    std::vector<std::string> gameMenuItemsStrings = { "Resume", "Settings", "Exit" };
+    std::vector<std::string> gameMenuItemsStrings = { "Resume", "Inventory", "Settings", "Exit" };
+    std::vector<std::string> characterCreationItemsStrings = { "Change Body", "Change Torso" };
     mainMenu = new MainMenu(mainMenuItemsStrings);
+    characterCreationMenu = new CharacterCreationMenu(characterCreationItemsStrings);
     gameMenu = new Menu(gameMenuItemsStrings);
 
     state = GameState::PAUSED;
@@ -101,11 +103,7 @@ Game::Game(const char* str) {
 //    getCurrentGameMap()->init();
 }
 
-void Game::start() {
-    cout << "Press Enter to start" << endl;
-    cout << "Press I or Esc to enter menu" << endl;
-    cout << "Press X near an enemy to attack" << endl;
-
+void Game::initEntities() {
     // initialize player's systems
     auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap(), points);
     auto *playerBattle = new GameEntityBattle(player);
@@ -116,6 +114,14 @@ void Game::start() {
                                             playerBattle, getCurrentGameMap());
     enemiesRepository = new EnemyRepository(enemiesMovement, enemiesBattle,
                                             player, getCurrentGameMap());
+}
+
+void Game::start() {
+    cout << "Press Enter to start" << endl;
+    cout << "Press I or Esc to enter menu" << endl;
+    cout << "Press X near an enemy to attack" << endl;
+
+    initEntities();
 
     bool canMove = false;
     bool running = window->isOpen();
@@ -131,7 +137,7 @@ void Game::start() {
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
                 state = GameState::EXITING;
-                // add save game and exit message confirmation
+                // TODO: add save game and exit message confirmation
                 running = false;
             }
 
@@ -158,25 +164,22 @@ void Game::start() {
                     switch (moveSuccessValue) {
                         case Constants::MoveSuccessValues::CHANGE_UP:
                             changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
-                            enemiesMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_DOWN:
                             changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
-                            enemiesMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_RIGHT:
                             changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
-                            enemiesMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         case Constants::MoveSuccessValues::CHANGE_LEFT:
                             changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
-                            enemiesMovement->setCurrentMap(getCurrentGameMap());
                             break;
                         default:
                             break;
                     }
+                    enemiesRepository->setGameMap(getCurrentGameMap());
 
-                    // pressing I sends to menu (not implemented menu yet)
+                    // pressing I or escape sends to menu
                     if (eventKeyCode == Keyboard::I || eventKeyCode == Keyboard::Escape) {
                         changeState(GameState::IN_MENU);
                         cout << "In Menu (Press Space to choose)" << endl;
@@ -204,6 +207,15 @@ void Game::start() {
                     } else if (eventKeyCode == Keyboard::Space) {
                         updateMenu(mainMenu, &running, &canMove);
                     }
+                } else if (state == GameState::INVENTORY) {
+                    // moving with the arrows
+                    if (eventKeyCode == Keyboard::Up) {
+                        characterCreationMenu->moveUp();
+                    } else if (eventKeyCode == Keyboard::Down) {
+                        characterCreationMenu->moveDown();
+                    } else if (eventKeyCode == Keyboard::Space) {
+                        updateMenu(characterCreationMenu, &running, &canMove);
+                    }
                 }
             } // end key pressed
         } // end poll event while loop
@@ -230,10 +242,6 @@ void Game::start() {
         }
         delete[] worldMap[i];
     }
-
-    delete playerMovement;
-    delete enemiesMovement;
-    delete playerBattle;
 }
 
 void Game::changeState(GameState gameState) {
@@ -248,13 +256,16 @@ GameMap* Game::getCurrentGameMap() {
 void Game::render() {
     // clear window
     window->clear();
+    // TODO: if want menu to show on top of game, draw all playing stuff first and then render menu
     // draw based on game state
     if (state == GameState::PAUSED) {
         renderMenu(mainMenu);
     } else if (state == GameState::IN_MENU) {
         renderMenu(gameMenu);
+    } else if (state == GameState::INVENTORY) {
+        renderMenu(characterCreationMenu);
     } else if (state == GameState::PLAYING) {
-        GameMap* map = getCurrentGameMap();
+        GameMap *map = getCurrentGameMap();
         // draw background
         window->draw(*(map->getBackgroundSprite()));
         // drawing unreachable areas
@@ -292,8 +303,11 @@ void Game::updateMenu(Menu *menu, bool *run, bool *move) {
     switch (menu->execute()) {
         case MenuActions::ACTION_RESUME: {
             state = GameState::PLAYING;
-            cout << "Resuming..." << endl;
             *move = true;
+            break;
+        }
+        case MenuActions::ACTIONS_INVENTORY: {
+            state = GameState::INVENTORY;
             break;
         }
         case MenuActions::ACTION_SETTINGS: {
@@ -305,6 +319,17 @@ void Game::updateMenu(Menu *menu, bool *run, bool *move) {
             state = GameState::EXITING;
             cout << "Exiting Game..." << endl;
             *run = false;
+            break;
+        }
+        // TODO: change functionality of execute command as it's using the menu item index to indicate action. maybe create sub menu item index and use special value (like -1) to know if its relevant
+        case MenuActions::ACTION_CHANGE_BODY: {
+            cout << "Change Body Menu" << endl;
+            dynamic_cast<CharacterCreationMenu *>(menu)->updateBodyMenuItems(); // setting the menu to be choices between several colors for the body (images)
+            break;
+        }
+        case MenuActions::ACTION_CHANGE_TORSO: {
+            cout << "Change Torso Menu" << endl;
+            dynamic_cast<CharacterCreationMenu *>(menu)->updateTorsoMenuItems();
             break;
         }
     }
@@ -362,7 +387,7 @@ void Game::changeCurrentMap(int row, int col) {
     // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);
-    // initialize map
+    // initialize map (or reinitialize?)
     worldMap[currentGameMapRow][currentGameMapCol]->init();
     if (playerRepository != nullptr) playerRepository->setGameMap(getCurrentGameMap());
     if (enemiesRepository != nullptr) enemiesRepository->setGameMap(getCurrentGameMap());

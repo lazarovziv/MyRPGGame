@@ -4,15 +4,15 @@
 #define Game_hpp
 
 #include <iostream>
+#include "CharacterCreationMenu.hpp"
 #include "MainMenu.hpp"
-#include "Player.hpp"
 #include "NPCEnemy.hpp"
 #include "LandscapeEntity.hpp"
 #include "PlayerRepository.hpp"
 #include "EnemyRepository.hpp"
 #include "Graph.hpp"
 
-enum class GameState { PLAYING, PAUSED, EXITING, RESUMING, IN_MENU };
+enum class GameState { PLAYING, INVENTORY, PAUSED, EXITING, RESUMING, IN_MENU };
 
 class Game {
 private:
@@ -20,6 +20,7 @@ private:
     RenderWindow *window = nullptr;
     View *cameraView = nullptr;
     MainMenu *mainMenu;
+    CharacterCreationMenu *characterCreationMenu;
     Menu *gameMenu;
     const char *title;
     GameState state;
@@ -56,6 +57,7 @@ public:
     void changeCurrentMap(int row, int col);
     
     void initWorldMap();
+    void initEntities();
     void render();
     void renderMenu(Menu *menu);
     void update(Constants::MoveSuccessValues playerMoveSuccessValue);
