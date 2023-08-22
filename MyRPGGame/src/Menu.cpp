@@ -5,7 +5,10 @@ Menu::Menu(std::vector<std::string> itemsStrings) {
         std::cout << "Failed to load font!" << std::endl;
         // TODO: throw error
     }
+    initMenuItems(itemsStrings);
+}
 
+void Menu::initMenuItems(std::vector<std::string> itemsStrings) {
     numOfMenuItems = (int) itemsStrings.size();
     currentMenuItemIdx = 0;
 

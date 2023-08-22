@@ -11,7 +11,8 @@
 using namespace sf;
 
 enum MenuActions {
-    ACTION_RESUME, ACTION_SETTINGS, ACTION_EXIT
+    ACTION_RESUME, ACTIONS_INVENTORY, ACTION_SETTINGS, ACTION_EXIT, ACTION_CHANGE_BODY,
+    ACTION_CHANGE_TORSO // TODO: add more for character creation menu (change torso, legs etc.)
 };
 
 class Menu {
@@ -25,6 +26,7 @@ public:
     explicit Menu(std::vector<std::string> itemsStrings);
     ~Menu() = default;
 
+    void initMenuItems(std::vector<std::string> itemsStrings);
     void render(int currentWindowX, int currentWindowY, RenderWindow *window);
     void moveUp();
     void moveDown();
