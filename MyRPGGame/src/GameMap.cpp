@@ -14,7 +14,7 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromRight = right;
     exitableFromLeft = left;
     backgroundSprite = new Sprite();
-    if (texture.loadFromFile("../graphics/trees/grass_bg_800x640.png")) {
+    if (texture.loadFromFile("../graphics/maps/map_1_1.png")) {
         std::cout << "Background loaded properly." << endl;
     } else std::cout << "Background NOT loaded." << endl;
 //    texture.setSmooth(true);
@@ -119,6 +119,13 @@ vector<NPCEnemy*> GameMap::getEnemies() {
 void GameMap::init() {
     // don't add more enemies
     if (enemiesVector.size() >= NUM_OF_MAX_ENEMIES) return;
+
+    // TODO: init map entities when player first enters the map
+    if (!initializedMapGraph) {
+        initGraph();
+        // init map
+    }
+
     // seeding
     srand((unsigned int) time(nullptr));
     int randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
@@ -185,8 +192,6 @@ void GameMap::init() {
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
     addEnemy(enemy);
-
-    if (!initializedMapGraph) initGraph();
 }
 
 void GameMap::initGraph() {
@@ -212,6 +217,7 @@ void GameMap::initGraphVertices() {
             mapGraph->addVertex(gameMapPoints[x][y]);
         }
     }
+
 }
 
 void GameMap::initGraphEdges() {

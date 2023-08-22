@@ -24,7 +24,7 @@ private:
     int worldMapCol;
     Point ***gameMapPoints;
     Graph<Point *> *mapGraph;
-    bool initializedMapGraph = false;
+    bool initializedMapGraph = false; // used also for indicator for player's first arrival
 
     bool exitableFromLeft, exitableFromRight, exitableFromTop, exitableFromBottom;
     
@@ -35,8 +35,7 @@ private:
 
     Texture texture;
     Sprite *backgroundSprite;
-    
-    int numOfCurrentEnemies = 0;
+
     const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
     vector<LandscapeEntity *> landscapes;
@@ -99,7 +98,7 @@ public:
 
     void update();
     
-    bool operator == (const GameMap& map) const;
+    bool operator ==(const GameMap& map) const;
 };
 
 #endif /* GameMap_hpp */
