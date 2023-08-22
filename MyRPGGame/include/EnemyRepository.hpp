@@ -14,7 +14,7 @@ private:
 public:
     explicit EnemyRepository(GameEntityMovement *movement, GameEntityBattle *battle,
                     Player *player, GameMap *gameMap);
-    ~EnemyRepository() = default;
+    ~EnemyRepository();
 
     void setGameMap(GameMap *gameMap);
 

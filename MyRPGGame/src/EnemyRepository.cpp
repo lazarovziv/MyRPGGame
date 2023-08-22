@@ -9,6 +9,11 @@ EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle 
     setGameMap(gameMap);
 }
 
+EnemyRepository::~EnemyRepository() {
+    delete movementHandler;
+    delete battleHandler;
+}
+
 void EnemyRepository::setGameMap(GameMap *gameMap) {
     map = gameMap;
     movementHandler->setCurrentMap(map);
