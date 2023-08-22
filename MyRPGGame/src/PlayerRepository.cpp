@@ -39,8 +39,12 @@ bool PlayerRepository::attack() {
 
 void PlayerRepository::update(Point ***points, Constants::MoveSuccessValues moveSuccessValue) {
     // setting justMoved attribute in respect to move attempt (or none)
+    player->setJustMoved(moveSuccessValue != Constants::MoveSuccessValues::NOT_MOVED &&
+    moveSuccessValue != Constants::MoveSuccessValues::FAILURE);
+    /*
     if (moveSuccessValue == Constants::MoveSuccessValues::NOT_MOVED ||
         moveSuccessValue == Constants::MoveSuccessValues::FAILURE) player->setJustMoved(false);
     else player->setJustMoved(true);
+     */
     player->update(points);
 }
