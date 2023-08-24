@@ -23,7 +23,7 @@ Player::Player(PlayerType type) : GameEntity() {
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
 //    texture = new Texture();
     sprite = new Sprite();
-    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
+    if (!texture.loadFromFile("../graphics/dark_chest_male.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;
@@ -47,7 +47,7 @@ Player::Player(PlayerType type, Point *center) : GameEntity(center) {
 //    speed = 6.f;
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
 //    texture = new Texture();
-    if (!texture.loadFromFile("../graphics/johnny_64.png")) {
+    if (!texture.loadFromFile("../graphics/dark_chest_male.png")) {
         std::cout << "Texture NOT loaded properly!" << endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << endl;

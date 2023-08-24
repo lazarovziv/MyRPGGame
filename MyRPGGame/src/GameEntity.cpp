@@ -16,14 +16,14 @@ GameEntity::GameEntity() {
     sprite = new Sprite();
 
     // TODO: add diagonal keys and values
-    moveDirectionsSpritesMap[MoveDirection::DOWN] = 0;
-    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 1;
-    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
-    moveDirectionsSpritesMap[MoveDirection::UP] = 3;
-    moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
-    moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
-    moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
-    moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10;
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11;
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9;
+    moveDirectionsSpritesMap[MoveDirection::UP] = 8;
+    // moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
+    // moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
+    // moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
+    // moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
 
 //    movement = new GameEntityMovement(this);
 }
@@ -44,14 +44,15 @@ GameEntity::GameEntity(Point *center) {
     sprite = new Sprite();
 
     // TODO: add diagonal keys and values
-    moveDirectionsSpritesMap[MoveDirection::DOWN] = 0;
-    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 1;
-    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
-    moveDirectionsSpritesMap[MoveDirection::UP] = 3;
-    moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
-    moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
-    moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
-    moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
+    // commented values are for johnny.png file
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10;
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11;
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9;
+    moveDirectionsSpritesMap[MoveDirection::UP] = 8;
+    // moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
+    // moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
+    // moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
+    // moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
 
     entityCircle = new Circle(center, (float) Constants::TILE_SIZE/4);
     attackRangeCircle = new Circle(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
@@ -117,7 +118,7 @@ void GameEntity::setMoveDirection(MoveDirection direction) {
 }
 
 void GameEntity::incrementStep() {
-    if (step <= 2) step++;
+    if (step < Constants::NUM_STEPS) step++;
     else step = 0;
 }
 
