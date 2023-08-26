@@ -12,11 +12,14 @@ public:
     static const int FPS = 60;
     static const int NUM_ROWS = 3;
     static const int NUM_COLS = 3;
+    static const int NUM_STEPS = 8;
 
     // enum for distinguishing moves - CHANGE_* values means needs to change to relevant map
     enum MoveSuccessValues {
         NOT_MOVED, FAILURE, SUCCESS, CHANGE_UP, CHANGE_DOWN, CHANGE_RIGHT, CHANGE_LEFT
     };
+
+    enum class GameState { PLAYING, EXITING, RESUMING, IN_MENU };
 };
 
 #endif /* Constants_h */

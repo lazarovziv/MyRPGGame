@@ -4,26 +4,24 @@
 #define Game_hpp
 
 #include <iostream>
-#include "CharacterCreationMenu.hpp"
-#include "MainMenu.hpp"
+#include "MenuRepository.hpp"
 #include "NPCEnemy.hpp"
 #include "LandscapeEntity.hpp"
 #include "PlayerRepository.hpp"
 #include "EnemyRepository.hpp"
 #include "Graph.hpp"
 
-enum class GameState { PLAYING, INVENTORY, PAUSED, EXITING, RESUMING, IN_MENU };
-
 class Game {
 private:
     static Game *instance;
     RenderWindow *window = nullptr;
     View *cameraView = nullptr;
-    MainMenu *mainMenu;
-    CharacterCreationMenu *characterCreationMenu;
+    Menu *mainMenu;
+    Menu *characterCreationMenu;
     Menu *gameMenu;
+    Menu *currentMenu; // for changing menus when choosing submenus
     const char *title;
-    GameState state;
+    Constants::GameState state;
     
     // entities
     Player *player = nullptr;
@@ -31,6 +29,8 @@ private:
     Point ***points;
     GameMap ***worldMap;
 
+    // repositories
+    MenuRepository *menuRepository;
     PlayerRepository *playerRepository;
     EnemyRepository *enemiesRepository;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
@@ -49,7 +49,7 @@ public:
     static Game* getInstance();
     static void disposeInstance();
 
-    void changeState(GameState gameState);
+    void changeState(Constants::GameState gameState);
     GameMap* getCurrentGameMap();
     void setCurrentWorldMapRow(int row);
     void setCurrentWorldMapCol(int col);
@@ -58,11 +58,13 @@ public:
     
     void initWorldMap();
     void initEntities();
+    void initMenus();
     void render();
     void renderMenu(Menu *menu);
     void update(Constants::MoveSuccessValues playerMoveSuccessValue);
     void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
+    void exitGame(bool *run);
 };
 
 #endif /* Game_hpp */

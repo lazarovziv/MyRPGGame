@@ -3,3 +3,4 @@
 *.o
 token.txt
 db_creds.txt
+.idea/workspace.xml

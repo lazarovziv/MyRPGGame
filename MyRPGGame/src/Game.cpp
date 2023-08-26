@@ -1,5 +1,4 @@
 #include "../include/Game.hpp"
-//#include "TextureLoader.hpp"
 
 //using namespace std;
 
@@ -39,19 +38,16 @@ Game::Game(const char* str) {
 
     window->setVerticalSyncEnabled(true);
     window->setFramerateLimit(Constants::FPS);
-    window->setFramerateLimit(0);
+    //window->setFramerateLimit(0);
 
     cameraView = new View(Vector2f(0, 0),
                           Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
-    std::vector<std::string> mainMenuItemsStrings = { "Start", "Settings", "Exit" };
-    std::vector<std::string> gameMenuItemsStrings = { "Resume", "Inventory", "Settings", "Exit" };
-    std::vector<std::string> characterCreationItemsStrings = { "Change Body", "Change Torso" };
-    mainMenu = new MainMenu(mainMenuItemsStrings);
-    characterCreationMenu = new CharacterCreationMenu(characterCreationItemsStrings);
-    gameMenu = new Menu(gameMenuItemsStrings);
-
-    state = GameState::PAUSED;
+    menuRepository = new MenuRepository();
+    initMenus();
+    menuRepository->setMenu(currentMenu); // first menu is the game menu
+    
+    state = Constants::GameState::PLAYING;
 
     // init all possible points
     points = new Point **[Constants::FULL_SCREEN_HEIGHT];
@@ -116,6 +112,20 @@ void Game::initEntities() {
                                             player, getCurrentGameMap());
 }
 
+void Game::initMenus() {
+    std::vector<std::string> gameMenuItemsStrings = { "Start", "Settings", "Exit" };
+    std::vector<std::string> mainMenuItemsStrings = { "Resume", "Inventory", "Settings", "Exit" };
+    std::vector<std::string> characterCreationItemsStrings = { "Change Body", "Change Torso" };
+
+    gameMenu = new Menu(gameMenuItemsStrings, true);
+    mainMenu = new Menu(mainMenuItemsStrings, false);
+    characterCreationMenu = new Menu(characterCreationItemsStrings, false);
+    gameMenu->addSubMenu(mainMenu, 0);
+    mainMenu->addSubMenu(characterCreationMenu, 1);
+    // gameMenu->addSubMenu(settingsMenu);
+    currentMenu = gameMenu; // initial menu is gameMenu
+}
+
 void Game::start() {
     cout << "Press Enter to start" << endl;
     cout << "Press I or Esc to enter menu" << endl;
@@ -136,15 +146,17 @@ void Game::start() {
     while (running) {
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
-                state = GameState::EXITING;
+                state = Constants::GameState::EXITING;
                 // TODO: add save game and exit message confirmation
                 running = false;
             }
 
+            canMove = state == Constants::GameState::PLAYING;
+
             if (event.type == Event::KeyPressed) {
                 eventKeyCode = event.key.code;
 
-                if (state == GameState::PLAYING) {
+                if (state == Constants::GameState::PLAYING) {
                     // moving with the arrows
                     if (eventKeyCode == Keyboard::Up && canMove) {
                         moveSuccessValue = playerRepository->move(MoveDirection::UP);
@@ -179,48 +191,60 @@ void Game::start() {
                     }
                     enemiesRepository->setGameMap(getCurrentGameMap());
 
-                    // pressing I or escape sends to menu
-                    if (eventKeyCode == Keyboard::I || eventKeyCode == Keyboard::Escape) {
-                        changeState(GameState::IN_MENU);
-                        cout << "In Menu (Press Space to choose)" << endl;
-                        canMove = false;
-                    }
                     // pressing x for attacking
                     if (eventKeyCode == Keyboard::X) {
                         playerRepository->attack();
                     }
-                } else if (state == GameState::IN_MENU) {
-                    // moving with the arrows
-                    if (eventKeyCode == Keyboard::Up) {
-                        gameMenu->moveUp();
-                    } else if (eventKeyCode == Keyboard::Down) {
-                        gameMenu->moveDown();
-                    } else if (eventKeyCode == Keyboard::Space) {
-                        updateMenu(gameMenu, &running, &canMove);
+
+                    // pressing escape sends to menu
+                    if (eventKeyCode == Keyboard::Escape) {
+                        changeState(Constants::GameState::IN_MENU);
+                        cout << "In Menu (Press Space to choose)" << endl;
+                        canMove = false;
+                        // pressing I sends to inventory menu (to be implemented)
+                    } else if (eventKeyCode == Keyboard::I) {
+                        changeState(Constants::GameState::IN_MENU);
+                        // currentMenu = inventoryMenu;
+                        cout << "Inventory Menu" << endl;
+                        canMove = false;
                     }
-                } else if (state == GameState::PAUSED) {
-                    // moving with the arrows
+                    // TODO: add key for going straight to character creation
+
+                } else if (state == Constants::GameState::IN_MENU) {
                     if (eventKeyCode == Keyboard::Up) {
-                        mainMenu->moveUp();
+                        menuRepository->moveUp();
                     } else if (eventKeyCode == Keyboard::Down) {
-                        mainMenu->moveDown();
-                    } else if (eventKeyCode == Keyboard::Space) {
-                        updateMenu(mainMenu, &running, &canMove);
-                    }
-                } else if (state == GameState::INVENTORY) {
-                    // moving with the arrows
-                    if (eventKeyCode == Keyboard::Up) {
-                        characterCreationMenu->moveUp();
-                    } else if (eventKeyCode == Keyboard::Down) {
-                        characterCreationMenu->moveDown();
-                    } else if (eventKeyCode == Keyboard::Space) {
-                        updateMenu(characterCreationMenu, &running, &canMove);
+                        menuRepository->moveDown();
+                        // user chose an item menu
+                    } else if (eventKeyCode == Keyboard::Space || eventKeyCode == Keyboard::Enter) {
+                        // set current menu to be the relevant one based on currentMenuItemIdx
+                        if (menuRepository->choseSubMenuItem()) {
+                            menuRepository->updateSubMenu(currentMenu, &state);
+                            //updateMenu(currentMenu, &running, &canMove, menuRepository->getMenuType());
+                        } else {
+                            // execute the menu item functionality (cant overflow as it's defined only for non submenu indexes in the class)
+                            menuRepository->execute(&state);
+                        }
+                        // going back one menu
+                    } else if (eventKeyCode == Keyboard::Escape) {
+                        // if it's the game menu then we'll exit the game
+                        if (menuRepository->isGameMenu()) {
+                            exitGame(&running);
+                            break;
+                        }
+                        // not a game menu
+                        currentMenu = currentMenu->getParentMenu();
+                        menuRepository->setMenu(currentMenu);
                     }
                 }
             } // end key pressed
+            if (state == Constants::GameState::EXITING) {
+                exitGame(&running);
+                break;
+            }
         } // end poll event while loop
 
-        if (state == GameState::PLAYING) {
+        if (state == Constants::GameState::PLAYING) {
             // make enemies move
             enemiesRepository->move();
             // update all entities' states when playing
@@ -244,7 +268,12 @@ void Game::start() {
     }
 }
 
-void Game::changeState(GameState gameState) {
+void Game::exitGame(bool *run) {
+    // do all things before closing the game session (autosave or whatever)
+    *run = false;
+}
+
+void Game::changeState(Constants::GameState gameState) {
     this->state = gameState;
     // TODO: change running and canMove local variables in start method
 }
@@ -256,15 +285,11 @@ GameMap* Game::getCurrentGameMap() {
 void Game::render() {
     // clear window
     window->clear();
-    // TODO: if want menu to show on top of game, draw all playing stuff first and then render menu
+    // TODO: handle case where state == IS_EXITING
     // draw based on game state
-    if (state == GameState::PAUSED) {
-        renderMenu(mainMenu);
-    } else if (state == GameState::IN_MENU) {
-        renderMenu(gameMenu);
-    } else if (state == GameState::INVENTORY) {
-        renderMenu(characterCreationMenu);
-    } else if (state == GameState::PLAYING) {
+    if (state != Constants::GameState::PLAYING) {
+        renderMenu(currentMenu);
+    } else {
         GameMap *map = getCurrentGameMap();
         // draw background
         window->draw(*(map->getBackgroundSprite()));
@@ -300,41 +325,9 @@ void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue) {
 
 void Game::updateMenu(Menu *menu, bool *run, bool *move) {
     // executing command
-    switch (menu->execute()) {
-        case MenuActions::ACTION_RESUME: {
-            state = GameState::PLAYING;
-            *move = true;
-            break;
-        }
-        case MenuActions::ACTIONS_INVENTORY: {
-            state = GameState::INVENTORY;
-            break;
-        }
-        case MenuActions::ACTION_SETTINGS: {
-            // TODO: create settings menu
-            cout << "Settings Menu" << endl;
-            break;
-        }
-        case MenuActions::ACTION_EXIT: {
-            state = GameState::EXITING;
-            cout << "Exiting Game..." << endl;
-            *run = false;
-            break;
-        }
-        // TODO: change functionality of execute command as it's using the menu item index to indicate action. maybe create sub menu item index and use special value (like -1) to know if its relevant
-        case MenuActions::ACTION_CHANGE_BODY: {
-            cout << "Change Body Menu" << endl;
-            dynamic_cast<CharacterCreationMenu *>(menu)->updateBodyMenuItems(); // setting the menu to be choices between several colors for the body (images)
-            break;
-        }
-        case MenuActions::ACTION_CHANGE_TORSO: {
-            cout << "Change Torso Menu" << endl;
-            dynamic_cast<CharacterCreationMenu *>(menu)->updateTorsoMenuItems();
-            break;
-        }
-    }
+    menuRepository->execute(&state);
     // resetting idx
-    menu->resetMenuItemIdx();
+    menuRepository->resetMenuItemIdx();
 }
 
 void Game::initWorldMap() {
