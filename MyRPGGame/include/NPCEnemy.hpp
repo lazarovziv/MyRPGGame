@@ -43,7 +43,7 @@ public:
     static const int SNAKE = 2;
     static const int BIRD = 3;
     static const int ETC = 4;
-    constexpr static const float MOVE_INTERVAL_DEFAULT = 0.25;
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 0.075;
     
     NPCEnemy() = default;
     explicit NPCEnemy(int type, Point *center);
@@ -64,7 +64,7 @@ public:
 
     void setMoveInterval(float interval);
 
-    void update(Point ***points) override;
+    void update(Point ***points, float dt) override;
     void notify() override;
 };
 

@@ -16,14 +16,14 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     moveDirection = MoveDirection::UP;
 
     // TextureLoader.getInstance()->loadTexture("dorio_64.png");
-    texture.loadFromFile("../graphics/dorio_64.png");
+    texture.loadFromFile("../graphics/enemies/green_orcs/spritesheet.png");
     texture.setSmooth(true);
     sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
-    weapon = new Weapon(WeaponType::MACE);
+    weapon = new Weapon(entityCircle->getCenter(), WeaponType::MACE);
     attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
     wanderAreaRadius = entityCircle->getRadius() * 12;
     wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
@@ -105,12 +105,12 @@ void NPCEnemy::setMoveInterval(float interval) {
 }
 
 // TODO: add more functionality or else use GameEntity's update method
-void NPCEnemy::update(Point ***points) {
+void NPCEnemy::update(Point ***points, float dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating entity circle and attack circle
-        entityCircle->setCenter(points[position.y][position.x]);
-        attackRangeCircle->setCenter(points[position.y][position.x]);
+        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
+        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
     }
 }
 
