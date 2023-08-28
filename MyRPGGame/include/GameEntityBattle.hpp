@@ -4,12 +4,14 @@
 #include <iostream>
 #include "GameMap.hpp"
 #include "Player.hpp"
+#include "AnimationManager.hpp"
 
 using namespace std;
 
 class GameEntityBattle {
 private:
     GameEntity *entity;
+    AnimationManager *animationManager;
     
 public:
     GameEntityBattle(GameEntity* entity);
@@ -18,6 +20,7 @@ public:
     void setEntity(GameEntity *gameEntity);
     bool attack(GameEntity &enemy);
     bool isInAttackRange(GameEntity &enemy);
+    bool attack();
 };
 
 #endif /* GameEntityBattle_hpp */
