@@ -15,17 +15,25 @@ GameEntity::GameEntity() {
     moveDirection = MoveDirection::RIGHT;
     sprite = new Sprite();
 
-    // TODO: add diagonal keys and values
-    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10;
-    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11;
-    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9;
-    moveDirectionsSpritesMap[MoveDirection::UP] = 8;
-    // moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
-    // moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
-    // moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
-    // moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
+//    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
+//    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11; // change to 4
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 4;
+//    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9; // change to 2
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
+//    moveDirectionsSpritesMap[MoveDirection::UP] = 8; // change to 1
+    moveDirectionsSpritesMap[MoveDirection::UP] = 1;
 
-//    movement = new GameEntityMovement(this);
+    movementStateRowMap[EntityMovementState::IDLE] = Constants::IDLE_ROW;
+    movementStateRowMap[EntityMovementState::CLIMB] = Constants::CLIMB_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = Constants::COMBAT_IDLE_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = Constants::COMBAT_SLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::WALK] = Constants::WALK_ROW;
+    movementStateRowMap[EntityMovementState::JUMP] = Constants::JUMP_ROW;
+    movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
+    movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 }
 
 GameEntity::GameEntity(Point *center) {
@@ -40,19 +48,28 @@ GameEntity::GameEntity(Point *center) {
     speed = Constants::BASE_ENTITY_SPEED;
     inBattle = false;
     dead = false;
-    moveDirection = MoveDirection::RIGHT;
+    moveDirection = MoveDirection::DOWN;
     sprite = new Sprite();
 
-    // TODO: add diagonal keys and values
-    // commented values are for johnny.png file
-    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10;
-    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11;
-    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9;
-    moveDirectionsSpritesMap[MoveDirection::UP] = 8;
-    // moveDirectionsSpritesMap[MoveDirection::UP_RIGHT] = 3;
-    // moveDirectionsSpritesMap[MoveDirection::UP_LEFT] = 3;
-    // moveDirectionsSpritesMap[MoveDirection::DOWN_RIGHT] = 0;
-    // moveDirectionsSpritesMap[MoveDirection::DOWN_LEFT] = 0;
+    //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
+//    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11; // change to 4
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 4;
+//    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9; // change to 2
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
+//    moveDirectionsSpritesMap[MoveDirection::UP] = 8; // change to 1
+    moveDirectionsSpritesMap[MoveDirection::UP] = 1;
+
+    movementStateRowMap[EntityMovementState::IDLE] = Constants::IDLE_ROW;
+    movementStateRowMap[EntityMovementState::CLIMB] = Constants::CLIMB_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = Constants::COMBAT_IDLE_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = Constants::COMBAT_SLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::WALK] = Constants::WALK_ROW;
+    movementStateRowMap[EntityMovementState::JUMP] = Constants::JUMP_ROW;
+    movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
+    movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
     entityCircle = new Circle(center, (float) Constants::TILE_SIZE/4);
     attackRangeCircle = new Circle(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
@@ -61,7 +78,6 @@ GameEntity::GameEntity(Point *center) {
     position.y = entityCircle->getCenter()->getY();
 
     lastTimeBattled = std::clock();
-//    movement = new GameEntityMovement(this);
 }
 
 GameEntity::~GameEntity() {
@@ -115,6 +131,8 @@ void GameEntity::changeInBattleState() {
 
 void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
+    // adjusting weapon direction
+    weapon->setTransitionDirection(direction);
 }
 
 void GameEntity::incrementStep() {
@@ -122,15 +140,15 @@ void GameEntity::incrementStep() {
     else step = 0;
 }
 
-void GameEntity::setX(int x) {
+void GameEntity::setX(float x) {
     position.x = x;
 }
 
-void GameEntity::setY(int y) {
+void GameEntity::setY(float y) {
     position.y = y;
 }
 
-void GameEntity::setPosition(int x, int y) {
+void GameEntity::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
     if (entityCircle != nullptr) {
@@ -154,8 +172,109 @@ void GameEntity::setPosition(Point *point) {
 //    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
 }
 
+bool GameEntity::createMovementStateSprite(EntityMovementState state) {
+    Texture textureToCreate;
+    Sprite *spriteToCreate = new Sprite();
+    switch (state) {
+        case EntityMovementState::IDLE: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "idle/body_idle.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::CLIMB: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "climb/body_climb.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::WALK: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "walk/body_walk.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::JUMP: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "jump/body_jump.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::RUN: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "run/body_run.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::SITTING: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "sitting/body_sitting.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::COMBAT_IDLE_ONE_HANDED: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_idle.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::COMBAT_SLASH_ONE_HANDED: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_slash.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_backslash.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+        case EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED: {
+            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_halfslash.png")) {
+                cout << "Texture wasn't loaded properly." << endl;
+                return false;
+            }
+            break;
+        }
+    }
+    // texture is loaded
+
+    // add texture to vector to keep in memory for future use
+    movementStateTextures.push_back(textureToCreate);
+    // load the texture into the sprite
+    spriteToCreate->setTexture(textureToCreate);
+    spriteToCreate->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
+    spriteToCreate->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+    spriteToCreate->setPosition(position.x, position.y);
+    // set created sprite as the movement state sprite
+    movementStateSpritesMap[state] = spriteToCreate;
+    return true;
+}
+
+bool GameEntity::addMovementStateSprite(EntityMovementState state, Sprite *newSprite) {
+    // calling the function with a nullptr parameter only if we want to initialize a new sprite
+    if (sprite == nullptr) {
+        return createMovementStateSprite(state);
+    }
+    // we want to change the current sprite
+    delete movementStateSpritesMap[state];
+    // create the new one
+    movementStateSpritesMap[state] = newSprite;
+    return true;
+}
+
 void GameEntity::setWeapon(WeaponType type) {
-    weapon = new Weapon(type);
+    weapon = new Weapon(entityCircle->getCenter(), type);
 //    // initializing attackRangeCircle according to weapon
 //    if (attackRangeCircle != nullptr) {
 //        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
@@ -272,12 +391,24 @@ map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() {
     return moveDirectionsSpritesMap;
 }
 
-Vector2i GameEntity::getPosition() {
+map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
+    return movementStateRowMap;
+}
+
+Vector2f GameEntity::getPosition() {
     return position;
 }
 
 Sprite* GameEntity::getSprite() {
     return sprite;
+}
+
+void GameEntity::setSprite(Sprite *newSprite) {
+    sprite = newSprite;
+}
+
+Sprite* GameEntity::getMovementStateSprite(EntityMovementState state) {
+    return movementStateSpritesMap[state];
 }
 
 IntRect GameEntity::getRectangle() {
@@ -341,6 +472,33 @@ void GameEntity::setJustMoved(bool flag) {
     justMoved = flag;
 }
 
+// direction is chosen randomly
+bool GameEntity::canGoIdle() {
+    if (idle) return true;
+    std::clock_t nowTime = std::clock();
+    // checking if entity can move due to moveInterval value
+    double diff = (double) (nowTime - lastTimeMoved) / (double) CLOCKS_PER_SEC;
+    if (diff >= moveInterval) {
+        // updating lastTimeMoved to latest move made time
+        lastTimeMoved = nowTime;
+        idle = true;
+        return true;
+    }
+    return false;
+}
+
+void GameEntity::setLastTimeMoved(std::clock_t time) {
+    lastTimeMoved = time;
+}
+
+void GameEntity::setIsIdle(bool flag) {
+    idle = flag;
+}
+
+bool GameEntity::isIdle() {
+    return idle;
+}
+
 bool GameEntity::move(MoveDirection direction) {
     return false;
 }
@@ -361,12 +519,16 @@ Circle* GameEntity::getAttackRangeCircle() {
     return attackRangeCircle;
 }
 
-void GameEntity::update(Point ***points) {
+Weapon* GameEntity::getWeapon() {
+    return weapon;
+}
+
+void GameEntity::update(Point ***points, float dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating entity circle and attack circle
-        entityCircle->setCenter(points[position.y][position.x]);
-        attackRangeCircle->setCenter(points[position.y][position.x]);
+        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
+        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
     }
 }
 

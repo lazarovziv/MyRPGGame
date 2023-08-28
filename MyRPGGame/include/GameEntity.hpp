@@ -15,8 +15,6 @@
 //class GameEntityMovement;
 class GameEntityMovement;
 
-enum class MoveDirection { DOWN, RIGHT, LEFT, UP, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT };
-
 using namespace std;
 using namespace sf;
 
@@ -43,9 +41,14 @@ protected:
     bool dead = false;
     MoveDirection moveDirection;
     map<MoveDirection, int> moveDirectionsSpritesMap;
-    Vector2i position;
+    map<EntityMovementState, int> movementStateRowMap;
+
+    Vector2f position;
     Texture texture;
     Sprite *sprite; // maybe VertexArray for each direction
+    // for handling changing in entity's movement (from walking to running, from idle to combat etc.)
+    vector<Texture> movementStateTextures;
+    map<EntityMovementState, Sprite*> movementStateSpritesMap;
     IntRect spriteRect;
     Circle *entityCircle = nullptr;
     Circle *attackRangeCircle = nullptr;
@@ -55,6 +58,12 @@ protected:
     std::clock_t lastTimeBattled;
     float battleTimeout = 0.35;
     bool justMoved = false;
+
+    // movement intervals
+    std::clock_t lastTimeMoved;
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 0.075;
+    float moveInterval = MOVE_INTERVAL_DEFAULT;
+    bool idle = true;
 
     stack<Point *> movesStack;
     
@@ -83,7 +92,8 @@ public:
     bool isDead();
     MoveDirection getMoveDirection();
     map<MoveDirection, int> getMoveDirectionsSpritesMap();
-    Vector2i getPosition();
+    map<EntityMovementState, int> getMovementStateRowMap();
+    Vector2f getPosition();
     Sprite* getSprite();
     IntRect getRectangle(); // sprite.getGlobalBounds()
     void setIntRectPosition(int left, int top, int width, int height);
@@ -97,12 +107,13 @@ public:
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
     void incrementStep();
-    void setX(int x);
-    void setY(int y);
-    void setPosition(int x, int y);
+    void setX(float x);
+    void setY(float y);
+    void setPosition(float x, float y);
     void setPosition(Point *point);
+    bool createMovementStateSprite(EntityMovementState state);
+    bool addMovementStateSprite(EntityMovementState state, Sprite *newSprite); // if sprite is null, we'll create one based on the state
     void setWeapon(WeaponType type);
-    
     void setIsInBattle(bool inBattle);
 
     // for situations where changing for worse equipment (adding logic for negative base values)
@@ -119,6 +130,10 @@ public:
     bool intersects(GameEntity &entity);
     Circle* getCircle();
     Circle* getAttackRangeCircle();
+
+    Sprite* getMovementStateSprite(EntityMovementState state);
+    void setSprite(Sprite *newSprite);
+    Weapon *getWeapon();
     
     void attack(GameEntity &entity);
     bool move(MoveDirection direction);
@@ -126,6 +141,12 @@ public:
     bool canAttack();
     bool didJustMove();
     void setJustMoved(bool flag);
+    bool isIdle();
+
+    bool canGoIdle();
+    void setIsIdle(bool flag);
+
+    void setLastTimeMoved(std::clock_t time);
 
     void pushToMoveStack(Point *move);
     Point *popMove();
@@ -133,7 +154,7 @@ public:
     int numOfMovesAvailable();
     void clearMoveStack();
     
-    virtual void update(Point ***points);
+    virtual void update(Point ***points, float dt);
 };
 
 #endif /* GameEntity_hpp */
