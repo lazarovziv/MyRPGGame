@@ -36,9 +36,9 @@ Game::Game(const char* str) {
     std::string s(title);
     window = new RenderWindow(videoMode, s);
 
-    window->setVerticalSyncEnabled(true);
+//    window->setVerticalSyncEnabled(true);
     window->setFramerateLimit(Constants::FPS);
-    //window->setFramerateLimit(0);
+//    window->setFramerateLimit(0);
 
     cameraView = new View(Vector2f(0, 0),
                           Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
@@ -95,6 +95,12 @@ Game::Game(const char* str) {
     
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
+
+    fpsFont.loadFromFile("../graphics/fonts/arial.ttf");
+    fpsText.setFillColor(Color::Blue);
+    dtText.setFillColor(Color::Blue);
+    fpsText.setFont(fpsFont);
+    dtText.setFont(fpsFont);
     // init first map
 //    getCurrentGameMap()->init();
 }
@@ -142,118 +148,135 @@ void Game::start() {
     bool moved = false;
     Constants::MoveSuccessValues moveSuccessValue;
 
-    // game loop
+    sf::Clock clock;
+    sf::Time timer = clock.restart();
+    float dt = 1;
+
     while (running) {
+        timer = clock.restart();
+        dt = timer.asMilliseconds();
+        // TODO: delta time fucks things if it's not in the pollEvent loop. processing input is outside of the loop we need to multiply each position by dt
         while (window->pollEvent(event)) {
             if (event.type == Event::Closed) {
                 state = Constants::GameState::EXITING;
                 // TODO: add save game and exit message confirmation
                 running = false;
             }
-
-            canMove = state == Constants::GameState::PLAYING;
-
-            if (event.type == Event::KeyPressed) {
-                eventKeyCode = event.key.code;
-
-                if (state == Constants::GameState::PLAYING) {
-                    // moving with the arrows
-                    if (eventKeyCode == Keyboard::Up && canMove) {
-                        moveSuccessValue = playerRepository->move(MoveDirection::UP);
-                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    } else if (eventKeyCode == Keyboard::Down && canMove) {
-                        moveSuccessValue = playerRepository->move(MoveDirection::DOWN);
-                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    } else if (eventKeyCode == Keyboard::Right && canMove) {
-                        moveSuccessValue = playerRepository->move(MoveDirection::RIGHT);
-                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    } else if (eventKeyCode == Keyboard::Left && canMove) {
-                        moveSuccessValue = playerRepository->move(MoveDirection::LEFT);
-                        moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    }
-
-                    // switching world map according to value returned from move function
-                    switch (moveSuccessValue) {
-                        case Constants::MoveSuccessValues::CHANGE_UP:
-                            changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
-                            break;
-                        case Constants::MoveSuccessValues::CHANGE_DOWN:
-                            changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
-                            break;
-                        case Constants::MoveSuccessValues::CHANGE_RIGHT:
-                            changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
-                            break;
-                        case Constants::MoveSuccessValues::CHANGE_LEFT:
-                            changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
-                            break;
-                        default:
-                            break;
-                    }
-                    enemiesRepository->setGameMap(getCurrentGameMap());
-
-                    // pressing x for attacking
-                    if (eventKeyCode == Keyboard::X) {
-                        playerRepository->attack();
-                    }
-
-                    // pressing escape sends to menu
-                    if (eventKeyCode == Keyboard::Escape) {
-                        changeState(Constants::GameState::IN_MENU);
-                        cout << "In Menu (Press Space to choose)" << endl;
-                        canMove = false;
-                        // pressing I sends to inventory menu (to be implemented)
-                    } else if (eventKeyCode == Keyboard::I) {
-                        changeState(Constants::GameState::IN_MENU);
-                        // currentMenu = inventoryMenu;
-                        cout << "Inventory Menu" << endl;
-                        canMove = false;
-                    }
-                    // TODO: add key for going straight to character creation
-
-                } else if (state == Constants::GameState::IN_MENU) {
-                    if (eventKeyCode == Keyboard::Up) {
-                        menuRepository->moveUp();
-                    } else if (eventKeyCode == Keyboard::Down) {
-                        menuRepository->moveDown();
-                        // user chose an item menu
-                    } else if (eventKeyCode == Keyboard::Space || eventKeyCode == Keyboard::Enter) {
-                        // set current menu to be the relevant one based on currentMenuItemIdx
-                        if (menuRepository->choseSubMenuItem()) {
-                            menuRepository->updateSubMenu(currentMenu, &state);
-                            //updateMenu(currentMenu, &running, &canMove, menuRepository->getMenuType());
-                        } else {
-                            // execute the menu item functionality (cant overflow as it's defined only for non submenu indexes in the class)
-                            menuRepository->execute(&state);
-                        }
-                        // going back one menu
-                    } else if (eventKeyCode == Keyboard::Escape) {
-                        // if it's the game menu then we'll exit the game
-                        if (menuRepository->isGameMenu()) {
-                            exitGame(&running);
-                            break;
-                        }
-                        // not a game menu
-                        currentMenu = currentMenu->getParentMenu();
-                        menuRepository->setMenu(currentMenu);
-                    }
-                }
-            } // end key pressed
-            if (state == Constants::GameState::EXITING) {
-                exitGame(&running);
-                break;
-            }
         } // end poll event while loop
+
+        canMove = state == Constants::GameState::PLAYING;
+        eventKeyCode = event.key.code;
+
+        if (state == Constants::GameState::PLAYING) {
+            // moving with the arrows
+            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E) && canMove) {
+                moveSuccessValue = playerRepository->move(MoveDirection::UP, EntityMovementState::RUN);
+                moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D) && canMove) {
+                moveSuccessValue = playerRepository->move(MoveDirection::DOWN, EntityMovementState::RUN);
+                moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F) && canMove) {
+                moveSuccessValue = playerRepository->move(MoveDirection::RIGHT, EntityMovementState::RUN);
+                moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S) && canMove) {
+                moveSuccessValue = playerRepository->move(MoveDirection::LEFT, EntityMovementState::RUN);
+                moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
+            }
+
+            // switching world map according to value returned from move function
+            switch (moveSuccessValue) {
+                case Constants::MoveSuccessValues::CHANGE_UP:
+                    changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
+                    break;
+                case Constants::MoveSuccessValues::CHANGE_DOWN:
+                    changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
+                    break;
+                case Constants::MoveSuccessValues::CHANGE_RIGHT:
+                    changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
+                    break;
+                case Constants::MoveSuccessValues::CHANGE_LEFT:
+                    changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
+                    break;
+                    // if player hasn't moved
+                case Constants::MoveSuccessValues::FAILURE:
+                case Constants::MoveSuccessValues::NOT_MOVED: {
+                    if (player->canGoIdle()) {
+                        playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE);
+                    }
+                    break;
+                }
+                default: break;
+            }
+            enemiesRepository->setGameMap(getCurrentGameMap());
+
+            // pressing x for attacking
+            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::J)) {
+                playerRepository->attack();
+            }
+
+            // pressing escape sends to menu
+            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape)) {
+                changeState(Constants::GameState::IN_MENU);
+                cout << "In Menu (Press Space to choose)" << endl;
+                canMove = false;
+                // pressing I sends to inventory menu (to be implemented)
+            } else if (eventKeyCode == Keyboard::I) {
+                changeState(Constants::GameState::IN_MENU);
+                // currentMenu = inventoryMenu;
+                cout << "Inventory Menu" << endl;
+                canMove = false;
+            }
+            // TODO: add key for going straight to character creation
+        } else if (state == Constants::GameState::IN_MENU) {
+            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E)) {
+                menuRepository->moveUp();
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D)) {
+                menuRepository->moveDown();
+                // user chose an item menu
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Space) || /*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Enter)) {
+                // set current menu to be the relevant one based on currentMenuItemIdx
+                if (menuRepository->choseSubMenuItem()) {
+                    menuRepository->updateSubMenu(currentMenu, &state);
+                    //updateMenu(currentMenu, &running, &canMove, menuRepository->getMenuType());
+                } else {
+                    // execute the menu item functionality (cant overflow as it's defined only for non submenu indexes in the class)
+                    menuRepository->execute(&state);
+                }
+                // going back one menu
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape)) {
+                // if it's the game menu then we'll exit the game
+                if (menuRepository->isGameMenu()) {
+                    exitGame(&running);
+                    break;
+                }
+                // not a game menu
+                currentMenu = currentMenu->getParentMenu();
+                menuRepository->setMenu(currentMenu);
+            }
+        }
+
+        // TODO: add save game functionality
+        if (state == Constants::GameState::EXITING) {
+            exitGame(&running);
+            break;
+        }
 
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
             enemiesRepository->move();
             // update all entities' states when playing
-            update(moveSuccessValue);
+            update(moveSuccessValue, dt);
             // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
             if (moved) {
                 moved = false;
                 moveSuccessValue = Constants::MoveSuccessValues::FAILURE;
-            } else moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
+                playerRepository->setLastTimeMoved(std::clock());
+            } else {
+                moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
+            }
+            if (player->canGoIdle()) {
+                playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE);
+            }
         }
         // render playing or main menu or game menu
         render();
@@ -297,13 +320,18 @@ void Game::render() {
         for (int i = 0; i < map->getLandscapes().size(); i++) {
             window->draw(*(map->getLandscapes()[i]->getSprite()));
         }
+        // draw fps
+        window->draw(fpsText);
+        window->draw(dtText);
         // drawing undead enemies
         for (int i = 0; i < map->getEnemies().size(); i++) {
             if (!map->getEnemies()[i]->isDead()) {
                 window->draw(*(map->getEnemies()[i]->getSprite()));
+                // draw enemies' weapon
             }
         }
         window->draw(*(player->getSprite()));
+        window->draw(*(player->getWeapon()->getSprite()));
     }
     // display all drawn sprites
     window->display();
@@ -314,13 +342,16 @@ void Game::renderMenu(Menu *menu) {
                  player->getCircle()->getCenter()->getY(), window);
 }
 
-void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue) {
+void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt) {
     // updating player state
-    playerRepository->update(points, playerMoveSuccessValue);
+    playerRepository->update(points, playerMoveSuccessValue, dt);
     // updating current map states
-    enemiesRepository->update();
+    enemiesRepository->update(dt);
     cameraView->setCenter((Vector2f) player->getPosition());
     window->setView(*cameraView);
+    // setting at the left hand corner in according to the player's position
+    fpsText.setPosition(player->getPosition().x - SCREEN_WIDTH/2, player->getPosition().y - SCREEN_HEIGHT/2);
+    dtText.setPosition(player->getPosition().x - SCREEN_WIDTH/2, player->getPosition().y - SCREEN_HEIGHT/2 + 2*fpsText.getGlobalBounds().height);
 }
 
 void Game::updateMenu(Menu *menu, bool *run, bool *move) {
@@ -382,6 +413,7 @@ void Game::changeCurrentMap(int row, int col) {
     setCurrentWorldMapCol(col);
     // initialize map (or reinitialize?)
     worldMap[currentGameMapRow][currentGameMapCol]->init();
+    // define the new game map for the entities
     if (playerRepository != nullptr) playerRepository->setGameMap(getCurrentGameMap());
     if (enemiesRepository != nullptr) enemiesRepository->setGameMap(getCurrentGameMap());
 }

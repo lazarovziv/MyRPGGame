@@ -4,6 +4,7 @@
 #define Game_hpp
 
 #include <iostream>
+#include <chrono>
 #include "MenuRepository.hpp"
 #include "NPCEnemy.hpp"
 #include "LandscapeEntity.hpp"
@@ -15,17 +16,19 @@ class Game {
 private:
     static Game *instance;
     RenderWindow *window = nullptr;
+
     View *cameraView = nullptr;
     Menu *mainMenu;
     Menu *characterCreationMenu;
     Menu *gameMenu;
     Menu *currentMenu; // for changing menus when choosing submenus
     const char *title;
+    Text fpsText, dtText;
+    Font fpsFont;
     Constants::GameState state;
     
     // entities
     Player *player = nullptr;
-    // Player player();
     Point ***points;
     GameMap ***worldMap;
 
@@ -61,7 +64,8 @@ public:
     void initMenus();
     void render();
     void renderMenu(Menu *menu);
-    void update(Constants::MoveSuccessValues playerMoveSuccessValue);
+    void update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt);
+    void updateDt();
     void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
     void exitGame(bool *run);
