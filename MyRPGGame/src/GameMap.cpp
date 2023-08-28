@@ -305,13 +305,13 @@ int GameMap::generateRandom(int min, int max) {
     return min + (random() % (max-min+1));
 }
 
-void GameMap::update() {
+void GameMap::update(float dt) {
     for (auto &enemy : enemiesVector) {
         // checking if enemy is dead
         if (enemy->isDead()) {
             // remove it from currentEnemies and unregistering it from subject's observers
             removeEnemy(enemy);
-        } else enemy->update(gameMapPoints); // if enemy is still alive
+        } else enemy->update(gameMapPoints, dt); // if enemy is still alive
     }
 }
 

@@ -20,7 +20,7 @@ public:
 
     void move();
     bool attack(GameEntity *entity);
-    void update();
+    void update(float dt);
 };
 
 #endif //MYRPGGAME_ENEMYREPOSITORY_HPP

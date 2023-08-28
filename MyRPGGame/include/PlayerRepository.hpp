@@ -14,13 +14,13 @@ private:
 public:
     explicit PlayerRepository(Player *player, GameEntityMovement *movement,
                               GameEntityBattle *battle, GameMap *gameMap);
-    ~PlayerRepository() = default;
+    ~PlayerRepository() = default; // TODO: delete all handlers and player (same for enemy repository)
 
     void setGameMap(GameMap *gameMap);
-
-    Constants::MoveSuccessValues move(MoveDirection direction);
+    void setLastTimeMoved(std::clock_t time);
+    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState);
     bool attack();
-    void update(Point ***points, Constants::MoveSuccessValues moveSuccessValue);
+    void update(Point ***points, Constants::MoveSuccessValues moveSuccessValue, float dt);
 };
 
 #endif //MYRPGGAME_PLAYERREPOSITORY_HPP

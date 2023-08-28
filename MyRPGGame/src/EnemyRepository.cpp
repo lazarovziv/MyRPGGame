@@ -67,6 +67,6 @@ bool EnemyRepository::attack(GameEntity *entity) {
     return battleHandler->attack(*entity);
 }
 
-void EnemyRepository::update() {
-    map->update();
+void EnemyRepository::update(float dt) {
+    map->update(dt);
 }

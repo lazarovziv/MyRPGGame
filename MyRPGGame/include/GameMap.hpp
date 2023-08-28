@@ -96,7 +96,7 @@ public:
 
     static int generateRandom(int min, int max);
 
-    void update();
+    void update(float dt);
     
     bool operator ==(const GameMap& map) const;
 };
