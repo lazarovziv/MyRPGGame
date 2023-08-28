@@ -1,7 +1,7 @@
 #include "../include/Circle.hpp"
 
 
-Circle::Circle(int x, int y, float r) {
+Circle::Circle(float x, float y, float r) {
     center = new Point(x, y);
     radius = r;
 }
@@ -27,7 +27,7 @@ void Circle::setRadius(float r) {
     radius = r;
 }
 
-void Circle::setCenter(int x, int y) {
+void Circle::setCenter(float x, float y) {
     center->setX(x);
     center->setY(y);
 }

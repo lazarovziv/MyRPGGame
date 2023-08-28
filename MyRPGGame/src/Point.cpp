@@ -5,25 +5,25 @@ Point::Point() {
     y = 0;
 }
 
-Point::Point(int X, int Y) {
+Point::Point(float X, float Y) {
     x = X;
     y = Y;
 }
 
-int Point::getX() {
+float Point::getX() {
     return x;
 }
 
-int Point::getY() {
+float Point::getY() {
     return y;
 }
 
 // memory leak, use pointers
-void Point::setX(int X) {
+void Point::setX(float X) {
     x = X;
 }
 // likewise
-void Point::setY(int Y) {
+void Point::setY(float Y) {
     y = Y;
 }
 // probably here too

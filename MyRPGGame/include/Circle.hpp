@@ -13,14 +13,14 @@ private:
     
 public:
     Circle();
-    Circle(int x, int y, float r);
+    Circle(float x, float y, float r);
     explicit Circle(Point *center, float r);
     ~Circle();
     
     Point* getCenter();
     float getRadius() const;
     void setRadius(float r);
-    void setCenter(int x, int y);
+    void setCenter(float x, float y);
     void setCenter(Point *newCenter);
     bool intersects(Circle* c);
 

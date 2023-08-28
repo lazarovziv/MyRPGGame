@@ -7,18 +7,18 @@
 
 class Point {
 private:
-    int x;
-    int y;
+    float x;
+    float y;
     
 public:
     Point();
-    Point(int x, int y);
+    Point(float x, float y);
     ~Point() = default;
-    
-    int getX();
-    int getY();
-    void setX(int X);
-    void setY(int Y);
+
+    float getX();
+    float getY();
+    void setX(float X);
+    void setY(float Y);
     float distance(Point p) const;
     int operator-(const Point &other) const;
 //    bool operator==(const Point& other) const;
