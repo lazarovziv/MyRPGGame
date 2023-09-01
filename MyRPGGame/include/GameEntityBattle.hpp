@@ -18,9 +18,9 @@ public:
     ~GameEntityBattle() = default;
     GameEntity *getEntity();
     void setEntity(GameEntity *gameEntity);
-    bool attack(GameEntity &enemy);
+    bool attack(GameEntity &enemy, float dt);
     bool isInAttackRange(GameEntity &enemy);
-    bool attack();
+    bool animate(float dt);
 };
 
 #endif /* GameEntityBattle_hpp */

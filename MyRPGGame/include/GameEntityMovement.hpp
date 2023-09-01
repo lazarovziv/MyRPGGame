@@ -16,22 +16,25 @@ private:
     int screenWidth, screenHeight;
     int tileSize;
 
-    Constants::MoveSuccessValues moveUp(GameMap* currentMap, float entityX, float entityY, float entitySpeed);
-    Constants::MoveSuccessValues moveDown(GameMap* currentMap, float entityX, float entityY, float entitySpeed);
-    Constants::MoveSuccessValues moveRight(GameMap* currentMap, float entityX, float entityY, float entitySpeed);
-    Constants::MoveSuccessValues moveLeft(GameMap* currentMap, float entityX, float entityY, float entitySpeed);
+    // TODO: add delta time multiplication with *entitySpeed* for every movement which is not screen borders
+    Constants::MoveSuccessValues moveUp(GameMap* currentMap, float entityX, float entityY, float entitySpeed, float dt);
+    Constants::MoveSuccessValues moveDown(GameMap* currentMap, float entityX, float entityY, float entitySpeed, float dt);
+    Constants::MoveSuccessValues moveRight(GameMap* currentMap, float entityX, float entityY, float entitySpeed, float dt);
+    Constants::MoveSuccessValues moveLeft(GameMap* currentMap, float entityX, float entityY, float entitySpeed, float dt);
 
 public:
     GameEntityMovement(GameEntity* entity, bool player, GameMap *map);
     GameEntityMovement(GameEntity* entity, bool player, GameMap *map, Point ***points);
     ~GameEntityMovement() = default;
-    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState);
+    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, float dt);
     // TODO: add run method (use acceleration, speed etc.)
 
-    bool moveRandomly(int randomDirection);
+    bool moveRandomly(int randomDirection, float dt);
     bool moveTowardsEntity(GameEntity *gameEntity, Graph<Point *> *graph);
     bool moveTowardsPoint(Point *point, Graph<Point *> *graph);
-    bool moveBasedOnPoint(Point *point);
+    bool moveBasedOnPoint(Point *point, float dt);
+
+    void calculatePathTo(GameEntity *target, float dt);
 
     void setEntity(GameEntity &entity);
     GameEntity* getEntity();

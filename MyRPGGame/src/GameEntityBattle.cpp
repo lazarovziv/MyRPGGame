@@ -11,30 +11,28 @@ GameEntity *GameEntityBattle::getEntity() {
 
 void GameEntityBattle::setEntity(GameEntity *gameEntity) {
     entity = gameEntity;
+    animationManager->setEntity(entity);
 }
-// TODO: add methods attackRight, attackLeft, etc.
 
 // TODO: add a parameter for attack type (slash, backslash, halfslash, etc.)
-bool GameEntityBattle::attack() {
-    Weapon *weapon = entity->getWeapon();
-    MoveDirection direction = weapon->getTransitionDirection();
+bool GameEntityBattle::animate(float dt) {
+//    Weapon *weapon = entity->getWeapon();
+//    MoveDirection direction = weapon->getTransitionDirection();
+    MoveDirection direction = entity->getMoveDirection();
     int directionRow = entity->getMoveDirectionsSpritesMap()[direction];
     // AttackSuccessValue attackSuccessValue;
     cout << "Attacking" << endl;
     // set attack success value
     animationManager->incrementCombatSlashOneHandedCount();
-    entity->setIntRectPosition(animationManager->getMovementStateCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED) * Constants::TILE_SIZE,
+    int movementStateCount = round(animationManager->getMovementStateCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED) * dt * 1.74f);
+
+    entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
                                (entity->getMovementStateRowMap()[EntityMovementState::COMBAT_SLASH_ONE_HANDED] + directionRow-1) * Constants::TILE_SIZE,
                                Constants::TILE_SIZE, Constants::TILE_SIZE);
-    /*
-     * entity->setIntRectPosition(animationManager->getMovementStateCount(EntityMovementState::WALK) * Constants::TILE_SIZE,
-                                   (entity->getMovementStateRowMap()[EntityMovementState::WALK] + directionRow-1) * Constants::TILE_SIZE,
-                                   Constants::TILE_SIZE, Constants::TILE_SIZE);
-     */
     return true;
 }
 
-bool GameEntityBattle::attack(GameEntity &enemy) {
+bool GameEntityBattle::attack(GameEntity &enemy, float dt) {
     // checking attack interval
     if (!entity->canAttack()) return false;
     // checking attack range
@@ -70,9 +68,11 @@ bool GameEntityBattle::attack(GameEntity &enemy) {
 //        entity->setIsInBattle(false);
         return false;
     }
-    attack(); // animation
+
+    animate(dt); // animation
     cout << "Health: " << enemy.getCurrentHealthPoints() << endl;
     cout << "Defence: " << enemy.getCurrentDefencePoints() << endl;
+//    entity->resetBattleInterval(); // moved to repository
     return true;
 }
 

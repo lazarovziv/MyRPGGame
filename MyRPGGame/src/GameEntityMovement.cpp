@@ -53,116 +53,97 @@ bool GameEntityMovement::moveTowardsPoint(Point *point, Graph<Point *> *graph) {
     return entity->areAvailableMoves();
 }
 
-bool GameEntityMovement::moveBasedOnPoint(Point *point) {
+bool GameEntityMovement::moveBasedOnPoint(Point *point, float dt) {
     if (point == nullptr) return false;
     // same row, can go up or down
     if (point->getX() == entity->getCircle()->getCenter()->getX()) {
         // go down
         if (point->getY() > entity->getCircle()->getCenter()->getY())
-            return move(MoveDirection::DOWN, EntityMovementState::RUN) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::DOWN, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
         // go up
-        return move(MoveDirection::UP, EntityMovementState::RUN) == Constants::MoveSuccessValues::SUCCESS;
+        return move(MoveDirection::UP, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
     } else {
         // same col, can go right or left
         // go right
         if (point->getX() > entity->getCircle()->getCenter()->getX())
-            return move(MoveDirection::RIGHT, EntityMovementState::RUN) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::RIGHT, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
         // go left
-        return move(MoveDirection::LEFT, EntityMovementState::RUN) == Constants::MoveSuccessValues::SUCCESS;
+        return move(MoveDirection::LEFT, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
     }
 }
 
-Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState) {
+void GameEntityMovement::calculatePathTo(GameEntity *target, float dt) {
+    // if slope doesn't exist
+    if (entity->getPosition().x == target->getPosition().x) return;
+    // calculate linear interpolation
+    float slope = (entity->getPosition().y - target->getPosition().y) / (entity->getPosition().x - target->getPosition().x);
+    int b = entity->getPosition().y - slope * entity->getPosition().x;
+    // TODO: understand slope and its positions
+    // positive slope = go down iff
+    if (slope > 0) {
+        // go down
+        if (entity->getPosition().y > target->getPosition().y) move(MoveDirection::DOWN, EntityMovementState::RUN, dt);
+    }
+}
+
+Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt) {
     GameMap *map = currentMap;
 
     float entitySpeed = entity->getSpeed();
-
     float entityX = entity->getPosition().x;
     float entityY = entity->getPosition().y;
 
-    int directionRow = entity->getMoveDirectionsSpritesMap()[direction];
-
     Constants::MoveSuccessValues moveSuccessValue;
     if (movementState == EntityMovementState::IDLE) {
-        animationManager->incrementCount(movementState);
-        entity->setIntRectPosition(animationManager->getMovementStateCount(movementState) * Constants::TILE_SIZE,
-                                   (entity->getMovementStateRowMap()[movementState] + directionRow-1) * Constants::TILE_SIZE,
-                                   Constants::TILE_SIZE, Constants::TILE_SIZE);
+        animationManager->animate(movementState, dt);
         return Constants::MoveSuccessValues::NOT_MOVED;
     }
+
     if (direction == MoveDirection::UP) {
-        moveSuccessValue = moveUp(map, entityX, entityY, entitySpeed);
+        moveSuccessValue = moveUp(map, entityX, entityY, entitySpeed, dt);
         // try and move up, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_UP) {
             entity->setMoveDirection(MoveDirection::UP);
-//            animationManager->incrementCount(EntityMovementState::WALK);
-            animationManager->incrementCount(movementState);
-//            animationManager->incrementWalkCount();
-//            entity->incrementStep();
-            //                    entity->getStep() * Constants::TILE_SIZE,
-            entity->setIntRectPosition(animationManager->getMovementStateCount(movementState) * Constants::TILE_SIZE,
-                                       (entity->getMovementStateRowMap()[movementState] + directionRow-1) * Constants::TILE_SIZE,
-                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
-//            animationManager->animate(EntityMovementState::WALK);
+            animationManager->animate(movementState, dt);
+            entity->resetMoveInterval();
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN) {
-        moveSuccessValue = moveDown(map, entityX, entityY, entitySpeed);
+        moveSuccessValue = moveDown(map, entityX, entityY, entitySpeed, dt);
         // try and move down, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_DOWN) {
             entity->setMoveDirection(MoveDirection::DOWN);
-            //            animationManager->incrementCount(EntityMovementState::WALK);
-            animationManager->incrementCount(movementState);
-//            animationManager->incrementWalkCount();
-//            entity->incrementStep();
-            //                    entity->getStep() * Constants::TILE_SIZE,
-            entity->setIntRectPosition(animationManager->getMovementStateCount(movementState) * Constants::TILE_SIZE,
-                                       (entity->getMovementStateRowMap()[movementState] + directionRow-1) * Constants::TILE_SIZE,
-                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
-//            animationManager->animate(EntityMovementState::WALK);
+            animationManager->animate(movementState, dt);
+            entity->resetMoveInterval();
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::RIGHT) {
-        moveSuccessValue = moveRight(map, entityX, entityY, entitySpeed);
+        moveSuccessValue = moveRight(map, entityX, entityY, entitySpeed, dt);
         // try and move right, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT) {
             entity->setMoveDirection(MoveDirection::RIGHT);
-            //            animationManager->incrementCount(EntityMovementState::WALK);
-            animationManager->incrementCount(movementState);
-//            animationManager->incrementWalkCount();
-//            entity->incrementStep();
-            //                    entity->getStep() * Constants::TILE_SIZE,
-            entity->setIntRectPosition(animationManager->getMovementStateCount(movementState) * Constants::TILE_SIZE,
-                                       (entity->getMovementStateRowMap()[movementState] + directionRow-1) * Constants::TILE_SIZE,
-                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
-//            animationManager->animate(EntityMovementState::WALK);
+            animationManager->animate(movementState, dt);
+            entity->resetMoveInterval();
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::LEFT) {
-        moveSuccessValue = moveLeft(map, entityX, entityY, entitySpeed);
+        moveSuccessValue = moveLeft(map, entityX, entityY, entitySpeed, dt);
         // try and move left, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT) {
             entity->setMoveDirection(MoveDirection::LEFT);
-            //            animationManager->incrementCount(EntityMovementState::WALK);
-            animationManager->incrementCount(movementState);
-//            animationManager->incrementWalkCount();
-//            entity->incrementStep();
-            //                    entity->getStep() * Constants::TILE_SIZE,
-            entity->setIntRectPosition(animationManager->getMovementStateCount(movementState) * Constants::TILE_SIZE,
-                                       (entity->getMovementStateRowMap()[movementState] + directionRow-1) * Constants::TILE_SIZE,
-                                       Constants::TILE_SIZE, Constants::TILE_SIZE);
-//            animationManager->animate(EntityMovementState::WALK);
+            animationManager->animate(movementState, dt);
+            entity->resetMoveInterval();
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     }
     return Constants::MoveSuccessValues::FAILURE;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float entityX, float entityY, float entitySpeed) {
+Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached top of screen
@@ -183,7 +164,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
     }
     // temp circle for moving up
     auto *circle = new Circle(entity->getCircle()->getCenter()->getX(),
-                              entity->getCircle()->getCenter()->getY() - entitySpeed,
+                              entity->getCircle()->getCenter()->getY() - entitySpeed * dt,
                               entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
@@ -206,7 +187,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
 //    canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(entityX, (entityY - entitySpeed));
+        entity->setPosition(entityX, (entityY - entitySpeed * dt));
 //        entity->setPosition(gameMapsPoints[entityY - entitySpeed][entityX]);
     }
 
@@ -216,7 +197,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, float entitySpeed) {
+Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached bottom of screen
@@ -236,7 +217,8 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
     }
     // temp circle for moving down
     auto *circle = new Circle(entity->getCircle()->getCenter()->getX(),
-                              entity->getCircle()->getCenter()->getY() + entitySpeed, entity->getCircle()->getRadius());
+                              entity->getCircle()->getCenter()->getY() + entitySpeed * dt,
+                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
@@ -258,7 +240,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(entityX, (entityY + entitySpeed));
+        entity->setPosition(entityX, (entityY + entitySpeed * dt));
 //        entity->setPosition(gameMapsPoints[entityY + entitySpeed][entityX]);
     }
 
@@ -268,7 +250,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, float entitySpeed) {
+Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached right of screen
@@ -287,8 +269,9 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
         return Constants::MoveSuccessValues::FAILURE;
     }
     // temp circle for moving right
-    auto *circle = new Circle(entity->getCircle()->getCenter()->getX() + entitySpeed,
-                              entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
+    auto *circle = new Circle(entity->getCircle()->getCenter()->getX() + entitySpeed * dt,
+                              entity->getCircle()->getCenter()->getY(),
+                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
@@ -310,7 +293,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition((entityX + entitySpeed), entityY);
+        entity->setPosition((entityX + entitySpeed * dt), entityY);
 //        entity->setPosition(gameMapsPoints[entityY][entityX + entitySpeed]);
     }
 
@@ -320,7 +303,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, float entitySpeed) {
+Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached left of screen
@@ -339,8 +322,9 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
         return Constants::MoveSuccessValues::FAILURE;
     }
     // temp circle for moving left
-    auto *circle = new Circle(entity->getCircle()->getCenter()->getX() - entitySpeed,
-                              entity->getCircle()->getCenter()->getY(), entity->getCircle()->getRadius());
+    auto *circle = new Circle(entity->getCircle()->getCenter()->getX() - entitySpeed * dt,
+                              entity->getCircle()->getCenter()->getY(),
+                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
         if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
@@ -362,7 +346,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition((entityX - entitySpeed), entityY);
+        entity->setPosition((entityX - entitySpeed * dt), entityY);
 //        entity->setPosition(gameMapsPoints[entityY][entityX - entitySpeed]);
     }
 
@@ -372,17 +356,17 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-bool GameEntityMovement::moveRandomly(int randomDirection) {
+bool GameEntityMovement::moveRandomly(int randomDirection, float dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
         case 0:
-            return move(MoveDirection::DOWN, EntityMovementState::WALK) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::DOWN, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         case 1:
-            return move(MoveDirection::RIGHT, EntityMovementState::WALK) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::RIGHT, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         case 2:
-            return move(MoveDirection::LEFT, EntityMovementState::WALK) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::LEFT, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         case 3:
-            return move(MoveDirection::UP, EntityMovementState::WALK) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::UP, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         default:
             // TODO: add error handling
             break;
@@ -392,6 +376,7 @@ bool GameEntityMovement::moveRandomly(int randomDirection) {
 
 void GameEntityMovement::setEntity(GameEntity &e) {
     this->entity = &e;
+    animationManager->setEntity(entity);
 }
 
 GameEntity *GameEntityMovement::getEntity() {
