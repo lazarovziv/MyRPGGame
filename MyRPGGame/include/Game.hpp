@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <map>
 #include "MenuRepository.hpp"
 #include "NPCEnemy.hpp"
 #include "LandscapeEntity.hpp"
