@@ -67,15 +67,28 @@ int AnimationManager::getMovementStateCount(EntityMovementState state) {
     return movementStateCounterMap[state];
 }
 
+// TODO: create animation function for combat and for that another entity variable to cover the combats' counters
 void AnimationManager::animate(EntityMovementState state, float dt) {
     // TODO: handle frames. increment the count in a faster way than up until now. need to call the animate function twice a frame
+    // TODO: increment animation count when player passed speed pixels in window?
     int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
-    int movementStateCount = round(movementStateCounterMap[state] * dt * 20.5f);
+    int movementStateCount = movementStateCounterMap[state];
+
+    if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
+        incrementCount(state);
+        entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+                                   (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+                                   Constants::TILE_SIZE, Constants::TILE_SIZE);
+        return;
+    }
 //    incrementMovementStateCountFunctionMap[state]();
-    incrementCount(state);
-    entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
-                               (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
-                               Constants::TILE_SIZE, Constants::TILE_SIZE);
+    // changing animation if player covered its' speed distance
+    if (entity->canAnimateMovement()) {
+        incrementCount(state);
+        entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+                                   (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+                                   Constants::TILE_SIZE, Constants::TILE_SIZE);
+    }
 }
 
 bool AnimationManager::generateBody() {
