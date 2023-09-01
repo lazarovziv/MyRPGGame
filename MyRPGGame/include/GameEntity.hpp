@@ -61,9 +61,14 @@ protected:
     bool justMoved = false;
 
     // movement intervals
-    constexpr static const float MOVE_INTERVAL_DEFAULT = 18.0f;
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 5.0f;
     float moveInterval = 0.f;
     bool idle = true;
+    // for the animations. after traveled the speed distance, increment relevant animation count
+    float distanceTraveledSinceIdle = 0;
+
+    // idle interval
+    float idleAnimationInterval = 0;
 
     stack<Point *> movesStack;
     
@@ -142,6 +147,13 @@ public:
     bool didJustMove();
     void setJustMoved(bool flag);
     bool isIdle();
+    void resetDistanceTraveledSinceIdle();
+    void incrementDistanceTraveledSinceIdle(float distance);
+    bool canAnimateMovement();
+
+    bool canAnimateIdle();
+    void resetIdleAnimationInterval();
+    void incrementIdleAnimationInterval(float dt);
 
     bool canGoIdle() const;
     void resetMoveInterval();

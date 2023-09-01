@@ -446,6 +446,7 @@ bool GameEntity::canGoIdle() const {
 
 void GameEntity::resetMoveInterval() {
     moveInterval = 0;
+    resetIdleAnimationInterval();
 }
 
 void GameEntity::setLastTimeMoved(std::clock_t time) {
@@ -458,6 +459,38 @@ void GameEntity::setIsIdle(bool flag) {
 
 bool GameEntity::isIdle() {
     return idle;
+}
+
+void GameEntity::resetDistanceTraveledSinceIdle() {
+    distanceTraveledSinceIdle = 0;
+}
+
+void GameEntity::incrementDistanceTraveledSinceIdle(float distance) {
+    distanceTraveledSinceIdle += distance;
+}
+
+bool GameEntity::canAnimateMovement() {
+    if (distanceTraveledSinceIdle >= speed) {
+        resetDistanceTraveledSinceIdle();
+        return true;
+    }
+    return false;
+}
+
+bool GameEntity::canAnimateIdle() {
+    if (idleAnimationInterval >= Constants::NUM_FRAMES_IDLE_ANIMATION) {
+        resetIdleAnimationInterval();
+        return true;
+    }
+    return false;
+}
+
+void GameEntity::resetIdleAnimationInterval() {
+    idleAnimationInterval = 0;
+}
+
+void GameEntity::incrementIdleAnimationInterval(float dt) {
+    idleAnimationInterval += dt;
 }
 
 bool GameEntity::move(MoveDirection direction) {

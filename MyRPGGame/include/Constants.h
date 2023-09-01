@@ -26,6 +26,9 @@ public:
     static const int TILE_SIZE = 64;
     static const int BASE_ENTITY_SPEED = 16;
     static const int FPS = 60;
+
+    static const int NUM_FRAMES_IDLE_ANIMATION = 13;
+
     static const int NUM_ROWS = 3;
     static const int NUM_COLS = 3;
     static const int NUM_STEPS = 8;
