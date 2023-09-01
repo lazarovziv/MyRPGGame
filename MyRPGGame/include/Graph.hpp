@@ -71,19 +71,19 @@ public:
 
     // A* algorithm
     std::vector<V> *findPathTo(V source, V target) {
-        std::priority_queue<std::pair<V, int>, std::vector<std::pair<V, int>>, greaterPair<V>> openQueue;
+        std::priority_queue<std::pair<V, float>, std::vector<std::pair<V, float>>, greaterPair<V>> openQueue;
         std::set<V> openSet;
         std::map<V, V> cameFrom;
-        std::map<V, int> gScore;
-        std::map<V, int> fScore;
-        std::pair<V, int> current, neighbor;
-        int tentativeGScore;
+        std::map<V, float> gScore;
+        std::map<V, float> fScore;
+        std::pair<V, float> current, neighbor;
+        float tentativeGScore;
         cameFrom[source] = nullptr;
 
         for (auto &item : genericGraph) {
             if (item.first != source) {
-                gScore[item.first] = INT32_MAX;
-                fScore[item.first] = INT32_MAX;
+                gScore[item.first] = std::numeric_limits<float>::max();
+                fScore[item.first] = std::numeric_limits<float>::max();
             }
         }
 
@@ -104,6 +104,7 @@ public:
             for (int i = 0; i < genericGraph[current.first]->size(); i++) {
                 neighbor = genericGraph[current.first]->at(i);
                 tentativeGScore = gScore[current.first] + neighbor.second; // second is the weight of edge (current, generic[current]->at(i).first)
+
                 // if path is better
                 if (tentativeGScore < gScore[neighbor.first]) {
                     cameFrom[neighbor.first] = current.first;
