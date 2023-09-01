@@ -59,16 +59,22 @@ void AnimationManager::addHairPath(string path) {
     hairPaths.push_back(path);
 }
 
+void AnimationManager::setEntity(GameEntity *entity) {
+    this->entity = entity;
+}
+
 int AnimationManager::getMovementStateCount(EntityMovementState state) {
     return movementStateCounterMap[state];
 }
 
-void AnimationManager::animate(EntityMovementState state) {
+void AnimationManager::animate(EntityMovementState state, float dt) {
     // TODO: handle frames. increment the count in a faster way than up until now. need to call the animate function twice a frame
-    incrementMovementStateCountFunctionMap[state]();
-    entity->setSprite(entity->getMovementStateSprite(state));
-    entity->setIntRectPosition(movementStateCounterMap[state] * Constants::TILE_SIZE,
-                               entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] * Constants::TILE_SIZE,
+    int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
+    int movementStateCount = round(movementStateCounterMap[state] * dt * 20.5f);
+//    incrementMovementStateCountFunctionMap[state]();
+    incrementCount(state);
+    entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+                               (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
                                Constants::TILE_SIZE, Constants::TILE_SIZE);
 }
 

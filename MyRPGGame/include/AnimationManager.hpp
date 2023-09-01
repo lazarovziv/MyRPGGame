@@ -43,6 +43,8 @@ public:
     void addHeadAccessoriesPath(string path);
     void addHairPath(string path);
 
+    void setEntity(GameEntity *entity);
+
     int getMovementStateCount(EntityMovementState state);
 
     void incrementCount(EntityMovementState state);
@@ -63,7 +65,7 @@ public:
     bool generateClothing();
     // TODO: add more generate functions
 
-    void animate(EntityMovementState state);
+    void animate(EntityMovementState state, float dt);
 
 };
 
