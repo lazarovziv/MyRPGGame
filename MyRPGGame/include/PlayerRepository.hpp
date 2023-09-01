@@ -11,6 +11,8 @@ private:
     GameEntityBattle *battleHandler;
     GameMap *map;
 
+    AnimationManager *animationManager;
+
 public:
     explicit PlayerRepository(Player *player, GameEntityMovement *movement,
                               GameEntityBattle *battle, GameMap *gameMap);
@@ -18,8 +20,8 @@ public:
 
     void setGameMap(GameMap *gameMap);
     void setLastTimeMoved(std::clock_t time);
-    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState);
-    bool attack();
+    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, float dt);
+    bool attack(float dt);
     void update(Point ***points, Constants::MoveSuccessValues moveSuccessValue, float dt);
 };
 

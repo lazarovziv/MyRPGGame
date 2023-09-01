@@ -19,7 +19,7 @@ Player::Player(PlayerType type) : GameEntity() {
     intelligencePoints = 0;
     criticalHitsPoints = 0;
     this->type = type;
-//    speed = 6.f;
+
     setPlayerType(type);
     entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/4);
     attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
@@ -28,7 +28,7 @@ Player::Player(PlayerType type) : GameEntity() {
         auto movementState = static_cast<EntityMovementState>(state);
         createMovementStateSprite(movementState);
     }
-    sprite = movementStateSpritesMap[EntityMovementState::WALK];
+    sprite = movementStateSpritesMap[EntityMovementState::IDLE];
 }
 
 Player::Player(PlayerType type, Point *center) : GameEntity(center) {
@@ -50,7 +50,7 @@ Player::Player(PlayerType type, Point *center) : GameEntity(center) {
     sprite->setPosition(position.x, position.y);
     setPlayerType(type);
     attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
-    battleTimeout = 0.15;
+    // TODO: add entityMovementState field for handling it more easily
 }
 
 Player::~Player() {
@@ -111,9 +111,12 @@ void Player::setPlayerType(PlayerType t) {
 void Player::update(Point ***points, float dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
+        // updating game entity intervals
+        moveInterval += dt;
+        battleInterval += dt;
         // updating entity circle and attack circle
-        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
-        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
+//        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
+//        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
 
         weapon->update(points);
         // notifying all observers (enemies) in current map

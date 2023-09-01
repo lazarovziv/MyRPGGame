@@ -19,19 +19,18 @@ class NPCEnemy : public GameEntity, public Observer {
 private:
     // radius for area to wander when not engaged with player
     float wanderAreaRadius;
+    constexpr static const float WANDER_AREA_INTERVAL_DEFAULT = 168.0f;
+    // duration of regenerating path to wander area
+    float wanderAreaInterval = 0;
+    bool onWayToWanderArea = false;
     Circle *wanderAreaCircle = nullptr;
-    std::clock_t lastTimeWandered;
     // radius for area to battle player after engaging (needs to be bigger than wander)
     float battleAreaRadius;
     Circle *battleAreaCircle = nullptr;
     // type of enemy
     int type;
-    // movement intervals
-    std::clock_t lastTimeMoved;
-    float moveInterval = MOVE_INTERVAL_DEFAULT;
-    // duration of regenerating path to wander area
-    int wanderTimeout = 7;
-    bool onWayToWanderArea = false;
+    // movement interval
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 42.0f; // TODO: tweak a little bit more
     
     // movement handler
 //    GameEntityMovement* movement;
@@ -43,7 +42,6 @@ public:
     static const int SNAKE = 2;
     static const int BIRD = 3;
     static const int ETC = 4;
-    constexpr static const float MOVE_INTERVAL_DEFAULT = 0.075;
     
     NPCEnemy() = default;
     explicit NPCEnemy(int type, Point *center);
@@ -53,8 +51,8 @@ public:
     float getBattleAreaRadius();
     int getExpPointsWorth();
     int getType();
-    
-    bool canMove();
+
+    bool canMove() const;
     bool canGoToWanderArea();
     bool isInBattleArea();
     bool isInWanderArea();

@@ -18,8 +18,8 @@ public:
 
     void setGameMap(GameMap *gameMap);
 
-    void move();
-    bool attack(GameEntity *entity);
+    void move(float dt);
+    bool attack(GameEntity *entity, float dt);
     void update(float dt);
 };
 

@@ -19,7 +19,9 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     texture.loadFromFile("../graphics/enemies/green_orcs/spritesheet.png");
     texture.setSmooth(true);
     sprite->setTexture(texture);
-    sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
+    sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection] * Constants::TILE_SIZE,
+                                       Constants::WALK_ROW * Constants::TILE_SIZE,
+                                       Constants::TILE_SIZE, Constants::TILE_SIZE));
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
@@ -30,8 +32,6 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     battleAreaRadius = (float) (wanderAreaRadius * 2.5);
     battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
 
-    lastTimeMoved = std::clock();
-    lastTimeBattled = lastTimeMoved;
     // TODO: choose random floats in defined location radius for each enemy in map
 }
 
@@ -40,7 +40,7 @@ NPCEnemy::~NPCEnemy() {
 }
 
 int NPCEnemy::getBattleTimeout() {
-    return battleTimeout;
+    return battleInterval;
 }
 
 float NPCEnemy::getWanderAreaRadius() {
@@ -59,27 +59,12 @@ int NPCEnemy::getType() {
     return type;
 }
 
-// direction is chosen randomly
-bool NPCEnemy::canMove() {
-    std::clock_t nowTime = std::clock();
-    // checking if entity can move due to moveInterval value
-    double diff = (double) (nowTime - lastTimeMoved) / (double) CLOCKS_PER_SEC;
-    if (diff >= moveInterval) {
-        // updating lastTimeMoved to latest move made time
-        lastTimeMoved = nowTime;
-        return true;
-    }
-    return false;
+bool NPCEnemy::canMove() const {
+    return moveInterval >= MOVE_INTERVAL_DEFAULT;
 }
 
 bool NPCEnemy::canGoToWanderArea() {
-    std::clock_t nowTime = std::clock();
-    double diff = (double) (nowTime - lastTimeWandered) / (double) CLOCKS_PER_SEC;
-    if (diff >= wanderTimeout) {
-        lastTimeWandered = nowTime;
-        return true;
-    }
-    return false;
+    return wanderAreaInterval >= WANDER_AREA_INTERVAL_DEFAULT;
 }
 
 bool NPCEnemy::isInBattleArea() {
@@ -108,9 +93,14 @@ void NPCEnemy::setMoveInterval(float interval) {
 void NPCEnemy::update(Point ***points, float dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
+        // updating game entity intervals
+        moveInterval += dt;
+        battleInterval += dt;
+        // npc enemy intervals
+        wanderAreaInterval += dt;
         // updating entity circle and attack circle
-        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
-        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
+//        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
+//        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
     }
 }
 

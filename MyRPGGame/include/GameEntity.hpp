@@ -34,7 +34,7 @@ protected:
     int attackPoints;
     int defencePoints;
     int currentDefencePoints;
-    int speed;
+    float speed;
     // counter for sprite change (0 to 3)
     int step = 0;
     bool inBattle = false;
@@ -55,14 +55,14 @@ protected:
 //    GameMap* currentGameMap;
     Weapon *weapon;
 
-    std::clock_t lastTimeBattled;
-    float battleTimeout = 0.35;
+    // combat intervals
+    constexpr static const float BATTLE_INTERVAL_DEFAULT = 9.0f;
+    float battleInterval = 0.f;
     bool justMoved = false;
 
     // movement intervals
-    std::clock_t lastTimeMoved;
-    constexpr static const float MOVE_INTERVAL_DEFAULT = 0.075;
-    float moveInterval = MOVE_INTERVAL_DEFAULT;
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 18.0f;
+    float moveInterval = 0.f;
     bool idle = true;
 
     stack<Point *> movesStack;
@@ -86,7 +86,7 @@ public:
     int getAttackPoints();
     int getDefencePoints();
     int getCurrentDefencePoints();
-    int getSpeed();
+    float getSpeed();
     int getStep();
     bool isInBattle();
     bool isDead();
@@ -101,7 +101,7 @@ public:
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
     void increaseMaxManaPoints(int amount);
-    void increaseSpeed(int amount);
+    void increaseSpeed(float amount);
     void increaseAttackPoints(int amount);
     void increaseDefencePoints(int amount);
     void changeInBattleState();
@@ -134,16 +134,17 @@ public:
     Sprite* getMovementStateSprite(EntityMovementState state);
     void setSprite(Sprite *newSprite);
     Weapon *getWeapon();
-    
-    void attack(GameEntity &entity);
+
     bool move(MoveDirection direction);
 
-    bool canAttack();
+    bool canAttack() const;
+    void resetBattleInterval();
     bool didJustMove();
     void setJustMoved(bool flag);
     bool isIdle();
 
-    bool canGoIdle();
+    bool canGoIdle() const;
+    void resetMoveInterval();
     void setIsIdle(bool flag);
 
     void setLastTimeMoved(std::clock_t time);

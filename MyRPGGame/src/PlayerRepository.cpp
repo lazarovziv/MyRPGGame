@@ -6,8 +6,7 @@ PlayerRepository::PlayerRepository(Player *player, GameEntityMovement *movement,
     movementHandler = movement;
     battleHandler = battle;
     setGameMap(gameMap);
-//    movementHandler = new GameEntityMovement(player, true, map);
-//    battleHandler = new GameEntityBattle(player);
+    animationManager = new AnimationManager(player);
 }
 
 void PlayerRepository::setGameMap(GameMap *gameMap) {
@@ -25,22 +24,28 @@ void PlayerRepository::setLastTimeMoved(std::clock_t time) {
 }
 
 // TODO: add listeners invocation
-Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState) {
-    if (movementState == EntityMovementState::IDLE && player->canGoIdle()) {
-        player->setIsIdle(true);
-    } else player->setIsIdle(false);
-    return movementHandler->move(direction, movementState);
+Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState, float dt) {
+    Constants::MoveSuccessValues moved = movementHandler->move(direction, movementState, dt);
+    return moved;
+    // TODO: add animate call here and remove animation handling from move method in GameEntityMovement
 }
 
 // TODO: add listeners invocation
-bool PlayerRepository::attack() {
+bool PlayerRepository::attack(float dt) {
+    if (!player->canAttack()) return false;
     // succeeded in attacking any of the enemies
     bool singleSuccess = false;
     // TODO: instead of traversing all enemies, maybe keep a min heap which is ordered by the distance from the player
     for (int i = 0; i < map->getEnemies().size(); i++) {
         if (!map->getEnemies().at(i)->isDead()) {
-             singleSuccess = battleHandler->attack(*(map->getEnemies()[i]));
+             singleSuccess = battleHandler->attack(*(map->getEnemies()[i]), dt);
         }
+    }
+    // resetting move interval because player isn't idle
+    if (singleSuccess) {
+//        animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
+        player->resetMoveInterval();
+        player->resetBattleInterval();
     }
     return singleSuccess;
 }

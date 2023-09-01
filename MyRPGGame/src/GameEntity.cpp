@@ -76,8 +76,6 @@ GameEntity::GameEntity(Point *center) {
 
     position.x = entityCircle->getCenter()->getX();
     position.y = entityCircle->getCenter()->getY();
-
-    lastTimeBattled = std::clock();
 }
 
 GameEntity::~GameEntity() {
@@ -107,7 +105,7 @@ void GameEntity::increaseMaxManaPoints(int amount) {
     } else currentManaPoints += amount;
 }
 
-void GameEntity::increaseSpeed(int amount) {
+void GameEntity::increaseSpeed(float amount) {
     // setting upper limit to 3
 //    if (speed + amount < 3) {
 //        speed += amount;
@@ -148,6 +146,7 @@ void GameEntity::setY(float y) {
     position.y = y;
 }
 
+// TODO: add direction vector and normalize it for diagonal movement?
 void GameEntity::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
@@ -253,7 +252,8 @@ bool GameEntity::createMovementStateSprite(EntityMovementState state) {
     movementStateTextures.push_back(textureToCreate);
     // load the texture into the sprite
     spriteToCreate->setTexture(textureToCreate);
-    spriteToCreate->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
+    spriteToCreate->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE,
+                                               0, Constants::TILE_SIZE, Constants::TILE_SIZE));
     spriteToCreate->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     spriteToCreate->setPosition(position.x, position.y);
     // set created sprite as the movement state sprite
@@ -367,7 +367,7 @@ int GameEntity::getCurrentDefencePoints() {
     return currentDefencePoints;
 }
 
-int GameEntity::getSpeed() {
+float GameEntity::getSpeed() {
     return speed;
 }
 
@@ -423,45 +423,12 @@ void GameEntity::setIntRectPosition(int left, int top, int width, int height) {
     sprite->setTextureRect(spriteRect);
 }
 
-void GameEntity::attack(GameEntity &entity) {
-    // attack only if entity is in range
-    if (isEntityInAttackRange(entity)) {
-        // setting entities' battle state
-        inBattle = true;
-        entity.setIsInBattle(true);
-        std::cout << "In attack range!" << endl;
-        std::cout << "Health Points: " << entity.currentHealthPoints << endl;
-        std::cout << "Defence Points: " << entity.currentDefencePoints << endl;
-        if (entity.currentDefencePoints > 0) {
-            int defenceAttackPtsDiff = attackPoints - entity.currentDefencePoints;
-            // if attack will break entity's defence
-            if (defenceAttackPtsDiff > 0) {
-                // zeroing defence points
-                entity.decreaseCurrentDefencePoints(entity.currentDefencePoints);
-                // decrease entity's health points by difference
-                entity.decreaseCurrentHealthPoints(defenceAttackPtsDiff);
-                // decrease defence points by attack points
-            } else entity.decreaseCurrentDefencePoints(attackPoints);
-            // broke defence points
-        } else {
-            entity.decreaseCurrentHealthPoints(attackPoints);
-            // changing battle state for entities
-            if (entity.isDead()) {
-                entity.setIsInBattle(false);
-                inBattle = false;
-            }
-        }
-    }
+bool GameEntity::canAttack() const {
+    return battleInterval >= BATTLE_INTERVAL_DEFAULT;
 }
 
-bool GameEntity::canAttack() {
-    std::clock_t nowTime = std::clock();
-    double diff = (double) (nowTime - lastTimeBattled) / (double) CLOCKS_PER_SEC;
-    if (diff >= battleTimeout) {
-        lastTimeBattled = nowTime;
-        return true;
-    }
-    return false;
+void GameEntity::resetBattleInterval() {
+    battleInterval = 0;
 }
 
 bool GameEntity::didJustMove() {
@@ -473,22 +440,16 @@ void GameEntity::setJustMoved(bool flag) {
 }
 
 // direction is chosen randomly
-bool GameEntity::canGoIdle() {
-    if (idle) return true;
-    std::clock_t nowTime = std::clock();
-    // checking if entity can move due to moveInterval value
-    double diff = (double) (nowTime - lastTimeMoved) / (double) CLOCKS_PER_SEC;
-    if (diff >= moveInterval) {
-        // updating lastTimeMoved to latest move made time
-        lastTimeMoved = nowTime;
-        idle = true;
-        return true;
-    }
-    return false;
+bool GameEntity::canGoIdle() const {
+    return moveInterval >= MOVE_INTERVAL_DEFAULT;
+}
+
+void GameEntity::resetMoveInterval() {
+    moveInterval = 0;
 }
 
 void GameEntity::setLastTimeMoved(std::clock_t time) {
-    lastTimeMoved = time;
+
 }
 
 void GameEntity::setIsIdle(bool flag) {
@@ -526,9 +487,12 @@ Weapon* GameEntity::getWeapon() {
 void GameEntity::update(Point ***points, float dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
+        // updating intervals
+        moveInterval += dt;
+        battleInterval += dt;
         // updating entity circle and attack circle
-        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
-        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
+//        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
+//        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
     }
 }
 
