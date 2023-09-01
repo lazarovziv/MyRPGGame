@@ -41,13 +41,13 @@ Game::Game(const char* str) {
     window->setFramerateLimit(0);
 
     cameraView = new View(Vector2f(0, 0),
-                          Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
+                          Vector2f(Constants::SCREEN_WIDTH,Constants::SCREEN_HEIGHT));
 
     menuRepository = new MenuRepository();
     initMenus();
     menuRepository->setMenu(currentMenu); // first menu is the game menu
     
-    state = Constants::GameState::PLAYING;
+    state = Constants::GameState::IN_MENU;
 
     // init all possible points
     points = new Point **[Constants::FULL_SCREEN_HEIGHT];
@@ -142,7 +142,7 @@ void Game::start() {
     bool canMove = false;
     bool running = window->isOpen();
 
-    Event event;
+    sf::Event event;
 
     int eventKeyCode;
     bool moved = false;
@@ -255,16 +255,12 @@ void Game::start() {
                     case Constants::MoveSuccessValues::CHANGE_LEFT:
                         changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
                         break;
-                        // if player hasn't moved
-                    case Constants::MoveSuccessValues::FAILURE: {
-                        if (player->canGoIdle()) {
-                            playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE, dt);
-                        }
-                    }
                     default: break;
                 }
             } else if (!keysPressedMap[Keyboard::J] && player->canGoIdle()) {
-                playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE, dt);
+                playerRepository->move(player->getMoveDirection(),
+                                       EntityMovementState::IDLE,
+                                       dt);
             }
 
             enemiesRepository->setGameMap(getCurrentGameMap());
@@ -277,6 +273,7 @@ void Game::start() {
 
             // pressing escape sends to menu
             if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape)) {
+                keysPressedMap[Keyboard::Escape] = true;
                 changeState(Constants::GameState::IN_MENU);
                 cout << "In Menu (Press Space to choose)" << endl;
                 canMove = false;
@@ -301,10 +298,25 @@ void Game::start() {
                     //updateMenu(currentMenu, &running, &canMove, menuRepository->getMenuType());
                 } else {
                     // execute the menu item functionality (cant overflow as it's defined only for non submenu indexes in the class)
-                    menuRepository->execute(&state);
+                    switch (menuRepository->execute(&state)) {
+                        case 0: {
+                            changeState(Constants::GameState::PLAYING);
+                            cout << "Returning to game..." << endl;
+                            canMove = true;
+                            break;
+                        }
+                        case 1: {
+                            break;
+                        }
+                        case 2: {
+                            exitGame(&running);
+                            break;
+                        }
+                    }
                 }
                 // going back one menu
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape)) {
+            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape) && keysPressedMap[Keyboard::Escape]) {
+                cout << "HEY" << endl;
                 // if it's the game menu then we'll exit the game
                 if (menuRepository->isGameMenu()) {
                     exitGame(&running);
@@ -335,6 +347,7 @@ void Game::start() {
                 moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
             }
         }
+
         for (auto &key : keysPressedMap) {
             keysPressedMap[key.first] = false;
         }
@@ -407,7 +420,7 @@ void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt)
     playerRepository->update(points, playerMoveSuccessValue, dt);
     // updating current map states
     enemiesRepository->update(dt);
-    cameraView->setCenter((Vector2f) player->getPosition());
+    cameraView->setCenter(player->getPosition());
     window->setView(*cameraView);
     // setting at the left hand corner in according to the player's position
     fpsText.setPosition(player->getPosition().x - SCREEN_WIDTH/2, player->getPosition().y - SCREEN_HEIGHT/2);

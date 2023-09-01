@@ -15,7 +15,7 @@ public:
     void moveUp();
     void moveDown();
     void setMenu(Menu *menu);
-    void execute(Constants::GameState *state);
+    int execute(Constants::GameState *state);
     void resetMenuItemIdx();
     bool menuHasSubMenus();
     void updateSubMenu(Menu *currentMenu, Constants::GameState *state);

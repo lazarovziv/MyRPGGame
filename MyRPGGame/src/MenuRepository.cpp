@@ -5,8 +5,8 @@ void MenuRepository::setMenu(Menu *menu) {
     this->menu = menu;
 }
 
-void MenuRepository::execute(Constants::GameState *state) {
-    menu->execute(state);
+int MenuRepository::execute(Constants::GameState *state) {
+    return menu->execute(state);
 }
 
 void MenuRepository::moveUp() {
