@@ -26,7 +26,7 @@ public:
     GameEntityMovement(GameEntity* entity, bool player, GameMap *map);
     GameEntityMovement(GameEntity* entity, bool player, GameMap *map, Point ***points);
     ~GameEntityMovement() = default;
-    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, float dt);
+    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, float dt, bool diagonal);
     // TODO: add run method (use acceleration, speed etc.)
 
     bool moveRandomly(int randomDirection, float dt);

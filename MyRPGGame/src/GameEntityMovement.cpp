@@ -59,16 +59,16 @@ bool GameEntityMovement::moveBasedOnPoint(Point *point, float dt) {
     if (point->getX() == entity->getCircle()->getCenter()->getX()) {
         // go down
         if (point->getY() > entity->getCircle()->getCenter()->getY())
-            return move(MoveDirection::DOWN, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::DOWN, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
         // go up
-        return move(MoveDirection::UP, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
+        return move(MoveDirection::UP, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
     } else {
         // same col, can go right or left
         // go right
         if (point->getX() > entity->getCircle()->getCenter()->getX())
-            return move(MoveDirection::RIGHT, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::RIGHT, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
         // go left
-        return move(MoveDirection::LEFT, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
+        return move(MoveDirection::LEFT, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
     }
 }
 
@@ -82,11 +82,20 @@ void GameEntityMovement::calculatePathTo(GameEntity *target, float dt) {
     // positive slope = go down iff
     if (slope > 0) {
         // go down
-        if (entity->getPosition().y > target->getPosition().y) move(MoveDirection::DOWN, EntityMovementState::RUN, dt);
+        if (entity->getPosition().y > target->getPosition().y) move(MoveDirection::DOWN, EntityMovementState::RUN, dt, false);
     }
 }
 
-Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt, bool diagonal) {
+    // no need to create extra variables if not using them
+    if (movementState == EntityMovementState::IDLE) {
+        animationManager->animate(movementState, dt);
+        // since we're idle, resetting the travel we covered until now
+        entity->resetDistanceTraveledSinceIdle();
+        entity->incrementIdleAnimationInterval(dt);
+        return Constants::MoveSuccessValues::NOT_MOVED;
+    }
+
     GameMap *map = currentMap;
 
     float entitySpeed = entity->getSpeed();
@@ -94,10 +103,6 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
     float entityY = entity->getPosition().y;
 
     Constants::MoveSuccessValues moveSuccessValue;
-    if (movementState == EntityMovementState::IDLE) {
-        animationManager->animate(movementState, dt);
-        return Constants::MoveSuccessValues::NOT_MOVED;
-    }
 
     if (direction == MoveDirection::UP) {
         moveSuccessValue = moveUp(map, entityX, entityY, entitySpeed, dt);
@@ -107,6 +112,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::UP);
             animationManager->animate(movementState, dt);
             entity->resetMoveInterval();
+            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt); // temporary solution for diagonal movement
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN) {
@@ -117,6 +123,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::DOWN);
             animationManager->animate(movementState, dt);
             entity->resetMoveInterval();
+            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::RIGHT) {
@@ -127,6 +134,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::RIGHT);
             animationManager->animate(movementState, dt);
             entity->resetMoveInterval();
+            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::LEFT) {
@@ -137,6 +145,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::LEFT);
             animationManager->animate(movementState, dt);
             entity->resetMoveInterval();
+            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
             return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     }
@@ -360,13 +369,13 @@ bool GameEntityMovement::moveRandomly(int randomDirection, float dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
         case 0:
-            return move(MoveDirection::DOWN, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::DOWN, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
         case 1:
-            return move(MoveDirection::RIGHT, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::RIGHT, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
         case 2:
-            return move(MoveDirection::LEFT, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::LEFT, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
         case 3:
-            return move(MoveDirection::UP, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::UP, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
         default:
             // TODO: add error handling
             break;
