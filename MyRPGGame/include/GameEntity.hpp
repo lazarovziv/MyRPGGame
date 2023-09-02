@@ -116,6 +116,7 @@ public:
     void setY(float y);
     void setPosition(float x, float y);
     void setPosition(Point *point);
+    void setPosition(Vector2f directionVector);
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, Sprite *newSprite); // if sprite is null, we'll create one based on the state
     void setWeapon(WeaponType type);

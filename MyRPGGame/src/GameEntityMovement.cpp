@@ -163,12 +163,10 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
             if (entity->getCircle()->intersects(map->getTopExitCircle())) {
                 cout << "Reached Top Exit" << endl;
                 entity->setPosition(entityX, (screenHeight - tileSize / 2));
-//                entity->setPosition(gameMapsPoints[screenHeight - tileSize / 2][entityX]);
                 return Constants::MoveSuccessValues::CHANGE_UP;
             }
         }
         entity->setPosition(entityX, tileSize/2);
-//        entity->setPosition(gameMapsPoints[tileSize / 2][entityX]);
         return Constants::MoveSuccessValues::FAILURE;
     }
     // temp circle for moving up
@@ -196,8 +194,8 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
 //    canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(entityX, (entityY - entitySpeed * dt));
-//        entity->setPosition(gameMapsPoints[entityY - entitySpeed][entityX]);
+//        entity->setPosition(entityX, (entityY - entitySpeed * dt));
+        entity->setPosition(Vector2f(0, -dt));
     }
 
     delete circle;
@@ -216,12 +214,10 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
             if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
                 cout << "Reached Bottom Exit" << endl;
                 entity->setPosition(entityX, (tileSize) / 2);
-//                entity->setPosition(gameMapsPoints[tileSize / 2][entityX]);
                 return Constants::MoveSuccessValues::CHANGE_DOWN;
             }
         }
         entity->setPosition(entityX, (screenHeight - tileSize/2));
-//        entity->setPosition(gameMapsPoints[screenHeight - tileSize / 2][entityX]);
         return Constants::MoveSuccessValues::FAILURE;
     }
     // temp circle for moving down
@@ -249,8 +245,8 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(entityX, (entityY + entitySpeed * dt));
-//        entity->setPosition(gameMapsPoints[entityY + entitySpeed][entityX]);
+//        entity->setPosition(entityX, (entityY + entitySpeed * dt));
+        entity->setPosition(Vector2f(0, dt));
     }
 
     delete circle;
@@ -269,12 +265,10 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
             if (entity->getCircle()->intersects(map->getRightExitCircle())) {
                 cout << "Reached Right Exit" << endl;
                 entity->setPosition(tileSize, entityY);
-//                entity->setPosition(gameMapsPoints[entityY][tileSize]);
                 return Constants::MoveSuccessValues::CHANGE_RIGHT;
             }
         }
         entity->setPosition((screenWidth - tileSize/2), entityY);
-//        entity->setPosition(gameMapsPoints[entityY][screenWidth - tileSize / 2]);
         return Constants::MoveSuccessValues::FAILURE;
     }
     // temp circle for moving right
@@ -302,8 +296,8 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition((entityX + entitySpeed * dt), entityY);
-//        entity->setPosition(gameMapsPoints[entityY][entityX + entitySpeed]);
+//        entity->setPosition((entityX + entitySpeed * dt), entityY);
+        entity->setPosition(Vector2f(dt, 0));
     }
 
     delete circle;
@@ -322,12 +316,10 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
             if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
                 cout << "Reached Left Exit" << endl;
                 entity->setPosition((screenWidth - tileSize / 2), entityY);
-//                entity->setPosition(gameMapsPoints[entityY][screenWidth - tileSize / 2]);
                 return Constants::MoveSuccessValues::CHANGE_LEFT;
             }
         }
         entity->setPosition(tileSize/2, entityY);
-//        entity->setPosition(gameMapsPoints[entityY][tileSize / 2]);
         return Constants::MoveSuccessValues::FAILURE;
     }
     // temp circle for moving left
@@ -355,8 +347,8 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition((entityX - entitySpeed * dt), entityY);
-//        entity->setPosition(gameMapsPoints[entityY][entityX - entitySpeed]);
+//        entity->setPosition((entityX - entitySpeed * dt), entityY);
+        entity->setPosition(Vector2f(-dt, 0));
     }
 
     delete circle;
