@@ -24,8 +24,8 @@ void PlayerRepository::setLastTimeMoved(std::clock_t time) {
 }
 
 // TODO: add listeners invocation
-Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState, float dt, bool diagonal) {
-    Constants::MoveSuccessValues moved = movementHandler->move(direction, movementState, dt, diagonal);
+Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState, float dt) {
+    Constants::MoveSuccessValues moved = movementHandler->move(direction, movementState, dt);
     return moved;
     // TODO: add animate call here and remove animation handling from move method in GameEntityMovement
 }
