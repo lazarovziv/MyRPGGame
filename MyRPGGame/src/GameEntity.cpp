@@ -71,7 +71,12 @@ GameEntity::GameEntity(Point *center) {
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
-    entityCircle = new Circle(center, (float) Constants::TILE_SIZE/4);
+    entityCircle = new Circle(center->getX(), center->getY(), (float) Constants::TILE_SIZE/4);
+    entityRightCircle = new Circle(center->getX() + speed, center->getY(), (float) Constants::TILE_SIZE/4);
+    entityLeftCircle = new Circle(center->getX() - speed, center->getY(), (float) Constants::TILE_SIZE/4);
+    entityTopCircle = new Circle(center->getX(), center->getY() - speed, (float) Constants::TILE_SIZE/4);
+    entityBottomCircle = new Circle(center->getX(), center->getY() + speed, (float) Constants::TILE_SIZE/4);
+
     attackRangeCircle = new Circle(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
 
     position.x = entityCircle->getCenter()->getX();
@@ -82,6 +87,10 @@ GameEntity::~GameEntity() {
     delete sprite;
 //    delete weapon;
     delete entityCircle;
+    delete entityRightCircle;
+    delete entityLeftCircle;
+    delete entityTopCircle;
+    delete entityBottomCircle;
     delete attackRangeCircle;
 }
 
@@ -174,10 +183,6 @@ void GameEntity::setPosition(Point *point) {
 void GameEntity::setPosition(Vector2f directionVector, float dt) {
     position.x = position.x + speed * dt * directionVector.x;
     position.y = position.y + speed * dt * directionVector.y;
-
-    if (entityCircle != nullptr) {
-        entityCircle->setCenter(position.x, position.y);
-    }
 }
 
 bool GameEntity::createMovementStateSprite(EntityMovementState state) {
@@ -518,6 +523,22 @@ Circle* GameEntity::getCircle() {
     return entityCircle;
 }
 
+Circle* GameEntity::getRightCircle() {
+    return entityRightCircle;
+}
+
+Circle* GameEntity::getLeftCircle() {
+    return entityLeftCircle;
+}
+
+Circle* GameEntity::getTopCircle() {
+    return entityTopCircle;
+}
+
+Circle* GameEntity::getBottomCircle() {
+    return entityBottomCircle;
+}
+
 Circle* GameEntity::getAttackRangeCircle() {
     return attackRangeCircle;
 }
@@ -532,9 +553,14 @@ void GameEntity::update(Point ***points, float dt) {
         // updating intervals
         moveInterval += dt;
         battleInterval += dt;
-        // updating entity circle and attack circle
-//        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
-//        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
+        // updating entity circles and attack circle
+        entityCircle->setCenter(position.x, position.y);
+        entityRightCircle->setCenter(position.x + speed * dt, position.y);
+        entityLeftCircle->setCenter(position.x - speed * dt, position.y);
+        entityTopCircle->setCenter(position.x, position.y - speed * dt);
+        entityBottomCircle->setCenter(position.x, position.y + speed * dt);
+
+        attackRangeCircle->setCenter(position.x, position.y);
     }
 }
 

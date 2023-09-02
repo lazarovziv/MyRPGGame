@@ -98,9 +98,14 @@ void NPCEnemy::update(Point ***points, float dt) {
         battleInterval += dt;
         // npc enemy intervals
         wanderAreaInterval += dt;
-        // updating entity circle and attack circle
-//        entityCircle->setCenter(points[(int)position.y][(int)position.x]);
-//        attackRangeCircle->setCenter(points[(int)position.y][(int)position.x]);
+        // updating entity circles and attack circle
+        entityCircle->setCenter(position.x, position.y);
+        entityRightCircle->setCenter(position.x + speed * dt, position.y);
+        entityLeftCircle->setCenter(position.x - speed * dt, position.y);
+        entityTopCircle->setCenter(position.x, position.y - speed * dt);
+        entityBottomCircle->setCenter(position.x, position.y + speed * dt);
+
+        attackRangeCircle->setCenter(position.x, position.y);
     }
 }
 
