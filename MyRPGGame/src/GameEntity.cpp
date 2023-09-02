@@ -171,9 +171,9 @@ void GameEntity::setPosition(Point *point) {
 //    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
 }
 
-void GameEntity::setPosition(Vector2f directionVector) {
-    position.x = position.x + speed * directionVector.x;
-    position.y = position.y + speed * directionVector.y;
+void GameEntity::setPosition(Vector2f directionVector, float dt) {
+    position.x = position.x + speed * dt * directionVector.x;
+    position.y = position.y + speed * dt * directionVector.y;
 
     if (entityCircle != nullptr) {
         entityCircle->setCenter(position.x, position.y);
