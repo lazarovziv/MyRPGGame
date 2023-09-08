@@ -35,11 +35,15 @@ protected:
     int defencePoints;
     int currentDefencePoints;
     float speed;
+    int maxStaminaPoints;
+    int currentStaminaPoints;
+
     // counter for sprite change (0 to 3)
     int step = 0;
     bool inBattle = false;
     bool dead = false;
     MoveDirection moveDirection;
+    EntityMovementState movementState;
     map<MoveDirection, int> moveDirectionsSpritesMap;
     map<EntityMovementState, int> movementStateRowMap;
 
@@ -63,7 +67,7 @@ protected:
     bool justMoved = false;
 
     // movement intervals
-    constexpr static const float MOVE_INTERVAL_DEFAULT = 5.0f;
+    constexpr static const float MOVE_INTERVAL_DEFAULT = 3.0f;
     float moveInterval = 0.f;
     bool idle = true;
     // for the animations. after traveled the speed distance, increment relevant animation count
@@ -93,11 +97,14 @@ public:
     int getAttackPoints();
     int getDefencePoints();
     int getCurrentDefencePoints();
+    int getMaxStaminaPoints();
+    int getCurrentStaminaPoints();
     float getSpeed();
     int getStep();
     bool isInBattle();
     bool isDead();
     MoveDirection getMoveDirection();
+    EntityMovementState getMovementState();
     map<MoveDirection, int> getMoveDirectionsSpritesMap();
     map<EntityMovementState, int> getMovementStateRowMap();
     Vector2f getPosition();
@@ -113,6 +120,7 @@ public:
     void increaseDefencePoints(int amount);
     void changeInBattleState();
     void setMoveDirection(MoveDirection direction);
+    void setMovementState(EntityMovementState state);
     void incrementStep();
     void setX(float x);
     void setY(float y);

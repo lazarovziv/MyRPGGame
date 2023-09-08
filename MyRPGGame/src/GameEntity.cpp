@@ -45,10 +45,13 @@ GameEntity::GameEntity(Point *center) {
     attackPoints = 1;
     defencePoints = 5;
     currentDefencePoints = defencePoints;
+    maxStaminaPoints = 35;
+    currentStaminaPoints = maxStaminaPoints;
     speed = Constants::BASE_ENTITY_SPEED;
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::DOWN;
+    movementState = EntityMovementState::RUN;
     sprite = new Sprite();
 
     //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
@@ -140,6 +143,10 @@ void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
     // adjusting weapon direction
     weapon->setTransitionDirection(direction);
+}
+
+void GameEntity::setMovementState(EntityMovementState state) {
+    movementState = state;
 }
 
 void GameEntity::incrementStep() {
@@ -381,6 +388,14 @@ int GameEntity::getCurrentDefencePoints() {
     return currentDefencePoints;
 }
 
+int GameEntity::getMaxStaminaPoints() {
+    return maxStaminaPoints;
+}
+
+int GameEntity::getCurrentStaminaPoints() {
+    return currentStaminaPoints;
+}
+
 float GameEntity::getSpeed() {
     return speed;
 }
@@ -399,6 +414,10 @@ bool GameEntity::isDead() {
 
 MoveDirection GameEntity::getMoveDirection() {
     return moveDirection;
+}
+
+EntityMovementState GameEntity::getMovementState() {
+    return movementState;
 }
 
 map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() {
