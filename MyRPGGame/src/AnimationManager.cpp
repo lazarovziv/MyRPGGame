@@ -69,8 +69,6 @@ int AnimationManager::getMovementStateCount(EntityMovementState state) {
 
 // TODO: create animation function for combat and for that another entity variable to cover the combats' counters
 void AnimationManager::animate(EntityMovementState state, float dt) {
-    // TODO: handle frames. increment the count in a faster way than up until now. need to call the animate function twice a frame
-    // TODO: increment animation count when player passed speed pixels in window?
     int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
     int movementStateCount = movementStateCounterMap[state];
 
@@ -191,26 +189,26 @@ void AnimationManager::incrementCombatHalfslashOneHandedCount() {
     movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
 }
 
-// create for idle, walk, run, climb, combat, jump, sit, expressions
-bool AnimationManager::generateBodyTest() {
-    cv::Mat bodyImage, headImage, finalImage;
-    string finalPath;
-    for (string movementState : movementStates) {
-        cout << movementState << endl;
-        bodyImage = cv::imread("../graphics/Characters/Body/masculine/" + movementState + ".png");
-        headImage = cv::imread("../graphics/Characters/Head/masculine/" + movementState + ".png");
-
-        // putting headImage on top of bodyImage into finalImage
-        addWeighted(bodyImage, 1.0, headImage, 1.0, 0.0, finalImage);
-        // combat has different output
-        if (movementState.substr(0, 6) == "combat") {
-            finalPath = "../graphics/player/body/combat/body_" + movementState + ".png";
-        } else finalPath = "../graphics/player/body/" + movementState + "/body_" + movementState + ".png";
-        // writing was not successful
-        if (!imwrite(finalPath, finalImage)) {
-            return false;
-        }
-    }
-    // all went well
-    return true;
-}
+//// create for idle, walk, run, climb, combat, jump, sit, expressions
+//bool AnimationManager::generateBodyTest() {
+//    cv::Mat bodyImage, headImage, finalImage;
+//    string finalPath;
+//    for (string movementState : movementStates) {
+//        cout << movementState << endl;
+//        bodyImage = cv::imread("../graphics/Characters/Body/masculine/" + movementState + ".png");
+//        headImage = cv::imread("../graphics/Characters/Head/masculine/" + movementState + ".png");
+//
+//        // putting headImage on top of bodyImage into finalImage
+//        addWeighted(bodyImage, 1.0, headImage, 1.0, 0.0, finalImage);
+//        // combat has different output
+//        if (movementState.substr(0, 6) == "combat") {
+//            finalPath = "../graphics/player/body/combat/body_" + movementState + ".png";
+//        } else finalPath = "../graphics/player/body/" + movementState + "/body_" + movementState + ".png";
+//        // writing was not successful
+//        if (!imwrite(finalPath, finalImage)) {
+//            return false;
+//        }
+//    }
+//    // all went well
+//    return true;
+//}

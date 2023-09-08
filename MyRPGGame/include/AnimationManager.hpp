@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <functional>
 #include "GameEntity.hpp"
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui/highgui.hpp>
