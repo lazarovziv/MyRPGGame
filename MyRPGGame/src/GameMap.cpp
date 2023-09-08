@@ -302,7 +302,7 @@ int GameMap::generateRandom(int min, int max) {
 //    float diff = max - min;
 //    float r = random * diff;
 //    return min + r;
-    return min + (random() % (max-min+1));
+    return min + (rand() % (max-min+1));
 }
 
 void GameMap::update(float dt) {
