@@ -8,6 +8,8 @@ if (APPLE)
     set(CMAKE_PREFIX_PATH /opt/homebrew)
 elseif (WIN32)
     # set windows compiler
+    set(SFML_DIR C:/SFML/lib/cmake/SFML)
+    set(OpenCV_DIR C:/opencv/build/x64/vc16/lib)
 endif()
 set(CMAKE_CXX_STANDARD 17)
 
@@ -32,23 +34,14 @@ find_package(OpenCV COMPONENTS core highgui REQUIRED)
 if (APPLE)
     include_directories(${SFML_INCLUDE_DIRS}/include)
     include_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/include)
-    include_directories(${OpenCV_INCLUDE_DIRS})
 
     link_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/lib64)
 endif()
 
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 # creating executables
 if (APPLE)
-    add_executable(main.out ${SOURCE_FILES})
-    target_link_libraries(main.out sfml-system
-            sfml-window
-            sfml-graphics
-            sfml-audio
-            sfml-network)
-    target_link_libraries(main.out ${OpenCV_LIBS})
-
-    target_compile_features(main.out PRIVATE cxx_range_for)
-elseif()
     add_executable(main.out ${SOURCE_FILES})
     target_link_libraries(main.out sfml-system
             sfml-window
