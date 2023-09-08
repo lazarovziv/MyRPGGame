@@ -89,6 +89,7 @@ void GameEntityMovement::calculatePathTo(GameEntity *target, float dt) {
 Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt) {
     // no need to create extra variables if not using them
     if (movementState == EntityMovementState::IDLE) {
+        entity->setMovementState(movementState);
         animationManager->animate(movementState, dt);
         // since we're idle, resetting the travel we covered until now
         entity->resetDistanceTraveledSinceIdle();
@@ -166,7 +167,8 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
         } else return Constants::MoveSuccessValues::FAILURE;
     }
 
-    animationManager->animate(movementState, dt);
+    entity->setMovementState(movementState);
+    animationManager->animate(entity->getMovementState(), dt);
     entity->resetMoveInterval();
     entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
     return moveSuccessValue;
