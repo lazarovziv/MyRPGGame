@@ -52,6 +52,8 @@ protected:
     IntRect spriteRect;
     Circle *entityCircle = nullptr;
     Circle *attackRangeCircle = nullptr;
+    // circle positioned in potentially next steps for the player (instead of creating new ones in move method)
+    Circle *entityRightCircle, *entityLeftCircle, *entityTopCircle, *entityBottomCircle;
 //    GameMap* currentGameMap;
     Weapon *weapon;
 
@@ -116,6 +118,8 @@ public:
     void setY(float y);
     void setPosition(float x, float y);
     void setPosition(Point *point);
+    void setPosition(Vector2f directionVector, float dt);
+
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, Sprite *newSprite); // if sprite is null, we'll create one based on the state
     void setWeapon(WeaponType type);
@@ -134,6 +138,10 @@ public:
     bool isEntityInAttackRange(GameEntity &entity);
     bool intersects(GameEntity &entity);
     Circle* getCircle();
+    Circle* getRightCircle();
+    Circle* getLeftCircle();
+    Circle* getTopCircle();
+    Circle* getBottomCircle();
     Circle* getAttackRangeCircle();
 
     Sprite* getMovementStateSprite(EntityMovementState state);

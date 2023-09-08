@@ -1,0 +1,2 @@
+Sprites used in this repository are from the talented ElizaWy (https://github.com/ElizaWy/LPC) and others from the Creative Commons community + volunteers at OpenGameArt.org.
+Thanks to them, I can focus on the technical side of things and make myself a better developer and create my dream game.

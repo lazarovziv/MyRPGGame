@@ -30,7 +30,7 @@ void EnemyRepository::move(float dt) {
             // if enemy is in battle (and in battle circle), chase the player
             // TODO: add checks for chasing other entities
             if (enemy->isInBattle() && enemy->isInBattleArea()) {
-                if (player->didJustMove()) movementHandler->moveTowardsEntity(player, map->getMapGraph());
+//                if (player->didJustMove()) movementHandler->moveTowardsEntity(player, map->getMapGraph());
                 // calculate path to player
                 if (enemy->areAvailableMoves()) {
                     movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
@@ -60,8 +60,8 @@ void EnemyRepository::move(float dt) {
                     // go back to wander area
                     if (enemy->areAvailableMoves()) {
                         movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
-                    } else movementHandler->moveTowardsPoint(enemy->getWanderAreaCircle()->getCenter(),
-                                                             map->getMapGraph());
+                    } /* else movementHandler->moveTowardsPoint(enemy->getWanderAreaCircle()->getCenter(),
+                                                             map->getMapGraph()); */
                 }
             }
         }

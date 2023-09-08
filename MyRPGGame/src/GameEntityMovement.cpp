@@ -59,16 +59,16 @@ bool GameEntityMovement::moveBasedOnPoint(Point *point, float dt) {
     if (point->getX() == entity->getCircle()->getCenter()->getX()) {
         // go down
         if (point->getY() > entity->getCircle()->getCenter()->getY())
-            return move(MoveDirection::DOWN, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::DOWN, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
         // go up
-        return move(MoveDirection::UP, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+        return move(MoveDirection::UP, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
     } else {
         // same col, can go right or left
         // go right
         if (point->getX() > entity->getCircle()->getCenter()->getX())
-            return move(MoveDirection::RIGHT, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::RIGHT, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
         // go left
-        return move(MoveDirection::LEFT, EntityMovementState::RUN, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+        return move(MoveDirection::LEFT, EntityMovementState::RUN, dt) == Constants::MoveSuccessValues::SUCCESS;
     }
 }
 
@@ -82,11 +82,11 @@ void GameEntityMovement::calculatePathTo(GameEntity *target, float dt) {
     // positive slope = go down iff
     if (slope > 0) {
         // go down
-        if (entity->getPosition().y > target->getPosition().y) move(MoveDirection::DOWN, EntityMovementState::RUN, dt, false);
+        if (entity->getPosition().y > target->getPosition().y) move(MoveDirection::DOWN, EntityMovementState::RUN, dt);
     }
 }
 
-Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt, bool diagonal) {
+Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt) {
     // no need to create extra variables if not using them
     if (movementState == EntityMovementState::IDLE) {
         animationManager->animate(movementState, dt);
@@ -110,10 +110,6 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_UP) {
             entity->setMoveDirection(MoveDirection::UP);
-            animationManager->animate(movementState, dt);
-            entity->resetMoveInterval();
-            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt); // temporary solution for diagonal movement
-            return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN) {
         moveSuccessValue = moveDown(map, entityX, entityY, entitySpeed, dt);
@@ -121,10 +117,6 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_DOWN) {
             entity->setMoveDirection(MoveDirection::DOWN);
-            animationManager->animate(movementState, dt);
-            entity->resetMoveInterval();
-            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
-            return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::RIGHT) {
         moveSuccessValue = moveRight(map, entityX, entityY, entitySpeed, dt);
@@ -132,10 +124,6 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT) {
             entity->setMoveDirection(MoveDirection::RIGHT);
-            animationManager->animate(movementState, dt);
-            entity->resetMoveInterval();
-            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
-            return moveSuccessValue;
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::LEFT) {
         moveSuccessValue = moveLeft(map, entityX, entityY, entitySpeed, dt);
@@ -143,42 +131,67 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT) {
             entity->setMoveDirection(MoveDirection::LEFT);
-            animationManager->animate(movementState, dt);
-            entity->resetMoveInterval();
-            if (!diagonal) entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
-            return moveSuccessValue;
+        } else return Constants::MoveSuccessValues::FAILURE;
+    } else if (direction == MoveDirection::UP_RIGHT) {
+        moveSuccessValue = moveRightUp(map, entityX, entityY, entitySpeed, dt);
+        // try and move right/up, if false, collided with something
+        if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_UP) {
+            entity->setMoveDirection(MoveDirection::RIGHT);
+        } else return Constants::MoveSuccessValues::FAILURE;
+    } else if (direction == MoveDirection::UP_LEFT) {
+        moveSuccessValue = moveLeftUp(map, entityX, entityY, entitySpeed, dt);
+        // try and move left/up, if false, collided with something
+        if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_UP) {
+            entity->setMoveDirection(MoveDirection::LEFT);
+        } else return Constants::MoveSuccessValues::FAILURE;
+    } else if (direction == MoveDirection::DOWN_RIGHT) {
+        moveSuccessValue = moveRightDown(map, entityX, entityY, entitySpeed, dt);
+        // try and move right/down, if false, collided with something
+        if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_DOWN) {
+            entity->setMoveDirection(MoveDirection::RIGHT);
+        } else return Constants::MoveSuccessValues::FAILURE;
+    } else if (direction == MoveDirection::DOWN_LEFT) {
+        moveSuccessValue = moveLeftDown(map, entityX, entityY, entitySpeed, dt);
+        // try and move left/down, if false, collided with something
+        if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT ||
+            moveSuccessValue == Constants::MoveSuccessValues::CHANGE_DOWN) {
+            entity->setMoveDirection(MoveDirection::LEFT);
         } else return Constants::MoveSuccessValues::FAILURE;
     }
-    return Constants::MoveSuccessValues::FAILURE;
+
+    animationManager->animate(movementState, dt);
+    entity->resetMoveInterval();
+    entity->incrementDistanceTraveledSinceIdle(entitySpeed * dt);
+    return moveSuccessValue;
 }
 
 Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached top of screen
-    if (entityY - entitySpeed <= tileSize / 2) {
+    if (reachedTopEndOfScreen(entityY, entitySpeed, dt)) {
         // check if top of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromTop() && map->getTopExitCircle() != nullptr) {
             // if reached top exit circle of the map
             if (entity->getCircle()->intersects(map->getTopExitCircle())) {
                 cout << "Reached Top Exit" << endl;
                 entity->setPosition(entityX, (screenHeight - tileSize / 2));
-//                entity->setPosition(gameMapsPoints[screenHeight - tileSize / 2][entityX]);
                 return Constants::MoveSuccessValues::CHANGE_UP;
             }
         }
         entity->setPosition(entityX, tileSize/2);
-//        entity->setPosition(gameMapsPoints[tileSize / 2][entityX]);
         return Constants::MoveSuccessValues::FAILURE;
     }
-    // temp circle for moving up
-    auto *circle = new Circle(entity->getCircle()->getCenter()->getX(),
-                              entity->getCircle()->getCenter()->getY() - entitySpeed * dt,
-                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
-        map->getLandscapes()[i]->getCircle()->intersects(circle)) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getTopCircle())) {
             canCollide = true;
             break;
         }
@@ -187,20 +200,17 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
     if (isPlayer) {
         // check for collisions with enemies
         for (int i = 0; i < map->getEnemies().size(); i++) {
-            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getTopCircle())) {
                 canCollide = true;
                 break;
             }
         }
-    } else canCollide = circle->intersects(map->getPlayer()->getCircle());
-//    canCollide = circle->intersects(Game::getInstance()->getPlayer()->getCircle());
+    } else canCollide = entity->getTopCircle()->intersects(map->getPlayer()->getCircle());
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(entityX, (entityY - entitySpeed * dt));
-//        entity->setPosition(gameMapsPoints[entityY - entitySpeed][entityX]);
+        entity->setPosition(Vector2f(0, -1), dt);
     }
 
-    delete circle;
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
@@ -210,28 +220,21 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached bottom of screen
-    if (entityY + entitySpeed >= screenHeight - tileSize / 2) {
+    if (reachedBottomEndOfScreen(entityY, entitySpeed, dt)) {
         // check if bottom of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromBottom() && map->getBottomExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
                 cout << "Reached Bottom Exit" << endl;
                 entity->setPosition(entityX, (tileSize) / 2);
-//                entity->setPosition(gameMapsPoints[tileSize / 2][entityX]);
                 return Constants::MoveSuccessValues::CHANGE_DOWN;
             }
         }
         entity->setPosition(entityX, (screenHeight - tileSize/2));
-//        entity->setPosition(gameMapsPoints[screenHeight - tileSize / 2][entityX]);
         return Constants::MoveSuccessValues::FAILURE;
     }
-    // temp circle for moving down
-    auto *circle = new Circle(entity->getCircle()->getCenter()->getX(),
-                              entity->getCircle()->getCenter()->getY() + entitySpeed * dt,
-                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
-            map->getLandscapes()[i]->getCircle()->intersects(circle)) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getBottomCircle())) {
             canCollide = true;
             break;
         }
@@ -240,20 +243,17 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
     if (isPlayer) {
         // check for collisions with enemies
         for (int i = 0; i < map->getEnemies().size(); i++) {
-            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getBottomCircle())) {
                 canCollide = true;
                 break;
             }
         }
-    } else canCollide = circle->intersects(map->getPlayer()->getCircle());
+    } else canCollide = entity->getBottomCircle()->intersects(map->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(entityX, (entityY + entitySpeed * dt));
-//        entity->setPosition(gameMapsPoints[entityY + entitySpeed][entityX]);
+        entity->setPosition(Vector2f(0, 1), dt);
     }
-
-    delete circle;
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
@@ -263,28 +263,21 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached right of screen
-    if (entityX + entitySpeed >= screenWidth - tileSize / 2) {
+    if (reachedRightEndOfScreen(entityX, entitySpeed, dt)) {
         // check if right of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromRight() && map->getRightExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getRightExitCircle())) {
                 cout << "Reached Right Exit" << endl;
                 entity->setPosition(tileSize, entityY);
-//                entity->setPosition(gameMapsPoints[entityY][tileSize]);
                 return Constants::MoveSuccessValues::CHANGE_RIGHT;
             }
         }
         entity->setPosition((screenWidth - tileSize/2), entityY);
-//        entity->setPosition(gameMapsPoints[entityY][screenWidth - tileSize / 2]);
         return Constants::MoveSuccessValues::FAILURE;
     }
-    // temp circle for moving right
-    auto *circle = new Circle(entity->getCircle()->getCenter()->getX() + entitySpeed * dt,
-                              entity->getCircle()->getCenter()->getY(),
-                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
-            map->getLandscapes()[i]->getCircle()->intersects(circle)) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getRightCircle())) {
             canCollide = true;
             break;
         }
@@ -293,20 +286,17 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
     if (isPlayer) {
         // check for collisions with enemies
         for (int i = 0; i < map->getEnemies().size(); i++) {
-            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getRightCircle())) {
                 canCollide = true;
                 break;
             }
         }
-    } else canCollide = circle->intersects(map->getPlayer()->getCircle());
+    } else canCollide = entity->getRightCircle()->intersects(map->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition((entityX + entitySpeed * dt), entityY);
-//        entity->setPosition(gameMapsPoints[entityY][entityX + entitySpeed]);
+        entity->setPosition(Vector2f(1, 0), dt);
     }
-
-    delete circle;
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
@@ -316,28 +306,21 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached left of screen
-    if (entityX - entitySpeed <= tileSize / 2) {
+    if (reachedLeftEndOfScreen(entityX, entitySpeed, dt)) {
         // check if left of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromLeft() && map->getLeftExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
                 cout << "Reached Left Exit" << endl;
                 entity->setPosition((screenWidth - tileSize / 2), entityY);
-//                entity->setPosition(gameMapsPoints[entityY][screenWidth - tileSize / 2]);
                 return Constants::MoveSuccessValues::CHANGE_LEFT;
             }
         }
         entity->setPosition(tileSize/2, entityY);
-//        entity->setPosition(gameMapsPoints[entityY][tileSize / 2]);
         return Constants::MoveSuccessValues::FAILURE;
     }
-    // temp circle for moving left
-    auto *circle = new Circle(entity->getCircle()->getCenter()->getX() - entitySpeed * dt,
-                              entity->getCircle()->getCenter()->getY(),
-                              entity->getCircle()->getRadius());
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
-        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
-            map->getLandscapes()[i]->getCircle()->intersects(circle)) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getLeftCircle())) {
             canCollide = true;
             break;
         }
@@ -346,36 +329,343 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
     if (isPlayer) {
         // check for collisions with enemies
         for (int i = 0; i < map->getEnemies().size(); i++) {
-            if (map->getEnemies()[i]->getCircle()->intersects(circle)) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getLeftCircle())) {
                 canCollide = true;
                 break;
             }
         }
-    } else canCollide = circle->intersects(map->getPlayer()->getCircle());
+    } else canCollide = entity->getLeftCircle()->intersects(map->getPlayer()->getCircle());
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition((entityX - entitySpeed * dt), entityY);
-//        entity->setPosition(gameMapsPoints[entityY][entityX - entitySpeed]);
+        entity->setPosition(Vector2f(-1, 0), dt);
     }
-
-    delete circle;
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
+}
+
+Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+    int unreachableAreasSize = map->getLandscapes().size();
+    bool canCollide = false;
+    // reached left of screen
+    if (reachedLeftEndOfScreen(entityX, entitySpeed, dt)) {
+        // check if left of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromLeft() && map->getLeftExitCircle() != nullptr) {
+            if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
+                cout << "Reached Left Exit" << endl;
+                entity->setPosition((screenWidth - tileSize / 2), entityY);
+                return Constants::MoveSuccessValues::CHANGE_LEFT;
+            }
+        }
+        entity->setPosition(tileSize/2, entityY);
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+    // reached top of screen
+    if (reachedTopEndOfScreen(entityY, entitySpeed, dt)) {
+        // check if top of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromTop() && map->getTopExitCircle() != nullptr) {
+            // if reached top exit circle of the map
+            if (entity->getCircle()->intersects(map->getTopExitCircle())) {
+                cout << "Reached Top Exit" << endl;
+                entity->setPosition(entityX, (screenHeight - tileSize / 2));
+                return Constants::MoveSuccessValues::CHANGE_UP;
+            }
+        }
+        entity->setPosition(entityX, tileSize/2);
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+
+    // direction vector
+    Vector2f directionVector = Vector2f(-1, -1);
+    // normalize
+    normalizeVector(&directionVector);
+
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getLeftCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getTopCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getLeftCircle()) ||
+                    map->getEnemies()[i]->getCircle()->intersects(entity->getTopCircle())) {
+                canCollide = true;
+                break;
+            }
+        }
+    } else canCollide = entity->getLeftCircle()->intersects(map->getPlayer()->getCircle()) ||
+                entity->getTopCircle()->intersects(map->getPlayer()->getCircle());
+
+    if (!canCollide) {
+        // in legal boundaries
+        entity->setPosition(directionVector, dt);
+    }
+
+    if (canCollide) return Constants::MoveSuccessValues::FAILURE;
+    return Constants::MoveSuccessValues::SUCCESS;
+}
+
+Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+    int unreachableAreasSize = map->getLandscapes().size();
+    bool canCollide = false;
+    // reached left of screen
+    if (reachedLeftEndOfScreen(entityX, entitySpeed, dt)) {
+        // check if left of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromLeft() && map->getLeftExitCircle() != nullptr) {
+            if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
+                cout << "Reached Left Exit" << endl;
+                entity->setPosition((screenWidth - tileSize / 2), entityY);
+                return Constants::MoveSuccessValues::CHANGE_LEFT;
+            }
+        }
+        entity->setPosition(tileSize/2, entityY);
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+    // reached bottom of screen
+    if (reachedBottomEndOfScreen(entityY, entitySpeed, dt)) {
+        // check if bottom of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromBottom() && map->getBottomExitCircle() != nullptr) {
+            if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
+                cout << "Reached Bottom Exit" << endl;
+                entity->setPosition(entityX, (tileSize) / 2);
+                return Constants::MoveSuccessValues::CHANGE_DOWN;
+            }
+        }
+        entity->setPosition(entityX, (screenHeight - tileSize/2));
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+
+    // direction vector
+    Vector2f directionVector = Vector2f(-1, 1);
+    // normalize
+    normalizeVector(&directionVector);
+
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getLeftCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getBottomCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getLeftCircle()) ||
+                map->getEnemies()[i]->getCircle()->intersects(entity->getBottomCircle())) {
+                canCollide = true;
+                break;
+            }
+        }
+    } else canCollide = entity->getLeftCircle()->intersects(map->getPlayer()->getCircle()) ||
+                entity->getBottomCircle()->intersects(map->getPlayer()->getCircle());
+
+    if (!canCollide) {
+        // in legal boundaries
+        entity->setPosition(directionVector, dt);
+    }
+
+    if (canCollide) return Constants::MoveSuccessValues::FAILURE;
+    return Constants::MoveSuccessValues::SUCCESS;
+}
+
+Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+    int unreachableAreasSize = map->getLandscapes().size();
+    bool canCollide = false;
+    // reached right of screen
+    if (reachedRightEndOfScreen(entityX, entitySpeed, dt)) {
+        // check if right of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromRight() && map->getRightExitCircle() != nullptr) {
+            if (entity->getCircle()->intersects(map->getRightExitCircle())) {
+                cout << "Reached Right Exit" << endl;
+                entity->setPosition(tileSize, entityY);
+                return Constants::MoveSuccessValues::CHANGE_RIGHT;
+            }
+        }
+        entity->setPosition((screenWidth - tileSize/2), entityY);
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+    // reached top of screen
+    if (reachedTopEndOfScreen(entityY, entitySpeed, dt)) {
+        // check if top of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromTop() && map->getTopExitCircle() != nullptr) {
+            // if reached top exit circle of the map
+            if (entity->getCircle()->intersects(map->getTopExitCircle())) {
+                cout << "Reached Top Exit" << endl;
+                entity->setPosition(entityX, (screenHeight - tileSize / 2));
+                return Constants::MoveSuccessValues::CHANGE_UP;
+            }
+        }
+        entity->setPosition(entityX, tileSize/2);
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+
+    // direction vector
+    Vector2f directionVector = Vector2f(1, -1);
+    // normalize
+    normalizeVector(&directionVector);
+
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getRightCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getTopCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getRightCircle()) ||
+                map->getEnemies()[i]->getCircle()->intersects(entity->getTopCircle())) {
+                canCollide = true;
+                break;
+            }
+        }
+    } else canCollide = entity->getRightCircle()->intersects(map->getPlayer()->getCircle()) ||
+                entity->getTopCircle()->intersects(map->getPlayer()->getCircle());
+
+    if (!canCollide) {
+        // in legal boundaries
+        entity->setPosition(directionVector, dt);
+    }
+
+    if (canCollide) return Constants::MoveSuccessValues::FAILURE;
+    return Constants::MoveSuccessValues::SUCCESS;
+}
+
+Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+    int unreachableAreasSize = map->getLandscapes().size();
+    bool canCollide = false;
+    // reached right of screen
+    if (reachedRightEndOfScreen(entityX, entitySpeed, dt)) {
+        // check if right of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromRight() && map->getRightExitCircle() != nullptr) {
+            if (entity->getCircle()->intersects(map->getRightExitCircle())) {
+                cout << "Reached Right Exit" << endl;
+                entity->setPosition(tileSize, entityY);
+                return Constants::MoveSuccessValues::CHANGE_RIGHT;
+            }
+        }
+        entity->setPosition((screenWidth - tileSize/2), entityY);
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+    // reached bottom of screen
+    if (reachedBottomEndOfScreen(entityY, entitySpeed, dt)) {
+        // check if bottom of screen is an exit point for current game map
+        if (isPlayer && map->isExitableFromBottom() && map->getBottomExitCircle() != nullptr) {
+            if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
+                cout << "Reached Bottom Exit" << endl;
+                entity->setPosition(entityX, (tileSize) / 2);
+                return Constants::MoveSuccessValues::CHANGE_DOWN;
+            }
+        }
+        entity->setPosition(entityX, (screenHeight - tileSize/2));
+        return Constants::MoveSuccessValues::FAILURE;
+    }
+
+    // direction vector
+    Vector2f directionVector = Vector2f(1, 1);
+    // normalize
+    normalizeVector(&directionVector);
+
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (map->getLandscapes()[i]->getCircle()->intersects(entity->getRightCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+    // check if the move can overlap with any of the unreachable areas
+    for (int i = 0; i < unreachableAreasSize; i++) {
+        if (/*map->getLandscapes()[i]->getRectangle().intersects(*rect) ||*/
+                map->getLandscapes()[i]->getCircle()->intersects(entity->getBottomCircle())) {
+            canCollide = true;
+            break;
+        }
+    }
+
+    if (isPlayer) {
+        // check for collisions with enemies
+        for (int i = 0; i < map->getEnemies().size(); i++) {
+            if (map->getEnemies()[i]->getCircle()->intersects(entity->getRightCircle()) ||
+                map->getEnemies()[i]->getCircle()->intersects(entity->getBottomCircle())) {
+                canCollide = true;
+                break;
+            }
+        }
+    } else canCollide = entity->getRightCircle()->intersects(map->getPlayer()->getCircle()) ||
+                entity->getBottomCircle()->intersects(map->getPlayer()->getCircle());
+
+    if (!canCollide) {
+        // in legal boundaries
+        entity->setPosition(directionVector, dt);
+    }
+
+    if (canCollide) return Constants::MoveSuccessValues::FAILURE;
+    return Constants::MoveSuccessValues::SUCCESS;
+}
+
+bool GameEntityMovement::reachedLeftEndOfScreen(float entityX, float entitySpeed, float dt) const {
+    return entityX - entitySpeed <= tileSize / 2;
+}
+
+bool GameEntityMovement::reachedRightEndOfScreen(float entityX, float entitySpeed, float dt) const {
+    return entityX + entitySpeed >= screenWidth - tileSize / 2;
+}
+
+bool GameEntityMovement::reachedTopEndOfScreen(float entityY, float entitySpeed, float dt) const {
+    return entityY - entitySpeed <= tileSize / 2;
+}
+
+bool GameEntityMovement::reachedBottomEndOfScreen(float entityY, float entitySpeed, float dt) const {
+    return entityY + entitySpeed >= screenHeight - tileSize / 2;
+}
+
+void GameEntityMovement::normalizeVector(sf::Vector2f *vector) {
+    float normSquared = vector->x * vector->x + vector->y * vector->y;
+    float norm = sqrt(normSquared);
+    vector->x /= norm;
+    vector->y /= norm;
 }
 
 bool GameEntityMovement::moveRandomly(int randomDirection, float dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
         case 0:
-            return move(MoveDirection::DOWN, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::DOWN, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         case 1:
-            return move(MoveDirection::RIGHT, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::RIGHT, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         case 2:
-            return move(MoveDirection::LEFT, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::LEFT, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         case 3:
-            return move(MoveDirection::UP, EntityMovementState::WALK, dt, false) == Constants::MoveSuccessValues::SUCCESS;
+            return move(MoveDirection::UP, EntityMovementState::WALK, dt) == Constants::MoveSuccessValues::SUCCESS;
         default:
             // TODO: add error handling
             break;

@@ -20,7 +20,7 @@ public:
 
     void setGameMap(GameMap *gameMap);
     void setLastTimeMoved(std::clock_t time);
-    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, float dt, bool diagonal);
+    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, float dt);
     bool attack(float dt);
     void update(Point ***points, Constants::MoveSuccessValues moveSuccessValue, float dt);
 };
