@@ -53,7 +53,7 @@ void EnemyRepository::move(float dt) {
                     } else {
                         // TODO: make enemy move in one direction for a period of time and then change it to another direction randomly
                         // move randomly
-                        int randomDirection = ((int) random()) % 4;
+                        int randomDirection = ((int) rand()) % 4;
                         movementHandler->moveRandomly(randomDirection, dt);
                     }
                 } else {
