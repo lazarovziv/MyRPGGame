@@ -30,7 +30,7 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, int x, int y) {
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2); // or set texture.size / 2, texture.size / 2
     sprite->setPosition(position.x, position.y);
-    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/4);
+    entityCircle = make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
 }
 
 LandscapeEntity::LandscapeEntity(LandscapeType type, Point *center) : GameEntity(center) {

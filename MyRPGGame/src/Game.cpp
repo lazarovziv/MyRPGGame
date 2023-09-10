@@ -24,9 +24,9 @@ Game::~Game() {
         }
         delete[] worldMap[row];
     }
-    delete player;
+//    delete player;
     delete worldMap;
-    delete window;
+//    delete window;
     delete title;
 }
 
@@ -34,16 +34,15 @@ Game::Game(const char* str) {
     title = str;
     VideoMode videoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
     std::string s(title);
-    window = new RenderWindow(videoMode, s);
+    window = make_unique<RenderWindow>(videoMode, s);
 
     window->setVerticalSyncEnabled(false);
 //    window->setFramerateLimit(Constants::FPS);
     window->setFramerateLimit(0);
 
-    cameraView = new View(Vector2f(0, 0),
-                          Vector2f(Constants::SCREEN_WIDTH,Constants::SCREEN_HEIGHT));
+    cameraView = make_unique<View>(Vector2f(0, 0), Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
-    menuRepository = new MenuRepository();
+    menuRepository = make_unique<MenuRepository>();
     initMenus();
     menuRepository->setMenu(currentMenu); // first menu is the game menu
     
@@ -90,7 +89,7 @@ Game::Game(const char* str) {
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
-    this->player = new Player(PlayerType::KNIGHT,
+    this->player = make_unique<Player>(PlayerType::KNIGHT,
                               points[Constants::SCREEN_HEIGHT/2][Constants::SCREEN_WIDTH/2]);
     
     initWorldMap();
@@ -107,15 +106,15 @@ Game::Game(const char* str) {
 
 void Game::initEntities() {
     // initialize player's systems
-    auto *playerMovement = new GameEntityMovement(player, true, getCurrentGameMap(), points);
-    auto *playerBattle = new GameEntityBattle(player);
+    auto *playerMovement = new GameEntityMovement(player.get(), true, getCurrentGameMap(), points);
+    auto *playerBattle = new GameEntityBattle(player.get());
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
     auto *enemiesBattle = new GameEntityBattle(nullptr);
 
-    playerRepository = new PlayerRepository(player, playerMovement,
+    playerRepository = make_unique<PlayerRepository>(player.get(), playerMovement,
                                             playerBattle, getCurrentGameMap());
-    enemiesRepository = new EnemyRepository(enemiesMovement, enemiesBattle,
-                                            player, getCurrentGameMap());
+    enemiesRepository = make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
+                                            player.get(), getCurrentGameMap());
 }
 
 void Game::initMenus() {
@@ -123,13 +122,13 @@ void Game::initMenus() {
     std::vector<std::string> mainMenuItemsStrings = { "Resume", "Inventory", "Settings", "Exit" };
     std::vector<std::string> characterCreationItemsStrings = { "Change Body", "Change Torso" };
 
-    gameMenu = new Menu(gameMenuItemsStrings, true);
-    mainMenu = new Menu(mainMenuItemsStrings, false);
-    characterCreationMenu = new Menu(characterCreationItemsStrings, false);
-    gameMenu->addSubMenu(mainMenu, 0);
-    mainMenu->addSubMenu(characterCreationMenu, 1);
+    gameMenu = make_unique<Menu>(gameMenuItemsStrings, true);
+    mainMenu = make_unique<Menu>(mainMenuItemsStrings, false);
+    characterCreationMenu = make_unique<Menu>(characterCreationItemsStrings, false);
+    gameMenu->addSubMenu(mainMenu.get(), 0);
+    mainMenu->addSubMenu(characterCreationMenu.get(), 1);
     // gameMenu->addSubMenu(settingsMenu);
-    currentMenu = gameMenu; // initial menu is gameMenu
+    currentMenu = gameMenu.get(); // initial menu is gameMenu
 }
 
 void Game::start() {
@@ -415,7 +414,7 @@ void Game::render() {
 
 void Game::renderMenu(Menu *menu) {
     menu->render(player->getCircle()->getCenter()->getX(),
-                 player->getCircle()->getCenter()->getY(), window);
+                 player->getCircle()->getCenter()->getY(), window.get());
 }
 
 void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt) {

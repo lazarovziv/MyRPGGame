@@ -74,13 +74,13 @@ GameEntity::GameEntity(Point *center) {
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
-    entityCircle = new Circle(center->getX(), center->getY(), (float) Constants::TILE_SIZE/4);
-    entityRightCircle = new Circle(center->getX() + speed, center->getY(), (float) Constants::TILE_SIZE/4);
-    entityLeftCircle = new Circle(center->getX() - speed, center->getY(), (float) Constants::TILE_SIZE/4);
-    entityTopCircle = new Circle(center->getX(), center->getY() - speed, (float) Constants::TILE_SIZE/4);
-    entityBottomCircle = new Circle(center->getX(), center->getY() + speed, (float) Constants::TILE_SIZE/4);
+    entityCircle = make_unique<Circle>(center->getX(), center->getY(), (float) Constants::TILE_SIZE/4);
+    entityRightCircle = make_unique<Circle>(center->getX() + speed, center->getY(), (float) Constants::TILE_SIZE/4);
+    entityLeftCircle = make_unique<Circle>(center->getX() - speed, center->getY(), (float) Constants::TILE_SIZE/4);
+    entityTopCircle = make_unique<Circle>(center->getX(), center->getY() - speed, (float) Constants::TILE_SIZE/4);
+    entityBottomCircle = make_unique<Circle>(center->getX(), center->getY() + speed, (float) Constants::TILE_SIZE/4);
 
-    attackRangeCircle = new Circle(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
+    attackRangeCircle = make_unique<Circle>(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
 
     position.x = entityCircle->getCenter()->getX();
     position.y = entityCircle->getCenter()->getY();
@@ -89,12 +89,12 @@ GameEntity::GameEntity(Point *center) {
 GameEntity::~GameEntity() {
     delete sprite;
 //    delete weapon;
-    delete entityCircle;
-    delete entityRightCircle;
-    delete entityLeftCircle;
-    delete entityTopCircle;
-    delete entityBottomCircle;
-    delete attackRangeCircle;
+//    delete entityCircle;
+//    delete entityRightCircle;
+//    delete entityLeftCircle;
+//    delete entityTopCircle;
+//    delete entityBottomCircle;
+//    delete attackRangeCircle;
 }
 
 void GameEntity::increaseLevel(int amount) {
@@ -531,35 +531,35 @@ bool GameEntity::move(MoveDirection direction) {
 }
 
 bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
-    return attackRangeCircle->intersects(entity.entityCircle);
+    return attackRangeCircle->intersects(entity.entityCircle.get());
 }
 
 bool GameEntity::intersects(GameEntity &entity) {
-    return entityCircle->intersects(entity.entityCircle);
+    return entityCircle->intersects(entity.entityCircle.get());
 }
 
 Circle* GameEntity::getCircle() {
-    return entityCircle;
+    return entityCircle.get();
 }
 
 Circle* GameEntity::getRightCircle() {
-    return entityRightCircle;
+    return entityRightCircle.get();
 }
 
 Circle* GameEntity::getLeftCircle() {
-    return entityLeftCircle;
+    return entityLeftCircle.get();
 }
 
 Circle* GameEntity::getTopCircle() {
-    return entityTopCircle;
+    return entityTopCircle.get();
 }
 
 Circle* GameEntity::getBottomCircle() {
-    return entityBottomCircle;
+    return entityBottomCircle.get();
 }
 
 Circle* GameEntity::getAttackRangeCircle() {
-    return attackRangeCircle;
+    return attackRangeCircle.get();
 }
 
 Weapon* GameEntity::getWeapon() {

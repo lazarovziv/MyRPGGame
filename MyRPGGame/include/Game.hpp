@@ -6,6 +6,7 @@
 #include <iostream>
 #include <chrono>
 #include <map>
+#include <memory>
 #include "MenuRepository.hpp"
 #include "NPCEnemy.hpp"
 #include "LandscapeEntity.hpp"
@@ -16,12 +17,12 @@
 class Game {
 private:
     static Game *instance;
-    RenderWindow *window = nullptr;
+    unique_ptr<RenderWindow> window = nullptr;
 
-    View *cameraView = nullptr;
-    Menu *mainMenu;
-    Menu *characterCreationMenu;
-    Menu *gameMenu;
+    unique_ptr<View> cameraView;
+    unique_ptr<Menu> mainMenu;
+    unique_ptr<Menu> characterCreationMenu;
+    unique_ptr<Menu> gameMenu;
     Menu *currentMenu; // for changing menus when choosing submenus
     const char *title;
     Text fpsText, dtText;
@@ -29,14 +30,14 @@ private:
     Constants::GameState state;
     
     // entities
-    Player *player = nullptr;
+    unique_ptr<Player> player = nullptr;
     Point ***points;
     GameMap ***worldMap;
 
     // repositories
-    MenuRepository *menuRepository;
-    PlayerRepository *playerRepository;
-    EnemyRepository *enemiesRepository;
+    unique_ptr<MenuRepository> menuRepository;
+    unique_ptr<PlayerRepository> playerRepository;
+    unique_ptr<EnemyRepository> enemiesRepository;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
@@ -66,7 +67,6 @@ public:
     void render();
     void renderMenu(Menu *menu);
     void update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt);
-    void updateDt();
     void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
     void exitGame(bool *run);

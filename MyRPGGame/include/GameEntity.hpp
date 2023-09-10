@@ -54,10 +54,10 @@ protected:
     vector<Texture> movementStateTextures;
     map<EntityMovementState, Sprite*> movementStateSpritesMap;
     IntRect spriteRect;
-    Circle *entityCircle = nullptr;
-    Circle *attackRangeCircle = nullptr;
+    unique_ptr<Circle> entityCircle = nullptr;
+    unique_ptr<Circle> attackRangeCircle = nullptr;
     // circle positioned in potentially next steps for the player (instead of creating new ones in move method)
-    Circle *entityRightCircle, *entityLeftCircle, *entityTopCircle, *entityBottomCircle;
+    unique_ptr<Circle> entityRightCircle, entityLeftCircle, entityTopCircle, entityBottomCircle;
 //    GameMap* currentGameMap;
     Weapon *weapon;
 

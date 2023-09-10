@@ -21,8 +21,8 @@ Player::Player(PlayerType type) : GameEntity() {
     this->type = type;
 
     setPlayerType(type);
-    entityCircle = new Circle(position.x, position.y, Constants::TILE_SIZE/4);
-    attackRangeCircle = new Circle(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
+    entityCircle = make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
+    attackRangeCircle = make_unique<Circle>(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
 
     for (int state = 0; state < 10; state++) {
         auto movementState = static_cast<EntityMovementState>(state);
