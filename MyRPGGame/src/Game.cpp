@@ -24,9 +24,8 @@ Game::~Game() {
         }
         delete[] worldMap[row];
     }
-//    delete player;
+
     delete worldMap;
-//    delete window;
     delete title;
 }
 
@@ -159,7 +158,10 @@ void Game::start() {
     keysPressedMap[Keyboard::Key::S] = false;
     keysPressedMap[Keyboard::Key::J] = false;
     keysPressedMap[Keyboard::Key::I] = false;
+    keysPressedMap[Keyboard::Key::H] = false;
     keysPressedMap[Keyboard::Key::Escape] = false;
+
+    EntityMovementState playerMovementState = EntityMovementState::WALK;
 
     while (running) {
         dt = clock.restart().asSeconds();
@@ -183,62 +185,70 @@ void Game::start() {
             // moving input
             if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E) && canMove) {
                 keysPressedMap[Keyboard::E] = true;
+                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
                 if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::F] = true;
                 } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::S] = true;
                 } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::UP, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
             } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D) && canMove) {
                 keysPressedMap[Keyboard::D] = true;
+                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
                 if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::F] = true;
                 } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::S] = true;
                 } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN, playerMovementState, dt);
                     moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
             } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F) && canMove) {
                 keysPressedMap[Keyboard::F] = true;
+                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
                 if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::E] = true;
                 } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::D] = true;
                 } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::RIGHT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::RIGHT, playerMovementState, dt);
                     moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
             } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S) && canMove) {
                 keysPressedMap[Keyboard::S] = true;
+                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
                 if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::E] = true;
                 } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                     keysPressedMap[Keyboard::D] = true;
                 } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::LEFT, EntityMovementState::RUN, dt);
+                    moveSuccessValue = playerRepository->move(MoveDirection::LEFT, playerMovementState, dt);
                     moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
             }
