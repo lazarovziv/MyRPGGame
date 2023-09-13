@@ -24,7 +24,7 @@ public:
     static const int FULL_SCREEN_WIDTH = 4 * SCREEN_WIDTH;
     static const int FULL_SCREEN_HEIGHT = 3 * SCREEN_HEIGHT;
     static const int TILE_SIZE = 64;
-    static const int BASE_ENTITY_SPEED = 16;
+    static const int BASE_ENTITY_SPEED = 8;
     static const int FPS = 60;
 
     static const int NUM_FRAMES_IDLE_ANIMATION = 13;

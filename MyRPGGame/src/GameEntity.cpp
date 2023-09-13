@@ -51,7 +51,7 @@ GameEntity::GameEntity(Point *center) {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::DOWN;
-    movementState = EntityMovementState::RUN;
+    movementState = EntityMovementState::WALK;
     sprite = new Sprite();
 
     //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
@@ -88,13 +88,6 @@ GameEntity::GameEntity(Point *center) {
 
 GameEntity::~GameEntity() {
     delete sprite;
-//    delete weapon;
-//    delete entityCircle;
-//    delete entityRightCircle;
-//    delete entityLeftCircle;
-//    delete entityTopCircle;
-//    delete entityBottomCircle;
-//    delete attackRangeCircle;
 }
 
 void GameEntity::increaseLevel(int amount) {
@@ -123,6 +116,10 @@ void GameEntity::increaseSpeed(float amount) {
 //        speed += amount;
 //    }
     speed += amount;
+}
+
+void GameEntity::setSpeed(float newSpeed) {
+    speed = newSpeed;
 }
 
 void GameEntity::increaseAttackPoints(int amount) {

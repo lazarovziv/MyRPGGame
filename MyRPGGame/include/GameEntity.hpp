@@ -116,6 +116,7 @@ public:
     void increaseMaxHealthPoints(int amount);
     void increaseMaxManaPoints(int amount);
     void increaseSpeed(float amount);
+    void setSpeed(float newSpeed);
     void increaseAttackPoints(int amount);
     void increaseDefencePoints(int amount);
     void changeInBattleState();
