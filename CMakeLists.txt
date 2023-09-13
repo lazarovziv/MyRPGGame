@@ -14,8 +14,6 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 
 project(MyRPGGame)
-#set(OpenCV_INCLUDE_DIRS /opt/homebrew/include/opencv4)
-#set(OpenCV_LIBS /opt/homebrew/Cellar/opencv/4.8.0_1/lib)
 
 set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/MenuRepository.cpp
         MyRPGGame/src/Menu.cpp MyRPGGame/src/TerrainGenerator.cpp
@@ -25,8 +23,7 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/Subject.cpp 
         MyRPGGame/src/NPCEnemy.cpp MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp
         MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
-        MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp
-        MyRPGGame/src/AnimationManager.cpp)
+        MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp)
 
 find_package(SFML 2.6.0 COMPONENTS system window graphics network audio REQUIRED)
 find_package(OpenCV COMPONENTS core highgui REQUIRED)
@@ -36,6 +33,8 @@ if (APPLE)
     include_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/include)
 
     link_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/lib64)
+elseif (WIN32)
+    include_directories(${SFML_INCLUDE_DIR})
 endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -51,7 +50,7 @@ if (APPLE)
     target_link_libraries(main.out ${OpenCV_LIBS})
 
     target_compile_features(main.out PRIVATE cxx_range_for)
-elseif(WIN32)
+elseif (WIN32)
     add_executable(main ${SOURCE_FILES})
     target_link_libraries(main sfml-system
             sfml-window
