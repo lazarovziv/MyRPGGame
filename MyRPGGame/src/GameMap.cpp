@@ -134,7 +134,6 @@ void GameMap::init() {
     randX = (randX/16) * 16;
     randY = (randY/16) * 16;
 
-    auto *rect = new IntRect(randX, randY, Constants::TILE_SIZE, Constants::TILE_SIZE);
     auto *circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
     // assuming position is invalid
     bool validations[landscapes.size()];
@@ -146,9 +145,7 @@ void GameMap::init() {
     while (!validPosition) {
         // checking all unreachable areas and exits (TODO: add other enemies)
         for (int i = 0; i < landscapes.size(); i++) {
-            if (!(((IntRect) landscapes[i]->getRectangle()).intersects(*rect))
-                /*&& !circle.intersects(*topExitCircle) && !circle.intersects(*bottomExitCircle)
-                && !circle.intersects(*leftExitCircle) && !circle.intersects(*rightExitCircle)*/) {
+            if (!landscapes[i]->getCircle()->intersects(circle)) {
                 validations[i] = true;
             } else {
                 // generating a new position
@@ -156,9 +153,6 @@ void GameMap::init() {
                 randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
                 randX = (randX/16) * 16;
                 randY = (randY/16) * 16;
-                // updating rect position
-                rect->left = randX;
-                rect->top = randY;
                 validations[i] = false;
                 // setting to -1 because i is incremented by 1
                 i = -1;
@@ -168,7 +162,7 @@ void GameMap::init() {
                 bool check = true;
                 // check enemies positions
                 for (int j = 0; j < enemiesVector.size(); j++) {
-                    if (enemiesVector[j]->getRectangle().intersects(*rect)) {
+                    if (enemiesVector[j]->getCircle()->intersects(circle)) {
                         // start over
                         for (int k = 0; k < landscapes.size(); k++) validations[k] = false;
                     }
@@ -183,7 +177,6 @@ void GameMap::init() {
     }
 
     // deallocating memory
-    delete rect;
     delete circle;
 
 //    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
