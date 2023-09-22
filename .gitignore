@@ -1,7 +1,13 @@
 .DS_Store
 *.xcuserstate
-*.o
-*.cpp.o
+.ninja_*
 token.txt
 db_creds.txt
-.idea/workspace.xml
+valgrind*
+# directories
+build
+.vscode
+.idea
+.cmake
+MyRPGGame.xcodeproj
+Testing
