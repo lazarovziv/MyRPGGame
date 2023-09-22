@@ -15,13 +15,13 @@ void GameEntityBattle::setEntity(GameEntity *gameEntity) {
 }
 
 // TODO: add a parameter for attack type (slash, backslash, halfslash, etc.)
-bool GameEntityBattle::animate(float dt) {
+bool GameEntityBattle::animate(real dt) {
 //    Weapon *weapon = entity->getWeapon();
 //    MoveDirection direction = weapon->getTransitionDirection();
     MoveDirection direction = entity->getMoveDirection();
     int directionRow = entity->getMoveDirectionsSpritesMap()[direction];
     // AttackSuccessValue attackSuccessValue;
-    cout << "Attacking" << endl;
+    std::cout << "Attacking" << std::endl;
     // set attack success value
     animationManager->incrementCombatSlashOneHandedCount();
     int movementStateCount = round(animationManager->getMovementStateCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED) * dt * 1.74f);
@@ -32,7 +32,7 @@ bool GameEntityBattle::animate(float dt) {
     return true;
 }
 
-bool GameEntityBattle::attack(GameEntity &enemy, float dt) {
+bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
     // checking attack interval
     if (!entity->canAttack()) return false;
     // checking attack range
@@ -70,8 +70,8 @@ bool GameEntityBattle::attack(GameEntity &enemy, float dt) {
     }
 
     animate(dt); // animation
-    cout << "Health: " << enemy.getCurrentHealthPoints() << endl;
-    cout << "Defence: " << enemy.getCurrentDefencePoints() << endl;
+    std::cout << "Health: " << enemy.getCurrentHealthPoints() << std::endl;
+    std::cout << "Defence: " << enemy.getCurrentDefencePoints() << std::endl;
 //    entity->resetBattleInterval(); // moved to repository
     return true;
 }

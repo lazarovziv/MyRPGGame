@@ -12,25 +12,23 @@
 #include <opencv2/opencv.hpp>
 #include "ScriptExecutor.hpp"
 
-using namespace std;
-
 class AnimationManager {
 private:
     GameEntity *entity;
     Weapon *weapon;
 
     // TODO: add constants for dimensions and all that kinda stuff
-    map<AnimationPathType, string> animationsPaths;
-    vector<string> bodyPaths;
-    vector<string> clothingPaths;
-    vector<string> headAccessoriesPaths;
-    vector<string> hairPaths;
+    std::map<AnimationPathType, std::string> animationsPaths;
+    std::vector<std::string> bodyPaths;
+    std::vector<std::string> clothingPaths;
+    std::vector<std::string> headAccessoriesPaths;
+    std::vector<std::string> hairPaths;
     
-    vector<string> movementStates;
+    std::vector<std::string> movementStates;
     // for calling the relevant function to increment step
-    map<EntityMovementState, function<void()>> incrementMovementStateCountFunctionMap;
+    std::map<EntityMovementState, std::function<void()>> incrementMovementStateCountFunctionMap;
     // for storing and updating the step
-    map<EntityMovementState, int> movementStateCounterMap;
+    std::map<EntityMovementState, int> movementStateCounterMap;
 
     int idleCount, climbCount, combatBackslashOneHandedCount, combatHalfslashOneHandedCount,
     combatIdleOneHandedCount, combatSlashOneHandedCount, runCount, sittingCount, walkCount, jumpCount;
@@ -39,10 +37,10 @@ public:
     AnimationManager(GameEntity *entity);
     ~AnimationManager() = default;
 
-    void addBodyPath(string path);
-    void addClothingPath(string path);
-    void addHeadAccessoriesPath(string path);
-    void addHairPath(string path);
+    void addBodyPath(std::string path);
+    void addClothingPath(std::string path);
+    void addHeadAccessoriesPath(std::string path);
+    void addHairPath(std::string path);
 
     void setEntity(GameEntity *entity);
 
@@ -66,7 +64,7 @@ public:
     bool generateClothing();
     // TODO: add more generate functions
 
-    void animate(EntityMovementState state, float dt);
+    void animate(EntityMovementState state, real dt);
 
 };
 

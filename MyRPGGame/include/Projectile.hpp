@@ -5,23 +5,21 @@
 #include "SFML/Graphics.hpp"
 #include "../include/Constants.h"
 
-using namespace sf;
-
 enum class ProjectileType { FIRE, ICE, LIGHTNING };
 
 class Projectile {
 private:
-    int velocity;
+    real velocity;
     ProjectileType type;
-    Vector2i position;
-    Sprite *sprite = nullptr;
+    sf::Vector2f position;
+    sf::Sprite *sprite = nullptr;
     
 public:
     Projectile();
-    Projectile(int v, int x, int y, ProjectileType type);
+    Projectile(real v, real x, real y, ProjectileType type);
     ~Projectile() = default;
     
-    int getVelocity() {
+    real getVelocity() {
         return velocity;
     }
     
@@ -29,21 +27,21 @@ public:
         return type;
     }
     
-    Vector2i getPosition() {
+    sf::Vector2f getPosition() {
         return position;
     }
     
-    Sprite* getSprite() {
+    sf::Sprite* getSprite() {
         return sprite;
     }
 
-    IntRect getRectangle();
+    sf::IntRect getRectangle();
     
-    void setVelocity(int v) {
+    void setVelocity(real v) {
         this->velocity = v;
     }
     
-    void setPosition(int x, int y) {
+    void setPosition(real x, real y) {
         position.x = x;
         position.y = y;
     }

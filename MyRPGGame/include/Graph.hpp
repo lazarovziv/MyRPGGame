@@ -53,7 +53,7 @@ public:
     }
     // add edge between two nodes with its weight
     void addEdge(V vertex1, V vertex2, int edge) {
-        genericGraph[vertex1]->push_back(make_pair(vertex2, edge));
+        genericGraph[vertex1]->push_back(std::make_pair(vertex2, edge));
     }
 
     int h(V first, V second) {
@@ -71,19 +71,19 @@ public:
 
     // A* algorithm
     std::vector<V> *findPathTo(V source, V target) {
-        std::priority_queue<std::pair<V, float>, std::vector<std::pair<V, float>>, greaterPair<V>> openQueue;
+        std::priority_queue<std::pair<V, real>, std::vector<std::pair<V, real>>, greaterPair<V>> openQueue;
         std::set<V> openSet;
         std::map<V, V> cameFrom;
-        std::map<V, float> gScore;
-        std::map<V, float> fScore;
-        std::pair<V, float> current, neighbor;
-        float tentativeGScore;
+        std::map<V, real> gScore;
+        std::map<V, real> fScore;
+        std::pair<V, real> current, neighbor;
+        real tentativeGScore;
         cameFrom[source] = nullptr;
 
         for (auto &item : genericGraph) {
             if (item.first != source) {
-                gScore[item.first] = std::numeric_limits<float>::max();
-                fScore[item.first] = std::numeric_limits<float>::max();
+                gScore[item.first] = std::numeric_limits<real>::max();
+                fScore[item.first] = std::numeric_limits<real>::max();
             }
         }
 

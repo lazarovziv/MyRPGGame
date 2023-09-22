@@ -41,21 +41,21 @@ AnimationManager::AnimationManager(GameEntity *entity) {
     movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
 }
 
-void AnimationManager::addBodyPath(string path) {
+void AnimationManager::addBodyPath(std::string path) {
     bodyPaths.push_back(path);
     animationsPaths[AnimationPathType::BODY] = path;
     animationsPaths[AnimationPathType::HEAD] = "../graphics/Characters/Head/masculine/idle.png";
 }
 
-void AnimationManager::addClothingPath(string path) {
+void AnimationManager::addClothingPath(std::string path) {
     clothingPaths.push_back(path);
 }
 
-void AnimationManager::addHeadAccessoriesPath(string path) {
+void AnimationManager::addHeadAccessoriesPath(std::string path) {
     headAccessoriesPaths.push_back(path);
 }
 
-void AnimationManager::addHairPath(string path) {
+void AnimationManager::addHairPath(std::string path) {
     hairPaths.push_back(path);
 }
 
@@ -68,9 +68,11 @@ int AnimationManager::getMovementStateCount(EntityMovementState state) {
 }
 
 // TODO: create animation function for combat and for that another entity variable to cover the combats' counters
-void AnimationManager::animate(EntityMovementState state, float dt) {
+void AnimationManager::animate(EntityMovementState state, real dt) {
     int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
     int movementStateCount = movementStateCounterMap[state];
+
+    real x = 8.3232f;
 
     if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
         incrementCount(state);
@@ -90,8 +92,8 @@ void AnimationManager::animate(EntityMovementState state, float dt) {
 }
 
 bool AnimationManager::generateBody() {
-    for (string movementState : movementStates) {
-        cout << movementState << endl;
+    for (std::string movementState : movementStates) {
+        std::cout << movementState << std::endl;
         // using the generate_image.py script
         createImage("../graphics/Characters/Body/masculine/" + movementState + ".png",
                     "../graphics/Characters/Head/masculine/" + movementState + ".png",

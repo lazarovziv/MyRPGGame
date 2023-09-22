@@ -10,22 +10,21 @@
 #include "Constants.h"
 #include "Circle.hpp"
 
-using namespace sf;
-using namespace std;
+//using namespace std;
 
 class Weapon {
 private:
-    string name;
+    std::string name;
     int attackPoints;
-    float hitRadius;
+    real hitRadius;
     int numHitsPerSecond;
 
     MoveDirection transitionDirection; // copying the entity's direction (simply for choosing the appropriate rows in the png file)
-    map<MoveDirection, int> transitionDirectionsSpritesMap; // for defining movement and animation for the pngs
-    Vector2i position; // for collision detection
-    Texture texture;
-    Sprite *sprite;
-    IntRect spriteRect; // for setting the relevant image from the png
+    std::map<MoveDirection, int> transitionDirectionsSpritesMap; // for defining movement and animation for the pngs
+    sf::Vector2f position; // for collision detection
+    sf::Texture texture;
+    sf::Sprite *sprite;
+    sf::IntRect spriteRect; // for setting the relevant image from the png
     int transition = Constants::WEAPON_TRANSITION_MIN;
 
     Circle *weaponCircle = nullptr;
@@ -36,12 +35,12 @@ public:
     
     int getAttackPoints();
     int getNumHitsPerSecond();
-    float getHitRadius();
+    real getHitRadius();
 
     MoveDirection getTransitionDirection();
-    map<MoveDirection, int> getTransitionDirectionsSpritesMap();
-    Vector2i getPosition();
-    Sprite *getSprite();
+    std::map<MoveDirection, int> getTransitionDirectionsSpritesMap();
+    sf::Vector2f getPosition();
+    sf::Sprite *getSprite();
     Circle *getWeaponCircle();
     int getTransition();
     void incrementTransition();
@@ -49,10 +48,10 @@ public:
     void setTransitionDirection(MoveDirection direction);
     
     void increaseAttackPoints(int amount);
-    void increaseHitRadius(float amount);
+    void increaseHitRadius(real amount);
     void increaseNumHitsPerSecond(int amount);
     void decreaseAttackPoints(int amount);
-    void decreaseHitRadius(float amount);
+    void decreaseHitRadius(real amount);
     void decreaseNumHitsPerSecond(int amount);
     // call this function inside the battleMovementHandler
     void setIntRectPosition(int left, int top, int width, int height);

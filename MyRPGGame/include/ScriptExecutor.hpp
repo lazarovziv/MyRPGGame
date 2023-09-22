@@ -4,10 +4,10 @@
 #include <iostream>
 #include <cstdlib>
 
-using namespace std;
+//using namespace std;
 
-bool createImage(std::string backgroundFileName, std::string foregroundFileName, string postfixName);
-bool concatenateImages(string pathToImagesDir, string finalName);
-bool concatAndCreate(string pathToImagesDir, string finalName, string backgroundFileName, string foregroundFileName, string postfixName);
+bool createImage(std::string backgroundFileName, std::string foregroundFileName, std::string postfixName);
+bool concatenateImages(std::string pathToImagesDir, std::string finalName);
+bool concatAndCreate(std::string pathToImagesDir, std::string finalName, std::string backgroundFileName, std::string foregroundFileName, std::string postfixName);
 
 #endif

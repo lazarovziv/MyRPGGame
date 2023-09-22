@@ -9,18 +9,18 @@
 class Circle {
 private:
     Point *center = nullptr;
-    float radius;
+    real radius;
     
 public:
     Circle();
-    Circle(float x, float y, float r);
-    explicit Circle(Point *center, float r);
+    Circle(real x, real y, real r);
+    explicit Circle(Point *center, real r);
     ~Circle();
     
     Point* getCenter();
-    float getRadius() const;
-    void setRadius(float r);
-    void setCenter(float x, float y);
+    real getRadius() const;
+    void setRadius(real r);
+    void setCenter(real x, real y);
     void setCenter(Point *newCenter);
     bool intersects(Circle* c);
 

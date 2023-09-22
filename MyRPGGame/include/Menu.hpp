@@ -9,8 +9,7 @@
 #include <map>
 #include <vector>
 
-using namespace sf;
-using namespace std;
+//using namespace std;
 
 enum MenuActions {
     ACTION_RESUME, ACTIONS_INVENTORY, ACTION_SETTINGS, ACTION_EXIT, ACTION_SUBMENU
@@ -25,8 +24,8 @@ protected:
     bool active; // indicator whether the menu is currently shown on screen (if switched off we'll go to parent menu)
     bool gameMenu = false;
     Menu *parentMenu; // for navigating backwards from the submenus
-    vector<Menu*> *subMenus; // setting an option for every menu to have a sub menu
-    map<int, Menu*> *subMenusIndexesMap;
+    std::vector<Menu*> *subMenus; // setting an option for every menu to have a sub menu
+    std::map<int, Menu*> *subMenusIndexesMap;
 
     void setParentMenu(Menu *menu);
 
@@ -35,9 +34,9 @@ public:
     ~Menu() = default;
 
     void initMenuItems(std::vector<std::string> itemsStrings);
-    vector<Text> *getMenuItems();
-    vector<Menu*> *getSubMenus();
-    void render(int currentWindowX, int currentWindowY, RenderWindow *window);
+    std::vector<sf::Text> *getMenuItems();
+    std::vector<Menu*> *getSubMenus();
+    void render(int currentWindowX, int currentWindowY, sf::RenderWindow *window);
     void moveUp();
     void moveDown();
     bool hasSubMenus();

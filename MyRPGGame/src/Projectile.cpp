@@ -1,13 +1,13 @@
 #include "../include/Projectile.hpp"
 
-Projectile::Projectile(int v, int x, int y, ProjectileType t) {
+Projectile::Projectile(real v, real x, real y, ProjectileType t) {
     velocity = v;
     position.x = x;
     position.y = y;
     type = t;
 
-    Texture texture;
-    sprite = new Sprite();
+    sf::Texture texture;
+    sprite = new sf::Sprite();
     texture.loadFromFile("/home/ziv/projects/cpp/MyRPGGame/graphics/player_8.png");
     texture.setSmooth(true);
     sprite->setTexture(texture);
@@ -15,7 +15,7 @@ Projectile::Projectile(int v, int x, int y, ProjectileType t) {
     sprite->setPosition(position.x, position.y);
 }
 
-IntRect Projectile::getRectangle() {
-    return (IntRect) sprite->getGlobalBounds();
+sf::IntRect Projectile::getRectangle() {
+    return (sf::IntRect) sprite->getGlobalBounds();
 }
 

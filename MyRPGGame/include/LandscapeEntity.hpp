@@ -9,8 +9,6 @@
 #include "../include/Constants.h"
 #include "../include/GameEntity.hpp"
 
-using namespace sf;
-
 enum class LandscapeType { TREE, GRASS, FLOWER, HOUSE }; // add more
 
 class LandscapeEntity : public GameEntity {
@@ -19,7 +17,7 @@ private:
     
 public:
     LandscapeEntity() = default;
-    LandscapeEntity(LandscapeType type, int x, int y);
+    LandscapeEntity(LandscapeType type, real x, real y);
     LandscapeEntity(LandscapeType type, Point *center);
     LandscapeType getType();
     

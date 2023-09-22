@@ -17,27 +17,27 @@
 class Game {
 private:
     static Game *instance;
-    unique_ptr<RenderWindow> window = nullptr;
+    std::unique_ptr<sf::RenderWindow> window = nullptr;
 
-    unique_ptr<View> cameraView;
-    unique_ptr<Menu> mainMenu;
-    unique_ptr<Menu> characterCreationMenu;
-    unique_ptr<Menu> gameMenu;
+    std::unique_ptr<sf::View> cameraView;
+    std::unique_ptr<Menu> mainMenu;
+    std::unique_ptr<Menu> characterCreationMenu;
+    std::unique_ptr<Menu> gameMenu;
     Menu *currentMenu; // for changing menus when choosing submenus
     const char *title;
-    Text fpsText, dtText;
-    Font fpsFont;
+    sf::Text fpsText, dtText;
+    sf::Font fpsFont;
     Constants::GameState state;
     
     // entities
-    unique_ptr<Player> player = nullptr;
+    std::unique_ptr<Player> player = nullptr;
     Point ***points;
     GameMap ***worldMap;
 
     // repositories
-    unique_ptr<MenuRepository> menuRepository;
-    unique_ptr<PlayerRepository> playerRepository;
-    unique_ptr<EnemyRepository> enemiesRepository;
+    std::unique_ptr<MenuRepository> menuRepository;
+    std::unique_ptr<PlayerRepository> playerRepository;
+    std::unique_ptr<EnemyRepository> enemiesRepository;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
     int currentGameMapRow, currentGameMapCol;
     
@@ -66,7 +66,7 @@ public:
     void initMenus();
     void render();
     void renderMenu(Menu *menu);
-    void update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt);
+    void update(Constants::MoveSuccessValues playerMoveSuccessValue, real dt);
     void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
     void exitGame(bool *run);

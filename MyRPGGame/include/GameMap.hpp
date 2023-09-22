@@ -14,9 +14,6 @@
 #include "Graph.hpp"
 class NPCEnemy;
 
-using namespace sf;
-using namespace std;
-
 class GameMap {
 private:
     // in relation to the 2d array of world map
@@ -33,15 +30,15 @@ private:
     Circle *topExitCircle = nullptr;
     Circle *bottomExitCircle = nullptr;
 
-    Texture texture;
-    Sprite *backgroundSprite;
+    sf::Texture texture;
+    sf::Sprite *backgroundSprite;
 
     const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
-    vector<LandscapeEntity *> landscapes;
+    std::vector<LandscapeEntity *> landscapes;
     // enemies in current map
-    vector<NPCEnemy *> enemiesVector;
-    vector<GameEntity *> entities;
+    std::vector<NPCEnemy *> enemiesVector;
+    std::vector<GameEntity *> entities;
     Player *player;
     
 public:
@@ -61,9 +58,9 @@ public:
 
     Graph<Point *> *getMapGraph();
 
-    Sprite* getBackgroundSprite();
+    sf::Sprite* getBackgroundSprite();
 
-    vector<LandscapeEntity *> getLandscapes();
+    std::vector<LandscapeEntity *> getLandscapes();
     void addLandscape(LandscapeEntity* entity);
     bool isExitableFromLeft() const;
     bool isExitableFromRight() const;
@@ -78,7 +75,7 @@ public:
     Player *getPlayer();
     void setPlayer(Player *player);
     void removePlayer();
-    vector<NPCEnemy *> getEnemies();
+    std::vector<NPCEnemy *> getEnemies();
     void addEnemy(NPCEnemy *enemy);
     void removeEnemyAtIndex(int i);
     void removeEnemy(NPCEnemy *enemy);
@@ -96,7 +93,7 @@ public:
 
     static int generateRandom(int min, int max);
 
-    void update(float dt);
+    void update(real dt);
     
     bool operator ==(const GameMap& map) const;
 };

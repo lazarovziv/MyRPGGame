@@ -1,7 +1,6 @@
 #include "../include/Game.hpp"
 
-using namespace std;
-using namespace sf;
+//#define SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 
 int main() {
     Game* game = Game::getInstance();

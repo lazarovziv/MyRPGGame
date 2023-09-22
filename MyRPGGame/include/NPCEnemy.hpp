@@ -11,26 +11,24 @@
 #include "Constants.h"
 #include "Observer.hpp"
 
-using namespace sf;
-
 enum class EnemyType { WORM, SNAKE, BIRD, ETC }; // add more
 
 class NPCEnemy : public GameEntity, public Observer {
 private:
     // radius for area to wander when not engaged with player
-    float wanderAreaRadius;
-    constexpr static const float WANDER_AREA_INTERVAL_DEFAULT = 168.0f;
+    real wanderAreaRadius;
+    constexpr static const real WANDER_AREA_INTERVAL_DEFAULT = 168.0f;
     // duration of regenerating path to wander area
-    float wanderAreaInterval = 0;
+    real wanderAreaInterval = 0;
     bool onWayToWanderArea = false;
     Circle *wanderAreaCircle = nullptr;
     // radius for area to battle player after engaging (needs to be bigger than wander)
-    float battleAreaRadius;
+    real battleAreaRadius;
     Circle *battleAreaCircle = nullptr;
     // type of enemy
     int type;
     // movement interval
-    constexpr static const float MOVE_INTERVAL_DEFAULT = 42.0f; // TODO: tweak a little bit more
+    constexpr static const real MOVE_INTERVAL_DEFAULT = 42.0f; // TODO: tweak a little bit more
     
     // movement handler
 //    GameEntityMovement* movement;
@@ -47,8 +45,8 @@ public:
     explicit NPCEnemy(int type, Point *center);
     ~NPCEnemy();
     int getBattleTimeout();
-    float getWanderAreaRadius();
-    float getBattleAreaRadius();
+    real getWanderAreaRadius();
+    real getBattleAreaRadius();
     int getExpPointsWorth();
     int getType();
 
@@ -60,9 +58,9 @@ public:
     Circle *getWanderAreaCircle();
     Circle *getBattleAreaCircle();
 
-    void setMoveInterval(float interval);
+    void setMoveInterval(real interval);
 
-    void update(Point ***points, float dt) override;
+    void update(Point ***points, real dt) override;
     void notify() override;
 };
 

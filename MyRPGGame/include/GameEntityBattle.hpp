@@ -6,8 +6,6 @@
 #include "Player.hpp"
 #include "AnimationManager.hpp"
 
-using namespace std;
-
 class GameEntityBattle {
 private:
     GameEntity *entity;
@@ -18,9 +16,9 @@ public:
     ~GameEntityBattle() = default;
     GameEntity *getEntity();
     void setEntity(GameEntity *gameEntity);
-    bool attack(GameEntity &enemy, float dt);
+    bool attack(GameEntity &enemy, real dt);
     bool isInAttackRange(GameEntity &enemy);
-    bool animate(float dt);
+    bool animate(real dt);
 };
 
 #endif /* GameEntityBattle_hpp */

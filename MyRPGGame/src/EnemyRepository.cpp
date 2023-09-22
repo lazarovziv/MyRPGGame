@@ -21,7 +21,7 @@ void EnemyRepository::setGameMap(GameMap *gameMap) {
 }
 
 // TODO: create move method for attacking other enemies (some skill for controlling enemies)
-void EnemyRepository::move(float dt) {
+void EnemyRepository::move(real dt) {
     for (auto &enemy : map->getEnemies()) {
         if (!enemy->isDead() && enemy->canMove()) {
             // set enemy if not already set
@@ -37,7 +37,7 @@ void EnemyRepository::move(float dt) {
                 } else {
                     // attack player when reached him
                     if (attack(player, dt)) {
-                        cout << "Attacked player..." << endl;
+                        std::cout << "Attacked player..." << std::endl;
                         // resetting battle interval for the enemy
                         enemy->resetBattleInterval();
                     }
@@ -68,10 +68,10 @@ void EnemyRepository::move(float dt) {
     }
 }
 
-bool EnemyRepository::attack(GameEntity *entity, float dt) {
+bool EnemyRepository::attack(GameEntity *entity, real dt) {
     return battleHandler->attack(*entity, dt);
 }
 
-void EnemyRepository::update(float dt) {
+void EnemyRepository::update(real dt) {
     map->update(dt);
 }

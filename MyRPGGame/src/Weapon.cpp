@@ -16,11 +16,11 @@ Weapon::Weapon(Point *center, WeaponType type) {
             hitRadius = 5 * 6.5f;
             numHitsPerSecond = 3;
             // init graphics
-            sprite = new Sprite();
+            sprite = new sf::Sprite();
             if (!texture.loadFromFile("../graphics/images/weapons/oversize/right_hand/male/longsword_male.png")) {
-                std::cout << "Texture NOT loaded properly!" << endl;
+                std::cout << "Texture NOT loaded properly!" << std::endl;
                 texture.setSmooth(true);
-            } else std::cout << "Weapon loaded properly." << endl;
+            } else std::cout << "Weapon loaded properly." << std::endl;
             sprite->setTexture(texture);
             sprite->setTextureRect(sf::IntRect(transitionDirectionsSpritesMap[transitionDirection]*Constants::TILE_SIZE, 0, Constants::TILE_SIZE, Constants::TILE_SIZE));
             sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
@@ -67,7 +67,7 @@ void Weapon::increaseAttackPoints(int amount) {
     attackPoints += amount;
 }
 
-void Weapon::increaseHitRadius(float amount) {
+void Weapon::increaseHitRadius(real amount) {
     hitRadius += amount;
 }
 
@@ -81,7 +81,7 @@ void Weapon::decreaseAttackPoints(int amount) {
     attackPoints -= amount;
 }
 
-void Weapon::decreaseHitRadius(float amount) {
+void Weapon::decreaseHitRadius(real amount) {
     // don't let any hit radius lower than 1
     if (hitRadius - amount <= 1) return;
     hitRadius -= amount;
@@ -97,7 +97,7 @@ int Weapon::getAttackPoints() {
     return attackPoints;
 }
 
-float Weapon::getHitRadius() {
+real Weapon::getHitRadius() {
     return hitRadius;
 }
 
@@ -117,15 +117,15 @@ MoveDirection Weapon::getTransitionDirection() {
     return transitionDirection;
 }
 
-map<MoveDirection, int> Weapon::getTransitionDirectionsSpritesMap() {
+std::map<MoveDirection, int> Weapon::getTransitionDirectionsSpritesMap() {
     return transitionDirectionsSpritesMap;
 }
 
-Vector2i Weapon::getPosition() {
+sf::Vector2f Weapon::getPosition() {
     return position;
 }
 
-Sprite* Weapon::getSprite() {
+sf::Sprite* Weapon::getSprite() {
     return sprite;
 }
 
@@ -150,5 +150,5 @@ void Weapon::setTransitionDirection(MoveDirection direction) {
 
 void Weapon::update(Point ***points) {
     sprite->setPosition(position.x, position.y);
-    weaponCircle->setCenter(points[position.y][position.x]);
+    weaponCircle->setCenter(points[(int)position.y][(int)position.x]);
 }

@@ -43,11 +43,11 @@ int NPCEnemy::getBattleTimeout() {
     return battleInterval;
 }
 
-float NPCEnemy::getWanderAreaRadius() {
+real NPCEnemy::getWanderAreaRadius() {
     return wanderAreaRadius;
 }
 
-float NPCEnemy::getBattleAreaRadius() {
+real NPCEnemy::getBattleAreaRadius() {
     return battleAreaRadius;
 }
 
@@ -85,12 +85,12 @@ Circle *NPCEnemy::getBattleAreaCircle() {
     return battleAreaCircle;
 }
 
-void NPCEnemy::setMoveInterval(float interval) {
+void NPCEnemy::setMoveInterval(real interval) {
     moveInterval = interval;
 }
 
 // TODO: add more functionality or else use GameEntity's update method
-void NPCEnemy::update(Point ***points, float dt) {
+void NPCEnemy::update(Point ***points, real dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating game entity intervals

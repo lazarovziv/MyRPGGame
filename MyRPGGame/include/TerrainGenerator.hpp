@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include "Constants.h"
 
 class TerrainGenerator {
 private:
@@ -11,10 +12,10 @@ public:
     TerrainGenerator();
     ~TerrainGenerator() = default;
 
-    float interpolate(float a0, float a1, float w);
+    real interpolate(real a0, real a1, real w);
     sf::Vector2f randomGradient(int positionX, int positionY);
-    float dotGridGradient(int positionX, int positionY, float x, float y);
-    float perlin(float x, float y);
+    real dotGridGradient(int positionX, int positionY, real x, real y);
+    real perlin(real x, real y);
 
     sf::Uint8* generate(int width, int height);
 

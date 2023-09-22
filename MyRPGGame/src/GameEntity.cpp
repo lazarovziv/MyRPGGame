@@ -13,7 +13,7 @@ GameEntity::GameEntity() {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
-    sprite = new Sprite();
+    sprite = new sf::Sprite();
 
 //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
     moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
@@ -52,7 +52,7 @@ GameEntity::GameEntity(Point *center) {
     dead = false;
     moveDirection = MoveDirection::DOWN;
     movementState = EntityMovementState::WALK;
-    sprite = new Sprite();
+    sprite = new sf::Sprite();
 
     //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
     moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
@@ -74,13 +74,13 @@ GameEntity::GameEntity(Point *center) {
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
-    entityCircle = make_unique<Circle>(center->getX(), center->getY(), (float) Constants::TILE_SIZE/4);
-    entityRightCircle = make_unique<Circle>(center->getX() + speed, center->getY(), (float) Constants::TILE_SIZE/4);
-    entityLeftCircle = make_unique<Circle>(center->getX() - speed, center->getY(), (float) Constants::TILE_SIZE/4);
-    entityTopCircle = make_unique<Circle>(center->getX(), center->getY() - speed, (float) Constants::TILE_SIZE/4);
-    entityBottomCircle = make_unique<Circle>(center->getX(), center->getY() + speed, (float) Constants::TILE_SIZE/4);
+    entityCircle = std::make_unique<Circle>(center->getX(), center->getY(), (real) Constants::TILE_SIZE/4);
+    entityRightCircle = std::make_unique<Circle>(center->getX() + speed, center->getY(), (real) Constants::TILE_SIZE/4);
+    entityLeftCircle = std::make_unique<Circle>(center->getX() - speed, center->getY(), (real) Constants::TILE_SIZE/4);
+    entityTopCircle = std::make_unique<Circle>(center->getX(), center->getY() - speed, (real) Constants::TILE_SIZE/4);
+    entityBottomCircle = std::make_unique<Circle>(center->getX(), center->getY() + speed, (real) Constants::TILE_SIZE/4);
 
-    attackRangeCircle = make_unique<Circle>(entityCircle->getCenter(), (float) Constants::TILE_SIZE/4);
+    attackRangeCircle = std::make_unique<Circle>(entityCircle->getCenter(), (real) Constants::TILE_SIZE/4);
 
     position.x = entityCircle->getCenter()->getX();
     position.y = entityCircle->getCenter()->getY();
@@ -110,7 +110,7 @@ void GameEntity::increaseMaxManaPoints(int amount) {
     } else currentManaPoints += amount;
 }
 
-void GameEntity::increaseSpeed(float amount) {
+void GameEntity::increaseSpeed(real amount) {
     // setting upper limit to 3
 //    if (speed + amount < 3) {
 //        speed += amount;
@@ -118,7 +118,7 @@ void GameEntity::increaseSpeed(float amount) {
     speed += amount;
 }
 
-void GameEntity::setSpeed(float newSpeed) {
+void GameEntity::setSpeed(real newSpeed) {
     speed = newSpeed;
 }
 
@@ -151,16 +151,16 @@ void GameEntity::incrementStep() {
     else step = 0;
 }
 
-void GameEntity::setX(float x) {
+void GameEntity::setX(real x) {
     position.x = x;
 }
 
-void GameEntity::setY(float y) {
+void GameEntity::setY(real y) {
     position.y = y;
 }
 
 // TODO: add direction vector and normalize it for diagonal movement?
-void GameEntity::setPosition(float x, float y) {
+void GameEntity::setPosition(real x, real y) {
     position.x = x;
     position.y = y;
     if (entityCircle != nullptr) {
@@ -184,81 +184,81 @@ void GameEntity::setPosition(Point *point) {
 //    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
 }
 
-void GameEntity::setPosition(Vector2f directionVector, float dt) {
+void GameEntity::setPosition(sf::Vector2f directionVector, real dt) {
     position.x = position.x + speed * dt * directionVector.x;
     position.y = position.y + speed * dt * directionVector.y;
 }
 
 bool GameEntity::createMovementStateSprite(EntityMovementState state) {
-    Texture textureToCreate;
-    Sprite *spriteToCreate = new Sprite();
+    sf::Texture textureToCreate;
+    sf::Sprite *spriteToCreate = new sf::Sprite();
     switch (state) {
         case EntityMovementState::IDLE: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "idle/body_idle.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::CLIMB: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "climb/body_climb.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::WALK: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "walk/body_walk.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::JUMP: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "jump/body_jump.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::RUN: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "run/body_run.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::SITTING: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "sitting/body_sitting.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::COMBAT_IDLE_ONE_HANDED: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_idle.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::COMBAT_SLASH_ONE_HANDED: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_slash.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_backslash.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
         }
         case EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED: {
             if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_halfslash.png")) {
-                cout << "Texture wasn't loaded properly." << endl;
+                std::cout << "Texture wasn't loaded properly." << std::endl;
                 return false;
             }
             break;
@@ -279,7 +279,7 @@ bool GameEntity::createMovementStateSprite(EntityMovementState state) {
     return true;
 }
 
-bool GameEntity::addMovementStateSprite(EntityMovementState state, Sprite *newSprite) {
+bool GameEntity::addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite) {
     // calling the function with a nullptr parameter only if we want to initialize a new sprite
     if (sprite == nullptr) {
         return createMovementStateSprite(state);
@@ -345,7 +345,7 @@ void GameEntity::decreaseCurrentDefencePoints(int amount) {
     else currentDefencePoints -= amount;
 }
 
-long GameEntity::getID() {
+long GameEntity::getID() const {
     return id;
 }
 
@@ -353,96 +353,96 @@ char* GameEntity::getName() {
     return name;
 }
 
-int GameEntity::getLevel() {
+int GameEntity::getLevel() const {
     return level;
 }
 
-int GameEntity::getMaxHealthPoints() {
+int GameEntity::getMaxHealthPoints() const {
     return maxHealthPoints;
 }
 
-int GameEntity::getCurrentHealthPoints() {
+int GameEntity::getCurrentHealthPoints() const {
     return currentHealthPoints;
 }
 
-int GameEntity::getMaxManaPoints() {
+int GameEntity::getMaxManaPoints() const {
     return maxManaPoints;
 }
 
-int GameEntity::getCurrentManaPoints() {
+int GameEntity::getCurrentManaPoints() const {
     return currentManaPoints;
 }
 
-int GameEntity::getAttackPoints() {
+int GameEntity::getAttackPoints() const {
     return attackPoints;
 }
 
-int GameEntity::getDefencePoints() {
+int GameEntity::getDefencePoints() const {
     return defencePoints;
 }
 
-int GameEntity::getCurrentDefencePoints() {
+int GameEntity::getCurrentDefencePoints() const {
     return currentDefencePoints;
 }
 
-int GameEntity::getMaxStaminaPoints() {
+int GameEntity::getMaxStaminaPoints() const {
     return maxStaminaPoints;
 }
 
-int GameEntity::getCurrentStaminaPoints() {
+int GameEntity::getCurrentStaminaPoints() const {
     return currentStaminaPoints;
 }
 
-float GameEntity::getSpeed() {
+real GameEntity::getSpeed() const {
     return speed;
 }
 
-int GameEntity::getStep() {
+int GameEntity::getStep() const {
     return step;
 }
 
-bool GameEntity::isInBattle() {
+bool GameEntity::isInBattle() const {
     return inBattle;
 }
 
-bool GameEntity::isDead() {
+bool GameEntity::isDead() const {
     return dead;
 }
 
-MoveDirection GameEntity::getMoveDirection() {
+MoveDirection GameEntity::getMoveDirection() const {
     return moveDirection;
 }
 
-EntityMovementState GameEntity::getMovementState() {
+EntityMovementState GameEntity::getMovementState() const {
     return movementState;
 }
 
-map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() {
+std::map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() const {
     return moveDirectionsSpritesMap;
 }
 
-map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
+std::map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
     return movementStateRowMap;
 }
 
-Vector2f GameEntity::getPosition() {
+sf::Vector2f GameEntity::getPosition() const {
     return position;
 }
 
-Sprite* GameEntity::getSprite() {
+sf::Sprite* GameEntity::getSprite() const {
     return sprite;
 }
 
-void GameEntity::setSprite(Sprite *newSprite) {
+void GameEntity::setSprite(sf::Sprite *newSprite) {
     sprite = newSprite;
 }
 
-Sprite* GameEntity::getMovementStateSprite(EntityMovementState state) {
+sf::Sprite* GameEntity::getMovementStateSprite(EntityMovementState state) {
     return movementStateSpritesMap[state];
 }
 
-IntRect GameEntity::getRectangle() {
-    return (IntRect) sprite->getGlobalBounds();
+sf::IntRect GameEntity::getRectangle() const {
+    return (sf::IntRect) sprite->getGlobalBounds();
 }
 
 void GameEntity::setIntRectPosition(int left, int top, int width, int height) {
@@ -461,7 +461,7 @@ void GameEntity::resetBattleInterval() {
     battleInterval = 0;
 }
 
-bool GameEntity::didJustMove() {
+bool GameEntity::didJustMove() const {
     return justMoved;
 }
 
@@ -487,7 +487,7 @@ void GameEntity::setIsIdle(bool flag) {
     idle = flag;
 }
 
-bool GameEntity::isIdle() {
+bool GameEntity::isIdle() const {
     return idle;
 }
 
@@ -495,7 +495,7 @@ void GameEntity::resetDistanceTraveledSinceIdle() {
     distanceTraveledSinceIdle = 0;
 }
 
-void GameEntity::incrementDistanceTraveledSinceIdle(float distance) {
+void GameEntity::incrementDistanceTraveledSinceIdle(real distance) {
     distanceTraveledSinceIdle += distance;
 }
 
@@ -519,12 +519,8 @@ void GameEntity::resetIdleAnimationInterval() {
     idleAnimationInterval = 0;
 }
 
-void GameEntity::incrementIdleAnimationInterval(float dt) {
+void GameEntity::incrementIdleAnimationInterval(real dt) {
     idleAnimationInterval += dt;
-}
-
-bool GameEntity::move(MoveDirection direction) {
-    return false;
 }
 
 bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
@@ -563,7 +559,7 @@ Weapon* GameEntity::getWeapon() {
     return weapon;
 }
 
-void GameEntity::update(Point ***points, float dt) {
+void GameEntity::update(Point ***points, real dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating intervals

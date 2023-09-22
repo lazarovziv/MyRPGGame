@@ -53,7 +53,7 @@ bool GameEntityMovement::moveTowardsPoint(Point *point, Graph<Point *> *graph) {
     return entity->areAvailableMoves();
 }
 
-bool GameEntityMovement::moveBasedOnPoint(Point *point, float dt) {
+bool GameEntityMovement::moveBasedOnPoint(Point *point, real dt) {
     if (point == nullptr) return false;
     // same row, can go up or down
     if (point->getX() == entity->getCircle()->getCenter()->getX()) {
@@ -72,11 +72,11 @@ bool GameEntityMovement::moveBasedOnPoint(Point *point, float dt) {
     }
 }
 
-void GameEntityMovement::calculatePathTo(GameEntity *target, float dt) {
+void GameEntityMovement::calculatePathTo(GameEntity *target, real dt) {
     // if slope doesn't exist
     if (entity->getPosition().x == target->getPosition().x) return;
     // calculate linear interpolation
-    float slope = (entity->getPosition().y - target->getPosition().y) / (entity->getPosition().x - target->getPosition().x);
+    real slope = (entity->getPosition().y - target->getPosition().y) / (entity->getPosition().x - target->getPosition().x);
     int b = entity->getPosition().y - slope * entity->getPosition().x;
     // TODO: understand slope and its positions
     // positive slope = go down iff
@@ -86,7 +86,7 @@ void GameEntityMovement::calculatePathTo(GameEntity *target, float dt) {
     }
 }
 
-Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, EntityMovementState movementState, real dt) {
     // no need to create extra variables if not using them
     if (movementState == EntityMovementState::IDLE) {
         entity->setMovementState(movementState);
@@ -99,9 +99,9 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
 
     GameMap *map = currentMap;
 
-    float entitySpeed = entity->getSpeed();
-    float entityX = entity->getPosition().x;
-    float entityY = entity->getPosition().y;
+    real entitySpeed = entity->getSpeed();
+    real entityX = entity->getPosition().x;
+    real entityY = entity->getPosition().y;
 
     Constants::MoveSuccessValues moveSuccessValue;
 
@@ -174,7 +174,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
     return moveSuccessValue;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached top of screen
@@ -183,7 +183,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
         if (isPlayer && map->isExitableFromTop() && map->getTopExitCircle() != nullptr) {
             // if reached top exit circle of the map
             if (entity->getCircle()->intersects(map->getTopExitCircle())) {
-                cout << "Reached Top Exit" << endl;
+                std::cout << "Reached Top Exit" << std::endl;
                 entity->setPosition(entityX, (screenHeight - tileSize / 2));
                 return Constants::MoveSuccessValues::CHANGE_UP;
             }
@@ -210,7 +210,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
     } else canCollide = entity->getTopCircle()->intersects(map->getPlayer()->getCircle());
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(Vector2f(0, -1), dt);
+        entity->setPosition(sf::Vector2f(0, -1), dt);
     }
 
 
@@ -218,7 +218,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, float enti
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached bottom of screen
@@ -226,7 +226,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
         // check if bottom of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromBottom() && map->getBottomExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
-                cout << "Reached Bottom Exit" << endl;
+                std::cout << "Reached Bottom Exit" << std::endl;
                 entity->setPosition(entityX, (tileSize) / 2);
                 return Constants::MoveSuccessValues::CHANGE_DOWN;
             }
@@ -254,14 +254,14 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, float en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(Vector2f(0, 1), dt);
+        entity->setPosition(sf::Vector2f(0, 1), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached right of screen
@@ -269,7 +269,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
         // check if right of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromRight() && map->getRightExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getRightExitCircle())) {
-                cout << "Reached Right Exit" << endl;
+                std::cout << "Reached Right Exit" << std::endl;
                 entity->setPosition(tileSize, entityY);
                 return Constants::MoveSuccessValues::CHANGE_RIGHT;
             }
@@ -297,14 +297,14 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, float e
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(Vector2f(1, 0), dt);
+        entity->setPosition(sf::Vector2f(1, 0), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached left of screen
@@ -312,7 +312,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
         // check if left of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromLeft() && map->getLeftExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
-                cout << "Reached Left Exit" << endl;
+                std::cout << "Reached Left Exit" << std::endl;
                 entity->setPosition((screenWidth - tileSize / 2), entityY);
                 return Constants::MoveSuccessValues::CHANGE_LEFT;
             }
@@ -340,14 +340,14 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, float en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(Vector2f(-1, 0), dt);
+        entity->setPosition(sf::Vector2f(-1, 0), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached left of screen
@@ -355,7 +355,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap* map, float 
         // check if left of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromLeft() && map->getLeftExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
-                cout << "Reached Left Exit" << endl;
+                std::cout << "Reached Left Exit" << std::endl;
                 entity->setPosition((screenWidth - tileSize / 2), entityY);
                 return Constants::MoveSuccessValues::CHANGE_LEFT;
             }
@@ -369,7 +369,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap* map, float 
         if (isPlayer && map->isExitableFromTop() && map->getTopExitCircle() != nullptr) {
             // if reached top exit circle of the map
             if (entity->getCircle()->intersects(map->getTopExitCircle())) {
-                cout << "Reached Top Exit" << endl;
+                std::cout << "Reached Top Exit" << std::endl;
                 entity->setPosition(entityX, (screenHeight - tileSize / 2));
                 return Constants::MoveSuccessValues::CHANGE_UP;
             }
@@ -379,7 +379,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap* map, float 
     }
 
     // direction vector
-    Vector2f directionVector = Vector2f(-1, -1);
+    sf::Vector2f directionVector = sf::Vector2f(-1, -1);
     // normalize
     normalizeVector(&directionVector);
 
@@ -419,7 +419,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap* map, float 
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached left of screen
@@ -427,7 +427,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap* map, floa
         // check if left of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromLeft() && map->getLeftExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getLeftExitCircle())) {
-                cout << "Reached Left Exit" << endl;
+                std::cout << "Reached Left Exit" << std::endl;
                 entity->setPosition((screenWidth - tileSize / 2), entityY);
                 return Constants::MoveSuccessValues::CHANGE_LEFT;
             }
@@ -440,7 +440,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap* map, floa
         // check if bottom of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromBottom() && map->getBottomExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
-                cout << "Reached Bottom Exit" << endl;
+                std::cout << "Reached Bottom Exit" << std::endl;
                 entity->setPosition(entityX, (tileSize) / 2);
                 return Constants::MoveSuccessValues::CHANGE_DOWN;
             }
@@ -450,7 +450,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap* map, floa
     }
 
     // direction vector
-    Vector2f directionVector = Vector2f(-1, 1);
+    sf::Vector2f directionVector = sf::Vector2f(-1, 1);
     // normalize
     normalizeVector(&directionVector);
 
@@ -490,7 +490,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap* map, floa
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached right of screen
@@ -498,7 +498,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap* map, float
         // check if right of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromRight() && map->getRightExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getRightExitCircle())) {
-                cout << "Reached Right Exit" << endl;
+                std::cout << "Reached Right Exit" << std::endl;
                 entity->setPosition(tileSize, entityY);
                 return Constants::MoveSuccessValues::CHANGE_RIGHT;
             }
@@ -512,7 +512,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap* map, float
         if (isPlayer && map->isExitableFromTop() && map->getTopExitCircle() != nullptr) {
             // if reached top exit circle of the map
             if (entity->getCircle()->intersects(map->getTopExitCircle())) {
-                cout << "Reached Top Exit" << endl;
+                std::cout << "Reached Top Exit" << std::endl;
                 entity->setPosition(entityX, (screenHeight - tileSize / 2));
                 return Constants::MoveSuccessValues::CHANGE_UP;
             }
@@ -522,7 +522,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap* map, float
     }
 
     // direction vector
-    Vector2f directionVector = Vector2f(1, -1);
+    sf::Vector2f directionVector = sf::Vector2f(1, -1);
     // normalize
     normalizeVector(&directionVector);
 
@@ -562,7 +562,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap* map, float
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap* map, float entityX, float entityY, float entitySpeed, float dt) {
+Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap *map, real entityX, real entityY, real entitySpeed, real dt) {
     int unreachableAreasSize = map->getLandscapes().size();
     bool canCollide = false;
     // reached right of screen
@@ -570,7 +570,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap* map, flo
         // check if right of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromRight() && map->getRightExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getRightExitCircle())) {
-                cout << "Reached Right Exit" << endl;
+                std::cout << "Reached Right Exit" << std::endl;
                 entity->setPosition(tileSize, entityY);
                 return Constants::MoveSuccessValues::CHANGE_RIGHT;
             }
@@ -583,7 +583,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap* map, flo
         // check if bottom of screen is an exit point for current game map
         if (isPlayer && map->isExitableFromBottom() && map->getBottomExitCircle() != nullptr) {
             if (entity->getCircle()->intersects(map->getBottomExitCircle())) {
-                cout << "Reached Bottom Exit" << endl;
+                std::cout << "Reached Bottom Exit" << std::endl;
                 entity->setPosition(entityX, (tileSize) / 2);
                 return Constants::MoveSuccessValues::CHANGE_DOWN;
             }
@@ -593,7 +593,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap* map, flo
     }
 
     // direction vector
-    Vector2f directionVector = Vector2f(1, 1);
+    sf::Vector2f directionVector = sf::Vector2f(1, 1);
     // normalize
     normalizeVector(&directionVector);
 
@@ -634,30 +634,30 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap* map, flo
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-bool GameEntityMovement::reachedLeftEndOfScreen(float entityX, float entitySpeed, float dt) const {
+bool GameEntityMovement::reachedLeftEndOfScreen(real entityX, real entitySpeed, real dt) const {
     return entityX - entitySpeed <= tileSize / 2;
 }
 
-bool GameEntityMovement::reachedRightEndOfScreen(float entityX, float entitySpeed, float dt) const {
+bool GameEntityMovement::reachedRightEndOfScreen(real entityX, real entitySpeed, real dt) const {
     return entityX + entitySpeed >= screenWidth - tileSize / 2;
 }
 
-bool GameEntityMovement::reachedTopEndOfScreen(float entityY, float entitySpeed, float dt) const {
+bool GameEntityMovement::reachedTopEndOfScreen(real entityY, real entitySpeed, real dt) const {
     return entityY - entitySpeed <= tileSize / 2;
 }
 
-bool GameEntityMovement::reachedBottomEndOfScreen(float entityY, float entitySpeed, float dt) const {
+bool GameEntityMovement::reachedBottomEndOfScreen(real entityY, real entitySpeed, real dt) const {
     return entityY + entitySpeed >= screenHeight - tileSize / 2;
 }
 
 void GameEntityMovement::normalizeVector(sf::Vector2f *vector) {
-    float normSquared = vector->x * vector->x + vector->y * vector->y;
-    float norm = sqrt(normSquared);
+    real normSquared = vector->x * vector->x + vector->y * vector->y;
+    real norm = sqrt(normSquared);
     vector->x /= norm;
     vector->y /= norm;
 }
 
-bool GameEntityMovement::moveRandomly(int randomDirection, float dt) {
+bool GameEntityMovement::moveRandomly(int randomDirection, real dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
         case 0:

@@ -1,12 +1,10 @@
 #include "../include/Game.hpp"
 
-//using namespace std;
-
 Game* Game::instance = nullptr;
 
 Game* Game::getInstance() {
     if (instance == nullptr) {
-        std::cout << "Initializing game..." << endl;
+        std::cout << "Initializing game..." << std::endl;
         instance = new Game("MyRPGGame");
     }
     return instance;
@@ -31,17 +29,17 @@ Game::~Game() {
 
 Game::Game(const char* str) {
     title = str;
-    VideoMode videoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
+    sf::VideoMode videoMode(SCREEN_WIDTH, SCREEN_HEIGHT);
     std::string s(title);
-    window = make_unique<RenderWindow>(videoMode, s);
+    window = std::make_unique<sf::RenderWindow>(videoMode, s);
 
     window->setVerticalSyncEnabled(false);
 //    window->setFramerateLimit(Constants::FPS);
     window->setFramerateLimit(0);
 
-    cameraView = make_unique<View>(Vector2f(0, 0), Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
+    cameraView = std::make_unique<sf::View>(sf::Vector2f(0, 0), sf::Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
-    menuRepository = make_unique<MenuRepository>();
+    menuRepository = std::make_unique<MenuRepository>();
     initMenus();
     menuRepository->setMenu(currentMenu); // first menu is the game menu
     
@@ -88,15 +86,15 @@ Game::Game(const char* str) {
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
-    this->player = make_unique<Player>(PlayerType::KNIGHT,
+    this->player = std::make_unique<Player>(PlayerType::KNIGHT,
                               points[Constants::SCREEN_HEIGHT/2][Constants::SCREEN_WIDTH/2]);
     
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
 
     fpsFont.loadFromFile("../graphics/fonts/arial.ttf");
-    fpsText.setFillColor(Color::Blue);
-    dtText.setFillColor(Color::Blue);
+    fpsText.setFillColor(sf::Color::Blue);
+    dtText.setFillColor(sf::Color::Blue);
     fpsText.setFont(fpsFont);
     dtText.setFont(fpsFont);
     // init first map
@@ -110,9 +108,9 @@ void Game::initEntities() {
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
     auto *enemiesBattle = new GameEntityBattle(nullptr);
 
-    playerRepository = make_unique<PlayerRepository>(player.get(), playerMovement,
+    playerRepository = std::make_unique<PlayerRepository>(player.get(), playerMovement,
                                             playerBattle, getCurrentGameMap());
-    enemiesRepository = make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
+    enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
                                             player.get(), getCurrentGameMap());
 }
 
@@ -121,9 +119,9 @@ void Game::initMenus() {
     std::vector<std::string> mainMenuItemsStrings = { "Resume", "Inventory", "Settings", "Exit" };
     std::vector<std::string> characterCreationItemsStrings = { "Change Body", "Change Torso" };
 
-    gameMenu = make_unique<Menu>(gameMenuItemsStrings, true);
-    mainMenu = make_unique<Menu>(mainMenuItemsStrings, false);
-    characterCreationMenu = make_unique<Menu>(characterCreationItemsStrings, false);
+    gameMenu = std::make_unique<Menu>(gameMenuItemsStrings, true);
+    mainMenu = std::make_unique<Menu>(mainMenuItemsStrings, false);
+    characterCreationMenu = std::make_unique<Menu>(characterCreationItemsStrings, false);
     gameMenu->addSubMenu(mainMenu.get(), 0);
     mainMenu->addSubMenu(characterCreationMenu.get(), 1);
     // gameMenu->addSubMenu(settingsMenu);
@@ -131,9 +129,9 @@ void Game::initMenus() {
 }
 
 void Game::start() {
-    cout << "Press Enter to start" << endl;
-    cout << "Press I or Esc to enter menu" << endl;
-    cout << "Press X near an enemy to attack" << endl;
+    std::cout << "Press Enter to start" << std::endl;
+    std::cout << "Press I or Esc to enter menu" << std::endl;
+    std::cout << "Press X near an enemy to attack" << std::endl;
 
     initEntities();
 
@@ -149,29 +147,29 @@ void Game::start() {
 
     sf::Clock clock;
     // TODO: tweak multiplier value (12 seems to be close, maybe fps/10)
-    float dt, multiplier = 12.f;
+    real dt, multiplier = 12.f;
 
-    std::map<Keyboard::Key, bool> keysPressedMap;
-    keysPressedMap[Keyboard::Key::E] = false;
-    keysPressedMap[Keyboard::Key::D] = false;
-    keysPressedMap[Keyboard::Key::F] = false;
-    keysPressedMap[Keyboard::Key::S] = false;
-    keysPressedMap[Keyboard::Key::J] = false;
-    keysPressedMap[Keyboard::Key::I] = false;
-    keysPressedMap[Keyboard::Key::H] = false;
-    keysPressedMap[Keyboard::Key::Escape] = false;
+    std::map<sf::Keyboard::Key, bool> keysPressedMap;
+    keysPressedMap[sf::Keyboard::Key::E] = false;
+    keysPressedMap[sf::Keyboard::Key::D] = false;
+    keysPressedMap[sf::Keyboard::Key::F] = false;
+    keysPressedMap[sf::Keyboard::Key::S] = false;
+    keysPressedMap[sf::Keyboard::Key::J] = false;
+    keysPressedMap[sf::Keyboard::Key::I] = false;
+    keysPressedMap[sf::Keyboard::Key::H] = false;
+    keysPressedMap[sf::Keyboard::Key::Escape] = false;
 
     EntityMovementState playerMovementState = EntityMovementState::WALK;
 
     while (running) {
         dt = clock.restart().asSeconds();
-        fpsText.setString("FPS: " + to_string(1/dt));
-        dtText.setString("DT: " + to_string(dt));
+        fpsText.setString("FPS: " + std::to_string(1/dt));
+        dtText.setString("DT: " + std::to_string(dt));
         dt *= multiplier;
 
-        // TODO: delta time fucks things if it's not in the pollEvent loop. processing input is outside of the loop we need to multiply each position by dt
+        // TODO: delta time screws things if it's not in the pollEvent loop. processing input is outside of the loop we need to multiply each position by dt
         while (window->pollEvent(event)) {
-            if (event.type == Event::Closed) {
+            if (event.type == sf::Event::Closed) {
                 state = Constants::GameState::EXITING;
                 // TODO: add save game and exit message confirmation
                 running = false;
@@ -183,77 +181,82 @@ void Game::start() {
 
         if (state == Constants::GameState::PLAYING) {
             // moving input
-            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E) && canMove) {
-                keysPressedMap[Keyboard::E] = true;
-                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) && canMove) {
+                keysPressedMap[sf::Keyboard::E] = true;
+                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
+                // pressing the H key will trigger running state
+                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
-                if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F)) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::F] = true;
-                } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S)) {
+                    keysPressedMap[sf::Keyboard::F] = true;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::S] = true;
+                    keysPressedMap[sf::Keyboard::S] = true;
                 } else {
                     moveSuccessValue = playerRepository->move(MoveDirection::UP, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D) && canMove) {
-                keysPressedMap[Keyboard::D] = true;
-                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && canMove) {
+                keysPressedMap[sf::Keyboard::D] = true;
+                // pressing the H key will trigger running state
+                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
-                if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F)) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::F] = true;
-                } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S)) {
+                    keysPressedMap[sf::Keyboard::F] = true;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::S] = true;
+                    keysPressedMap[sf::Keyboard::S] = true;
                 } else {
                     moveSuccessValue = playerRepository->move(MoveDirection::DOWN, playerMovementState, dt);
                     moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::F) && canMove) {
-                keysPressedMap[Keyboard::F] = true;
-                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F) && canMove) {
+                keysPressedMap[sf::Keyboard::F] = true;
+                // pressing the H key will trigger running state
+                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
-                if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E)) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::E] = true;
-                } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D)) {
+                    keysPressedMap[sf::Keyboard::E] = true;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::D] = true;
+                    keysPressedMap[sf::Keyboard::D] = true;
                 } else {
                     moveSuccessValue = playerRepository->move(MoveDirection::RIGHT, playerMovementState, dt);
                     moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::S) && canMove) {
-                keysPressedMap[Keyboard::S] = true;
-                keysPressedMap[Keyboard::H] = Keyboard::isKeyPressed(Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && canMove) {
+                keysPressedMap[sf::Keyboard::S] = true;
+                // pressing the H key will trigger running state
+                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
+                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 // allowing diagonal movement
-                if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E)) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::E] = true;
-                } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D)) {
+                    keysPressedMap[sf::Keyboard::E] = true;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                     moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, playerMovementState, dt);
                     moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[Keyboard::D] = true;
+                    keysPressedMap[sf::Keyboard::D] = true;
                 } else {
                     moveSuccessValue = playerRepository->move(MoveDirection::LEFT, playerMovementState, dt);
                     moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
                 }
             }
 
-            if (moved || keysPressedMap[Keyboard::E] || keysPressedMap[Keyboard::S] || keysPressedMap[Keyboard::D] || keysPressedMap[Keyboard::F]) {
+            if (moved || keysPressedMap[sf::Keyboard::E] || keysPressedMap[sf::Keyboard::S] 
+            || keysPressedMap[sf::Keyboard::D] || keysPressedMap[sf::Keyboard::F]) {
                 // switching world map according to value returned from move function
                 switch (moveSuccessValue) {
                     case Constants::MoveSuccessValues::CHANGE_UP:
@@ -270,41 +273,39 @@ void Game::start() {
                         break;
                     default: break;
                 }
-            } else if (!keysPressedMap[Keyboard::J] && player->canGoIdle()) {
-                playerRepository->move(player->getMoveDirection(),
-                                       EntityMovementState::IDLE,
-                                       dt);
+            } else if (!keysPressedMap[sf::Keyboard::J] && player->canGoIdle()) {
+                playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE, dt);
             }
 
             enemiesRepository->setGameMap(getCurrentGameMap());
 
             // pressing x for attacking
-            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::J)) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
                 attacked = playerRepository->attack(dt);
-                keysPressedMap[Keyboard::J] = true;
+                keysPressedMap[sf::Keyboard::J] = true;
             }
 
             // pressing escape sends to menu
-            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape)) {
-                keysPressedMap[Keyboard::Escape] = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                keysPressedMap[sf::Keyboard::Escape] = true;
                 changeState(Constants::GameState::IN_MENU);
-                cout << "In Menu (Press Space to choose)" << endl;
+                std::cout << "In Menu (Press Space to choose)" << std::endl;
                 canMove = false;
                 // pressing I sends to inventory menu (to be implemented)
-            } else if (eventKeyCode == Keyboard::I) {
+            } else if (eventKeyCode == sf::Keyboard::I) {
                 changeState(Constants::GameState::IN_MENU);
                 // currentMenu = inventoryMenu;
-                cout << "Inventory Menu" << endl;
+                std::cout << "Inventory Menu" << std::endl;
                 canMove = false;
             }
             // TODO: add key for going straight to character creation
         } else if (state == Constants::GameState::IN_MENU) {
-            if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::E)) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
                 menuRepository->moveUp();
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::D)) {
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                 menuRepository->moveDown();
                 // user chose an item menu
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Space) || /*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Enter)) {
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
                 // set current menu to be the relevant one based on currentMenuItemIdx
                 if (menuRepository->choseSubMenuItem()) {
                     menuRepository->updateSubMenu(currentMenu, &state);
@@ -314,21 +315,22 @@ void Game::start() {
                     switch (menuRepository->execute(&state)) {
                         case 0: {
                             changeState(Constants::GameState::PLAYING);
-                            cout << "Returning to game..." << endl;
+                            std::cout << "Returning to game..." << std::endl;
                             break;
                         }
                         case 1: {
                             break;
                         }
                         case 2: {
+                            changeState(Constants::GameState::EXITING);
                             exitGame(&running);
                             break;
                         }
                     }
                 }
                 // going back one menu
-            } else if (/*eventKeyCode == */Keyboard::isKeyPressed(Keyboard::Escape) && keysPressedMap[Keyboard::Escape]) {
-                cout << "HEY" << endl;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                std::cout << "HEY" << std::endl;
                 // if it's the game menu then we'll exit the game
                 if (menuRepository->isGameMenu()) {
                     exitGame(&running);
@@ -427,7 +429,7 @@ void Game::renderMenu(Menu *menu) {
                  player->getCircle()->getCenter()->getY(), window.get());
 }
 
-void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, float dt) {
+void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, real dt) {
     // updating player state
     playerRepository->update(points, playerMoveSuccessValue, dt);
     // updating current map states

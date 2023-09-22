@@ -6,7 +6,7 @@ Player::Player() : GameEntity() {
     speed = 2;
 //    texture = new Texture();
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    sprite = new Sprite();
+    sprite = new sf::Sprite();
     texture.loadFromFile("../graphics/player_down_1_64.png");
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
@@ -21,8 +21,8 @@ Player::Player(PlayerType type) : GameEntity() {
     this->type = type;
 
     setPlayerType(type);
-    entityCircle = make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
-    attackRangeCircle = make_unique<Circle>(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
+    entityCircle = std::make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
+    attackRangeCircle = std::make_unique<Circle>(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
 
     for (int state = 0; state < 10; state++) {
         auto movementState = static_cast<EntityMovementState>(state);
@@ -38,9 +38,9 @@ Player::Player(PlayerType type, Point *center) : GameEntity(center) {
     criticalHitsPoints = 0;
     this->type = type;
     if (!texture.loadFromFile("../graphics/player/gray_t_shirt_leather_pants_spritesheet.png")) {
-        std::cout << "Texture NOT loaded properly!" << endl;
+        std::cout << "Texture NOT loaded properly!" << std::endl;
         texture.setSmooth(true);
-    } else std::cout << "Texture loaded properly." << endl;
+    } else std::cout << "Texture loaded properly." << std::endl;
     // TextureLoader.getInstance()->loadFromFile("player.png");
     sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection] * Constants::TILE_SIZE,
@@ -108,7 +108,7 @@ void Player::setPlayerType(PlayerType t) {
 }
 
 // TODO: add more functionality or else use GameEntity's update method
-void Player::update(Point ***points, float dt) {
+void Player::update(Point ***points, real dt) {
     if (!dead) {
         sprite->setPosition(position.x, position.y);
         // updating game entity intervals

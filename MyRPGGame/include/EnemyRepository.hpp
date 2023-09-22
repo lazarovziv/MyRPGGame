@@ -18,9 +18,9 @@ public:
 
     void setGameMap(GameMap *gameMap);
 
-    void move(float dt);
-    bool attack(GameEntity *entity, float dt);
-    void update(float dt);
+    void move(real dt);
+    bool attack(GameEntity *entity, real dt);
+    void update(real dt);
 };
 
 #endif //MYRPGGAME_ENEMYREPOSITORY_HPP

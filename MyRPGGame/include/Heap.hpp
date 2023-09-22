@@ -6,11 +6,11 @@
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
-using namespace std;
+//using namespace std;
 
 class Heap {
 private:
-    vector<FloatRect> array;
+    std::vector<sf::IntRect> array;
     int length;
     int heapSize;
     

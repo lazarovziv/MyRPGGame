@@ -13,10 +13,10 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromBottom = down;
     exitableFromRight = right;
     exitableFromLeft = left;
-    backgroundSprite = new Sprite();
+    backgroundSprite = new sf::Sprite();
     if (texture.loadFromFile("../graphics/maps/map_1_1.png")) {
-        std::cout << "Background loaded properly." << endl;
-    } else std::cout << "Background NOT loaded." << endl;
+        std::cout << "Background loaded properly." << std::endl;
+    } else std::cout << "Background NOT loaded." << std::endl;
 //    texture.setSmooth(true);
     backgroundSprite->setTexture(texture);
     backgroundSprite->setOrigin(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
@@ -67,7 +67,7 @@ int GameMap::getWorldMapCol() const {
     return worldMapCol;
 }
 
-Sprite* GameMap::getBackgroundSprite() {
+sf::Sprite* GameMap::getBackgroundSprite() {
     return backgroundSprite;
 }
 
@@ -103,7 +103,7 @@ void GameMap::setIsExitableFromBottom(bool flag) {
     exitableFromBottom = flag;
 }
 
-vector<LandscapeEntity*> GameMap::getLandscapes() {
+std::vector<LandscapeEntity*> GameMap::getLandscapes() {
     return landscapes;
 }
 
@@ -112,7 +112,7 @@ void GameMap::addLandscape(LandscapeEntity *entity) {
     entities.push_back(entity);
 }
 
-vector<NPCEnemy*> GameMap::getEnemies() {
+std::vector<NPCEnemy*> GameMap::getEnemies() {
     return enemiesVector;
 } 
 
@@ -136,7 +136,7 @@ void GameMap::init() {
 
     auto *circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
     // assuming position is invalid
-    bool validations[landscapes.size()];
+    std::vector<bool> validations(landscapes.size());
     for (int i = 0; i < landscapes.size(); i++) {
         validations[i] = false;
     }
@@ -298,7 +298,7 @@ int GameMap::generateRandom(int min, int max) {
     return min + (rand() % (max-min+1));
 }
 
-void GameMap::update(float dt) {
+void GameMap::update(real dt) {
     for (auto &enemy : enemiesVector) {
         // checking if enemy is dead
         if (enemy->isDead()) {

@@ -32,7 +32,7 @@ void Heap::heapify(int i) {
     if (right <= heapSize && array[right].left < array[largest].left) largest = right;
     if (largest != i) {
         // swap
-        swap(array[largest], array[i]);
+        std::swap(array[largest], array[i]);
         heapify(largest);
     }
 }

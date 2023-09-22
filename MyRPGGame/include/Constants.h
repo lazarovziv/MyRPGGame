@@ -5,7 +5,8 @@
 #include <string>
 #include <map>
 
-using namespace std;
+// for using throughout the project, if want to change to int/double
+typedef float real;
 
 enum class MoveDirection { DOWN, RIGHT, LEFT, UP, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT };
 
@@ -67,7 +68,7 @@ public:
     static const int CLIMB_NUM_ROWS = 1;
     static const int CLIMB_ROW = 0;
 
-    inline static const map<EntityMovementState, int> MOVEMENT_STATE_NUM_COLS = {
+    inline static const std::map<EntityMovementState, int> MOVEMENT_STATE_NUM_COLS = {
             { EntityMovementState::CLIMB, Constants::CLIMB_NUM_COLS },
             { EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED, Constants::COMBAT_BACKSLASH_ONE_HANDED_NUM_COLS },
             { EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED, Constants::COMBAT_HALFSLASH_ONE_HANDED_NUM_COLS },
@@ -81,7 +82,7 @@ public:
     };
 
     // inline is a c++ 17 feature
-    inline static const string PLAYER_IMAGES_PATH = "../graphics/player/body/";
+    inline static const std::string PLAYER_IMAGES_PATH = "../graphics/player/body/";
 
     // enum for distinguishing moves - CHANGE_* values means needs to change to relevant map
     enum MoveSuccessValues {

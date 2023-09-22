@@ -5,8 +5,8 @@ Menu::Menu(std::vector<std::string> itemsStrings, bool gameMenu) {
         std::cout << "Failed to load font!" << std::endl;
         // TODO: throw error
     }
-    menuItems = new vector<sf::Text>();
-    subMenusIndexesMap = new map<int, Menu*>();
+    menuItems = new std::vector<sf::Text>();
+    subMenusIndexesMap = new std::map<int, Menu*>();
     initMenuItems(itemsStrings);
     this->gameMenu = gameMenu;
 }
@@ -25,7 +25,7 @@ void Menu::initMenuItems(std::vector<std::string> itemsStrings) {
     }
 }
 
-std::vector<Text>* Menu::getMenuItems() {
+std::vector<sf::Text>* Menu::getMenuItems() {
     return menuItems;
 }
 
@@ -71,7 +71,7 @@ bool Menu::hasSubMenus() {
 
 void Menu::addSubMenu(Menu *menu, int menuIndex) {
     if (subMenus == nullptr) {
-        subMenus = new vector<Menu*>();
+        subMenus = new std::vector<Menu*>();
     }
     subMenus->push_back(menu);
     (*subMenusIndexesMap)[menuIndex] = menu;
