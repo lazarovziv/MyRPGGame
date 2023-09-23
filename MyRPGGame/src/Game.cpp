@@ -98,7 +98,7 @@ Game::Game(const char* str) {
     fpsText.setFont(fpsFont);
     dtText.setFont(fpsFont);
     // init first map
-//    getCurrentGameMap()->init();
+    getCurrentGameMap()->init();
 }
 
 void Game::initEntities() {
@@ -110,6 +110,7 @@ void Game::initEntities() {
 
     playerRepository = std::make_unique<PlayerRepository>(player.get(), playerMovement,
                                             playerBattle, getCurrentGameMap());
+    
     enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
                                             player.get(), getCurrentGameMap());
 }
@@ -122,6 +123,7 @@ void Game::initMenus() {
     gameMenu = std::make_unique<Menu>(gameMenuItemsStrings, true);
     mainMenu = std::make_unique<Menu>(mainMenuItemsStrings, false);
     characterCreationMenu = std::make_unique<Menu>(characterCreationItemsStrings, false);
+
     gameMenu->addSubMenu(mainMenu.get(), 0);
     mainMenu->addSubMenu(characterCreationMenu.get(), 1);
     // gameMenu->addSubMenu(settingsMenu);
@@ -330,7 +332,6 @@ void Game::start() {
                 }
                 // going back one menu
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                std::cout << "HEY" << std::endl;
                 // if it's the game menu then we'll exit the game
                 if (menuRepository->isGameMenu()) {
                     exitGame(&running);
