@@ -7,11 +7,11 @@
 class PlayerRepository {
 private:
     Player *player;
-    GameEntityMovement *movementHandler;
-    GameEntityBattle *battleHandler;
-    GameMap *map;
+    GameEntityMovement *movementHandler = nullptr;
+    GameEntityBattle *battleHandler = nullptr;
+    GameMap *map = nullptr;
 
-    AnimationManager *animationManager;
+    AnimationManager *animationManager = nullptr;
 
 public:
     explicit PlayerRepository(Player *player, GameEntityMovement *movement,

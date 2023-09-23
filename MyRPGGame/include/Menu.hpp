@@ -24,8 +24,8 @@ protected:
     bool active; // indicator whether the menu is currently shown on screen (if switched off we'll go to parent menu)
     bool gameMenu = false;
     Menu *parentMenu; // for navigating backwards from the submenus
-    std::vector<Menu*> *subMenus; // setting an option for every menu to have a sub menu
-    std::map<int, Menu*> *subMenusIndexesMap;
+    std::vector<Menu*> *subMenus = nullptr; // setting an option for every menu to have a sub menu
+    std::map<int, Menu*> *subMenusIndexesMap = nullptr;
 
     void setParentMenu(Menu *menu);
 
