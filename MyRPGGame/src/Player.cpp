@@ -6,7 +6,7 @@ Player::Player() : GameEntity() {
     speed = 2;
 //    texture = new Texture();
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
-    sprite = new sf::Sprite();
+//    sprite = new sf::Sprite();
     texture.loadFromFile("../graphics/player_down_1_64.png");
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
@@ -28,7 +28,7 @@ Player::Player(PlayerType type) : GameEntity() {
         auto movementState = static_cast<EntityMovementState>(state);
         createMovementStateSprite(movementState);
     }
-    sprite = movementStateSpritesMap[EntityMovementState::IDLE];
+//    sprite = movementStateSpritesMap[EntityMovementState::IDLE];
 }
 
 Player::Player(PlayerType type, Point *center) : GameEntity(center) {
@@ -54,7 +54,7 @@ Player::Player(PlayerType type, Point *center) : GameEntity(center) {
 }
 
 Player::~Player() {
-    delete weapon;
+//    delete weapon;
 }
 
 int Player::getStrengthPoints() {

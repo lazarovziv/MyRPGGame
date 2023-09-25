@@ -13,7 +13,8 @@ GameEntity::GameEntity() {
     inBattle = false;
     dead = false;
     moveDirection = MoveDirection::RIGHT;
-    sprite = new sf::Sprite();
+//    sprite = new sf::Sprite();
+    sprite = std::make_unique<sf::Sprite>();
 
 //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
     moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
@@ -52,7 +53,8 @@ GameEntity::GameEntity(Point *center) {
     dead = false;
     moveDirection = MoveDirection::DOWN;
     movementState = EntityMovementState::WALK;
-    sprite = new sf::Sprite();
+//    sprite = new sf::Sprite();
+    sprite = std::make_unique<sf::Sprite>();
 
     //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
     moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
@@ -87,7 +89,7 @@ GameEntity::GameEntity(Point *center) {
 }
 
 GameEntity::~GameEntity() {
-    delete sprite;
+//    delete sprite;
 }
 
 void GameEntity::increaseLevel(int amount) {
@@ -292,7 +294,7 @@ bool GameEntity::addMovementStateSprite(EntityMovementState state, sf::Sprite *n
 }
 
 void GameEntity::setWeapon(WeaponType type) {
-    weapon = new Weapon(entityCircle->getCenter(), type);
+    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), type);
 //    // initializing attackRangeCircle according to weapon
 //    if (attackRangeCircle != nullptr) {
 //        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
@@ -430,11 +432,11 @@ sf::Vector2f GameEntity::getPosition() const {
 }
 
 sf::Sprite* GameEntity::getSprite() const {
-    return sprite;
+    return sprite.get();
 }
 
 void GameEntity::setSprite(sf::Sprite *newSprite) {
-    sprite = newSprite;
+//    sprite = newSprite;
 }
 
 sf::Sprite* GameEntity::getMovementStateSprite(EntityMovementState state) {
@@ -556,7 +558,7 @@ Circle* GameEntity::getAttackRangeCircle() {
 }
 
 Weapon* GameEntity::getWeapon() {
-    return weapon;
+    return weapon.get();
 }
 
 void GameEntity::update(Point ***points, real dt) {

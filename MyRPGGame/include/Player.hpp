@@ -7,7 +7,7 @@
 #include "GameEntity.hpp"
 #include "Constants.h"
 #include "Subject.hpp"
-#include "../include/TextureLoader.hpp"
+#include "TextureLoader.hpp"
 
 enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 

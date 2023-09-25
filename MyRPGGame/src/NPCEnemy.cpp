@@ -25,7 +25,7 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
-    weapon = new Weapon(entityCircle->getCenter(), WeaponType::MACE);
+    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
     attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
     wanderAreaRadius = entityCircle->getRadius() * 12;
     wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
@@ -36,7 +36,7 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
 }
 
 NPCEnemy::~NPCEnemy() {
-    delete weapon;
+//    delete weapon;
 }
 
 int NPCEnemy::getBattleTimeout() {

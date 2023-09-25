@@ -45,7 +45,8 @@ protected:
 
     sf::Vector2f position;
     sf::Texture texture;
-    sf::Sprite *sprite; // maybe VertexArray for each direction
+    std::unique_ptr<sf::Sprite> sprite;
+//    sf::Sprite *sprite; // maybe VertexArray for each direction
     // for handling changing in entity's movement (from walking to running, from idle to combat etc.)
     std::vector<sf::Texture> movementStateTextures;
     std::map<EntityMovementState, sf::Sprite*> movementStateSpritesMap;
@@ -55,7 +56,7 @@ protected:
     // circle positioned in potentially next steps for the player (instead of creating new ones in move method)
     std::unique_ptr<Circle> entityRightCircle, entityLeftCircle, entityTopCircle, entityBottomCircle;
 //    GameMap* currentGameMap;
-    Weapon *weapon;
+    std::unique_ptr<Weapon> weapon;
 
     // combat intervals
     constexpr static const real BATTLE_INTERVAL_DEFAULT = 9.0f;

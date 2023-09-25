@@ -5,7 +5,7 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, real x, real y) {
     position.y = y;
     this->type = type;
 //    RectangleShape rectangle0(Vector2f(200, 200));
-    sprite = new sf::Sprite();
+//    sprite = new sf::Sprite();
 
     switch (this->type) {
         case LandscapeType::TREE:
