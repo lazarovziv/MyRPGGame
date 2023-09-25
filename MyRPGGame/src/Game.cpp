@@ -95,16 +95,16 @@ Game::Game(const char* str) {
 
 void Game::initEntities() {
     // initialize player's systems
-    auto *playerMovement = new GameEntityMovement(player.get(), true, getCurrentGameMap(), points);
+    auto *playerMovement = new GameEntityMovement(player.get(), true, std::move(getCurrentGameMap()), points);
     auto *playerBattle = new GameEntityBattle(player.get());
-    auto *enemiesMovement = new GameEntityMovement(nullptr, false, getCurrentGameMap(), points);
+    auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()), points);
     auto *enemiesBattle = new GameEntityBattle(nullptr);
 
     playerRepository = std::make_unique<PlayerRepository>(player.get(), playerMovement,
-                                            playerBattle, getCurrentGameMap());
+                                            playerBattle, std::move(getCurrentGameMap()));
     
     enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
-                                            player, getCurrentGameMap());
+                                            player, std::move(getCurrentGameMap()));
 }
 
 void Game::initMenus() {
@@ -271,7 +271,7 @@ void Game::start() {
                 playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE, dt);
             }
 
-            enemiesRepository->setGameMap(getCurrentGameMap());
+            enemiesRepository->setGameMap(std::move(getCurrentGameMap()));
 
             // pressing x for attacking
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
@@ -486,6 +486,6 @@ void Game::changeCurrentMap(int row, int col) {
     // initialize map (or reinitialize?)
     worldMap[currentGameMapRow][currentGameMapCol]->init();
     // define the new game map for the entities
-    if (playerRepository != nullptr) playerRepository->setGameMap(getCurrentGameMap());
-    if (enemiesRepository != nullptr) enemiesRepository->setGameMap(getCurrentGameMap());
+    if (playerRepository != nullptr) playerRepository->setGameMap(std::move(getCurrentGameMap()));
+    if (enemiesRepository != nullptr) enemiesRepository->setGameMap(std::move(getCurrentGameMap()));
 }
