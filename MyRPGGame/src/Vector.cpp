@@ -2,7 +2,11 @@
 
 namespace physics {
 
-    real Vector::norma() {
+    real Vector::norma() const {
+        return (real) sqrt(magnitude());
+    }
+
+    real Vector::magnitude() const {
         return x*x + y*y + z*z;
     }
 
@@ -114,6 +118,14 @@ namespace physics {
         Vector result(x, y, z);
         result /= scalar;
         return result;
+    }
+
+    bool Vector::operator ==(const Vector &other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    bool Vector::operator !=(const Vector &other) const {
+        return !(*this == other);
     }
 
 }

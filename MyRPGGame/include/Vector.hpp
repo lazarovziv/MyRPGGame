@@ -15,7 +15,8 @@ namespace physics {
         Vector(real x, real y, real z = 0) : x(x), y(y), z(z) {};
         ~Vector() = default;
 
-        real norma();
+        real norma() const;
+        real magnitude() const;
         Vector normalize();
         real dot(const Vector &other);
 
