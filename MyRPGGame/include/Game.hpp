@@ -30,9 +30,9 @@ private:
     Constants::GameState state;
     
     // entities
-    std::unique_ptr<Player> player = nullptr;
+    std::shared_ptr<Player> player = nullptr;
     Point ***points;
-    GameMap ***worldMap;
+    std::vector<std::vector<std::shared_ptr<GameMap>>> worldMap;
 
     // repositories
     std::unique_ptr<MenuRepository> menuRepository;
@@ -55,7 +55,7 @@ public:
     static void disposeInstance();
 
     void changeState(Constants::GameState gameState);
-    GameMap* getCurrentGameMap();
+    std::shared_ptr<GameMap> getCurrentGameMap();
     void setCurrentWorldMapRow(int row);
     void setCurrentWorldMapCol(int col);
     

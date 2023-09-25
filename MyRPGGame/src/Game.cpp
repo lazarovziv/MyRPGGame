@@ -16,14 +16,6 @@ void Game::disposeInstance() {
 }
 
 Game::~Game() {
-    for (int row = 0; row < Constants::NUM_ROWS; row++) {
-        for (int col = 0; col < Constants::NUM_COLS; col++) {
-            delete worldMap[row][col];
-        }
-        delete[] worldMap[row];
-    }
-
-    delete worldMap;
     delete title;
 }
 
@@ -55,38 +47,38 @@ Game::Game(const char* str) {
     }
 
     // init world map
-    worldMap = new GameMap **[Constants::NUM_ROWS];
     for (int r = 0; r < Constants::NUM_ROWS; r++) {
-        worldMap[r] = new GameMap *[Constants::NUM_COLS];
+        std::vector<std::shared_ptr<GameMap>> rowVector;
         for (int c = 0; c < Constants::NUM_COLS; c++) {
             // cant go down but can go right, left and up
             if (r == Constants::NUM_ROWS - 1) {
-                worldMap[r][c] = new GameMap(r, c, true, false, true, true, points);
+                rowVector.push_back(std::make_shared<GameMap>(r, c, true, false, true, true, points));
                 continue;
             }
             // cant go up but can go down, right, left
             if (r == 0) {
-                worldMap[r][c] = new GameMap(r, c, false, true, true, true, points);
+                rowVector.push_back(std::make_shared<GameMap>(r, c, false, true, true, true, points));
                 continue;
             }
             // cant go right but can go down, up and left
             if (c == Constants::NUM_COLS - 1) {
-                worldMap[r][c] = new GameMap(r, c, true, true, false, true, points);
+                rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, false, true, points));
                 continue;
             }
             // cant go left but can go right, up and down
             if (c == 0) {
-                worldMap[r][c] = new GameMap(r, c, true, true, true, false, points);
+                rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, false, points));
                 continue;
             }
-            worldMap[r][c] = new GameMap(r, c, true, true, true, true, points);
+            rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, true, points));
         }
+        worldMap.push_back(rowVector);
     }
 
     currentGameMapRow = 1;
     currentGameMapCol = 1;
     
-    this->player = std::make_unique<Player>(PlayerType::KNIGHT,
+    this->player = std::make_shared<Player>(PlayerType::KNIGHT,
                               points[Constants::SCREEN_HEIGHT/2][Constants::SCREEN_WIDTH/2]);
     
     initWorldMap();
@@ -112,7 +104,7 @@ void Game::initEntities() {
                                             playerBattle, getCurrentGameMap());
     
     enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
-                                            player.get(), getCurrentGameMap());
+                                            player, getCurrentGameMap());
 }
 
 void Game::initMenus() {
@@ -369,14 +361,6 @@ void Game::start() {
         // render playing or main menu or game menu
         render();
     }
-
-    // deleting all maps from world map
-    for (int i = 0; i < Constants::NUM_ROWS; i++) {
-        for (int j = 0; j < Constants::NUM_COLS; j++) {
-            delete worldMap[i][j];
-        }
-        delete[] worldMap[i];
-    }
 }
 
 void Game::exitGame(bool *run) {
@@ -389,7 +373,7 @@ void Game::changeState(Constants::GameState gameState) {
     // TODO: change running and canMove local variables in start method
 }
 
-GameMap* Game::getCurrentGameMap() {
+std::shared_ptr<GameMap> Game::getCurrentGameMap() {
     return worldMap[currentGameMapRow][currentGameMapCol];
 }
 
@@ -401,7 +385,7 @@ void Game::render() {
     if (state != Constants::GameState::PLAYING) {
         renderMenu(currentMenu);
     } else {
-        GameMap *map = getCurrentGameMap();
+        std::shared_ptr<GameMap> map = getCurrentGameMap();
         // draw background
         window->draw(*(map->getBackgroundSprite()));
         // drawing unreachable areas
@@ -451,7 +435,7 @@ void Game::updateMenu(Menu *menu, bool *run, bool *move) {
 
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
-    GameMap *startMap = worldMap[currentGameMapRow][currentGameMapRow];
+    std::shared_ptr<GameMap> startMap = worldMap[currentGameMapRow][currentGameMapRow];
     // top exit circle
     auto *startMapTopExitCircle = new Circle(points[TILE_SIZE / 2][FULL_SCREEN_WIDTH / 2 + TILE_SIZE],
                                              TILE_SIZE / 2);
@@ -466,7 +450,7 @@ void Game::initWorldMap() {
     startMap->addLandscape(unreachableTree22);
     startMap->addLandscape(unreachableTree33);
 
-    GameMap* topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
+    std::shared_ptr<GameMap>  topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
     // bottom exit circle
     auto *topMapBottomExitCircle = new Circle(
             points[FULL_SCREEN_HEIGHT-TILE_SIZE/2][FULL_SCREEN_WIDTH/2 + TILE_SIZE],TILE_SIZE/2);
