@@ -1,20 +1,19 @@
 #include "../include/EnemyRepository.hpp"
 
 EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle *battle,
-                                 Player *player, GameMap *gameMap) {
+                                 std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap) {
     this->player = player;
     movementHandler = movement;
     battleHandler = battle;
-    map = gameMap;
     setGameMap(gameMap);
 }
 
 EnemyRepository::~EnemyRepository() {
-    delete movementHandler;
-    delete battleHandler;
+    // delete movementHandler;
+    // delete battleHandler;
 }
 
-void EnemyRepository::setGameMap(GameMap *gameMap) {
+void EnemyRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     map = gameMap;
     movementHandler->setCurrentMap(map);
     // referring player to map is taken care of in player repository
@@ -36,7 +35,7 @@ void EnemyRepository::move(real dt) {
                     movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                 } else {
                     // attack player when reached him
-                    if (attack(player, dt)) {
+                    if (attack(player.get(), dt)) {
                         std::cout << "Attacked player..." << std::endl;
                         // resetting battle interval for the enemy
                         enemy->resetBattleInterval();

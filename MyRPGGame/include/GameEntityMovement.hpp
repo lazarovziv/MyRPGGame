@@ -10,7 +10,7 @@
 class GameEntityMovement {
 private:
     GameEntity *entity;
-    GameMap *currentMap;
+    std::shared_ptr<GameMap> currentMap;
     Point ***gameMapsPoints;
     AnimationManager *animationManager;
     bool isPlayer;
@@ -35,8 +35,8 @@ private:
     void normalizeVector(sf::Vector2f *vector);
 
 public:
-    GameEntityMovement(GameEntity* entity, bool player, GameMap *map);
-    GameEntityMovement(GameEntity* entity, bool player, GameMap *map, Point ***points);
+    GameEntityMovement(GameEntity* entity, bool player, std::shared_ptr<GameMap> map);
+    GameEntityMovement(GameEntity* entity, bool player, std::shared_ptr<GameMap> map, Point ***points);
     ~GameEntityMovement() = default;
     Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
     // TODO: add run method (use acceleration, speed etc.)
@@ -50,7 +50,7 @@ public:
 
     void setEntity(GameEntity &entity);
     GameEntity* getEntity();
-    void setCurrentMap(GameMap *map);
+    void setCurrentMap(std::shared_ptr<GameMap> map);
 };
 
 #endif /* GameEntityMovement_hpp */

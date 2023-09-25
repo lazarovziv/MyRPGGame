@@ -1,6 +1,6 @@
 #include "../include/GameEntityMovement.hpp"
 
-GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, GameMap *map) {
+GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map) {
     this->entity = entity;
     currentMap = map;
     isPlayer = player;
@@ -11,7 +11,7 @@ GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, GameMap 
     animationManager = new AnimationManager(this->entity);
 }
 
-GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, GameMap *map, Point ***points) {
+GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map, Point ***points) {
     this->entity = entity;
     currentMap = map;
     isPlayer = player;
@@ -97,7 +97,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
         return Constants::MoveSuccessValues::NOT_MOVED;
     }
 
-    GameMap *map = currentMap;
+    std::shared_ptr<GameMap> map = currentMap;
 
     real entitySpeed = entity->getSpeed();
     real entityX = entity->getPosition().x;
@@ -106,35 +106,35 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
     Constants::MoveSuccessValues moveSuccessValue;
 
     if (direction == MoveDirection::UP) {
-        moveSuccessValue = moveUp(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveUp(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move up, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_UP) {
             entity->setMoveDirection(MoveDirection::UP);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN) {
-        moveSuccessValue = moveDown(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveDown(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move down, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
         moveSuccessValue == Constants::MoveSuccessValues::CHANGE_DOWN) {
             entity->setMoveDirection(MoveDirection::DOWN);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::RIGHT) {
-        moveSuccessValue = moveRight(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveRight(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move right, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT) {
             entity->setMoveDirection(MoveDirection::RIGHT);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::LEFT) {
-        moveSuccessValue = moveLeft(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveLeft(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move left, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT) {
             entity->setMoveDirection(MoveDirection::LEFT);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::UP_RIGHT) {
-        moveSuccessValue = moveRightUp(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveRightUp(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move right/up, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT ||
@@ -142,7 +142,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::RIGHT);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::UP_LEFT) {
-        moveSuccessValue = moveLeftUp(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveLeftUp(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move left/up, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT ||
@@ -150,7 +150,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::LEFT);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN_RIGHT) {
-        moveSuccessValue = moveRightDown(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveRightDown(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move right/down, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_RIGHT ||
@@ -158,7 +158,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(MoveDirection direction, E
             entity->setMoveDirection(MoveDirection::RIGHT);
         } else return Constants::MoveSuccessValues::FAILURE;
     } else if (direction == MoveDirection::DOWN_LEFT) {
-        moveSuccessValue = moveLeftDown(map, entityX, entityY, entitySpeed, dt);
+        moveSuccessValue = moveLeftDown(map.get(), entityX, entityY, entitySpeed, dt);
         // try and move left/down, if false, collided with something
         if (moveSuccessValue == Constants::MoveSuccessValues::SUCCESS ||
             moveSuccessValue == Constants::MoveSuccessValues::CHANGE_LEFT ||
@@ -684,6 +684,6 @@ GameEntity *GameEntityMovement::getEntity() {
     return entity;
 }
 
-void GameEntityMovement::setCurrentMap(GameMap *map) {
+void GameEntityMovement::setCurrentMap(std::shared_ptr<GameMap> map) {
     currentMap = map;
 }

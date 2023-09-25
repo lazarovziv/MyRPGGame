@@ -9,16 +9,16 @@ private:
     Player *player;
     GameEntityMovement *movementHandler = nullptr;
     GameEntityBattle *battleHandler = nullptr;
-    GameMap *map = nullptr;
+    std::shared_ptr<GameMap> map;
 
     AnimationManager *animationManager = nullptr;
 
 public:
     explicit PlayerRepository(Player *player, GameEntityMovement *movement,
-                              GameEntityBattle *battle, GameMap *gameMap);
+                              GameEntityBattle *battle, std::shared_ptr<GameMap> gameMap);
     ~PlayerRepository() = default; // TODO: delete all handlers and player (same for enemy repository)
 
-    void setGameMap(GameMap *gameMap);
+    void setGameMap(std::shared_ptr<GameMap> gameMap);
     void setLastTimeMoved(std::clock_t time);
     Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
     bool attack(real dt);

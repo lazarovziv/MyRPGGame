@@ -6,17 +6,21 @@
 
 class EnemyRepository {
 private:
-    GameMap *map;
+    std::shared_ptr<GameMap> map;
+    // GameMap *map;
+    // std::unique_ptr<GameEntityMovement> movementHandler;
     GameEntityMovement *movementHandler;
+    // std::unique_ptr<GameEntityBattle> battleHandler;
     GameEntityBattle *battleHandler;
-    Player *player;
+    std::shared_ptr<Player> player;
+    // Player *player;
 
 public:
     explicit EnemyRepository(GameEntityMovement *movement, GameEntityBattle *battle,
-                    Player *player, GameMap *gameMap);
+                    std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap);
     ~EnemyRepository();
 
-    void setGameMap(GameMap *gameMap);
+    void setGameMap(std::shared_ptr<GameMap> gameMap);
 
     void move(real dt);
     bool attack(GameEntity *entity, real dt);
