@@ -13,8 +13,10 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     exitableFromBottom = down;
     exitableFromRight = right;
     exitableFromLeft = left;
-    backgroundSprite = new sf::Sprite();
-    if (texture.loadFromFile("../graphics/maps/map_1_1.png")) {
+//    backgroundSprite = new sf::Sprite();
+    backgroundSprite = std::make_unique<sf::Sprite>();
+
+    if (texture.loadFromFile("../graphics/maps/Sample.png")) {
         std::cout << "Background loaded properly." << std::endl;
     } else std::cout << "Background NOT loaded." << std::endl;
 //    texture.setSmooth(true);
@@ -35,14 +37,14 @@ GameMap::GameMap(int row, int col, Circle *up,
                                                           up != nullptr, down != nullptr,
                                                           right != nullptr, left != nullptr) {
     gameMapPoints = points;
-    topExitCircle = up;
-    bottomExitCircle = down;
-    rightExitCircle = right;
-    leftExitCircle = left;
+    topExitCircle.reset(up);
+    bottomExitCircle.reset(down);
+    rightExitCircle.reset(right);
+    leftExitCircle.reset(left);
 }
 
 GameMap::~GameMap() {
-    delete backgroundSprite;
+//    delete backgroundSprite;
     for (auto & landscape : landscapes) {
         delete landscape;
     }
@@ -51,10 +53,10 @@ GameMap::~GameMap() {
         delete enemy;
     }
 
-    delete leftExitCircle;
-    delete rightExitCircle;
-    delete topExitCircle;
-    delete bottomExitCircle;
+//    delete leftExitCircle;
+//    delete rightExitCircle;
+//    delete topExitCircle;
+//    delete bottomExitCircle;
 
     delete mapGraph;
 }
@@ -68,7 +70,7 @@ int GameMap::getWorldMapCol() const {
 }
 
 sf::Sprite* GameMap::getBackgroundSprite() {
-    return backgroundSprite;
+    return backgroundSprite.get();
 }
 
 bool GameMap::isExitableFromLeft() const {
@@ -134,50 +136,51 @@ void GameMap::init() {
     randX = (randX/16) * 16;
     randY = (randY/16) * 16;
 
-    auto *circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
-    // assuming position is invalid
-    std::vector<bool> validations(landscapes.size());
-    for (int i = 0; i < landscapes.size(); i++) {
-        validations[i] = false;
-    }
-    // true if validations filled with true
-    bool validPosition = false;
-    while (!validPosition) {
-        // checking all unreachable areas and exits (TODO: add other enemies)
-        for (int i = 0; i < landscapes.size(); i++) {
-            if (!landscapes[i]->getCircle()->intersects(circle)) {
-                validations[i] = true;
-            } else {
-                // generating a new position
-                randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
-                randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
-                randX = (randX/16) * 16;
-                randY = (randY/16) * 16;
-                validations[i] = false;
-                // setting to -1 because i is incremented by 1
-                i = -1;
-            }
-            // reached end of array, validating if all is well
-            if (i == landscapes.size() - 1) {
-                bool check = true;
-                // check enemies positions
-                for (int j = 0; j < enemiesVector.size(); j++) {
-                    if (enemiesVector[j]->getCircle()->intersects(circle)) {
-                        // start over
-                        for (int k = 0; k < landscapes.size(); k++) validations[k] = false;
-                    }
-                }
+    // TODO: improve randomness of spawns!!
+    // auto *circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
+    // // assuming position is invalid
+    // std::vector<bool> validations(landscapes.size());
+    // for (int i = 0; i < landscapes.size(); i++) {
+    //     validations[i] = false;
+    // }
+    // // true if validations filled with true
+    // bool validPosition = false;
+    // while (!validPosition) {
+    //     // checking all unreachable areas and exits (TODO: add other enemies)
+    //     for (int i = 0; i < landscapes.size(); i++) {
+    //         if (!landscapes[i]->getCircle()->intersects(circle)) {
+    //             validations[i] = true;
+    //         } else {
+    //             // generating a new position
+    //             randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
+    //             randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+    //             randX = (randX/16) * 16;
+    //             randY = (randY/16) * 16;
+    //             validations[i] = false;
+    //             // setting to -1 because i is incremented by 1
+    //             i = -1;
+    //         }
+    //         // reached end of array, validating if all is well
+    //         if (i == landscapes.size() - 1) {
+    //             bool check = true;
+    //             // check enemies positions
+    //             for (int j = 0; j < enemiesVector.size(); j++) {
+    //                 if (enemiesVector[j]->getCircle()->intersects(circle)) {
+    //                     // start over
+    //                     for (int k = 0; k < landscapes.size(); k++) validations[k] = false;
+    //                 }
+    //             }
 
-                for (int k = 0; k < landscapes.size(); k++) {
-                    if (!validations[k]) check = false;
-                }
-                validPosition = check;
-            }
-        }
-    }
+    //             for (int k = 0; k < landscapes.size(); k++) {
+    //                 if (!validations[k]) check = false;
+    //             }
+    //             validPosition = check;
+    //         }
+    //     }
+    // }
 
-    // deallocating memory
-    delete circle;
+    // // deallocating memory
+    // delete circle;
 
 //    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
     auto *enemy = new NPCEnemy(NPCEnemy::WORM, gameMapPoints[randY][randX]);
@@ -312,8 +315,8 @@ void GameMap::removePlayer() {
     player = nullptr;
 }
 
-void GameMap::setPlayer(Player *player) {
-    this->player = player;
+void GameMap::setPlayer(Player *newPlayer) {
+    this->player = newPlayer;
 }
 
 Player *GameMap::getPlayer() {
@@ -321,35 +324,35 @@ Player *GameMap::getPlayer() {
 }
 
 void GameMap::setTopExitCircle(Circle *circle) {
-    topExitCircle = circle;
+    topExitCircle.reset(circle);
 }
 
 void GameMap::setBottomExitCircle(Circle *circle) {
-    bottomExitCircle = circle;
+    bottomExitCircle.reset(circle);
 }
 
 void GameMap::setRightExitCircle(Circle *circle) {
-    rightExitCircle = circle;
+    rightExitCircle.reset(circle);
 }
 
 void GameMap::setLeftExitCircle(Circle *circle) {
-    leftExitCircle = circle;
+    leftExitCircle.reset(circle);
 }
 
 Circle *GameMap::getTopExitCircle() {
-    return topExitCircle;
+    return topExitCircle.get();
 }
 
 Circle *GameMap::getBottomExitCircle() {
-    return bottomExitCircle;
+    return bottomExitCircle.get();
 }
 
 Circle *GameMap::getRightExitCircle() {
-    return rightExitCircle;
+    return rightExitCircle.get();
 }
 
 Circle *GameMap::getLeftExitCircle() {
-    return leftExitCircle;
+    return leftExitCircle.get();
 }
 
 bool GameMap::operator==(const GameMap &map) const {

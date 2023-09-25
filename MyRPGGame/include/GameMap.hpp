@@ -24,14 +24,15 @@ private:
     bool initializedMapGraph = false; // used also for indicator for player's first arrival
 
     bool exitableFromLeft, exitableFromRight, exitableFromTop, exitableFromBottom;
-    
-    Circle *leftExitCircle = nullptr;
-    Circle *rightExitCircle = nullptr;
-    Circle *topExitCircle = nullptr;
-    Circle *bottomExitCircle = nullptr;
+
+    std::unique_ptr<Circle> leftExitCircle;
+    std::unique_ptr<Circle> rightExitCircle;
+    std::unique_ptr<Circle> topExitCircle;
+    std::unique_ptr<Circle> bottomExitCircle;
 
     sf::Texture texture;
-    sf::Sprite *backgroundSprite;
+//    sf::Sprite *backgroundSprite;
+    std::unique_ptr<sf::Sprite> backgroundSprite;
 
     const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
@@ -73,7 +74,7 @@ public:
     void setIsExitableFromBottom(bool flag);
 
     Player *getPlayer();
-    void setPlayer(Player *player);
+    void setPlayer(Player *newPlayer);
     void removePlayer();
     std::vector<NPCEnemy *> getEnemies();
     void addEnemy(NPCEnemy *enemy);

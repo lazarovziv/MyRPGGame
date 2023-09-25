@@ -5,16 +5,17 @@ PlayerRepository::PlayerRepository(Player *player, GameEntityMovement *movement,
     this->player = player;
     movementHandler = movement;
     battleHandler = battle;
-    setGameMap(gameMap);
+    setGameMap(std::move(gameMap));
     animationManager = new AnimationManager(player);
 }
 
 void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     // setting to-be-replaced map's player to null
-    if (map.get() != nullptr) map->removePlayer();
+    if (map != nullptr) map->removePlayer();
     // changing to the new map
-    map = gameMap;
-    map->setPlayer(player);
+    map = std::move(gameMap);
+//    map->setPlayer(std::move(player));
+    map->setPlayer(std::move(player));
     // updating movement handler
     movementHandler->setCurrentMap(map);
 }
