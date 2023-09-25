@@ -60,7 +60,6 @@ public:
 
     void setMoveInterval(real interval);
 
-    void update(Point ***points, real dt) override;
     void notify() override;
 };
 

@@ -89,26 +89,6 @@ void NPCEnemy::setMoveInterval(real interval) {
     moveInterval = interval;
 }
 
-// TODO: add more functionality or else use GameEntity's update method
-void NPCEnemy::update(Point ***points, real dt) {
-    if (!dead) {
-        sprite->setPosition(position.x, position.y);
-        // updating game entity intervals
-        moveInterval += dt;
-        battleInterval += dt;
-        // npc enemy intervals
-        wanderAreaInterval += dt;
-        // updating entity circles and attack circle
-        entityCircle->setCenter(position.x, position.y);
-        entityRightCircle->setCenter(position.x + speed * dt, position.y);
-        entityLeftCircle->setCenter(position.x - speed * dt, position.y);
-        entityTopCircle->setCenter(position.x, position.y - speed * dt);
-        entityBottomCircle->setCenter(position.x, position.y + speed * dt);
-
-        attackRangeCircle->setCenter(position.x, position.y);
-    }
-}
-
 // TODO: what to do here? how to use observers to my advantage
 void NPCEnemy::notify() {
     // updating battle state

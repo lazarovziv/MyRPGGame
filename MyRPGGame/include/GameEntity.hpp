@@ -179,7 +179,7 @@ public:
     int numOfMovesAvailable();
     void clearMoveStack();
     
-    virtual void update(Point ***points, real dt);
+    void update(Point ***points, real dt);
 };
 
 #endif /* GameEntity_hpp */
