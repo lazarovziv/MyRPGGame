@@ -210,7 +210,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveUp(GameMap *map, real entit
     } else canCollide = entity->getTopCircle()->intersects(map->getPlayer()->getCircle());
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(sf::Vector2f(0, -1), dt);
+        entity->move(physics::Vector(0, -1), dt);
     }
 
 
@@ -254,7 +254,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveDown(GameMap *map, real ent
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(sf::Vector2f(0, 1), dt);
+        entity->move(physics::Vector(0, 1), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
@@ -297,7 +297,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRight(GameMap *map, real en
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(sf::Vector2f(1, 0), dt);
+        entity->move(physics::Vector(1, 0), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
@@ -340,7 +340,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeft(GameMap *map, real ent
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(sf::Vector2f(-1, 0), dt);
+        entity->move(physics::Vector(-1, 0), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
@@ -379,9 +379,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap *map, real e
     }
 
     // direction vector
-    sf::Vector2f directionVector = sf::Vector2f(-1, -1);
-    // normalize
-    normalizeVector(&directionVector);
+    physics::Vector directionVector = physics::Vector(-1, -1);
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
@@ -412,7 +410,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftUp(GameMap *map, real e
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(directionVector, dt);
+        entity->move(directionVector.normalize(), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
@@ -450,9 +448,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap *map, real
     }
 
     // direction vector
-    sf::Vector2f directionVector = sf::Vector2f(-1, 1);
-    // normalize
-    normalizeVector(&directionVector);
+    physics::Vector directionVector = physics::Vector(-1, 1);
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
@@ -483,7 +479,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveLeftDown(GameMap *map, real
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(directionVector, dt);
+        entity->move(directionVector.normalize(), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
@@ -522,9 +518,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap *map, real 
     }
 
     // direction vector
-    sf::Vector2f directionVector = sf::Vector2f(1, -1);
-    // normalize
-    normalizeVector(&directionVector);
+    physics::Vector directionVector = physics::Vector(1, -1);
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
@@ -555,7 +549,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightUp(GameMap *map, real 
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(directionVector, dt);
+        entity->move(directionVector.normalize(), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;
@@ -593,9 +587,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap *map, rea
     }
 
     // direction vector
-    sf::Vector2f directionVector = sf::Vector2f(1, 1);
-    // normalize
-    normalizeVector(&directionVector);
+    physics::Vector directionVector = physics::Vector(1, 1);
 
     // check if the move can overlap with any of the unreachable areas
     for (int i = 0; i < unreachableAreasSize; i++) {
@@ -627,7 +619,7 @@ Constants::MoveSuccessValues GameEntityMovement::moveRightDown(GameMap *map, rea
 
     if (!canCollide) {
         // in legal boundaries
-        entity->setPosition(directionVector, dt);
+        entity->move(directionVector.normalize(), dt);
     }
 
     if (canCollide) return Constants::MoveSuccessValues::FAILURE;

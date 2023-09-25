@@ -17,6 +17,7 @@ project(MyRPGGame)
 
 set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/MenuRepository.cpp
         MyRPGGame/src/Menu.cpp MyRPGGame/src/TerrainGenerator.cpp
+        MyRPGGame/src/Vector.cpp
         MyRPGGame/src/ScriptExecutor.cpp MyRPGGame/src/AnimationManager.cpp
         MyRPGGame/src/Game.cpp MyRPGGame/src/GameEntity.cpp MyRPGGame/src/GameEntityBattle.cpp
         MyRPGGame/src/GameEntityMovement.cpp MyRPGGame/src/GameMap.cpp MyRPGGame/src/Heap.cpp

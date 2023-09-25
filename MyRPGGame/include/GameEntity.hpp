@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
 #include "Circle.hpp"
+#include "Vector.hpp"
 //#include "GameEntityMovement.hpp"
 //class GameEntityMovement;
 class GameEntityMovement;
@@ -42,6 +43,11 @@ protected:
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
     std::map<EntityMovementState, int> movementStateRowMap;
+
+    physics::Vector entityPosition = physics::Vector::ZERO;
+    physics::Vector velocity = physics::Vector::ZERO;
+    physics::Vector acceleration = physics::Vector::ZERO;
+    real inverseMass = 1;
 
     sf::Vector2f position;
     sf::Texture texture;
@@ -124,7 +130,7 @@ public:
     void setY(real y);
     void setPosition(real x, real y);
     void setPosition(Point *point);
-    void setPosition(sf::Vector2f directionVector, real dt);
+    void move(physics::Vector directionVector, real dt);
 
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite); // if sprite is null, we'll create one based on the state

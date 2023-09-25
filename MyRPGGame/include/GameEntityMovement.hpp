@@ -6,6 +6,7 @@
 #include "GameMap.hpp"
 #include "Constants.h"
 #include "AnimationManager.hpp"
+#include "Vector.hpp"
 
 class GameEntityMovement {
 private:

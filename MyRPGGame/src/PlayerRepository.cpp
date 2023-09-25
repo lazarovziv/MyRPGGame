@@ -58,4 +58,6 @@ void PlayerRepository::update(Point ***points, Constants::MoveSuccessValues move
     player->setJustMoved(moveSuccessValue != Constants::MoveSuccessValues::NOT_MOVED &&
     moveSuccessValue != Constants::MoveSuccessValues::FAILURE);
     player->update(points, dt);
+    player->getWeapon()->update(points);
+    player->notifyAll();
 }

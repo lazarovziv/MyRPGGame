@@ -2,6 +2,8 @@
 
 namespace physics {
 
+    Vector Vector::ZERO = Vector(0, 0, 0);
+
     real Vector::norma() const {
         return (real) sqrt(magnitude());
     }

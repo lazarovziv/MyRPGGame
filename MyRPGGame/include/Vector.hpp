@@ -7,11 +7,13 @@
 namespace physics {
 
     class Vector {
-    private:
+    public:
         real x;
         real y;
         real z;
-    public:
+
+        static Vector ZERO;
+
         Vector(real x, real y, real z = 0) : x(x), y(y), z(z) {};
         ~Vector() = default;
 

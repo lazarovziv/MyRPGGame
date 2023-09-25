@@ -35,6 +35,8 @@ GameEntity::GameEntity() {
     movementStateRowMap[EntityMovementState::JUMP] = Constants::JUMP_ROW;
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
+
+    entityPosition = physics::Vector(position.x, position.y);
 }
 
 GameEntity::GameEntity(Point *center) {
@@ -86,6 +88,8 @@ GameEntity::GameEntity(Point *center) {
 
     position.x = entityCircle->getCenter()->getX();
     position.y = entityCircle->getCenter()->getY();
+
+    entityPosition = physics::Vector(position.x, position.y);
 }
 
 GameEntity::~GameEntity() {
@@ -163,11 +167,12 @@ void GameEntity::setY(real y) {
 
 // TODO: add direction vector and normalize it for diagonal movement?
 void GameEntity::setPosition(real x, real y) {
-    position.x = x;
-    position.y = y;
+    entityPosition.x = x;
+    entityPosition.y = y;
+
     if (entityCircle != nullptr) {
-        entityCircle->getCenter()->setX(position.x);
-        entityCircle->getCenter()->setY(position.y);
+        entityCircle->getCenter()->setX(entityPosition.x);
+        entityCircle->getCenter()->setY(entityPosition.y);
         // if not created
     }
 //    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
@@ -186,9 +191,10 @@ void GameEntity::setPosition(Point *point) {
 //    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
 }
 
-void GameEntity::setPosition(sf::Vector2f directionVector, real dt) {
-    position.x = position.x + speed * dt * directionVector.x;
-    position.y = position.y + speed * dt * directionVector.y;
+void GameEntity::move(physics::Vector directionVector, real dt) {
+    entityPosition += directionVector * speed * dt;
+//    position.x = position.x + speed * dt * directionVector.x;
+//    position.y = position.y + speed * dt * directionVector.y;
 }
 
 bool GameEntity::createMovementStateSprite(EntityMovementState state) {
@@ -563,6 +569,9 @@ Weapon* GameEntity::getWeapon() {
 
 void GameEntity::update(Point ***points, real dt) {
     if (!dead) {
+        position.x = entityPosition.x;
+        position.y = entityPosition.y;
+
         sprite->setPosition(position.x, position.y);
         // updating intervals
         moveInterval += dt;
