@@ -12,7 +12,7 @@ namespace physics {
         return x*x + y*y + z*z;
     }
 
-    Vector Vector::normalize() {
+    Vector Vector::normalized() const {
         return (*this) / norma();
     }
 

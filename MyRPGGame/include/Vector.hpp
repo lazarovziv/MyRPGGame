@@ -19,7 +19,7 @@ namespace physics {
 
         real norma() const;
         real magnitude() const;
-        Vector normalize();
+        Vector normalized() const;
         real dot(const Vector &other);
 
         void operator +=(const Vector &other);
