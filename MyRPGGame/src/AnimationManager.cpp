@@ -69,10 +69,9 @@ int AnimationManager::getMovementStateCount(EntityMovementState state) {
 
 // TODO: create animation function for combat and for that another entity variable to cover the combats' counters
 void AnimationManager::animate(EntityMovementState state, real dt) {
+    entity->setMovementState(state);
     int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
     int movementStateCount = movementStateCounterMap[state];
-
-    real x = 8.3232f;
 
     if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
         incrementCount(state);
