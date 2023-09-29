@@ -40,6 +40,7 @@ protected:
     int step = 0;
     bool inBattle = false;
     bool dead = false;
+    bool running = false;
     MoveDirection moveDirection;
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
@@ -148,6 +149,8 @@ public:
     void setSprite(sf::Sprite *newSprite);
     Weapon *getWeapon();
 
+    bool isRunning() const;
+    void setIsRunning(const bool flag);
     bool canAttack() const;
     void resetBattleInterval();
     bool didJustMove() const;

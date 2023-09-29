@@ -176,7 +176,18 @@ void GameEntity::setPosition(physics::Vector newPosition) {
 }
 
 void GameEntity::move(physics::Vector directionVector, real dt) {
-    (*rigidBody) += directionVector * speed * dt; // affects the position attribute in rigidBody
+    if (directionVector == physics::Vector::ZERO) return;
+    (*rigidBody) += running ? directionVector * speed * 2 * dt : directionVector * speed * dt; // affects the position attribute in rigidBody
+    incrementDistanceTraveledSinceIdle(speed * dt);
+
+    real horizontalDirection = directionVector.x;
+    real verticalDirection = directionVector.y;
+    if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
+    else if (horizontalDirection < 0) moveDirection = MoveDirection::LEFT;
+    else {
+        if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
+        else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
+    }
 }
 
 bool GameEntity::createMovementStateSprite(EntityMovementState state) {
@@ -444,6 +455,14 @@ physics::Vector GameEntity::getPosition() const {
     return (*rigidBody).getPosition();
 }
 
+bool GameEntity::isRunning() const {
+    return running;
+}
+
+void GameEntity::setIsRunning(const bool flag) {
+    running = flag;
+}
+
 bool GameEntity::canAttack() const {
     return battleInterval >= BATTLE_INTERVAL_DEFAULT;
 }
@@ -528,29 +547,6 @@ void GameEntity::update(real dt) {
         moveInterval += dt;
         battleInterval += dt;
         // TODO: update physics
-        rigidBody->update(dt);
+//        rigidBody->update(dt);
     }
-}
-
-void GameEntity::pushToMoveStack(Point *move) {
-    movesStack.push(move);
-}
-
-Point *GameEntity::popMove() {
-    if (numOfMovesAvailable() == 0) return nullptr;
-    auto *move = movesStack.top();
-    movesStack.pop();
-    return move;
-}
-
-int GameEntity::numOfMovesAvailable() {
-    return movesStack.size();
-}
-
-bool GameEntity::areAvailableMoves() {
-    return !movesStack.empty();
-}
-
-void GameEntity::clearMoveStack() {
-    while (!movesStack.empty()) movesStack.pop();
 }
