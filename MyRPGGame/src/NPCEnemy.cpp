@@ -1,6 +1,6 @@
 #include "../include/NPCEnemy.hpp"
 
-NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
+NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initialPosition, physics::RigidBodyType::CIRCLE) {
     this->type = type;
     level = 1;
     maxHealthPoints = 20;
@@ -25,12 +25,14 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
-    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
-    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
-    wanderAreaRadius = entityCircle->getRadius() * 12;
-    wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
-    battleAreaRadius = (float) (wanderAreaRadius * 2.5);
-    battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
+
+    rigidBody->setMass(2);
+//    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
+//    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
+//    wanderAreaRadius = entityCircle->getRadius() * 12;
+//    wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
+//    battleAreaRadius = (float) (wanderAreaRadius * 2.5);
+//    battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
 
     // TODO: choose random floats in defined location radius for each enemy in map
 }
@@ -69,12 +71,14 @@ bool NPCEnemy::canGoToWanderArea() {
 
 bool NPCEnemy::isInBattleArea() {
     if (battleAreaCircle == nullptr) return false;
-    return battleAreaCircle->isPointInCircle(entityCircle->getCenter());
+//    return battleAreaCircle->isPointInCircle(entityCircle->getCenter());
+    return false;
 }
 
 bool NPCEnemy::isInWanderArea() {
     if (wanderAreaCircle == nullptr) return false;
-    return wanderAreaCircle->isPointInCircle(entityCircle->getCenter());
+//    return wanderAreaCircle->isPointInCircle(entityCircle->getCenter());
+    return false;
 }
 
 Circle *NPCEnemy::getWanderAreaCircle() {

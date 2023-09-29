@@ -30,10 +30,10 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, real x, real y) {
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2); // or set texture.size / 2, texture.size / 2
     sprite->setPosition(position.x, position.y);
-    entityCircle = std::make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
+//    entityCircle = std::make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
 }
 
-LandscapeEntity::LandscapeEntity(LandscapeType type, Point *center) : GameEntity(center) {
+LandscapeEntity::LandscapeEntity(LandscapeType type, physics::Vector initialPosition) : GameEntity(initialPosition, physics::RigidBodyType::BOX) {
     this->type = type;
 //    RectangleShape rectangle0(Vector2f(200, 200));
     switch (this->type) {
@@ -59,7 +59,7 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, Point *center) : GameEntity
     sprite->setTexture(texture);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2); // or set texture.size / 2, texture.size / 2
     sprite->setPosition(position.x, position.y);
-    entityCircle->setRadius(entityCircle->getRadius()*2);
+//    entityCircle->setRadius(entityCircle->getRadius()*2);
 }
 
 LandscapeType LandscapeEntity::getType() {

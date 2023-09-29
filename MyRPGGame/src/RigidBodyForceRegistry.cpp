@@ -17,6 +17,10 @@ namespace physics {
         registrations.clear();
     }
 
+    std::vector<RigidBodyForceRegistry::RigidBodyForceItem> RigidBodyForceRegistry::getItems() const {
+        return registrations;
+    }
+
     void RigidBodyForceRegistry::update(real dt) {
         for (registry::iterator it = registrations.begin(); it != registrations.end(); it++) {
             it->generator->update(it->body, dt);

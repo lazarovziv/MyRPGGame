@@ -37,40 +37,31 @@ Game::Game(const char* str) {
     
     state = Constants::GameState::IN_MENU;
 
-    // init all possible points
-    points = new Point **[Constants::FULL_SCREEN_HEIGHT];
-    for (int row = 0; row < Constants::FULL_SCREEN_HEIGHT; row++) {
-        points[row] = new Point *[Constants::FULL_SCREEN_WIDTH];
-        for (int col = 0; col < Constants::FULL_SCREEN_WIDTH; col++) {
-            points[row][col] = new Point(col, row);
-        }
-    }
-
     // init world map
     for (int r = 0; r < Constants::NUM_ROWS; r++) {
         std::vector<std::shared_ptr<GameMap>> rowVector;
         for (int c = 0; c < Constants::NUM_COLS; c++) {
             // cant go down but can go right, left and up
             if (r == Constants::NUM_ROWS - 1) {
-                rowVector.push_back(std::make_shared<GameMap>(r, c, true, false, true, true, points));
+                rowVector.push_back(std::make_shared<GameMap>(r, c, true, false, true, true));
                 continue;
             }
             // cant go up but can go down, right, left
             if (r == 0) {
-                rowVector.push_back(std::make_shared<GameMap>(r, c, false, true, true, true, points));
+                rowVector.push_back(std::make_shared<GameMap>(r, c, false, true, true, true));
                 continue;
             }
             // cant go right but can go down, up and left
             if (c == Constants::NUM_COLS - 1) {
-                rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, false, true, points));
+                rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, false, true));
                 continue;
             }
             // cant go left but can go right, up and down
             if (c == 0) {
-                rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, false, points));
+                rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, false));
                 continue;
             }
-            rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, true, points));
+            rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, true));
         }
         worldMap.push_back(rowVector);
     }
@@ -79,7 +70,9 @@ Game::Game(const char* str) {
     currentGameMapCol = 1;
     
     this->player = std::make_shared<Player>(PlayerType::KNIGHT,
-                              points[Constants::SCREEN_HEIGHT/2][Constants::SCREEN_WIDTH/2]);
+                                            physics::Vector{ (real) Constants::SCREEN_HEIGHT/2,
+                                                            (real) Constants::SCREEN_WIDTH/2 }
+                                            );
     
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
@@ -95,9 +88,9 @@ Game::Game(const char* str) {
 
 void Game::initEntities() {
     // initialize player's systems
-    auto *playerMovement = new GameEntityMovement(player.get(), true, std::move(getCurrentGameMap()), points);
+    auto *playerMovement = new GameEntityMovement(player.get(), true, std::move(getCurrentGameMap()));
     auto *playerBattle = new GameEntityBattle(player.get());
-    auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()), points);
+    auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()));
     auto *enemiesBattle = new GameEntityBattle(nullptr);
 
     playerRepository = std::make_unique<PlayerRepository>(player.get(), playerMovement,
@@ -155,11 +148,15 @@ void Game::start() {
 
     EntityMovementState playerMovementState = EntityMovementState::WALK;
 
+    physics::Vector directionVector = physics::Vector::ZERO;
+
     while (running) {
         dt = clock.restart().asSeconds();
         fpsText.setString("FPS: " + std::to_string(1/dt));
         dtText.setString("DT: " + std::to_string(dt));
         dt *= multiplier;
+        // setting direction to 0
+        directionVector.resetCoordinates();
 
         // TODO: delta time screws things if it's not in the pollEvent loop. processing input is outside of the loop we need to multiply each position by dt
         while (window->pollEvent(event)) {
@@ -173,6 +170,7 @@ void Game::start() {
         canMove = state == Constants::GameState::PLAYING;
         eventKeyCode = event.key.code;
 
+        // TODO: use H key for running to add to the direction vector in GameEntityMovement
         if (state == Constants::GameState::PLAYING) {
             // moving input
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) && canMove) {
@@ -180,96 +178,31 @@ void Game::start() {
                 keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
                 // pressing the H key will trigger running state
                 playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
-                // allowing diagonal movement
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::F] = true;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::S] = true;
-                } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                }
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && canMove) {
+                directionVector += physics::Vector::UP_DIRECTION;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && canMove) {
                 keysPressedMap[sf::Keyboard::D] = true;
                 // pressing the H key will trigger running state
                 keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
                 playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
-                // allowing diagonal movement
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::F] = true;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::S] = true;
-                } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN, playerMovementState, dt);
-                    moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                }
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F) && canMove) {
+                directionVector += physics::Vector::DOWN_DIRECTION;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::F) && canMove) {
                 keysPressedMap[sf::Keyboard::F] = true;
                 // pressing the H key will trigger running state
                 keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
                 playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
-                // allowing diagonal movement
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_RIGHT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::E] = true;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_RIGHT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::D] = true;
-                } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::RIGHT, playerMovementState, dt);
-                    moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                }
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && canMove) {
+                directionVector += physics::Vector::RIGHT_DIRECTION;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && canMove) {
                 keysPressedMap[sf::Keyboard::S] = true;
                 // pressing the H key will trigger running state
                 keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
                 playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
-                // allowing diagonal movement
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::UP_LEFT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::E] = true;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                    moveSuccessValue = playerRepository->move(MoveDirection::DOWN_LEFT, playerMovementState, dt);
-                    moved = moved && moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                    keysPressedMap[sf::Keyboard::D] = true;
-                } else {
-                    moveSuccessValue = playerRepository->move(MoveDirection::LEFT, playerMovementState, dt);
-                    moved = moveSuccessValue != Constants::MoveSuccessValues::FAILURE;
-                }
+                directionVector += physics::Vector::LEFT_DIRECTION;
             }
 
-            if (moved || keysPressedMap[sf::Keyboard::E] || keysPressedMap[sf::Keyboard::S] 
-            || keysPressedMap[sf::Keyboard::D] || keysPressedMap[sf::Keyboard::F]) {
-                // switching world map according to value returned from move function
-                switch (moveSuccessValue) {
-                    case Constants::MoveSuccessValues::CHANGE_UP:
-                        changeCurrentMap(currentGameMapRow-1, currentGameMapCol);
-                        break;
-                    case Constants::MoveSuccessValues::CHANGE_DOWN:
-                        changeCurrentMap(currentGameMapRow+1, currentGameMapCol);
-                        break;
-                    case Constants::MoveSuccessValues::CHANGE_RIGHT:
-                        changeCurrentMap(currentGameMapRow, currentGameMapCol+1);
-                        break;
-                    case Constants::MoveSuccessValues::CHANGE_LEFT:
-                        changeCurrentMap(currentGameMapRow, currentGameMapCol-1);
-                        break;
-                    default: break;
-                }
-            } else if (!keysPressedMap[sf::Keyboard::J] && player->canGoIdle()) {
-                playerRepository->move(player->getMoveDirection(), EntityMovementState::IDLE, dt);
-            }
+            playerRepository->move(directionVector, dt);
 
             enemiesRepository->setGameMap(std::move(getCurrentGameMap()));
 
@@ -343,7 +276,7 @@ void Game::start() {
 
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
-            enemiesRepository->move(dt);
+//            enemiesRepository->move(dt);
             // update all entities' states when playing
             update(moveSuccessValue, dt);
             // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
@@ -410,20 +343,20 @@ void Game::render() {
 }
 
 void Game::renderMenu(Menu *menu) {
-    menu->render(player->getCircle()->getCenter()->getX(),
-                 player->getCircle()->getCenter()->getY(), window.get());
+    menu->render(player->getPosition().x,
+                 player->getPosition().y, window.get());
 }
 
 void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, real dt) {
     // updating player state
-    playerRepository->update(points, playerMoveSuccessValue, dt);
+    playerRepository->update(playerMoveSuccessValue, dt);
     // updating current map states
     enemiesRepository->update(dt);
-    cameraView->setCenter(player->getPosition());
+    cameraView->setCenter(player->getRenderPosition());
     window->setView(*cameraView);
     // setting at the left hand corner in according to the player's position
-    fpsText.setPosition(player->getPosition().x - SCREEN_WIDTH/2, player->getPosition().y - SCREEN_HEIGHT/2);
-    dtText.setPosition(player->getPosition().x - SCREEN_WIDTH/2, player->getPosition().y - SCREEN_HEIGHT/2 + 2*fpsText.getGlobalBounds().height);
+    fpsText.setPosition(player->getRenderPosition().x - SCREEN_WIDTH/2, player->getRenderPosition().y - SCREEN_HEIGHT/2);
+    dtText.setPosition(player->getRenderPosition().x - SCREEN_WIDTH/2, player->getRenderPosition().y - SCREEN_HEIGHT/2 + 2*fpsText.getGlobalBounds().height);
 }
 
 void Game::updateMenu(Menu *menu, bool *run, bool *move) {
@@ -437,29 +370,29 @@ void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
     std::shared_ptr<GameMap> startMap = worldMap[currentGameMapRow][currentGameMapRow];
     // top exit circle
-    auto *startMapTopExitCircle = new Circle(points[TILE_SIZE / 2][FULL_SCREEN_WIDTH / 2 + TILE_SIZE],
-                                             TILE_SIZE / 2);
+    auto *startMapTopExitCircle = new Circle((real) TILE_SIZE / 2, (real) FULL_SCREEN_WIDTH / 2 + TILE_SIZE,
+                                             (real) TILE_SIZE / 2);
     startMap->setTopExitCircle(startMapTopExitCircle);
     // adding unreachable areas and landscapes
-    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, points[FULL_SCREEN_HEIGHT/6][3*FULL_SCREEN_WIDTH/16]);
-    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*FULL_SCREEN_HEIGHT/3][9*FULL_SCREEN_WIDTH/16]);
-    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*FULL_SCREEN_HEIGHT/3][7*FULL_SCREEN_WIDTH/16]);
-    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, points[(int)1.7*FULL_SCREEN_HEIGHT/3][5*FULL_SCREEN_WIDTH/16]);
+    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, (real) FULL_SCREEN_HEIGHT/6, (real) 3*FULL_SCREEN_WIDTH/16);
+    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, (real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 9*FULL_SCREEN_WIDTH/16);
+    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, (real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 7*FULL_SCREEN_WIDTH/16);
+    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, (real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 5*FULL_SCREEN_WIDTH/16);
     startMap->addLandscape(unreachableTree0);
     startMap->addLandscape(unreachableTree1);
     startMap->addLandscape(unreachableTree22);
     startMap->addLandscape(unreachableTree33);
 
-    std::shared_ptr<GameMap>  topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
+    std::shared_ptr<GameMap> topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
     // bottom exit circle
     auto *topMapBottomExitCircle = new Circle(
-            points[FULL_SCREEN_HEIGHT-TILE_SIZE/2][FULL_SCREEN_WIDTH/2 + TILE_SIZE],TILE_SIZE/2);
+    (real) FULL_SCREEN_HEIGHT-TILE_SIZE/2, (real) FULL_SCREEN_WIDTH/2 + TILE_SIZE,(real) TILE_SIZE/2);
     topMap->setBottomExitCircle(topMapBottomExitCircle);
     // adding unreachable areas and landscapes
     auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE,
-                                                 points[5*FULL_SCREEN_HEIGHT/24][(int)6.5*FULL_SCREEN_WIDTH/8]);
+                                                 (real) 5*FULL_SCREEN_HEIGHT/24, (real) 6.5*FULL_SCREEN_WIDTH/8);
     auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE,
-                                                 points[7*FULL_SCREEN_HEIGHT/12][3*FULL_SCREEN_WIDTH/16]);
+                                                 (real) 7*FULL_SCREEN_HEIGHT/12, (real) 3*FULL_SCREEN_WIDTH/16);
     topMap->addLandscape(unreachableTree2);
     topMap->addLandscape(unreachableTree3);
 

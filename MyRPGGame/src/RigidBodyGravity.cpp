@@ -1,6 +1,7 @@
 #include "../include/RigidBodyGravity.hpp"
 
 namespace physics {
+
     RigidBodyGravity::RigidBodyGravity(const physics::Vector &gravity) {
         this->gravity = Vector{gravity.x, gravity.y, gravity.z};
     }

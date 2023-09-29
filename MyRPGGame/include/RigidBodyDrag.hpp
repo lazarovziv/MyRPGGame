@@ -15,7 +15,7 @@ namespace physics {
     public:
         RigidBodyDrag(real k1, real k2) : k1(k1), k2(k2) {};
 
-        virtual void update(RigidBody *body, real dt);
+        virtual void update(RigidBody *body, real dt) override;
     };
 }
 

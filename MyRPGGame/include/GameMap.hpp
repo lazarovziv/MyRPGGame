@@ -12,6 +12,8 @@
 #include "Constants.h"
 #include "LandscapeEntity.hpp"
 #include "Graph.hpp"
+#include "RigidBodyForceRegistry.hpp"
+#include "RigidBodyGravity.hpp"
 class NPCEnemy;
 
 class GameMap {
@@ -19,7 +21,6 @@ private:
     // in relation to the 2d array of world map
     int worldMapRow;
     int worldMapCol;
-    Point ***gameMapPoints;
     Graph<Point *> *mapGraph;
     bool initializedMapGraph = false; // used also for indicator for player's first arrival
 
@@ -41,12 +42,14 @@ private:
     std::vector<NPCEnemy *> enemiesVector;
     std::vector<GameEntity *> entities;
     Player *player;
+    // for handling all collisions and forces in the map
+    std::unique_ptr<physics::RigidBodyGravity> gravityForceGenerator;
+    std::unique_ptr<physics::RigidBodyForceRegistry> forceRegistry;
     
 public:
     GameMap(int row, int col);
     GameMap(int row, int col, bool up, bool down, bool right, bool left);
-    GameMap(int row, int col, bool up, bool down, bool right, bool left, Point ***points);
-    GameMap(int row, int col, Circle *up, Circle *down, Circle *right, Circle *left, Point ***points);
+    GameMap(int row, int col, Circle *up, Circle *down, Circle *right, Circle *left);
     ~GameMap();
 
     int getWorldMapRow() const;
@@ -74,6 +77,7 @@ public:
     void setIsExitableFromBottom(bool flag);
 
     Player *getPlayer();
+    physics::RigidBodyForceRegistry *getForceRegistry() const;
     void setPlayer(Player *newPlayer);
     void removePlayer();
     std::vector<NPCEnemy *> getEnemies();
@@ -92,7 +96,7 @@ public:
     Circle *getRightExitCircle();
     Circle *getLeftExitCircle();
 
-    static int generateRandom(int min, int max);
+    static real generateRandom(int min, int max);
 
     void update(real dt);
     

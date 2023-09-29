@@ -12,7 +12,7 @@ namespace physics {
     public:
         RigidBodyGravity(const Vector &gravity);
 
-        virtual void update(RigidBody *body, real dt);
+        virtual void update(RigidBody *body, real dt) override;
     };
 }
 

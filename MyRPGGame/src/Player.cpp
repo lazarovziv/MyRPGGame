@@ -13,25 +13,7 @@ Player::Player() : GameEntity() {
     sprite->setPosition(position.x, position.y);
 }
 
-Player::Player(PlayerType type) : GameEntity() {
-    expPoints = 0;
-    strengthPoints = 0;
-    intelligencePoints = 0;
-    criticalHitsPoints = 0;
-    this->type = type;
-
-    setPlayerType(type);
-    entityCircle = std::make_unique<Circle>(position.x, position.y, Constants::TILE_SIZE/4);
-    attackRangeCircle = std::make_unique<Circle>(position.x, position.y, (entityCircle->getRadius() * (float) 10/3) + weapon->getHitRadius());
-
-    for (int state = 0; state < 10; state++) {
-        auto movementState = static_cast<EntityMovementState>(state);
-        createMovementStateSprite(movementState);
-    }
-//    sprite = movementStateSpritesMap[EntityMovementState::IDLE];
-}
-
-Player::Player(PlayerType type, Point *center) : GameEntity(center) {
+Player::Player(PlayerType type, physics::Vector initialPosition) : GameEntity(initialPosition, physics::RigidBodyType::CIRCLE) {
     expPoints = 0;
     strengthPoints = 0;
     intelligencePoints = 0;
@@ -49,7 +31,7 @@ Player::Player(PlayerType type, Point *center) : GameEntity(center) {
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
     setPlayerType(type);
-    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
+    rigidBody->setMass(2);
     // TODO: add entityMovementState field for handling it more easily
 }
 

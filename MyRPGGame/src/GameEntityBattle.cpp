@@ -36,7 +36,7 @@ bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
     // checking attack interval
     if (!entity->canAttack()) return false;
     // checking attack range
-    if (isInAttackRange(enemy)) {
+    if (/*isInAttackRange(enemy)*/entity->canAttack()) {
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
@@ -74,8 +74,4 @@ bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
     std::cout << "Defence: " << enemy.getCurrentDefencePoints() << std::endl;
 //    entity->resetBattleInterval(); // moved to repository
     return true;
-}
-
-bool GameEntityBattle::isInAttackRange(GameEntity &enemy) {
-    return entity->getAttackRangeCircle()->intersects(enemy.getCircle());
 }

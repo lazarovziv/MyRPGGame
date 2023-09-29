@@ -20,6 +20,7 @@ namespace physics {
         void addItem(RigidBody *body, RigidBodyForceGenerator *generator);
         void removeItem(RigidBody *body, RigidBodyForceGenerator *generator);
         void clearRegistrations();
+        registry getItems() const;
 
         void update(real dt);
     };

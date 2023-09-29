@@ -6,6 +6,8 @@ PlayerRepository::PlayerRepository(Player *player, GameEntityMovement *movement,
     movementHandler = movement;
     battleHandler = battle;
     setGameMap(std::move(gameMap));
+    forceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, (real) -9.81, 0});
+    std::cout << "HEY" << std::endl;
     animationManager = new AnimationManager(player);
 }
 
@@ -24,14 +26,19 @@ void PlayerRepository::setLastTimeMoved(std::clock_t time) {
     player->setLastTimeMoved(time);
 }
 
-// TODO: add listeners invocation
-Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState, real dt) {
-    if (movementState == EntityMovementState::RUN) player->setSpeed(2*Constants::BASE_ENTITY_SPEED);
-    else if (movementState == EntityMovementState::WALK) player->setSpeed(Constants::BASE_ENTITY_SPEED);
-    Constants::MoveSuccessValues moved = movementHandler->move(direction, movementState, dt);
-    return moved;
-    // TODO: add animate call here and remove animation handling from move method in GameEntityMovement
+bool PlayerRepository::move(physics::Vector direction, real dt) {
+    // vector is normalized in the movement handler
+    return movementHandler->move(direction, dt) == Constants::MoveSuccessValues::SUCCESS;
 }
+
+// TODO: add listeners invocation
+//Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState, real dt) {
+//    if (movementState == EntityMovementState::RUN) player->setSpeed(2*Constants::BASE_ENTITY_SPEED);
+//    else if (movementState == EntityMovementState::WALK) player->setSpeed(Constants::BASE_ENTITY_SPEED);
+//    Constants::MoveSuccessValues moved = movementHandler->move(direction, movementState, dt);
+//    return moved;
+//    // TODO: add animate call here and remove animation handling from move method in GameEntityMovement
+//}
 
 // TODO: add listeners invocation
 bool PlayerRepository::attack(real dt) {
@@ -53,11 +60,12 @@ bool PlayerRepository::attack(real dt) {
     return singleSuccess;
 }
 
-void PlayerRepository::update(Point ***points, Constants::MoveSuccessValues moveSuccessValue, real dt) {
+void PlayerRepository::update(Constants::MoveSuccessValues moveSuccessValue, real dt) {
     // setting justMoved attribute in respect to move attempt (or none)
     player->setJustMoved(moveSuccessValue != Constants::MoveSuccessValues::NOT_MOVED &&
     moveSuccessValue != Constants::MoveSuccessValues::FAILURE);
-    player->update(points, dt);
-    player->getWeapon()->update(points);
+    forceGenerator->update(player->getRigidBody(), dt);
+    player->update(dt);
+    player->getWeapon()->update(dt);
     player->notifyAll();
 }

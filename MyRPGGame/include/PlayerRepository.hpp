@@ -9,6 +9,7 @@ private:
     Player *player;
     GameEntityMovement *movementHandler = nullptr;
     GameEntityBattle *battleHandler = nullptr;
+    std::unique_ptr<physics::RigidBodyGravity> forceGenerator;
     std::shared_ptr<GameMap> map;
 
     AnimationManager *animationManager = nullptr;
@@ -20,9 +21,10 @@ public:
 
     void setGameMap(std::shared_ptr<GameMap> gameMap);
     void setLastTimeMoved(std::clock_t time);
-    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
+    bool move(physics::Vector direction, real dt);
+//    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
     bool attack(real dt);
-    void update(Point ***points, Constants::MoveSuccessValues moveSuccessValue, real dt);
+    void update(Constants::MoveSuccessValues moveSuccessValue, real dt);
 };
 
 #endif //MYRPGGAME_PLAYERREPOSITORY_HPP

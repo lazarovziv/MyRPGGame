@@ -33,7 +33,7 @@ std::vector<Menu*>* Menu::getSubMenus() {
     return subMenus;
 }
 
-void Menu::render(int currentWindowX, int currentWindowY, sf::RenderWindow *window) {
+void Menu::render(real currentWindowX, real currentWindowY, sf::RenderWindow *window) {
     for (int i = 0; i < numOfMenuItems; i++) {
         // center all items
         menuItems->at(i).setPosition(currentWindowX, currentWindowY + (i-1) * Constants::TILE_SIZE);

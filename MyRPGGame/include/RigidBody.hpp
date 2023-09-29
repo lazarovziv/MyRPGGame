@@ -77,6 +77,12 @@ namespace physics {
         real getDepth() const;
         Vector getTopRightCornerPosition();
         Vector getBottomLeftCornerPosition();
+
+        // bodies for collision when entities trying to exit map's bounds
+        static Box RIGHT_END_SCREEN;
+        static Box LEFT_END_SCREEN;
+        static Box TOP_END_SCREEN;
+        static Box BOTTOM_END_SCREEN;
     };
 }
 

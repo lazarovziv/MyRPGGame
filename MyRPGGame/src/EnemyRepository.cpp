@@ -32,7 +32,7 @@ void EnemyRepository::move(real dt) {
 //                if (player->didJustMove()) movementHandler->moveTowardsEntity(player, map->getMapGraph());
                 // calculate path to player
                 if (enemy->areAvailableMoves()) {
-                    movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
+//                    movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                 } else {
                     // attack player when reached him
                     if (attack(player.get(), dt)) {
@@ -48,7 +48,7 @@ void EnemyRepository::move(real dt) {
                 if (enemy->isInWanderArea()) {
                     // keep on going to center of wander area if haven't reached it
                     if (enemy->areAvailableMoves()) {
-                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
+//                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                     } else {
                         // TODO: make enemy move in one direction for a period of time and then change it to another direction randomly
                         // move randomly
@@ -58,7 +58,7 @@ void EnemyRepository::move(real dt) {
                 } else {
                     // go back to wander area
                     if (enemy->areAvailableMoves()) {
-                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
+//                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                     } /* else movementHandler->moveTowardsPoint(enemy->getWanderAreaCircle()->getCenter(),
                                                              map->getMapGraph()); */
                 }

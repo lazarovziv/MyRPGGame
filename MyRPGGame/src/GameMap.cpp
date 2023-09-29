@@ -23,24 +23,26 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     backgroundSprite->setTexture(texture);
     backgroundSprite->setOrigin(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
     backgroundSprite->setPosition(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
-}
 
-GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left, Point ***points) : GameMap(row, col, up, down, right, left) {
-    gameMapPoints = points;
-    mapGraph = new Graph<Point *>();
+    // initializing gravity for map
+    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, (real) -9.81, 0});
+    forceRegistry = std::make_unique<physics::RigidBodyForceRegistry>();
+    forceRegistry->addItem(&physics::Box::RIGHT_END_SCREEN, gravityForceGenerator.get());
+    forceRegistry->addItem(&physics::Box::LEFT_END_SCREEN, gravityForceGenerator.get());
+    forceRegistry->addItem(&physics::Box::TOP_END_SCREEN, gravityForceGenerator.get());
+    forceRegistry->addItem(&physics::Box::BOTTOM_END_SCREEN, gravityForceGenerator.get());
 }
 
 // setting circles as nullptr means player can't exit from that direction
 GameMap::GameMap(int row, int col, Circle *up,
                  Circle *down, Circle *right,
-                 Circle *left, Point ***points) : GameMap(row, col,
-                                                          up != nullptr, down != nullptr,
-                                                          right != nullptr, left != nullptr) {
-    gameMapPoints = points;
+                 Circle *left) {
+//    mapGraph = new Graph<Point *>();
     topExitCircle.reset(up);
     bottomExitCircle.reset(down);
     rightExitCircle.reset(right);
     leftExitCircle.reset(left);
+
 }
 
 GameMap::~GameMap() {
@@ -116,7 +118,11 @@ void GameMap::addLandscape(LandscapeEntity *entity) {
 
 std::vector<NPCEnemy*> GameMap::getEnemies() {
     return enemiesVector;
-} 
+}
+
+physics::RigidBodyForceRegistry* GameMap::getForceRegistry() const {
+    return forceRegistry.get();
+}
 
 void GameMap::init() {
     // don't add more enemies
@@ -124,14 +130,14 @@ void GameMap::init() {
 
     // TODO: init map entities when player first enters the map
     if (!initializedMapGraph) {
-        initGraph();
+//        initGraph();
         // init map
     }
 
     // seeding
     srand((unsigned int) time(nullptr));
-    int randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
-    int randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+    real randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
+    real randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
 
     randX = (randX/16) * 16;
     randY = (randY/16) * 16;
@@ -183,7 +189,7 @@ void GameMap::init() {
     // delete circle;
 
 //    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
-    auto *enemy = new NPCEnemy(NPCEnemy::WORM, gameMapPoints[randY][randX]);
+    auto *enemy = new NPCEnemy(NPCEnemy::WORM, physics::Vector{randX, randY});
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
@@ -191,15 +197,15 @@ void GameMap::init() {
 }
 
 void GameMap::initGraph() {
-    initGraphVertices();
-    initGraphEdges();
+//    initGraphVertices();
+//    initGraphEdges();
     // remove all vertices which are occupied by landscapes
     for (auto &landscape : landscapes) {
         for (int row = 0; row < Constants::FULL_SCREEN_HEIGHT; row++) {
             for (int col = 0; col < Constants::FULL_SCREEN_WIDTH; col++) {
-                if (landscape->getCircle()->isPointInCircle(gameMapPoints[row][col])) {
-                    mapGraph->removeVertex(gameMapPoints[row][col]);
-                }
+//                if (landscape->getCircle()->isPointInCircle(gameMapPoints[row][col])) {
+//                    mapGraph->removeVertex(gameMapPoints[row][col]);
+//                }
             }
         }
     }
@@ -210,7 +216,7 @@ void GameMap::initGraphVertices() {
     // add vertices (in relevant points)
     for (int x = 0; x <= Constants::FULL_SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
         for (int y = 0; y <= Constants::FULL_SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
-            mapGraph->addVertex(gameMapPoints[x][y]);
+//            mapGraph->addVertex(gameMapPoints[x][y]);
         }
     }
 
@@ -221,43 +227,43 @@ void GameMap::initGraphEdges() {
     bool toAdd = true;
     for (int x = Constants::BASE_ENTITY_SPEED; x <= Constants::FULL_SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED; x += Constants::BASE_ENTITY_SPEED) {
         for (int y = Constants::BASE_ENTITY_SPEED; y <= Constants::FULL_SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED; y += Constants::BASE_ENTITY_SPEED) {
-            if (!mapGraph->isInGraph(gameMapPoints[x][y])) continue;
+//            if (!mapGraph->isInGraph(gameMapPoints[x][y])) continue;
             toAdd = true;
             // down, right, left
             if (x == Constants::BASE_ENTITY_SPEED) {
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
                 toAdd = false;
             }
                 // up, right, left
             else if (x == Constants::FULL_SCREEN_HEIGHT-Constants::BASE_ENTITY_SPEED) {
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
                 toAdd = false;
             }
                 // up, down, left
             else if (y == Constants::FULL_SCREEN_WIDTH-Constants::BASE_ENTITY_SPEED) {
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
                 toAdd = false;
             }
                 // up, down, right
             else if (y == Constants::BASE_ENTITY_SPEED) {
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
                 toAdd = false;
             }
 
             // up, down, right, left
             if (toAdd) {
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
-                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x-Constants::BASE_ENTITY_SPEED][y], 1); // up
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x+Constants::BASE_ENTITY_SPEED][y], 1); // down
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y+Constants::BASE_ENTITY_SPEED], 1); // right
+//                mapGraph->addEdge(gameMapPoints[x][y], gameMapPoints[x][y-Constants::BASE_ENTITY_SPEED], 1); // left
             }
         }
     }
@@ -270,6 +276,7 @@ Graph<Point *> *GameMap::getMapGraph() {
 void GameMap::addEnemy(NPCEnemy *enemy) {
     enemiesVector.push_back(enemy);
     entities.push_back(enemy);
+    forceRegistry->addItem(enemy->getRigidBody(), gravityForceGenerator.get());
     // registering observer
     if (player != nullptr) player->registerObserver(enemy);
 }
@@ -293,21 +300,23 @@ void GameMap::removeAllEnemies() {
     enemiesVector.clear();
 }   
 
-int GameMap::generateRandom(int min, int max) {
+real GameMap::generateRandom(int min, int max) {
 //    float random = ((float) rand()) / (float) RAND_MAX;
 //    float diff = max - min;
 //    float r = random * diff;
 //    return min + r;
-    return min + (rand() % (max-min+1));
+    return (real) min + (rand() % (max-min+1));
 }
 
 void GameMap::update(real dt) {
+    // updating physics
+    forceRegistry->update(dt);
     for (auto &enemy : enemiesVector) {
         // checking if enemy is dead
         if (enemy->isDead()) {
             // remove it from currentEnemies and unregistering it from subject's observers
             removeEnemy(enemy);
-        } else enemy->update(gameMapPoints, dt); // if enemy is still alive
+        } else enemy->update(dt); // if enemy is still alive
     }
 }
 

@@ -13,6 +13,10 @@ namespace physics {
         real z;
 
         static Vector ZERO;
+        static Vector UP_DIRECTION;
+        static Vector DOWN_DIRECTION;
+        static Vector RIGHT_DIRECTION;
+        static Vector LEFT_DIRECTION;
 
         Vector(real x, real y, real z = 0) : x(x), y(y), z(z) {};
         ~Vector() = default;
@@ -21,6 +25,8 @@ namespace physics {
         real magnitude() const;
         Vector normalized() const;
         real dot(const Vector &other);
+
+        void resetCoordinates();
 
         void operator +=(const Vector &other);
         void operator *=(const Vector &other);

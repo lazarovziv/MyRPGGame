@@ -31,7 +31,6 @@ private:
     
     // entities
     std::shared_ptr<Player> player = nullptr;
-    Point ***points;
     std::vector<std::vector<std::shared_ptr<GameMap>>> worldMap;
 
     // repositories

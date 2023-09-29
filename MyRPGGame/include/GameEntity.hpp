@@ -10,7 +10,8 @@
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
 #include "Circle.hpp"
-#include "Vector.hpp"
+#include "RigidBody.hpp"
+
 //#include "GameEntityMovement.hpp"
 //class GameEntityMovement;
 class GameEntityMovement;
@@ -43,11 +44,8 @@ protected:
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
     std::map<EntityMovementState, int> movementStateRowMap;
-
-    physics::Vector entityPosition = physics::Vector::ZERO;
-    physics::Vector velocity = physics::Vector::ZERO;
-    physics::Vector acceleration = physics::Vector::ZERO;
-    real inverseMass = 1;
+    // field for all collisions and position of the entity
+    std::unique_ptr<physics::RigidBody> rigidBody;
 
     sf::Vector2f position;
     sf::Texture texture;
@@ -57,10 +55,6 @@ protected:
     std::vector<sf::Texture> movementStateTextures;
     std::map<EntityMovementState, sf::Sprite*> movementStateSpritesMap;
     sf::IntRect spriteRect;
-    std::unique_ptr<Circle> entityCircle = nullptr;
-    std::unique_ptr<Circle> attackRangeCircle = nullptr;
-    // circle positioned in potentially next steps for the player (instead of creating new ones in move method)
-    std::unique_ptr<Circle> entityRightCircle, entityLeftCircle, entityTopCircle, entityBottomCircle;
 //    GameMap* currentGameMap;
     std::unique_ptr<Weapon> weapon;
 
@@ -86,7 +80,7 @@ private:
     
 public:
     GameEntity();
-    explicit GameEntity(Point *center);
+    explicit GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType);
     virtual ~GameEntity();
     // getters
     long getID() const;
@@ -110,10 +104,13 @@ public:
     EntityMovementState getMovementState() const;
     std::map<MoveDirection, int> getMoveDirectionsSpritesMap() const;
     std::map<EntityMovementState, int> getMovementStateRowMap();
-    sf::Vector2f getPosition() const;
+    sf::Vector2f getRenderPosition() const;
     sf::Sprite* getSprite() const;
     sf::IntRect getRectangle() const; // sprite.getGlobalBounds()
     void setIntRectPosition(int left, int top, int width, int height);
+
+    physics::RigidBody *getRigidBody() const;
+    physics::Vector getPosition() const;
     
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
@@ -128,8 +125,8 @@ public:
     void incrementStep();
     void setX(real x);
     void setY(real y);
-    void setPosition(real x, real y);
-    void setPosition(Point *point);
+    void setPosition(real x, real y, real z = 0);
+    void setPosition(physics::Vector newPosition);
     void move(physics::Vector directionVector, real dt);
 
     bool createMovementStateSprite(EntityMovementState state);
@@ -146,15 +143,6 @@ public:
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
     void decreaseCurrentDefencePoints(int amount);
-    
-    bool isEntityInAttackRange(GameEntity &entity);
-    bool intersects(GameEntity &entity);
-    Circle* getCircle();
-    Circle* getRightCircle();
-    Circle* getLeftCircle();
-    Circle* getTopCircle();
-    Circle* getBottomCircle();
-    Circle* getAttackRangeCircle();
 
     sf::Sprite* getMovementStateSprite(EntityMovementState state);
     void setSprite(sf::Sprite *newSprite);
@@ -185,7 +173,7 @@ public:
     int numOfMovesAvailable();
     void clearMoveStack();
     
-    void update(Point ***points, real dt);
+    void update(real dt);
 };
 
 #endif /* GameEntity_hpp */

@@ -35,11 +35,9 @@ GameEntity::GameEntity() {
     movementStateRowMap[EntityMovementState::JUMP] = Constants::JUMP_ROW;
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
-
-    entityPosition = physics::Vector(position.x, position.y);
 }
 
-GameEntity::GameEntity(Point *center) {
+GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType) {
     level = 1;
     maxHealthPoints = 50;
     currentHealthPoints = maxHealthPoints;
@@ -78,18 +76,21 @@ GameEntity::GameEntity(Point *center) {
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
-    entityCircle = std::make_unique<Circle>(center->getX(), center->getY(), (real) Constants::TILE_SIZE/4);
-    entityRightCircle = std::make_unique<Circle>(center->getX() + speed, center->getY(), (real) Constants::TILE_SIZE/4);
-    entityLeftCircle = std::make_unique<Circle>(center->getX() - speed, center->getY(), (real) Constants::TILE_SIZE/4);
-    entityTopCircle = std::make_unique<Circle>(center->getX(), center->getY() - speed, (real) Constants::TILE_SIZE/4);
-    entityBottomCircle = std::make_unique<Circle>(center->getX(), center->getY() + speed, (real) Constants::TILE_SIZE/4);
+    switch (rigidBodyType) {
+        case physics::RigidBodyType::CIRCLE: {
+            rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z, (real) Constants::TILE_SIZE/4);
+            break;
+        }
+        case physics::RigidBodyType::BOX: {
+            rigidBody = std::make_unique<physics::Box>(initialPosition.x, initialPosition.y, initialPosition.z, (real) Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+            break;
+        }
+        default:
+            break;
+    }
 
-    attackRangeCircle = std::make_unique<Circle>(entityCircle->getCenter(), (real) Constants::TILE_SIZE/4);
-
-    position.x = entityCircle->getCenter()->getX();
-    position.y = entityCircle->getCenter()->getY();
-
-    entityPosition = physics::Vector(position.x, position.y);
+    position.x = rigidBody->getPosition().x;
+    position.y = rigidBody->getPosition().y;
 }
 
 GameEntity::~GameEntity() {
@@ -166,35 +167,16 @@ void GameEntity::setY(real y) {
 }
 
 // TODO: add direction vector and normalize it for diagonal movement?
-void GameEntity::setPosition(real x, real y) {
-    entityPosition.x = x;
-    entityPosition.y = y;
-
-    if (entityCircle != nullptr) {
-        entityCircle->getCenter()->setX(entityPosition.x);
-        entityCircle->getCenter()->setY(entityPosition.y);
-        // if not created
-    }
-//    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
+void GameEntity::setPosition(real x, real y, real z) {
+    rigidBody->setPosition(x, y, z);
 }
 
-void GameEntity::setPosition(Point *point) {
-    position.x = point->getX();
-    position.y = point->getY();
-    if (entityCircle != nullptr) {
-        entityCircle->setCenter(point);
-        // if not created
-    }
-    if (attackRangeCircle != nullptr) {
-        attackRangeCircle->setCenter(point);
-    }
-//    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
+void GameEntity::setPosition(physics::Vector newPosition) {
+    rigidBody->setPosition(newPosition.x, newPosition.y, newPosition.z);
 }
 
 void GameEntity::move(physics::Vector directionVector, real dt) {
-    entityPosition += directionVector * speed * dt;
-//    position.x = position.x + speed * dt * directionVector.x;
-//    position.y = position.y + speed * dt * directionVector.y;
+    (*rigidBody) += directionVector * speed * dt; // affects the position attribute in rigidBody
 }
 
 bool GameEntity::createMovementStateSprite(EntityMovementState state) {
@@ -300,14 +282,7 @@ bool GameEntity::addMovementStateSprite(EntityMovementState state, sf::Sprite *n
 }
 
 void GameEntity::setWeapon(WeaponType type) {
-    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), type);
-//    // initializing attackRangeCircle according to weapon
-//    if (attackRangeCircle != nullptr) {
-//        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
-//    } else {
-//        attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
-//        cout << attackRangeCircle->getCenter()->getX() << endl;
-//    }
+    weapon = std::make_unique<Weapon>(rigidBody->getPosition(), type);
 }
 
 void GameEntity::setIsInBattle(bool inBattle) {
@@ -433,7 +408,7 @@ std::map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
     return movementStateRowMap;
 }
 
-sf::Vector2f GameEntity::getPosition() const {
+sf::Vector2f GameEntity::getRenderPosition() const {
     return position;
 }
 
@@ -459,6 +434,14 @@ void GameEntity::setIntRectPosition(int left, int top, int width, int height) {
     spriteRect.width = width;
     spriteRect.height = height;
     sprite->setTextureRect(spriteRect);
+}
+
+physics::RigidBody* GameEntity::getRigidBody() const {
+    return rigidBody.get();
+}
+
+physics::Vector GameEntity::getPosition() const {
+    return (*rigidBody).getPosition();
 }
 
 bool GameEntity::canAttack() const {
@@ -531,59 +514,21 @@ void GameEntity::incrementIdleAnimationInterval(real dt) {
     idleAnimationInterval += dt;
 }
 
-bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
-    return attackRangeCircle->intersects(entity.entityCircle.get());
-}
-
-bool GameEntity::intersects(GameEntity &entity) {
-    return entityCircle->intersects(entity.entityCircle.get());
-}
-
-Circle* GameEntity::getCircle() {
-    return entityCircle.get();
-}
-
-Circle* GameEntity::getRightCircle() {
-    return entityRightCircle.get();
-}
-
-Circle* GameEntity::getLeftCircle() {
-    return entityLeftCircle.get();
-}
-
-Circle* GameEntity::getTopCircle() {
-    return entityTopCircle.get();
-}
-
-Circle* GameEntity::getBottomCircle() {
-    return entityBottomCircle.get();
-}
-
-Circle* GameEntity::getAttackRangeCircle() {
-    return attackRangeCircle.get();
-}
-
 Weapon* GameEntity::getWeapon() {
     return weapon.get();
 }
 
-void GameEntity::update(Point ***points, real dt) {
+void GameEntity::update(real dt) {
     if (!dead) {
-        position.x = entityPosition.x;
-        position.y = entityPosition.y;
+        position.x = rigidBody->getPosition().x;
+        position.y = rigidBody->getPosition().y;
 
         sprite->setPosition(position.x, position.y);
         // updating intervals
         moveInterval += dt;
         battleInterval += dt;
-        // updating entity circles and attack circle
-        entityCircle->setCenter(position.x, position.y);
-        entityRightCircle->setCenter(position.x + speed * dt, position.y);
-        entityLeftCircle->setCenter(position.x - speed * dt, position.y);
-        entityTopCircle->setCenter(position.x, position.y - speed * dt);
-        entityBottomCircle->setCenter(position.x, position.y + speed * dt);
-
-        attackRangeCircle->setCenter(position.x, position.y);
+        // TODO: update physics
+        rigidBody->update(dt);
     }
 }
 

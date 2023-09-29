@@ -117,6 +117,27 @@ namespace physics {
         return Circle::radius;
     }
 
+    Box Box::RIGHT_END_SCREEN = Box{(real) Constants::FULL_SCREEN_WIDTH + 0.5,
+                                    (real) Constants::FULL_SCREEN_HEIGHT/2,
+                                    Constants::REAL_MAX, // very tall
+                                    (real) 1,
+                                    (real) Constants::FULL_SCREEN_HEIGHT};
+    Box Box::LEFT_END_SCREEN = Box{(real) -0.5,
+                                    (real) Constants::FULL_SCREEN_HEIGHT/2,
+                                    Constants::REAL_MAX, // very tall
+                                    (real) 1,
+                                    (real) Constants::FULL_SCREEN_HEIGHT};
+    Box Box::TOP_END_SCREEN = Box{(real) Constants::FULL_SCREEN_WIDTH/2,
+                                    (real) -0.5,
+                                    Constants::REAL_MAX, // very tall
+                                    (real) Constants::FULL_SCREEN_WIDTH,
+                                    (real) 1};
+    Box Box::BOTTOM_END_SCREEN = Box{(real) Constants::FULL_SCREEN_WIDTH/2,
+                                  (real) Constants::FULL_SCREEN_HEIGHT + 0.5,
+                                  Constants::REAL_MAX, // very tall
+                                  (real) Constants::FULL_SCREEN_WIDTH,
+                                  (real) 1};
+
     Box::Box(real x, real y, real z, real width, real height, real depth) : RigidBody(RigidBodyType::BOX, x, y, z) {
         this->width = width;
         this->height = height;
