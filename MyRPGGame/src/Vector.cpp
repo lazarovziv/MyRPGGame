@@ -24,6 +24,11 @@ namespace physics {
         return x * other.x + y * other.y + z * other.z;
     }
 
+    real Vector::distance(const physics::Vector &other) {
+        return (real) sqrt(pow(x - other.y, 2) + pow(y - other.y, 2) +
+                           pow(z - other.z, 2));
+    }
+
     void Vector::resetCoordinates() {
         x = 0;
         y = 0;

@@ -2,64 +2,45 @@
 
 namespace physics {
 
-    bool physics::resolveCollision(RigidBody *first, RigidBody *second, real dt) {
-        if (!resolveVelocity(first, second, dt)) return false;
-        return resolveInterpenetration(first, second, dt);
-    }
-
-    real physics::calculateSeparatingVelocity(RigidBody *first, RigidBody *second) {
-        Vector relativeVelocity = first->getVelocity();
-        relativeVelocity -= second->getVelocity();
-        // calculate the direction
-        Vector normal = (first->getPosition() - second->getPosition()).normalized();
-        // return whether they're at the same direction
-        return relativeVelocity.dot(normal);
-    }
-
-    bool physics::resolveVelocity(RigidBody *first, RigidBody *second, real dt) {
-        real separatingVelocity = physics::calculateSeparatingVelocity(first, second);
-        // if traveling at the same direction, no need to resolve velocity
-        if (separatingVelocity > 0) return false;
-
-        real restitution = first->getRestitution() < second->getRestitution() ?
-                first->getRestitution() : second->getRestitution();
-        real sepVelocity = -separatingVelocity * restitution;
-        real deltaVelocity = sepVelocity - separatingVelocity;
-
-        real totalInverseMass = first->getInverseMass();
-        totalInverseMass += second->getInverseMass();
-        // if both have infinite mass, stop
-        if (totalInverseMass <= 0) return false;
-        // impulse scalar,
-        real impulse = deltaVelocity / totalInverseMass;
-        // calculate direction normal of collision
-        Vector normal = (first->getPosition() - second->getPosition()).normalized();
-        // impulse vector
-        Vector impulsePerInverseMass = normal * impulse;
-
-        // apply the impulses
-        first->incrementVelocity(impulsePerInverseMass * first->getInverseMass() * dt);
-        second->incrementVelocity(impulsePerInverseMass * -second->getInverseMass() * dt);
-
-        return true;
-    }
-
-    bool physics::resolveInterpenetration(RigidBody *first, RigidBody *second, real dt) {
-        // calculate penetration based on rigid body types
-        Vector firstToSecond = first->getPosition() - second->getPosition();
-        real penetration = firstToSecond.magnitude() - ((real) 0.16); // 0.16 is the error epsilon
-        // no penetration
-        if (penetration <= 0) return false;
-        real totalInverseMass = first->getInverseMass() + second->getInverseMass();
-        // infinite mass
-        if (totalInverseMass <= 0) return false;
-        // calculate direction normal of collision
-        Vector normal = (first->getPosition() - second->getPosition()).normalized();
-        // direction vector
-        Vector movePerInverseMass = normal * (-penetration / totalInverseMass);
-        // apply penetration (+= operator acts on the position vector)
-        (*first) += movePerInverseMass * first->getInverseMass() * dt;
-        (*second) += movePerInverseMass * second->getInverseMass() * dt;
+    bool physics::resolveCollisions(physics::RigidBody *first, physics::RigidBody *second, real dt) {
+        // referring to first and second as of type Circle
+        Vector separator = second->getPosition() - first->getPosition();
+        Vector relativeDirection = separator.normalized();
+        Vector relativeVelocity = first->getVelocity() - second->getVelocity();
+        // if moving in the same direction
+        if (relativeVelocity.dot(relativeDirection) > 0) return false;
+        real penetrationDistance = 0;
+        // divide into different types of bodies
+        if (first->getBodyType() == RigidBodyType::CIRCLE) {
+            if (second->getBodyType() == RigidBodyType::CIRCLE) {
+                penetrationDistance = ((Circle*)first)->getRadius() + ((Circle*)second)->getRadius() - separator.norma();
+            } else if (second->getBodyType() == RigidBodyType::BOX) {
+                Vector firstSeparatorDistance = Vector{abs(first->getPosition().x - second->getPosition().x),
+                                                       abs(first->getPosition().y - second->getPosition().y)};
+                if (firstSeparatorDistance.x > ((Box*)second)->getWidth()/2 + ((Circle*)first)->getRadius()) return false;
+                if (firstSeparatorDistance.y > ((Box*)second)->getHeight()/2 + ((Circle*)first)->getRadius()) return false;
+                penetrationDistance = firstSeparatorDistance.distance(second->getPosition());
+                if (penetrationDistance <= pow(((Circle*)first)->getRadius(), 2)) return false;
+            }
+        } else if (first->getBodyType() == RigidBodyType::BOX) {
+            if (second->getBodyType() == RigidBodyType::CIRCLE) {
+                Vector secondSeparatorDistance = Vector{abs(second->getPosition().x - first->getPosition().x),
+                                                       abs(second->getPosition().y - first->getPosition().y)};
+                if (secondSeparatorDistance.x > ((Box*)first)->getWidth()/2 + ((Circle*)second)->getRadius()) return false;
+                if (secondSeparatorDistance.y > ((Box*)first)->getHeight()/2 + ((Circle*)second)->getRadius()) return false;
+                penetrationDistance = secondSeparatorDistance.distance(first->getPosition());
+                if (penetrationDistance <= pow(((Circle*)second)->getRadius(), 2)) return false;
+            } else if (second->getBodyType() == RigidBodyType::BOX) {
+                // TODO: todo
+            }
+        } // more body types
+        // calculated relevant penetration distance
+        if (penetrationDistance < 0) return false;
+        // setting the separation distance for each body
+        real firstDistance = second->getMass()/(first->getMass() + second->getMass());
+        real secondDistance = first->getMass()/(first->getMass() + second->getMass());
+        (*first) += relativeDirection * dt * -penetrationDistance * firstDistance;
+        (*second) += relativeDirection * dt * penetrationDistance * secondDistance;
         return true;
     }
 }
