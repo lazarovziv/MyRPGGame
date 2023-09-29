@@ -3,14 +3,17 @@
 namespace physics {
 
     void RigidBodyForceRegistry::addItem(physics::RigidBody *body, physics::RigidBodyForceGenerator *generator) {
-        RigidBodyForceItem item;
+        RigidBodyForceItem item = {};
         item.body = body;
         item.generator = generator;
         registrations.push_back(item);
     }
 
     void RigidBodyForceRegistry::removeItem(physics::RigidBody *body, physics::RigidBodyForceGenerator *generator) {
-
+        RigidBodyForceItem item = {};
+        item.body = body;
+        item.generator = generator;
+//        registrations.erase(std::find(registrations.begin(), registrations.end(), item));
     }
 
     void RigidBodyForceRegistry::clearRegistrations() {
@@ -22,8 +25,8 @@ namespace physics {
     }
 
     void RigidBodyForceRegistry::update(real dt) {
-        for (registry::iterator it = registrations.begin(); it != registrations.end(); it++) {
-            it->generator->update(it->body, dt);
+        for (auto &item : registrations) {
+            item.generator->update(item.body, dt);
         }
     }
 }

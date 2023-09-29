@@ -2,6 +2,7 @@
 #define MYRPGGAME_RIGIDBODY_HPP
 
 #include "Vector.hpp"
+#include <memory>
 
 namespace physics {
     enum class RigidBodyType {
@@ -10,11 +11,11 @@ namespace physics {
 
     class RigidBody {
     protected:
-        Vector position = Vector::ZERO;
-        Vector velocity = Vector::ZERO;
-        Vector acceleration = Vector::ZERO;
+        std::unique_ptr<Vector> position;
+        std::unique_ptr<Vector> velocity;
+        std::unique_ptr<Vector> acceleration;
         // used for D'Alembert rule, accumulating all forces that act on the rigid body
-        Vector forceAccumulator = Vector::ZERO;
+        std::unique_ptr<Vector> forceAccumulator;
         real restitution;
         // 1/mass
         real inverseMass;
@@ -26,9 +27,9 @@ namespace physics {
         RigidBody(RigidBodyType type, real x, real y, real z = 0);
         ~RigidBody() = default;
 
-        Vector getPosition() const;
-        Vector getVelocity() const;
-        Vector getAcceleration() const;
+        Vector getPosition();
+        Vector getVelocity();
+        Vector getAcceleration();
         real getRestitution() const;
         real getInverseMass() const;
         real getMass() const;
