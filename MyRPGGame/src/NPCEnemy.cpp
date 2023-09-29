@@ -26,7 +26,7 @@ NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initi
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
 
-    rigidBody->setMass(2);
+    rigidBody->setMass(200);
 //    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
 //    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
 //    wanderAreaRadius = entityCircle->getRadius() * 12;

@@ -5,7 +5,7 @@ EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle 
     this->player = player;
     movementHandler = movement;
     battleHandler = battle;
-    setGameMap(gameMap);
+    setGameMap(std::move(gameMap));
 }
 
 EnemyRepository::~EnemyRepository() {
@@ -31,7 +31,7 @@ void EnemyRepository::move(real dt) {
             if (enemy->isInBattle() && enemy->isInBattleArea()) {
 //                if (player->didJustMove()) movementHandler->moveTowardsEntity(player, map->getMapGraph());
                 // calculate path to player
-                if (enemy->areAvailableMoves()) {
+                if (/*enemy->areAvailableMoves()*/false) {
 //                    movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                 } else {
                     // attack player when reached him
@@ -47,7 +47,7 @@ void EnemyRepository::move(real dt) {
                 // go to wander area and move random in there
                 if (enemy->isInWanderArea()) {
                     // keep on going to center of wander area if haven't reached it
-                    if (enemy->areAvailableMoves()) {
+                    if (/*enemy->areAvailableMoves()*/false) {
 //                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                     } else {
                         // TODO: make enemy move in one direction for a period of time and then change it to another direction randomly
@@ -57,7 +57,7 @@ void EnemyRepository::move(real dt) {
                     }
                 } else {
                     // go back to wander area
-                    if (enemy->areAvailableMoves()) {
+                    if (/*enemy->areAvailableMoves()*/false) {
 //                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
                     } /* else movementHandler->moveTowardsPoint(enemy->getWanderAreaCircle()->getCenter(),
                                                              map->getMapGraph()); */
