@@ -35,7 +35,7 @@ Game::Game(const char* str) {
     initMenus();
     menuRepository->setMenu(currentMenu); // first menu is the game menu
     
-    state = Constants::GameState::IN_MENU;
+    state = Constants::GameState::PLAYING;
 
     // init world map
     for (int r = 0; r < Constants::NUM_ROWS; r++) {
@@ -71,8 +71,7 @@ Game::Game(const char* str) {
     
     this->player = std::make_shared<Player>(PlayerType::KNIGHT,
                                             physics::Vector{ (real) Constants::SCREEN_HEIGHT/2,
-                                                            (real) Constants::SCREEN_WIDTH/2 }
-                                            );
+                                                             (real) Constants::SCREEN_WIDTH/2 });
     
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
@@ -82,8 +81,6 @@ Game::Game(const char* str) {
     dtText.setFillColor(sf::Color::Blue);
     fpsText.setFont(fpsFont);
     dtText.setFont(fpsFont);
-    // init first map
-    getCurrentGameMap()->init();
 }
 
 void Game::initEntities() {
@@ -93,11 +90,11 @@ void Game::initEntities() {
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()));
     auto *enemiesBattle = new GameEntityBattle(nullptr);
 
-    playerRepository = std::make_unique<PlayerRepository>(player.get(), playerMovement,
-                                            playerBattle, std::move(getCurrentGameMap()));
+    playerRepository = std::make_unique<PlayerRepository>(player, playerMovement,
+                                            playerBattle, getCurrentGameMap());
     
     enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
-                                            player, std::move(getCurrentGameMap()));
+                                            player, getCurrentGameMap());
 }
 
 void Game::initMenus() {
@@ -202,9 +199,9 @@ void Game::start() {
                 directionVector += physics::Vector::LEFT_DIRECTION;
             }
 
-            playerRepository->move(directionVector, dt);
+            playerRepository->move(directionVector, keysPressedMap[sf::Keyboard::H], dt);
 
-            enemiesRepository->setGameMap(std::move(getCurrentGameMap()));
+            enemiesRepository->setGameMap(getCurrentGameMap());
 
             // pressing x for attacking
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
@@ -321,10 +318,6 @@ void Game::render() {
         std::shared_ptr<GameMap> map = getCurrentGameMap();
         // draw background
         window->draw(*(map->getBackgroundSprite()));
-        // drawing unreachable areas
-        for (int i = 0; i < map->getLandscapes().size(); i++) {
-            window->draw(*(map->getLandscapes()[i]->getSprite()));
-        }
         // draw fps and dt
         window->draw(fpsText);
         window->draw(dtText);
@@ -337,6 +330,10 @@ void Game::render() {
         }
         window->draw(*(player->getSprite()));
         window->draw(*(player->getWeapon()->getSprite()));
+        // drawing unreachable areas
+        for (int i = 0; i < map->getLandscapes().size(); i++) {
+            window->draw(*(map->getLandscapes()[i]->getSprite()));
+        }
     }
     // display all drawn sprites
     window->display();
@@ -374,10 +371,10 @@ void Game::initWorldMap() {
                                              (real) TILE_SIZE / 2);
     startMap->setTopExitCircle(startMapTopExitCircle);
     // adding unreachable areas and landscapes
-    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, (real) FULL_SCREEN_HEIGHT/6, (real) 3*FULL_SCREEN_WIDTH/16);
-    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, (real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 9*FULL_SCREEN_WIDTH/16);
-    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, (real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 7*FULL_SCREEN_WIDTH/16);
-    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, (real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 5*FULL_SCREEN_WIDTH/16);
+    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) FULL_SCREEN_HEIGHT/6, (real) 3*FULL_SCREEN_WIDTH/16});
+    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 9*FULL_SCREEN_WIDTH/16});
+    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 7*FULL_SCREEN_WIDTH/16});
+    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 5*FULL_SCREEN_WIDTH/16});
     startMap->addLandscape(unreachableTree0);
     startMap->addLandscape(unreachableTree1);
     startMap->addLandscape(unreachableTree22);
@@ -390,9 +387,9 @@ void Game::initWorldMap() {
     topMap->setBottomExitCircle(topMapBottomExitCircle);
     // adding unreachable areas and landscapes
     auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE,
-                                                 (real) 5*FULL_SCREEN_HEIGHT/24, (real) 6.5*FULL_SCREEN_WIDTH/8);
+                                                 physics::Vector{(real) 5*FULL_SCREEN_HEIGHT/24, (real) 6.5*FULL_SCREEN_WIDTH/8});
     auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE,
-                                                 (real) 7*FULL_SCREEN_HEIGHT/12, (real) 3*FULL_SCREEN_WIDTH/16);
+                                                 physics::Vector{(real) 7*FULL_SCREEN_HEIGHT/12, (real) 3*FULL_SCREEN_WIDTH/16});
     topMap->addLandscape(unreachableTree2);
     topMap->addLandscape(unreachableTree3);
 
@@ -412,7 +409,7 @@ void Game::changeCurrentMap(int row, int col) {
     if (row < 0 || row >= Constants::NUM_ROWS) return;
     if (col < 0 || col >= Constants::NUM_COLS) return;
     // abandoning previous map and setting its player attribute to null
-    worldMap[currentGameMapRow][currentGameMapCol]->setPlayer(nullptr);
+    worldMap[currentGameMapRow][currentGameMapCol]->removePlayer();
     // change current map
     setCurrentWorldMapRow(row);
     setCurrentWorldMapCol(col);
