@@ -25,7 +25,7 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     backgroundSprite->setPosition(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
 
     // initializing gravity for map
-    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, (real) -9.81, 0});
+    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, 0, (real) -9.81});
     forceRegistry = std::make_unique<physics::RigidBodyForceRegistry>();
     forceRegistry->addItem(&physics::Box::RIGHT_END_SCREEN, gravityForceGenerator.get());
     forceRegistry->addItem(&physics::Box::LEFT_END_SCREEN, gravityForceGenerator.get());
@@ -142,53 +142,6 @@ void GameMap::init() {
     randX = (randX/16) * 16;
     randY = (randY/16) * 16;
 
-    // TODO: improve randomness of spawns!!
-    // auto *circle = new Circle(randX, randY, Constants::TILE_SIZE/2);
-    // // assuming position is invalid
-    // std::vector<bool> validations(landscapes.size());
-    // for (int i = 0; i < landscapes.size(); i++) {
-    //     validations[i] = false;
-    // }
-    // // true if validations filled with true
-    // bool validPosition = false;
-    // while (!validPosition) {
-    //     // checking all unreachable areas and exits (TODO: add other enemies)
-    //     for (int i = 0; i < landscapes.size(); i++) {
-    //         if (!landscapes[i]->getCircle()->intersects(circle)) {
-    //             validations[i] = true;
-    //         } else {
-    //             // generating a new position
-    //             randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
-    //             randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
-    //             randX = (randX/16) * 16;
-    //             randY = (randY/16) * 16;
-    //             validations[i] = false;
-    //             // setting to -1 because i is incremented by 1
-    //             i = -1;
-    //         }
-    //         // reached end of array, validating if all is well
-    //         if (i == landscapes.size() - 1) {
-    //             bool check = true;
-    //             // check enemies positions
-    //             for (int j = 0; j < enemiesVector.size(); j++) {
-    //                 if (enemiesVector[j]->getCircle()->intersects(circle)) {
-    //                     // start over
-    //                     for (int k = 0; k < landscapes.size(); k++) validations[k] = false;
-    //                 }
-    //             }
-
-    //             for (int k = 0; k < landscapes.size(); k++) {
-    //                 if (!validations[k]) check = false;
-    //             }
-    //             validPosition = check;
-    //         }
-    //     }
-    // }
-
-    // // deallocating memory
-    // delete circle;
-
-//    auto* enemy = new NPCEnemy(NPCEnemy::WORM, randX, randY);
     auto *enemy = new NPCEnemy(NPCEnemy::WORM, physics::Vector{randX, randY});
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
@@ -308,28 +261,19 @@ real GameMap::generateRandom(int min, int max) {
     return (real) min + (rand() % (max-min+1));
 }
 
-void GameMap::update(real dt) {
-    // updating physics
-    forceRegistry->update(dt);
-    for (auto &enemy : enemiesVector) {
-        // checking if enemy is dead
-        if (enemy->isDead()) {
-            // remove it from currentEnemies and unregistering it from subject's observers
-            removeEnemy(enemy);
-        } else enemy->update(dt); // if enemy is still alive
-    }
-}
 
 void GameMap::removePlayer() {
-    player = nullptr;
+    // forceRegistry->removeItem(this->player->getRigidBody(), gravityForceGenerator.get());
+    player.reset();
 }
 
-void GameMap::setPlayer(Player *newPlayer) {
-    this->player = newPlayer;
+void GameMap::setPlayer(std::shared_ptr<Player> player) {
+    this->player = player;
+    forceRegistry->addItem(this->player->getRigidBody(), gravityForceGenerator.get());
 }
 
 Player *GameMap::getPlayer() {
-    return player;
+    return player.get();
 }
 
 void GameMap::setTopExitCircle(Circle *circle) {
@@ -366,4 +310,20 @@ Circle *GameMap::getLeftExitCircle() {
 
 bool GameMap::operator==(const GameMap &map) const {
     return map.worldMapRow == worldMapRow && map.worldMapCol == worldMapCol;
+}
+
+void GameMap::update(real dt) {
+    // updating physics
+    forceRegistry->update(dt);
+
+    for (auto &entity : entities) {
+        // checking if enemy is dead
+        if (entity->isDead()) {
+            // remove it from currentEnemies and unregistering it from subject's observers
+            removeEnemy(dynamic_cast<NPCEnemy*>(entity));
+        } else {
+            physics::resolveCollisions(player->getRigidBody(), entity->getRigidBody(), dt);
+            entity->update(dt); // if enemy is still alive
+        }
+    }
 }

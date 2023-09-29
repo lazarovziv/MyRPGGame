@@ -14,6 +14,7 @@
 #include "Graph.hpp"
 #include "RigidBodyForceRegistry.hpp"
 #include "RigidBodyGravity.hpp"
+#include "Collision.hpp"
 class NPCEnemy;
 
 class GameMap {
@@ -41,7 +42,7 @@ private:
     // enemies in current map
     std::vector<NPCEnemy *> enemiesVector;
     std::vector<GameEntity *> entities;
-    Player *player;
+    std::shared_ptr<Player> player;
     // for handling all collisions and forces in the map
     std::unique_ptr<physics::RigidBodyGravity> gravityForceGenerator;
     std::unique_ptr<physics::RigidBodyForceRegistry> forceRegistry;
@@ -78,7 +79,7 @@ public:
 
     Player *getPlayer();
     physics::RigidBodyForceRegistry *getForceRegistry() const;
-    void setPlayer(Player *newPlayer);
+    void setPlayer(std::shared_ptr<Player> newPlayer);
     void removePlayer();
     std::vector<NPCEnemy *> getEnemies();
     void addEnemy(NPCEnemy *enemy);
