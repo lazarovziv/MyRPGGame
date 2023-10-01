@@ -41,7 +41,8 @@ private:
     std::vector<LandscapeEntity *> landscapes;
     // enemies in current map
     std::vector<NPCEnemy *> enemiesVector;
-    std::vector<GameEntity *> entities;
+    std::vector<GameEntity *> entities; // contains NPCs
+    std::vector<physics::RigidBody*> bodies; // contains all game entities
     std::shared_ptr<Player> player;
     // for handling all collisions and forces in the map
     std::unique_ptr<physics::RigidBodyGravity> gravityForceGenerator;
@@ -57,11 +58,6 @@ public:
     int getWorldMapCol() const;
     
     void init();
-    void initGraph();
-    void initGraphVertices();
-    void initGraphEdges();
-
-    Graph<Point *> *getMapGraph();
 
     sf::Sprite* getBackgroundSprite();
 
