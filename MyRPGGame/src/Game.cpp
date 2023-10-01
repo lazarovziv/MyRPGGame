@@ -273,7 +273,7 @@ void Game::start() {
 
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
-//            enemiesRepository->move(dt);
+            enemiesRepository->move(dt);
             // update all entities' states when playing
             update(moveSuccessValue, dt);
             // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
@@ -330,6 +330,7 @@ void Game::render() {
         }
         window->draw(*(player->getSprite()));
         window->draw(*(player->getWeapon()->getSprite()));
+
         // drawing unreachable areas
         for (int i = 0; i < map->getLandscapes().size(); i++) {
             window->draw(*(map->getLandscapes()[i]->getSprite()));
@@ -366,33 +367,101 @@ void Game::updateMenu(Menu *menu, bool *run, bool *move) {
 void Game::initWorldMap() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
     std::shared_ptr<GameMap> startMap = worldMap[currentGameMapRow][currentGameMapRow];
+    // TODO: AUTOMATE THIS CODE
+    physics::Vector bottomLeftOffset = physics::Vector{-1, 1};
+    physics::Vector bottomRightOffset = physics::Vector{1, 1};
+    physics::Vector topLeftOffset = physics::Vector{-1, -1};
+    physics::Vector topRightOffset = physics::Vector{1, -1};
     // top exit circle
-    auto *startMapTopExitCircle = new Circle((real) TILE_SIZE / 2, (real) FULL_SCREEN_WIDTH / 2 + TILE_SIZE,
-                                             (real) TILE_SIZE / 2);
+    auto *startMapTopExitCircle = new Circle(TILE_SIZE / 2, FULL_SCREEN_WIDTH / 2 + TILE_SIZE,
+                                             TILE_SIZE / 2);
     startMap->setTopExitCircle(startMapTopExitCircle);
+    physics::Vector unreachableTree0Center = physics::Vector{FULL_SCREEN_HEIGHT/6, 3*FULL_SCREEN_WIDTH/16};
+    std::vector<physics::Vector> unreachableTree0Vertices = {
+            unreachableTree0Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            unreachableTree0Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            unreachableTree0Center + topLeftOffset * TILE_SIZE/2, // top left
+            unreachableTree0Center + topRightOffset * TILE_SIZE/2
+    };
     // adding unreachable areas and landscapes
-    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) FULL_SCREEN_HEIGHT/6, (real) 3*FULL_SCREEN_WIDTH/16});
-    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 9*FULL_SCREEN_WIDTH/16});
-    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 7*FULL_SCREEN_WIDTH/16});
-    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE, physics::Vector{(real) 1.7*FULL_SCREEN_HEIGHT/3, (real) 5*FULL_SCREEN_WIDTH/16});
+    auto *unreachableTree0 = new LandscapeEntity(LandscapeType::TREE,
+                                                 unreachableTree0Center,
+                                                 unreachableTree0Vertices);
+    physics::Vector unreachableTree1Center = physics::Vector{1.7*FULL_SCREEN_HEIGHT/3, 9*FULL_SCREEN_WIDTH/16};
+    std::vector<physics::Vector> unreachableTree1Vertices = {
+            unreachableTree1Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            unreachableTree1Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            unreachableTree1Center + topLeftOffset * TILE_SIZE/2, // top left
+            unreachableTree1Center + topRightOffset * TILE_SIZE/2
+    };
+    auto *unreachableTree1 = new LandscapeEntity(LandscapeType::TREE,
+                                                 unreachableTree1Center,
+                                                 unreachableTree1Vertices);
+    physics::Vector unreachableTree22Center = physics::Vector{1.7*FULL_SCREEN_HEIGHT/3, 7*FULL_SCREEN_WIDTH/16};
+    std::vector<physics::Vector> unreachableTree22Vertices = {
+            unreachableTree22Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            unreachableTree22Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            unreachableTree22Center + topLeftOffset * TILE_SIZE/2, // top left
+            unreachableTree22Center + topRightOffset * TILE_SIZE/2
+    };
+    auto *unreachableTree22 = new LandscapeEntity(LandscapeType::TREE,
+                                                  unreachableTree22Center,
+                                                  unreachableTree22Vertices);
+    physics::Vector unreachableTree33Center = physics::Vector{1.7*FULL_SCREEN_HEIGHT/3, 5*FULL_SCREEN_WIDTH/16};
+    std::vector<physics::Vector> unreachableTree33Vertices = {
+            unreachableTree33Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            unreachableTree33Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            unreachableTree33Center + topLeftOffset * TILE_SIZE/2, // top left
+            unreachableTree33Center + topRightOffset * TILE_SIZE/2
+    };
+    auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE,
+                                                  unreachableTree33Center,
+                                                  unreachableTree33Vertices);
+
+    physics::Vector house0Center = physics::Vector{535, 95};
+    std::vector<physics::Vector> house0Vertices {
+            house0Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            house0Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            house0Center + topLeftOffset * TILE_SIZE/2, // top left
+            house0Center + topRightOffset * TILE_SIZE/2
+    };
+    auto *unreachableHouse0 = new LandscapeEntity(LandscapeType::HOUSE,
+                                                 house0Center,
+                                                 house0Vertices);
     startMap->addLandscape(unreachableTree0);
     startMap->addLandscape(unreachableTree1);
     startMap->addLandscape(unreachableTree22);
     startMap->addLandscape(unreachableTree33);
+    startMap->addLandscape(unreachableHouse0);
 
     std::shared_ptr<GameMap> topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
     // bottom exit circle
     auto *topMapBottomExitCircle = new Circle(
-    (real) FULL_SCREEN_HEIGHT-TILE_SIZE/2, (real) FULL_SCREEN_WIDTH/2 + TILE_SIZE,(real) TILE_SIZE/2);
+    FULL_SCREEN_HEIGHT-TILE_SIZE/2, FULL_SCREEN_WIDTH/2 + TILE_SIZE, TILE_SIZE/2);
     topMap->setBottomExitCircle(topMapBottomExitCircle);
     // adding unreachable areas and landscapes
+    physics::Vector unreachableTree2Center = physics::Vector{5*FULL_SCREEN_HEIGHT/24, 6.5*FULL_SCREEN_WIDTH/8};
+    std::vector<physics::Vector> unreachableTree2Vertices = {
+            unreachableTree2Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            unreachableTree2Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            unreachableTree2Center + topLeftOffset * TILE_SIZE/2, // top left
+            unreachableTree2Center + topRightOffset * TILE_SIZE/2
+    };
     auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE,
-                                                 physics::Vector{(real) 5*FULL_SCREEN_HEIGHT/24, (real) 6.5*FULL_SCREEN_WIDTH/8});
+                                                 unreachableTree2Center,
+                                                 unreachableTree2Vertices);
+    physics::Vector unreachableTree3Center = physics::Vector{7*FULL_SCREEN_HEIGHT/12, 3*FULL_SCREEN_WIDTH/16};
+    std::vector<physics::Vector> unreachableTree3Vertices = {
+            unreachableTree3Center + bottomLeftOffset * TILE_SIZE/2, // bottom left
+            unreachableTree3Center + bottomRightOffset * TILE_SIZE/2, // bottom right
+            unreachableTree3Center + topLeftOffset * TILE_SIZE/2, // top left
+            unreachableTree3Center + topRightOffset * TILE_SIZE/2
+    };
     auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE,
-                                                 physics::Vector{(real) 7*FULL_SCREEN_HEIGHT/12, (real) 3*FULL_SCREEN_WIDTH/16});
+                                                 unreachableTree3Center,
+                                                 unreachableTree3Vertices);
     topMap->addLandscape(unreachableTree2);
     topMap->addLandscape(unreachableTree3);
-
 
     // deallocate memory if needed
 }

@@ -46,10 +46,10 @@ public:
     Game(Game &game) = delete;
     ~Game();
     void operator=(const Game&) = delete;
-    static const int SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;
-    static const int TILE_SIZE = Constants::TILE_SIZE;
-    static const int FULL_SCREEN_WIDTH = Constants::FULL_SCREEN_WIDTH;
-    static const int FULL_SCREEN_HEIGHT = Constants::FULL_SCREEN_HEIGHT;
+    static constexpr real SCREEN_WIDTH = Constants::SCREEN_WIDTH, SCREEN_HEIGHT = Constants::SCREEN_HEIGHT;
+    static constexpr real TILE_SIZE = Constants::TILE_SIZE;
+    static constexpr real FULL_SCREEN_WIDTH = Constants::FULL_SCREEN_WIDTH;
+    static constexpr real FULL_SCREEN_HEIGHT = Constants::FULL_SCREEN_HEIGHT;
     static Game* getInstance();
     static void disposeInstance();
 
