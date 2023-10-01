@@ -20,10 +20,6 @@ void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     movementHandler->setCurrentMap(map);
 }
 
-void PlayerRepository::setLastTimeMoved(std::clock_t time) {
-    player->setLastTimeMoved(time);
-}
-
 bool PlayerRepository::move(physics::Vector direction, bool run, real dt) {
     player->setIsRunning(run);
     // vector is normalized in the movement handler

@@ -27,16 +27,29 @@ bool GameEntityMovement::moveRandomly(int randomDirection, real dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
         case 0:
-            return move(physics::Vector::RIGHT_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS;
+            if (move(physics::Vector::RIGHT_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS) {
+                animationManager->animate(EntityMovementState::WALK, dt);
+                return true;
+            }
         case 1:
-            return move(physics::Vector::LEFT_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS;
+            if (move(physics::Vector::LEFT_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS) {
+                animationManager->animate(EntityMovementState::WALK, dt);
+                return true;
+            }
         case 2:
-            return move(physics::Vector::UP_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS;
+            if (move(physics::Vector::UP_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS) {
+                animationManager->animate(EntityMovementState::WALK, dt);
+                return true;
+            }
         case 3:
-            return move(physics::Vector::DOWN_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS;
-        default:
-            // TODO: add error handling
-            break;
+            if (move(physics::Vector::DOWN_DIRECTION, dt) == Constants::MoveSuccessValues::SUCCESS) {
+                animationManager->animate(EntityMovementState::WALK, dt);
+                return true;
+            }
+        default: {
+            move(physics::Vector::ZERO, dt); // don't move
+            return true;
+        }
     }
     return false;
 }

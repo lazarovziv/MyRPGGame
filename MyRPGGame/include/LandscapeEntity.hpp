@@ -17,7 +17,7 @@ private:
     
 public:
     LandscapeEntity() = default;
-    LandscapeEntity(LandscapeType type, physics::Vector initialPosition);
+    LandscapeEntity(LandscapeType type, physics::Vector initialPosition, std::vector<physics::Vector> &vertices);
     LandscapeType getType();
     
 };

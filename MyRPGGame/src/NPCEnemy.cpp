@@ -13,6 +13,7 @@ NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initi
     expPointsWorth = 10;
     inBattle = false;
     dead = false;
+    speed = Constants::BASE_ENTITY_SPEED/4;
     moveDirection = MoveDirection::UP;
 
     // TextureLoader.getInstance()->loadTexture("dorio_64.png");
@@ -25,6 +26,7 @@ NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initi
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
+    moveDirection = MoveDirection::DOWN;
 
     rigidBody->setMass(200);
 //    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
@@ -76,9 +78,9 @@ bool NPCEnemy::isInBattleArea() {
 }
 
 bool NPCEnemy::isInWanderArea() {
-    if (wanderAreaCircle == nullptr) return false;
+//    if (wanderAreaCircle == nullptr) return false;
 //    return wanderAreaCircle->isPointInCircle(entityCircle->getCenter());
-    return false;
+    return true;
 }
 
 Circle *NPCEnemy::getWanderAreaCircle() {

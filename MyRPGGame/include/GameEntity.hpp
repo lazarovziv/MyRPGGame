@@ -36,6 +36,8 @@ protected:
     int maxStaminaPoints;
     int currentStaminaPoints;
 
+    bool isPlayer = false;
+
     // counter for sprite change (0 to 3)
     int step = 0;
     bool inBattle = false;
@@ -64,6 +66,10 @@ protected:
     real battleInterval = 0.f;
     bool justMoved = false;
 
+    // change direction interval (for enemies only!)
+    constexpr static const real CHANGE_MOVE_DIRECTION_INTERVAL = 256.0f;
+    real changeMoveDirectionInterval = 0;
+
     // movement intervals
     constexpr static const real MOVE_INTERVAL_DEFAULT = 3.0f;
     real moveInterval = 0.f;
@@ -81,7 +87,8 @@ private:
     
 public:
     GameEntity();
-    explicit GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType);
+    explicit GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
+                        const std::vector<physics::Vector> &vertices = {});
     virtual ~GameEntity();
     // getters
     long getID() const;
@@ -165,16 +172,12 @@ public:
     void incrementIdleAnimationInterval(real dt);
 
     bool canGoIdle() const;
+    bool canChangeDirection() const;
+    void resetChangeDirectionInterval();
     void resetMoveInterval();
     void setIsIdle(bool flag);
 
-    void setLastTimeMoved(std::clock_t time);
-
-    void pushToMoveStack(Point *move);
-    Point *popMove();
-    bool areAvailableMoves();
-    int numOfMovesAvailable();
-    void clearMoveStack();
+    void printPosition() const;
     
     void update(real dt);
 };

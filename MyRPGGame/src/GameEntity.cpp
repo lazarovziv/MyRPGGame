@@ -37,7 +37,8 @@ GameEntity::GameEntity() {
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 }
 
-GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType) {
+GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
+                       const std::vector<physics::Vector> &vertices) {
     level = 1;
     maxHealthPoints = 50;
     currentHealthPoints = maxHealthPoints;
@@ -78,11 +79,13 @@ GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType r
 
     switch (rigidBodyType) {
         case physics::RigidBodyType::CIRCLE: {
-            rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z, (real) Constants::TILE_SIZE/4);
+            rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z,
+                                                          (real) Constants::TILE_SIZE/4);
             break;
         }
-        case physics::RigidBodyType::BOX: {
-            rigidBody = std::make_unique<physics::Box>(initialPosition.x, initialPosition.y, initialPosition.z, (real) Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+        case physics::RigidBodyType::POLYGON: {
+            rigidBody = std::make_unique<physics::Polygon>(initialPosition.x, initialPosition.y, initialPosition.z,
+                                                           vertices);
             break;
         }
         default:
@@ -146,7 +149,7 @@ void GameEntity::changeInBattleState() {
 void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
     // adjusting weapon direction
-    weapon->setTransitionDirection(direction);
+//    weapon->setTransitionDirection(direction);
 }
 
 void GameEntity::setMovementState(EntityMovementState state) {
@@ -176,9 +179,11 @@ void GameEntity::setPosition(physics::Vector newPosition) {
 }
 
 void GameEntity::move(physics::Vector directionVector, real dt) {
+    // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) return;
-    (*rigidBody) += running ? directionVector * speed * 2 * dt : directionVector * speed * dt; // affects the position attribute in rigidBody
-    incrementDistanceTraveledSinceIdle(speed * dt);
+    real currentSpeed = running ? speed * 1.5f * dt : speed * dt;
+    (*rigidBody) += directionVector * currentSpeed; // affects the position attribute in rigidBody
+    incrementDistanceTraveledSinceIdle(currentSpeed);
 
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
@@ -188,108 +193,6 @@ void GameEntity::move(physics::Vector directionVector, real dt) {
         if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
         else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
-}
-
-bool GameEntity::createMovementStateSprite(EntityMovementState state) {
-    sf::Texture textureToCreate;
-    sf::Sprite *spriteToCreate = new sf::Sprite();
-    switch (state) {
-        case EntityMovementState::IDLE: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "idle/body_idle.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::CLIMB: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "climb/body_climb.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::WALK: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "walk/body_walk.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::JUMP: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "jump/body_jump.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::RUN: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "run/body_run.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::SITTING: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "sitting/body_sitting.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_IDLE_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_idle.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_SLASH_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_slash.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_backslash.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_halfslash.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-    }
-    // texture is loaded
-
-    // add texture to vector to keep in memory for future use
-    movementStateTextures.push_back(textureToCreate);
-    // load the texture into the sprite
-    spriteToCreate->setTexture(textureToCreate);
-    spriteToCreate->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE,
-                                               0, Constants::TILE_SIZE, Constants::TILE_SIZE));
-    spriteToCreate->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-    spriteToCreate->setPosition(position.x, position.y);
-    // set created sprite as the movement state sprite
-    movementStateSpritesMap[state] = spriteToCreate;
-    return true;
-}
-
-bool GameEntity::addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite) {
-    // calling the function with a nullptr parameter only if we want to initialize a new sprite
-    if (sprite == nullptr) {
-        return createMovementStateSprite(state);
-    }
-    // we want to change the current sprite
-    delete movementStateSpritesMap[state];
-    // create the new one
-    movementStateSpritesMap[state] = newSprite;
-    return true;
 }
 
 void GameEntity::setWeapon(WeaponType type) {
@@ -484,13 +387,18 @@ bool GameEntity::canGoIdle() const {
     return moveInterval >= MOVE_INTERVAL_DEFAULT;
 }
 
+bool GameEntity::canChangeDirection() const {
+    return changeMoveDirectionInterval >= CHANGE_MOVE_DIRECTION_INTERVAL;
+}
+
+void GameEntity::resetChangeDirectionInterval() {
+    changeMoveDirectionInterval = 0;
+
+}
+
 void GameEntity::resetMoveInterval() {
     moveInterval = 0;
     resetIdleAnimationInterval();
-}
-
-void GameEntity::setLastTimeMoved(std::clock_t time) {
-
 }
 
 void GameEntity::setIsIdle(bool flag) {
@@ -537,6 +445,10 @@ Weapon* GameEntity::getWeapon() {
     return weapon.get();
 }
 
+void GameEntity::printPosition() const {
+    std::cout << "(" << rigidBody->getPosition().x << ", " << rigidBody->getPosition().y << ", " << rigidBody->getPosition().z << ")" << std::endl;
+}
+
 void GameEntity::update(real dt) {
     if (!dead) {
         position.x = rigidBody->getPosition().x;
@@ -546,7 +458,7 @@ void GameEntity::update(real dt) {
         // updating intervals
         moveInterval += dt;
         battleInterval += dt;
-        // TODO: update physics
-//        rigidBody->update(dt);
+        if (!isPlayer) changeMoveDirectionInterval += dt;
+        else printPosition();
     }
 }

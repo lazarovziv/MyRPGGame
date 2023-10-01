@@ -20,7 +20,6 @@ public:
     ~PlayerRepository() = default; // TODO: delete all handlers and player (same for enemy repository)
 
     void setGameMap(std::shared_ptr<GameMap> gameMap);
-    void setLastTimeMoved(std::clock_t time);
     bool move(physics::Vector direction, bool run, real dt);
 //    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
     bool attack(real dt);

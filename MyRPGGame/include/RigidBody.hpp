@@ -6,7 +6,7 @@
 
 namespace physics {
     enum class RigidBodyType {
-        CIRCLE, BOX
+        CIRCLE, POLYGON
     };
 
     class RigidBody {
@@ -17,6 +17,7 @@ namespace physics {
         // used for D'Alembert rule, accumulating all forces that act on the rigid body
         std::unique_ptr<Vector> forceAccumulator;
         real restitution;
+        bool infiniteMass = true;
         // 1/mass
         real inverseMass;
         real damping;
@@ -58,32 +59,26 @@ namespace physics {
         real radius;
 
     public:
-        Circle(real x, real y, real z, real r = 1);
+        explicit Circle(real x, real y, real z, real r = 1);
 
         real getRadius() const;
     };
 
-    // the position field for this class is not the bottom left corner of the box, but it's center!
-    class Box : public RigidBody {
+    // the position field for this class is it's center
+    class Polygon : public RigidBody {
     private:
-        real width;
-        real height;
-        real depth;
+        std::unique_ptr<std::vector<Vector>> vertices;
 
     public:
-        Box(real x, real y, real z, real width, real height, real depth = 1);
+        explicit Polygon(const real x, const real y, const real z, const std::vector<Vector> &newVertices);
 
-        real getWidth() const;
-        real getHeight() const;
-        real getDepth() const;
-        Vector getTopRightCornerPosition();
-        Vector getBottomLeftCornerPosition();
+        std::vector<Vector>* getVertices();
 
         // bodies for collision when entities trying to exit map's bounds
-        static Box RIGHT_END_SCREEN;
-        static Box LEFT_END_SCREEN;
-        static Box TOP_END_SCREEN;
-        static Box BOTTOM_END_SCREEN;
+        static Polygon RIGHT_END_SCREEN;
+        static Polygon LEFT_END_SCREEN;
+        static Polygon TOP_END_SCREEN;
+        static Polygon BOTTOM_END_SCREEN;
     };
 }
 

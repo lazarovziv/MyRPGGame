@@ -18,6 +18,7 @@ Player::Player(PlayerType type, physics::Vector initialPosition) : GameEntity(in
     strengthPoints = 0;
     intelligencePoints = 0;
     criticalHitsPoints = 0;
+    isPlayer = true;
     this->type = type;
     if (!texture.loadFromFile("../graphics/player/gray_t_shirt_leather_pants_spritesheet.png")) {
         std::cout << "Texture NOT loaded properly!" << std::endl;
