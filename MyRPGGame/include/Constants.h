@@ -20,15 +20,16 @@ enum class EntityMovementState {
 
 class Constants {
 public:
-    static const int SCREEN_WIDTH = 800;
-    static const int SCREEN_HEIGHT = 640;
-    static const int FULL_SCREEN_WIDTH = 4 * SCREEN_WIDTH;
-    static const int FULL_SCREEN_HEIGHT = 3 * SCREEN_HEIGHT;
-    static const int TILE_SIZE = 64;
-    static const int BASE_ENTITY_SPEED = 8;
+    static constexpr real SCREEN_WIDTH = 800;
+    static constexpr real SCREEN_HEIGHT = 640;
+    static constexpr real FULL_SCREEN_WIDTH = 918;//4 * SCREEN_WIDTH;
+    static constexpr real FULL_SCREEN_HEIGHT = 515; //3 * SCREEN_HEIGHT;
+    static constexpr real TILE_SIZE = 64;
+    static constexpr real BASE_ENTITY_SPEED = 8;
     static const int FPS = 60;
 
     static constexpr real REAL_MAX = std::numeric_limits<real>::max();
+    static constexpr real REAL_MIN = std::numeric_limits<real>::min();
 
     static const int NUM_FRAMES_IDLE_ANIMATION = 13;
 
