@@ -41,7 +41,7 @@ private:
     std::vector<LandscapeEntity *> landscapes;
     // enemies in current map
     std::vector<NPCEnemy *> enemiesVector;
-    std::vector<GameEntity *> entities; // contains NPCs
+    std::vector<GameEntity *> entities; // contains NPCs and player
     std::vector<physics::RigidBody*> bodies; // contains all game entities
     std::shared_ptr<Player> player;
     // for handling all collisions and forces in the map

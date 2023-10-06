@@ -10,6 +10,7 @@ GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::sha
 Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction, real dt) {
     // no need to create extra variables if not using them
     if (direction == physics::Vector::ZERO) {
+        entity->move(direction, dt);
         animationManager->animate(EntityMovementState::IDLE, dt);
         // since we're idle, resetting the travel we covered until now
         entity->resetDistanceTraveledSinceIdle();

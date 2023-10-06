@@ -41,10 +41,11 @@ bool PlayerRepository::attack(real dt) {
     }
     // resetting move interval because player isn't idle
     if (singleSuccess) {
-//        animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
+        animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
         player->resetMoveInterval();
         player->resetBattleInterval();
     }
+
     return singleSuccess;
 }
 
@@ -52,7 +53,7 @@ void PlayerRepository::update(Constants::MoveSuccessValues moveSuccessValue, rea
     // setting justMoved attribute in respect to move attempt (or none)
     player->setJustMoved(moveSuccessValue != Constants::MoveSuccessValues::NOT_MOVED &&
     moveSuccessValue != Constants::MoveSuccessValues::FAILURE);
-    // forceGenerator->update(player->getRigidBody(), dt);
+//    forceGenerator->update(player->getRigidBody(), dt);
     player->update(dt);
     // player->getWeapon()->update(dt);
     player->notifyAll();

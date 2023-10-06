@@ -6,6 +6,7 @@ EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle 
     movementHandler = movement;
     battleHandler = battle;
     setGameMap(std::move(gameMap));
+    animationManager = new AnimationManager(nullptr);
 }
 
 EnemyRepository::~EnemyRepository() {
@@ -24,8 +25,13 @@ void EnemyRepository::move(real dt) {
     for (auto &enemy : map->getEnemies()) {
         if (!enemy->isDead() && enemy->canMove()) {
             // set enemy if not already set
-            if (movementHandler->getEntity() != enemy) movementHandler->setEntity(*enemy);
-            if (battleHandler->getEntity() != enemy) battleHandler->setEntity(enemy);
+            movementHandler->setEntity(*enemy);
+            battleHandler->setEntity(enemy);
+            animationManager->setEntity(enemy);
+
+            movementHandler->move(player->getPosition() - enemy->getPosition(), dt);
+            animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
+            /*
             // move randomly
             if (enemy->canChangeDirection()) {
                 enemy->resetChangeDirectionInterval();
@@ -59,6 +65,7 @@ void EnemyRepository::move(real dt) {
                     break;
                 }
             }
+             */
         }
     }
 }

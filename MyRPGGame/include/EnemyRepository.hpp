@@ -14,6 +14,7 @@ private:
     GameEntityBattle *battleHandler;
     std::shared_ptr<Player> player;
     // Player *player;
+    AnimationManager *animationManager = nullptr;
 
 public:
     explicit EnemyRepository(GameEntityMovement *movement, GameEntityBattle *battle,

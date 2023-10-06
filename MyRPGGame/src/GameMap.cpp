@@ -25,7 +25,8 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     backgroundSprite->setPosition(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
 
     // initializing gravity for map
-    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, (real) -9.81, 0});
+//    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0,  (real) -9.81});
+    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector::ZERO);
     forceRegistry = std::make_unique<physics::RigidBodyForceRegistry>();
     forceRegistry->addItem(&physics::Polygon::RIGHT_END_SCREEN, gravityForceGenerator.get());
     forceRegistry->addItem(&physics::Polygon::LEFT_END_SCREEN, gravityForceGenerator.get());
@@ -35,6 +36,9 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     bodies.push_back(&physics::Polygon::LEFT_END_SCREEN);
     bodies.push_back(&physics::Polygon::TOP_END_SCREEN);
     bodies.push_back(&physics::Polygon::BOTTOM_END_SCREEN);
+    auto *testCircle = new physics::Circle(255, 282, 0, 64);
+    testCircle->setMass(1000);
+    bodies.push_back(testCircle);
 }
 
 // setting circles as nullptr means player can't exit from that direction
@@ -127,13 +131,6 @@ physics::RigidBodyForceRegistry* GameMap::getForceRegistry() const {
 void GameMap::init() {
     // don't add more enemies
     if (enemiesVector.size() >= NUM_OF_MAX_ENEMIES) return;
-
-    // TODO: init map entities when player first enters the map
-    if (!initializedMapGraph) {
-//        initGraph();
-        // init map
-    }
-
     // seeding
     srand((unsigned int) time(nullptr));
     real randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
@@ -194,6 +191,7 @@ void GameMap::removePlayer() {
 
 void GameMap::setPlayer(std::shared_ptr<Player> player) {
     this->player = player;
+    entities.push_back(this->player.get());
     bodies.push_back(this->player->getRigidBody());
     forceRegistry->addItem(this->player->getRigidBody(), gravityForceGenerator.get());
 }
@@ -243,7 +241,8 @@ void GameMap::update(real dt) {
     forceRegistry->update(dt);
     // TODO: check death of entity in another place to use only RigidBody objects for collision detection
     // player not in entities
-    for (auto &entity : entities) {
+    // checking collision of entity in a body and not the other way around
+    for (auto entity : entities) {
         // checking if enemy is dead
         if (entity->isDead()) {
             // remove it from currentEnemies and unregistering it from subject's observers
@@ -253,8 +252,9 @@ void GameMap::update(real dt) {
             for (auto &body : bodies) {
                 if (body == entity->getRigidBody()) continue;
                 physics::resolveCollisions(entity->getRigidBody(), body, dt);
-                entity->update(dt); // if enemy is still alive
+                if (entity != player.get()) entity->update(dt); // if entity is not the player and it is still alive
             }
         }
     }
+//    std::cout << "(" << physics::Polygon::BOTTOM_END_SCREEN.getPosition().x << ", " << physics::Polygon::BOTTOM_END_SCREEN.getPosition().y << ")" << std::endl;
 }
