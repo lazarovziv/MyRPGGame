@@ -38,7 +38,7 @@ GameEntity::GameEntity() {
 }
 
 GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
-                       const std::vector<physics::Vector> &vertices) {
+                       const std::vector<physics::Vector> &vertices, real mass) {
     level = 1;
     maxHealthPoints = 50;
     currentHealthPoints = maxHealthPoints;
@@ -85,12 +85,14 @@ GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType r
         }
         case physics::RigidBodyType::POLYGON: {
             rigidBody = std::make_unique<physics::Polygon>(initialPosition.x, initialPosition.y, initialPosition.z,
-                                                           vertices);
+                                                           vertices, mass);
             break;
         }
         default:
             break;
     }
+    // updating the mass because derived classes aren't setting new values to the mass in their constructors
+    rigidBody->setMass(mass);
 
     position.x = rigidBody->getPosition().x;
     position.y = rigidBody->getPosition().y;
@@ -180,11 +182,17 @@ void GameEntity::setPosition(physics::Vector newPosition) {
 
 void GameEntity::move(physics::Vector directionVector, real dt) {
     // TODO: delete this after anti gravity force will be added
-    if (directionVector == physics::Vector::ZERO) return;
-    real currentSpeed = running ? speed * 1.5f * dt : speed * dt;
-    (*rigidBody) += directionVector * currentSpeed; // affects the position attribute in rigidBody
-    incrementDistanceTraveledSinceIdle(currentSpeed);
-
+    if (directionVector == physics::Vector::ZERO) {
+        positionUpdated = false;
+//        rigidBody->resetAcceleration();
+        return;
+    }
+    real currentSpeed = running ? speed * 2.f * dt : speed * dt;
+    rigidBody->addForce(directionVector * currentSpeed);
+//    (*rigidBody) += directionVector * currentSpeed; // affects the position attribute in rigidBody
+    // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
+    incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed : currentSpeed);
+    // setting the moveDirection used for animating
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
     if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
@@ -193,14 +201,15 @@ void GameEntity::move(physics::Vector directionVector, real dt) {
         if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
         else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
+    positionUpdated = true;
 }
 
 void GameEntity::setWeapon(WeaponType type) {
     weapon = std::make_unique<Weapon>(rigidBody->getPosition(), type);
 }
 
-void GameEntity::setIsInBattle(bool inBattle) {
-    this->inBattle = inBattle;
+void GameEntity::setIsInBattle(bool flag) {
+    this->inBattle = flag;
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
@@ -433,6 +442,11 @@ bool GameEntity::canAnimateIdle() {
     return false;
 }
 
+bool GameEntity::canAnimateCombat() {
+    // TODO: implement
+    return false;
+}
+
 void GameEntity::resetIdleAnimationInterval() {
     idleAnimationInterval = 0;
 }
@@ -451,6 +465,10 @@ void GameEntity::printPosition() const {
 
 void GameEntity::update(real dt) {
     if (!dead) {
+        /*if (positionUpdated) */rigidBody->update(dt);
+        // TODO: fix when colliding when entity is not moving
+//        rigidBody->update(dt);
+
         position.x = rigidBody->getPosition().x;
         position.y = rigidBody->getPosition().y;
 
@@ -459,6 +477,5 @@ void GameEntity::update(real dt) {
         moveInterval += dt;
         battleInterval += dt;
         if (!isPlayer) changeMoveDirectionInterval += dt;
-        else printPosition();
     }
 }

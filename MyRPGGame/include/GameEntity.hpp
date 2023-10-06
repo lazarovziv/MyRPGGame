@@ -37,6 +37,9 @@ protected:
     int currentStaminaPoints;
 
     bool isPlayer = false;
+    // TODO: add flag for indicating whether the entity is on the ground
+    // flag for idle state and time delta incrementation
+    bool positionUpdated = false;
 
     // counter for sprite change (0 to 3)
     int step = 0;
@@ -88,7 +91,7 @@ private:
 public:
     GameEntity();
     explicit GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
-                        const std::vector<physics::Vector> &vertices = {});
+                        const std::vector<physics::Vector> &vertices = {}, real mass = 1);
     virtual ~GameEntity();
     // getters
     long getID() const;
@@ -168,6 +171,7 @@ public:
     bool canAnimateMovement();
 
     bool canAnimateIdle();
+    bool canAnimateCombat();
     void resetIdleAnimationInterval();
     void incrementIdleAnimationInterval(real dt);
 

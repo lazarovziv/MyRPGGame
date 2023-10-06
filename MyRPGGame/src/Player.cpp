@@ -32,8 +32,6 @@ Player::Player(PlayerType type, physics::Vector initialPosition) : GameEntity(in
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
     setPlayerType(type);
-    rigidBody->setMass(2);
-    // TODO: add entityMovementState field for handling it more easily
 }
 
 Player::~Player() {

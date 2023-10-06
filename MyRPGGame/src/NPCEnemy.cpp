@@ -13,7 +13,7 @@ NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initi
     expPointsWorth = 10;
     inBattle = false;
     dead = false;
-    speed = Constants::BASE_ENTITY_SPEED/4;
+    speed = Constants::BASE_ENTITY_SPEED;
     moveDirection = MoveDirection::UP;
 
     // TextureLoader.getInstance()->loadTexture("dorio_64.png");
