@@ -18,6 +18,7 @@ namespace physics {
         std::unique_ptr<Vector> forceAccumulator;
         real restitution;
         bool infiniteMass = true;
+        real mass = 1;
         // 1/mass
         real inverseMass;
         real damping;
@@ -25,15 +26,15 @@ namespace physics {
         RigidBodyType bodyType;
 
     public:
-        RigidBody(RigidBodyType type, real x, real y, real z = 0);
+        RigidBody(RigidBodyType type, real x, real y, real z = 0, real mass = 1);
         ~RigidBody() = default;
 
         Vector getPosition();
         Vector getVelocity();
         Vector getAcceleration();
         real getRestitution() const;
-        real getInverseMass() const;
         real getMass() const;
+        real getInverseMass() const;
         RigidBodyType getBodyType() const;
 
         bool hasFiniteMass() const;
@@ -44,8 +45,12 @@ namespace physics {
         void setMass(const real mass); // set inverseMass accordingly
         void incrementVelocity(const Vector &v);
         void incrementAcceleration(const real amount);
+        void incrementAcceleration(const Vector amount);
         void resetForceAccumulator();
         void addForce(const Vector &force);
+
+        void resetVelocity();
+        void resetAcceleration();
 
         void operator +=(const Vector &other); // refers to the position vector!!
 
@@ -70,7 +75,7 @@ namespace physics {
         std::unique_ptr<std::vector<Vector>> vertices;
 
     public:
-        explicit Polygon(const real x, const real y, const real z, const std::vector<Vector> &newVertices);
+        explicit Polygon(const real x, const real y, const real z, const std::vector<Vector> &newVertices, const real mass);
 
         std::vector<Vector>* getVertices();
 
