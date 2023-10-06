@@ -28,7 +28,10 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/Subject.cpp 
         MyRPGGame/src/NPCEnemy.cpp MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp
         MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
-        MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp)
+        MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp
+        # test files
+        # test files
+)
 
 find_package(SFML 2.6.0 COMPONENTS system window graphics network audio REQUIRED)
 find_package(OpenCV COMPONENTS core highgui REQUIRED)
