@@ -17,6 +17,7 @@ namespace physics {
     }
 
     Vector Vector::normalized() const {
+        if ((*this) == Vector::ZERO) return Vector::ZERO;
         return (*this) / norma();
     }
 
@@ -33,6 +34,10 @@ namespace physics {
         x = 0;
         y = 0;
         z = 0;
+    }
+
+    void Vector::printCoordinates() const {
+        std::cout << "(" << x << ", " << y << "," << z << ")" << std::endl;
     }
 
     void Vector::operator +=(const Vector &other) {
@@ -143,6 +148,13 @@ namespace physics {
 
     bool Vector::operator !=(const Vector &other) const {
         return !(*this == other);
+    }
+
+    Vector& Vector::operator =(const Vector &other) {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+        return *this;
     }
 
 }
