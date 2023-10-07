@@ -25,11 +25,15 @@ public:
     static constexpr real FULL_SCREEN_WIDTH = 918;//4 * SCREEN_WIDTH;
     static constexpr real FULL_SCREEN_HEIGHT = 515; //3 * SCREEN_HEIGHT;
     static constexpr real TILE_SIZE = 64;
-    static constexpr real BASE_ENTITY_SPEED = 6;
+    static constexpr real BASE_ENTITY_SPEED = 3;
     static const int FPS = 60;
 
     static constexpr real REAL_MAX = std::numeric_limits<real>::max();
     static constexpr real REAL_MIN = std::numeric_limits<real>::min();
+
+    static constexpr real RIGID_BODY_FORCE_SCALE = (real) 64;
+    static constexpr real FRICTION_DEGRADATION_CONSTANT = (real) 1.0015;
+    static constexpr real VELOCITY_MAGNITUDE_MIN = 0.002;
 
     static const int NUM_FRAMES_IDLE_ANIMATION = 13;
 
@@ -42,7 +46,7 @@ public:
     // constants for the movement animations
     static const int IDLE_NUM_COLS = 3;
     static const int IDLE_NUM_ROWS = 4;
-    static const int IDLE_ROW = 17; // start of the spritesheet
+    static const int IDLE_ROW = 17; // start of the sprite sheet
     static const int JUMP_NUM_COLS = 6;
     static const int JUMP_NUM_ROWS = 4;
     static const int JUMP_ROW = 21;

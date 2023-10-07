@@ -43,6 +43,7 @@ namespace physics {
         void setPosition(const Vector &other);
         void setRestitution(const real e);
         void setMass(const real mass); // set inverseMass accordingly
+        void scaleVelocity(const real amount);
         void incrementVelocity(const Vector &v);
         void incrementAcceleration(const real amount);
         void incrementAcceleration(const Vector amount);
@@ -84,6 +85,8 @@ namespace physics {
         static Polygon LEFT_END_SCREEN;
         static Polygon TOP_END_SCREEN;
         static Polygon BOTTOM_END_SCREEN;
+        static constexpr real MAP_POLYGON_WIDTH = Constants::TILE_SIZE;
+        static constexpr real MAP_POLYGON_HEIGHT = Constants::TILE_SIZE;
     };
 }
 

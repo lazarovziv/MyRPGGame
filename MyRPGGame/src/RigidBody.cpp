@@ -70,6 +70,10 @@ namespace physics {
         infiniteMass = false;
     }
 
+    void RigidBody::scaleVelocity(const real amount) {
+        (*velocity) *= amount;
+    }
+
     void RigidBody::setRestitution(const real e) {
         restitution = e;
     }
@@ -92,7 +96,7 @@ namespace physics {
 
     // needs to be called before the rigid body is integrated (before changing its position)
     void RigidBody::addForce(const physics::Vector &force) {
-        (*forceAccumulator) += force;
+        (*forceAccumulator) += force; // * mass * Constants::RIGID_BODY_FORCE_SCALE;
     }
 
     void RigidBody::resetVelocity() {
@@ -115,19 +119,19 @@ namespace physics {
     void RigidBody::update(const real dt) {
         // updating infinite mass bodies is irrelevant
         if (infiniteMass) return;
-        real SCALE = (real) 48;
         // acceleration = force * mass
         Vector resultingAcceleration = (*acceleration);
-        resultingAcceleration += (*forceAccumulator) * inverseMass * SCALE;
+        resultingAcceleration += (*forceAccumulator) * inverseMass;
         (*velocity) += resultingAcceleration * dt; // * dt
         // TODO: clamp velocity
-        real speed = velocity->norma();
-        if (speed > Constants::BASE_ENTITY_SPEED*1.5) (*velocity) = velocity->normalized() * Constants::BASE_ENTITY_SPEED*1.5;
         // drag
         (*velocity) *= pow(damping, dt);
         // applying forces to the position
         (*position) += (*velocity) * dt + (*acceleration) * dt * dt * (real) 0.5;
-
+        // defined friction
+        scaleVelocity((real) 1/Constants::FRICTION_DEGRADATION_CONSTANT);
+        // clamping velocity
+        if (velocity->magnitude() < Constants::VELOCITY_MAGNITUDE_MIN) velocity->resetCoordinates();
         resetForceAccumulator();
     }
 
@@ -144,18 +148,18 @@ namespace physics {
                                     Constants::REAL_MAX, // very tall
                                                 { // vertices of the polygon (rectangle)
         Vector{Constants::FULL_SCREEN_WIDTH, Constants::FULL_SCREEN_HEIGHT}, // bottom left
-        Vector{Constants::FULL_SCREEN_WIDTH+1, Constants::FULL_SCREEN_HEIGHT}, // bottom right
+        Vector{Constants::FULL_SCREEN_WIDTH+Polygon::MAP_POLYGON_WIDTH, Constants::FULL_SCREEN_HEIGHT}, // bottom right
         Vector{Constants::FULL_SCREEN_WIDTH, (real) 0}, // top left
-        Vector{Constants::FULL_SCREEN_WIDTH+1, (real) 0}, // top right
+        Vector{Constants::FULL_SCREEN_WIDTH+Polygon::MAP_POLYGON_WIDTH, (real) 0}, // top right
                                                 },
                                                 Constants::REAL_MAX};
     Polygon Polygon::LEFT_END_SCREEN = Polygon{(real) -0.5,
                                     Constants::FULL_SCREEN_HEIGHT/2,
                                     Constants::REAL_MAX, // very tall
                                                { // vertices of the polygon (rectangle)
-        Vector{(real) -1, Constants::FULL_SCREEN_HEIGHT}, // bottom left
+        Vector{(real) -Polygon::MAP_POLYGON_WIDTH, Constants::FULL_SCREEN_HEIGHT}, // bottom left
         Vector{(real) 0, Constants::FULL_SCREEN_HEIGHT}, // bottom right
-        Vector{(real) -1, (real) 0}, // top left
+        Vector{(real) -Polygon::MAP_POLYGON_WIDTH, (real) 0}, // top left
         Vector{(real) 0, (real) 0}, // top right
                                                },
                                                Constants::REAL_MAX};
@@ -165,16 +169,16 @@ namespace physics {
                                               { // vertices of the polygon (rectangle)
         Vector{(real) 0, (real) 0}, // bottom left
         Vector{Constants::FULL_SCREEN_WIDTH, (real) 0}, // bottom right
-        Vector{(real) 0, (real) -1}, // top left
-        Vector{Constants::FULL_SCREEN_WIDTH, (real) -1}, // top right
+        Vector{(real) 0, (real) -Polygon::MAP_POLYGON_HEIGHT}, // top left
+        Vector{Constants::FULL_SCREEN_WIDTH, (real) -Polygon::MAP_POLYGON_HEIGHT}, // top right
                                               },
                                               Constants::REAL_MAX};
     Polygon Polygon::BOTTOM_END_SCREEN = Polygon{Constants::FULL_SCREEN_WIDTH/2,
                                   Constants::FULL_SCREEN_HEIGHT + 0.5,
                                   Constants::REAL_MAX, // very tall
                                                  { // vertices of the polygon (rectangle)
-        Vector{(real) 0, Constants::FULL_SCREEN_HEIGHT}, // bottom left
-        Vector{Constants::FULL_SCREEN_WIDTH, Constants::FULL_SCREEN_HEIGHT}, // bottom right
+        Vector{(real) 0, Constants::FULL_SCREEN_HEIGHT+Polygon::MAP_POLYGON_HEIGHT}, // bottom left
+        Vector{Constants::FULL_SCREEN_WIDTH, Constants::FULL_SCREEN_HEIGHT+Polygon::MAP_POLYGON_HEIGHT}, // bottom right
         Vector{(real) 0, Constants::FULL_SCREEN_HEIGHT}, // top left
         Vector{Constants::FULL_SCREEN_WIDTH, Constants::FULL_SCREEN_HEIGHT}, // top right
                                                  },

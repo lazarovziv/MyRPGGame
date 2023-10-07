@@ -122,7 +122,7 @@ void GameEntity::increaseMaxManaPoints(int amount) {
     } else currentManaPoints += amount;
 }
 
-void GameEntity::increaseSpeed(real amount) {
+void GameEntity::increaseSpeed(const real amount) {
     // setting upper limit to 3
 //    if (speed + amount < 3) {
 //        speed += amount;
@@ -184,14 +184,12 @@ void GameEntity::move(physics::Vector directionVector, real dt) {
     // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) {
         positionUpdated = false;
-//        rigidBody->resetAcceleration();
         return;
     }
-    real currentSpeed = running ? speed * 2.f * dt : speed * dt;
+    real currentSpeed = running ? speed * 2.f : speed; // multiply by dt?
     rigidBody->addForce(directionVector * currentSpeed);
-//    (*rigidBody) += directionVector * currentSpeed; // affects the position attribute in rigidBody
     // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
-    incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed : currentSpeed);
+    incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
     // setting the moveDirection used for animating
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
@@ -231,7 +229,7 @@ void GameEntity::decreaseMaxManaPoints(int amount) {
     maxManaPoints -= amount;
 }
 
-void GameEntity::decreaseSpeed(int speed) {
+void GameEntity::decreaseSpeed(const real speed) {
     if (this->speed - speed <= 0) this->speed = 0;
     this->speed -= speed;
 }
@@ -460,18 +458,16 @@ Weapon* GameEntity::getWeapon() {
 }
 
 void GameEntity::printPosition() const {
-    std::cout << "(" << rigidBody->getPosition().x << ", " << rigidBody->getPosition().y << ", " << rigidBody->getPosition().z << ")" << std::endl;
+    std::cout << "(" << rigidBody->getPosition().x << ", " <<
+    rigidBody->getPosition().y << ", " << rigidBody->getPosition().z << ")" << std::endl;
 }
 
 void GameEntity::update(real dt) {
     if (!dead) {
-        /*if (positionUpdated) */rigidBody->update(dt);
-        // TODO: fix when colliding when entity is not moving
-//        rigidBody->update(dt);
+        rigidBody->update(dt);
 
         position.x = rigidBody->getPosition().x;
         position.y = rigidBody->getPosition().y;
-
         sprite->setPosition(position.x, position.y);
         // updating intervals
         moveInterval += dt;
