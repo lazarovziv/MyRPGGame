@@ -13,6 +13,7 @@ namespace physics {
         // scaler to the direction vector
         real penetrationDistance = Constants::REAL_MAX;
         // dividing into all types of bodies
+        // TODO: add check for first contained in the second
         if (first->getBodyType() == RigidBodyType::CIRCLE) {
             if (second->getBodyType() == RigidBodyType::CIRCLE) {
                 // distance of the overlapping area
@@ -47,7 +48,6 @@ namespace physics {
         if (second->hasFiniteMass()) (*second).incrementVelocity(impulse * second->getInverseMass() * dt); // incremented position before
 
         // resolving interpenetration
-
 
         /*
         // setting the separation distance for each body
@@ -195,8 +195,7 @@ namespace physics {
     void physics::clampCircle(physics::Circle &circle, physics::Vector &axis, real *min, real *max) {
         real radius = circle.getRadius();
         // declaring the axis for the points on the circle and scaling it by the radius
-        Vector normalizedAxis = axis.normalized();
-        Vector scaledAxis = normalizedAxis * radius;
+        Vector scaledAxis = axis * radius;
         // declaring the 2 points on the circle to clamp with the axis
         Vector circleVertexA = circle.getPosition() + scaledAxis;
         Vector circleVertexB = circle.getPosition() - scaledAxis;
