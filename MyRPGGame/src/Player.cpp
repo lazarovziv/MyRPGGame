@@ -3,7 +3,6 @@
 
 Player::Player() : GameEntity() {
     expPoints = 0;
-    speed = 2;
 //    texture = new Texture();
 //    sprite.setTexture(TextureLoader::getInstance()->loadTexture("player.png"));
 //    sprite = new sf::Sprite();

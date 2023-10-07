@@ -126,7 +126,7 @@ public:
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
     void increaseMaxManaPoints(int amount);
-    void increaseSpeed(real amount);
+    void increaseSpeed(const real amount);
     void setSpeed(real newSpeed);
     void increaseAttackPoints(int amount);
     void increaseDefencePoints(int amount);
@@ -150,7 +150,7 @@ public:
     void decreaseMaxManaPoints(int amount);
     void decreaseCurrentHealthPoints(int amount);
     void decreaseCurrentManaPoints(int amount);
-    void decreaseSpeed(int speed);
+    void decreaseSpeed(const real speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
     void decreaseCurrentDefencePoints(int amount);

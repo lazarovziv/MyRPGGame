@@ -28,14 +28,7 @@ NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initi
     sprite->setPosition(position.x, position.y);
     moveDirection = MoveDirection::DOWN;
 
-    rigidBody->setMass(200);
-//    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
-//    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
-//    wanderAreaRadius = entityCircle->getRadius() * 12;
-//    wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
-//    battleAreaRadius = (float) (wanderAreaRadius * 2.5);
-//    battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
-
+    rigidBody->setMass(5);
     // TODO: choose random floats in defined location radius for each enemy in map
 }
 
