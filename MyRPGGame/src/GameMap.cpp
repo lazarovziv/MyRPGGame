@@ -240,20 +240,24 @@ void GameMap::update(real dt) {
     // updating physics
     forceRegistry->update(dt);
     // TODO: check death of entity in another place to use only RigidBody objects for collision detection
-    // player not in entities
-    // checking collision of entity in a body and not the other way around
     for (auto entity : entities) {
         // checking if enemy is dead
         if (entity->isDead()) {
             // remove it from currentEnemies and unregistering it from subject's observers
-            removeEnemy(dynamic_cast<NPCEnemy*>(entity));
-        } else {
-            // player is in bodies
-            for (auto &body : bodies) {
-                if (body == entity->getRigidBody()) continue;
-                physics::resolveCollisions(entity->getRigidBody(), body, dt);
-                if (entity != player.get()) entity->update(dt); // if entity is not the player and it is still alive
-            }
+            removeEnemy(dynamic_cast<NPCEnemy *>(entity));
+        }
+    }
+    // player not in entities
+    // checking collision of entity in a body and not the other way around
+//    for (int i = 0; i < 64; i++) {
+//
+//    }
+    for (auto entity : entities) {
+        // player is in bodies
+        for (auto &body : bodies) {
+            if (body == entity->getRigidBody()) continue;
+            physics::resolveCollisions(entity->getRigidBody(), body, dt);
+            if (entity != player.get()) entity->update(dt); // if entity is not the player and it is still alive
         }
     }
 //    std::cout << "(" << physics::Polygon::BOTTOM_END_SCREEN.getPosition().x << ", " << physics::Polygon::BOTTOM_END_SCREEN.getPosition().y << ")" << std::endl;
