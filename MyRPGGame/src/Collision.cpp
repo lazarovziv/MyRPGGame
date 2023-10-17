@@ -18,10 +18,16 @@ namespace physics {
             if (second->getBodyType() == RigidBodyType::CIRCLE) {
                 // distance of the overlapping area
                 penetrationDistance = ((Circle*)first)->getRadius() + ((Circle*)second)->getRadius() - axisToProject.norma();
+                if (penetrationDistance < 0) return false;
             } else if (second->getBodyType() == RigidBodyType::POLYGON) {
                 Circle &circle = ((Circle&) *first);
                 Polygon &polygon = ((Polygon&) *second);
                 if (!physics::areColliding(circle, polygon, axisNormalized, &penetrationDistance)) return false;
+
+            } else if (second->getBodyType() == RigidBodyType::LINE) {
+                Circle &firstAsCircle = ((Circle&) *first);
+                Line &secondAsLine = ((Line&) *second);
+                if (!physics::areColliding(firstAsCircle, secondAsLine, axisNormalized, &penetrationDistance)) return false;
             }
         } else if (first->getBodyType() == RigidBodyType::POLYGON) {
             if (second->getBodyType() == RigidBodyType::CIRCLE) {
@@ -33,17 +39,24 @@ namespace physics {
                 Polygon &secondAsPolygon = ((Polygon&) *second);
                 if (!physics::areColliding(firstAsPolygon, secondAsPolygon, axisNormalized, &penetrationDistance)) return false;
             }
-        } // more body types
+        } else if (first->getBodyType() == RigidBodyType::LINE) {
+            if (second->getBodyType() == RigidBodyType::CIRCLE) {
+                Line &firstAsLine = ((Line&) *first);
+                Circle &secondAsCircle = ((Circle&) *second);
+                if (!physics::areColliding(secondAsCircle, firstAsLine, axisNormalized, &penetrationDistance)) return false;
+            }
+        }
 
         // calculated relevant penetration distance
-        if (penetrationDistance < 0) return false;
+        // if (penetrationDistance < 0) return false;
         // using restitution and getting collision response values
         relativeVelocity = first->getPosition() - second->getPosition();
+        
         real e = std::min(first->getRestitution(), second->getRestitution());
-//        real j = -((real) 1 + e) * -penetrationDistance; // for smoother visuals but not accurate
+        // real j = -((real) 1 + e) * -penetrationDistance; // for smoother visuals but not accurate
         real j = -((real) 1 + e) * relativeVelocity.dot(axisNormalized);
         j /= first->getInverseMass() + second->getInverseMass(); // if axis wasn't normalized, magnitude was needed in the denominator, multiplied by the inverse masses sum
-        Vector impulse = axisNormalized * j;
+        Vector impulse = axisNormalized * (2 * j);
         if (first->hasFiniteMass()) (*first).incrementVelocity(impulse * -first->getInverseMass() * dt);
         if (second->hasFiniteMass()) (*second).incrementVelocity(impulse * second->getInverseMass() * dt); // incremented position before
 
@@ -77,8 +90,8 @@ namespace physics {
     }
 
     bool physics::areColliding(physics::Polygon &first, physics::Polygon &second, Vector &projectionNormal, real *penetrationDistance) {
-        size_t firstNumVertices = first.getVertices()->size();
-        size_t secondNumVertices = second.getVertices()->size();
+        size_t firstNumVertices = first.getNumVertices();
+        size_t secondNumVertices = second.getNumVertices();
         real minFirst, maxFirst;
         real minSecond, maxSecond;
         real currentPenetration = 0;
@@ -89,12 +102,12 @@ namespace physics {
             Vector edge = vertexB - vertexA; // vector from A to B
             // getting orthogonal vector to the edge, i.e: the axis
             Vector axis = Vector{-edge.y, edge.x};
-            axis = axis.normalized();
+            axis.normalize();
             // clamping
             physics::clampVertices(first, axis, &minFirst, &maxFirst);
             physics::clampVertices(second, axis, &minSecond, &maxSecond);
             // if there's no overlap, they're not colliding (by AABB theorem)
-            if (minFirst >= maxSecond || minSecond >= minFirst) return false;
+            if (minFirst >= maxSecond || minSecond >= maxFirst) return false;
             // getting the penetration value and updating the projection vector accordingly
             currentPenetration = std::min(maxFirst - minSecond, maxSecond - minFirst);
             if (currentPenetration < *penetrationDistance) {
@@ -109,7 +122,7 @@ namespace physics {
             Vector edge = vertexB - vertexA; // vector from A to B
             // getting orthogonal vector to the edge, i.e: the axis
             Vector axis = Vector{-edge.y, edge.x};
-            axis = axis.normalized();
+            axis.normalize();
             // clamping
             physics::clampVertices(first, axis, &minFirst, &minFirst);
             physics::clampVertices(second, axis, &minSecond, &maxSecond);
@@ -131,7 +144,7 @@ namespace physics {
     }
 
     bool physics::areColliding(physics::Circle &circle, physics::Polygon &polygon, physics::Vector &projectionNormal, real *penetrationDistance) {
-        size_t firstNumVertices = polygon.getVertices()->size();
+        size_t firstNumVertices = polygon.getNumVertices();
         real circleMin, circleMax;
         real polygonMin, polygonMax;
         real currentPenetration = 0;
@@ -142,43 +155,77 @@ namespace physics {
             Vector edge = vertexB - vertexA; // vector from A to B
             // getting orthogonal vector to the edge, i.e: the axis
             Vector axis = Vector{-edge.y, edge.x};
-            axis = axis.normalized();
+            axis.normalize();
             // clamping
             physics::clampVertices(polygon, axis, &polygonMin, &polygonMax);
             physics::clampCircle(circle, axis, &circleMin, &circleMax);
-            // if they're not colliding, there's no overlap (by AABB theorem)
+            // if there's no overlap in one axis, they're not colliding
             if (polygonMin >= circleMax || circleMin >= polygonMax) return false;
             // getting the penetration value and updating the projection vector accordingly
             currentPenetration = std::min(circleMax - polygonMin, polygonMax - circleMin);
             if (currentPenetration < *penetrationDistance) {
                 *penetrationDistance = currentPenetration;
                 projectionNormal = axis;
+                if (circle.getPosition().dot(projectionNormal) < 0) projectionNormal *= -1;
             }
         }
+        /*
         // trying a new axis, which is the vector from the circle to the closest point on the polygon (maybe it's closer to the circle than one of the edges
         Vector &closestVertexToCircle = physics::closestVertexTo(circle.getPosition(), *(polygon.getVertices()));
-        Vector newAxis = circle.getPosition() - closestVertexToCircle;
-        newAxis = newAxis.normalized();
-        // clamping
+        Vector newAxis = closestVertexToCircle - circle.getPosition();
+        newAxis.normalize();
+        // clamping and projecting to the axis
         physics::clampVertices(polygon, newAxis, &polygonMin, &polygonMax);
         physics::clampCircle(circle, newAxis, &circleMin, &circleMax);
-        // if they're not colliding, there's no overlap (by AABB theorem)
+        // if there's no overlap in one axis, they're not colliding
         if (polygonMin >= circleMax || circleMin >= polygonMax) return false;
         // getting the penetration value and updating the projection vector accordingly
         currentPenetration = std::min(circleMax - polygonMin, polygonMax - circleMin);
         if (currentPenetration < *penetrationDistance) {
             *penetrationDistance = currentPenetration;
             projectionNormal = newAxis;
+            if (circle.getPosition().dot(projectionNormal) < 0) projectionNormal *= -1;
         }
+        */
         // checking validity of projection's direction
-
         Vector polygonPosition = Vector{0, 0, 0};
         physics::polygonCenterPosition(polygon, polygonPosition);
         Vector circleToPolygonVector = polygonPosition - circle.getPosition();
+
         // if not, change its direction
         if (circleToPolygonVector.dot(projectionNormal) < 0) projectionNormal *= -1;
 
         return true;
+    }
+
+    bool physics::areColliding(Circle &circle, Line &line, Vector &projectionNormal, real *penetrationDistance) {
+        Vector first = line.getFirst();
+        Vector second = line.getSecond();
+        Vector lineVector = second - first;
+        real lineLength = lineVector.norma();
+        Vector circleToFirst = first - circle.getPosition();
+        
+        real lengthFromFirstToCollision = 0;
+        if (std::min(lineVector.dot(circleToFirst), lineLength) > 0) lengthFromFirstToCollision = std::min(lineVector.dot(circleToFirst), lineLength);
+        
+        // normalizing the length to get values from 0 to 1
+        lengthFromFirstToCollision /= lineLength;
+        Vector collisionVector = first + (lineVector * lengthFromFirstToCollision);
+        // getting distance to the circle
+        real distanceToLine = collisionVector.distance(circle.getPosition());
+        std::cout << distanceToLine << std::endl;
+
+        if (distanceToLine <= circle.getRadius()) {
+            *penetrationDistance = circle.getRadius() - distanceToLine;
+            projectionNormal.x = -collisionVector.y;
+            projectionNormal.y = collisionVector.x;
+            projectionNormal = projectionNormal.normalized();
+
+            if (projectionNormal.dot(circle.getPosition()) < 0) projectionNormal *= -1;
+            return true;
+        } 
+        
+        return false;
     }
 
     void physics::clampVertices(physics::Polygon &polygon, physics::Vector &axis, real *min, real *max) {
@@ -190,6 +237,15 @@ namespace physics {
             *min = std::min(*min, dotProduct);
             *max = std::max(*max, dotProduct);
         }
+    }
+
+    void physics::clampVertex(Vector &vertex, Vector &axis, real *min, real *max) {
+        *min = Constants::REAL_MAX;
+        *max = Constants::REAL_MIN;
+
+        real dotProduct = vertex.dot(axis);
+        *min = std::min(*min, dotProduct);
+        *max = std::max(*max, dotProduct);
     }
 
     void physics::clampCircle(physics::Circle &circle, physics::Vector &axis, real *min, real *max) {
@@ -218,7 +274,7 @@ namespace physics {
             ySum += vertex.y;
             zSum += vertex.z;
         }
-
+        // average of each coordinate for a rough estimation of its' center
         xSum /= (real) numVertices;
         ySum /= (real) numVertices;
         zSum /= (real) numVertices;
