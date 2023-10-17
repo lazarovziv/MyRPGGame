@@ -65,7 +65,7 @@ public:
     void initMenus();
     void render();
     void renderMenu(Menu *menu);
-    void update(Constants::MoveSuccessValues playerMoveSuccessValue, real dt);
+    void update(real dt);
     void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
     void exitGame(bool *run);

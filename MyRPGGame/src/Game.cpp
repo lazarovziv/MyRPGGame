@@ -131,7 +131,7 @@ void Game::start() {
 
     sf::Clock clock;
     // TODO: tweak multiplier value (12 seems to be close, maybe fps/10)
-    real dt, multiplier = 12.f;
+    real dt, multiplier = (real) 12;
 
     std::map<sf::Keyboard::Key, bool> keysPressedMap;
     keysPressedMap[sf::Keyboard::Key::E] = false;
@@ -275,7 +275,7 @@ void Game::start() {
             // make enemies move
             enemiesRepository->move(dt);
             // update all entities' states when playing
-            update(moveSuccessValue, dt);
+            update(dt);
             // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
             if (moved) {
                 moved = false;
@@ -345,11 +345,12 @@ void Game::renderMenu(Menu *menu) {
                  player->getPosition().y, window.get());
 }
 
-void Game::update(Constants::MoveSuccessValues playerMoveSuccessValue, real dt) {
-    // updating player state
-    playerRepository->update(playerMoveSuccessValue, dt);
+void Game::update(real dt) {
     // updating current map states
     enemiesRepository->update(dt);
+    // updating player state
+    // playerRepository->update(dt);
+
     cameraView->setCenter(player->getRenderPosition());
     window->setView(*cameraView);
     // setting at the left hand corner in according to the player's position
@@ -419,7 +420,6 @@ void Game::initWorldMap() {
     auto *unreachableTree33 = new LandscapeEntity(LandscapeType::TREE,
                                                   unreachableTree33Center,
                                                   unreachableTree33Vertices);
-    */
 
     physics::Vector house0Center = physics::Vector{535, 95};
     std::vector<physics::Vector> house0Vertices {
@@ -432,11 +432,12 @@ void Game::initWorldMap() {
                                                  house0Center,
                                                  house0Vertices);
 
-//    startMap->addLandscape(unreachableTree0);
-//    startMap->addLandscape(unreachableTree1);
-//    startMap->addLandscape(unreachableTree22);
-//    startMap->addLandscape(unreachableTree33);
+    startMap->addLandscape(unreachableTree0);
+    startMap->addLandscape(unreachableTree1);
+    startMap->addLandscape(unreachableTree22);
+    startMap->addLandscape(unreachableTree33);
     startMap->addLandscape(unreachableHouse0);
+    */
 
     std::shared_ptr<GameMap> topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
     // bottom exit circle
