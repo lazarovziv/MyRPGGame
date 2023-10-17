@@ -18,8 +18,8 @@ Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction,
         return Constants::MoveSuccessValues::NOT_MOVED;
     }
 
-    physics::Vector directionNormal = direction.normalized(); // for diagonal movements
-    entity->move(directionNormal, dt);
+    direction.normalize(); // for diagonal movements
+    entity->move(direction, dt);
     // TODO: handle collisions in the physics manager
     return Constants::MoveSuccessValues::SUCCESS;
 }

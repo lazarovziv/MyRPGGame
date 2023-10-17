@@ -6,7 +6,6 @@ PlayerRepository::PlayerRepository(const std::shared_ptr<Player> player, GameEnt
     movementHandler = movement;
     battleHandler = battle;
     setGameMap(gameMap);
-    forceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, (real) -9.81, 0});
     animationManager = new AnimationManager(player.get());
 }
 
@@ -49,11 +48,7 @@ bool PlayerRepository::attack(real dt) {
     return singleSuccess;
 }
 
-void PlayerRepository::update(Constants::MoveSuccessValues moveSuccessValue, real dt) {
-    // setting justMoved attribute in respect to move attempt (or none)
-    player->setJustMoved(moveSuccessValue != Constants::MoveSuccessValues::NOT_MOVED &&
-    moveSuccessValue != Constants::MoveSuccessValues::FAILURE);
-//    forceGenerator->update(player->getRigidBody(), dt);
+void PlayerRepository::update(real dt) {
     player->update(dt);
     // player->getWeapon()->update(dt);
     player->notifyAll();

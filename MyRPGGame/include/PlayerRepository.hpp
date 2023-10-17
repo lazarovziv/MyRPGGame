@@ -9,7 +9,6 @@ private:
     std::shared_ptr<Player> player;
     GameEntityMovement *movementHandler = nullptr;
     GameEntityBattle *battleHandler = nullptr;
-    std::unique_ptr<physics::RigidBodyGravity> forceGenerator;
     std::shared_ptr<GameMap> map;
 
     AnimationManager *animationManager = nullptr;
@@ -23,7 +22,7 @@ public:
     bool move(physics::Vector direction, bool run, real dt);
 //    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
     bool attack(real dt);
-    void update(Constants::MoveSuccessValues moveSuccessValue, real dt);
+    void update(real dt);
 };
 
 #endif //MYRPGGAME_PLAYERREPOSITORY_HPP

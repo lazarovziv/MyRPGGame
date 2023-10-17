@@ -12,11 +12,11 @@ namespace physics {
         real y;
         real z;
 
-        static Vector ZERO;
-        static Vector UP_DIRECTION;
-        static Vector DOWN_DIRECTION;
-        static Vector RIGHT_DIRECTION;
-        static Vector LEFT_DIRECTION;
+        static const Vector ZERO;
+        static const Vector UP_DIRECTION;
+        static const Vector DOWN_DIRECTION;
+        static const Vector RIGHT_DIRECTION;
+        static const Vector LEFT_DIRECTION;
 
         Vector(real x, real y, real z = 0) : x(x), y(y), z(z) {};
         ~Vector() = default;
@@ -24,6 +24,7 @@ namespace physics {
         real norma() const;
         real magnitude() const;
         Vector normalized() const;
+        void normalize();
         real dot(const Vector &other);
         real distance(const Vector &other);
 

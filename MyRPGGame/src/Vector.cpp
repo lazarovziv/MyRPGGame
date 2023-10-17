@@ -2,11 +2,11 @@
 
 namespace physics {
 
-    Vector Vector::ZERO = Vector(0, 0, 0);
-    Vector Vector::UP_DIRECTION = Vector(0, -1, 0);
-    Vector Vector::DOWN_DIRECTION = Vector(0, 1, 0);
-    Vector Vector::RIGHT_DIRECTION = Vector(1, 0, 0);
-    Vector Vector::LEFT_DIRECTION = Vector(-1, 0, 0);
+    const Vector Vector::ZERO = Vector(0, 0, 0);
+    const Vector Vector::UP_DIRECTION = Vector(0, -1, 0);
+    const Vector Vector::DOWN_DIRECTION = Vector(0, 1, 0);
+    const Vector Vector::RIGHT_DIRECTION = Vector(1, 0, 0);
+    const Vector Vector::LEFT_DIRECTION = Vector(-1, 0, 0);
 
     real Vector::norma() const {
         return (real) sqrt(magnitude());
@@ -19,6 +19,12 @@ namespace physics {
     Vector Vector::normalized() const {
         if ((*this) == Vector::ZERO) return Vector::ZERO;
         return (*this) / norma();
+    }
+
+    void Vector::normalize() {
+        if ((*this) == Vector::ZERO) return;
+        real norm = this->norma();
+        *this /= norm;
     }
 
     real Vector::dot(const physics::Vector &other) {
