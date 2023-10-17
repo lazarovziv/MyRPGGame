@@ -59,6 +59,9 @@ public:
     void incrementWalkCount();
     void incrementJumpCount();
 
+    bool isMovementState(EntityMovementState state) const;
+    bool isCombatState(EntityMovementState state) const;
+
     bool generateBody();
     bool generateBodyTest();
     bool generateClothing();

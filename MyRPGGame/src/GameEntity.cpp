@@ -400,7 +400,6 @@ bool GameEntity::canChangeDirection() const {
 
 void GameEntity::resetChangeDirectionInterval() {
     changeMoveDirectionInterval = 0;
-
 }
 
 void GameEntity::resetMoveInterval() {
@@ -437,11 +436,6 @@ bool GameEntity::canAnimateIdle() {
         resetIdleAnimationInterval();
         return true;
     }
-    return false;
-}
-
-bool GameEntity::canAnimateCombat() {
-    // TODO: implement
     return false;
 }
 

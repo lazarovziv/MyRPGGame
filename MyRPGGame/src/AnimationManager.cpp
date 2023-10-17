@@ -67,6 +67,22 @@ int AnimationManager::getMovementStateCount(EntityMovementState state) {
     return movementStateCounterMap[state];
 }
 
+/*
+enum class EntityMovementState {
+    CLIMB, COMBAT_BACKSLASH_ONE_HANDED, COMBAT_HALFSLASH_ONE_HANDED,
+    COMBAT_IDLE_ONE_HANDED, COMBAT_SLASH_ONE_HANDED, WALK, JUMP, SITTING, RUN, IDLE };*/
+
+bool AnimationManager::isMovementState(EntityMovementState state) const {
+    return state == EntityMovementState::WALK || state == EntityMovementState::RUN;
+}
+
+bool AnimationManager::isCombatState(EntityMovementState state) const {
+    return state == EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED ||
+    state == EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED ||
+    state == EntityMovementState::COMBAT_IDLE_ONE_HANDED ||
+    state == EntityMovementState::COMBAT_SLASH_ONE_HANDED;
+}
+
 // TODO: create animation function for combat and for that another entity variable to cover the combats' counters
 void AnimationManager::animate(EntityMovementState state, real dt) {
     entity->setMovementState(state);
@@ -79,15 +95,27 @@ void AnimationManager::animate(EntityMovementState state, real dt) {
                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
         return;
+    } else if (isMovementState(state)) {
+        if (entity->canAnimateMovement()) {
+            incrementCount(state);
+            entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
+        }
+    } else if (isCombatState(state)) {
+        if (entity->canAttack()) {
+            incrementCount(state);
+            entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+                                    Constants::TILE_SIZE * 2, Constants::TILE_SIZE * 2);
+
+            entity->getSprite()->setOrigin(Constants::TILE_SIZE, Constants::TILE_SIZE);
+        }
     }
 //    incrementMovementStateCountFunctionMap[state]();
+    // TODO: implement different types of states (combat, idle, movement)
     // changing animation if player covered its' speed distance
-    if (entity->canAnimateMovement()) {
-        incrementCount(state);
-        entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
-                                   (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
-                                   Constants::TILE_SIZE, Constants::TILE_SIZE);
-    }
+    
 }
 
 bool AnimationManager::generateBody() {

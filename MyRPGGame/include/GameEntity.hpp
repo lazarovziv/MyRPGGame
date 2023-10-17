@@ -65,7 +65,7 @@ protected:
     std::unique_ptr<Weapon> weapon;
 
     // combat intervals
-    constexpr static const real BATTLE_INTERVAL_DEFAULT = 9.0f;
+    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 1.5;
     real battleInterval = 0.f;
     bool justMoved = false;
 
@@ -171,7 +171,6 @@ public:
     bool canAnimateMovement();
 
     bool canAnimateIdle();
-    bool canAnimateCombat();
     void resetIdleAnimationInterval();
     void incrementIdleAnimationInterval(real dt);
 
