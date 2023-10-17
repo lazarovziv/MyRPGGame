@@ -6,7 +6,7 @@
 #include <map>
 
 // for using throughout the project, if want to change to int/double
-typedef float real;
+typedef double real;
 
 enum class MoveDirection { DOWN, RIGHT, LEFT, UP, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT };
 
@@ -25,15 +25,18 @@ public:
     static constexpr real FULL_SCREEN_WIDTH = 918;//4 * SCREEN_WIDTH;
     static constexpr real FULL_SCREEN_HEIGHT = 515; //3 * SCREEN_HEIGHT;
     static constexpr real TILE_SIZE = 64;
-    static constexpr real BASE_ENTITY_SPEED = 3;
+    static constexpr real BASE_ENTITY_SPEED = 6;
     static const int FPS = 60;
 
     static constexpr real REAL_MAX = std::numeric_limits<real>::max();
     static constexpr real REAL_MIN = std::numeric_limits<real>::min();
 
     static constexpr real RIGID_BODY_FORCE_SCALE = (real) 64;
-    static constexpr real FRICTION_DEGRADATION_CONSTANT = (real) 1.0015;
     static constexpr real VELOCITY_MAGNITUDE_MIN = 0.002;
+    static constexpr real VELOCITY_MAGNITUDE_MAX = BASE_ENTITY_SPEED * 0.45;
+    // TODO: add more friction variables per ground type
+    static constexpr real ICE_FRICTION_DEGRADATION_CONSTANT = (real) 1.0015;
+    static constexpr real GRASS_FRICTION_DEGRADATION_CONSTANT = (real) 1.005;
 
     static const int NUM_FRAMES_IDLE_ANIMATION = 13;
 
@@ -64,7 +67,7 @@ public:
     static const int COMBAT_IDLE_ONE_HANDED_ROW = 9;
     static const int COMBAT_SLASH_ONE_HANDED_NUM_COLS = 7;
     static const int COMBAT_SLASH_ONE_HANDED_NUM_ROWS = 4;
-    static const int COMBAT_SLASH_ONE_HANDED_ROW = 13;
+    static const int COMBAT_SLASH_ONE_HANDED_ROW = 37; //13;
     static const int COMBAT_BACKSLASH_ONE_HANDED_NUM_COLS = 12;
     static const int COMBAT_BACKSLASH_ONE_HANDED_NUM_ROWS = 4;
     static const int COMBAT_BACKSLASH_ONE_HANDED_ROW = 1;
