@@ -28,10 +28,10 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
 //    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0,  (real) -9.81});
     gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector::ZERO);
     forceRegistry = std::make_unique<physics::RigidBodyForceRegistry>();
-    forceRegistry->addItem(&physics::Polygon::RIGHT_END_SCREEN, gravityForceGenerator.get());
-    forceRegistry->addItem(&physics::Polygon::LEFT_END_SCREEN, gravityForceGenerator.get());
-    forceRegistry->addItem(&physics::Polygon::TOP_END_SCREEN, gravityForceGenerator.get());
-    forceRegistry->addItem(&physics::Polygon::BOTTOM_END_SCREEN, gravityForceGenerator.get());
+    // forceRegistry->addItem(&physics::Polygon::RIGHT_END_SCREEN, gravityForceGenerator.get());
+    // forceRegistry->addItem(&physics::Polygon::LEFT_END_SCREEN, gravityForceGenerator.get());
+    // forceRegistry->addItem(&physics::Polygon::TOP_END_SCREEN, gravityForceGenerator.get());
+    // forceRegistry->addItem(&physics::Polygon::BOTTOM_END_SCREEN, gravityForceGenerator.get());
     bodies.push_back(&physics::Polygon::RIGHT_END_SCREEN);
     bodies.push_back(&physics::Polygon::LEFT_END_SCREEN);
     bodies.push_back(&physics::Polygon::TOP_END_SCREEN);
@@ -184,7 +184,7 @@ real GameMap::generateRandom(int min, int max) {
 void GameMap::removePlayer() {
     if (player != nullptr) {
         bodies.erase(std::find(bodies.begin(), bodies.end(), this->player->getRigidBody()));
-         forceRegistry->removeItem(this->player->getRigidBody(), gravityForceGenerator.get());
+        forceRegistry->removeItem(this->player->getRigidBody(), gravityForceGenerator.get());
     }
     player.reset();
 }
@@ -237,8 +237,6 @@ bool GameMap::operator==(const GameMap &map) const {
 }
 
 void GameMap::update(real dt) {
-    // updating physics
-    forceRegistry->update(dt);
     // TODO: check death of entity in another place to use only RigidBody objects for collision detection
     for (auto entity : entities) {
         // checking if enemy is dead
@@ -249,16 +247,21 @@ void GameMap::update(real dt) {
     }
     // player not in entities
     // checking collision of entity in a body and not the other way around
-//    for (int i = 0; i < 64; i++) {
-//
-//    }
+    int iterations = 4;
     for (auto entity : entities) {
         // player is in bodies
         for (auto &body : bodies) {
             if (body == entity->getRigidBody()) continue;
-            physics::resolveCollisions(entity->getRigidBody(), body, dt);
-            if (entity != player.get()) entity->update(dt); // if entity is not the player and it is still alive
+            for (int i = 0; i < iterations; i++) {
+                physics::resolveCollisions(entity->getRigidBody(), body, dt);
+                entity->update(dt);
+            }
         }
     }
-//    std::cout << "(" << physics::Polygon::BOTTOM_END_SCREEN.getPosition().x << ", " << physics::Polygon::BOTTOM_END_SCREEN.getPosition().y << ")" << std::endl;
+
+    // std::cout << "Count: " << count/iterations << std::endl;
+    // std::cout << "# Entities: " << entities.size() << std::endl;
+
+    // updating physics
+    forceRegistry->update(dt);
 }
