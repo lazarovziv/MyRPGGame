@@ -195,9 +195,12 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
     // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) {
         positionUpdated = false;
+        running = false;
+        moving = false;
         return;
     }
     real currentSpeed = running ? speed * 2.f : speed; // multiply by dt?
+
     rigidBody->addForce(directionVector * currentSpeed);
     // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
     incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
@@ -211,6 +214,8 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
         else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
     positionUpdated = true;
+    moving = true;
+    // TODO: add reset to all entity movement states columns values besides the relevant state that'll be used
 }
 
 void GameEntity::setWeapon(WeaponType type) {
@@ -400,8 +405,16 @@ void GameEntity::setIsRunning(const bool flag) {
     running = flag;
 }
 
+bool GameEntity::isMoving() const {
+    return moving;
+}
+
+void GameEntity::setIsMoving(const bool flag) {
+    moving = flag;
+}
+
 bool GameEntity::canAttack() const {
-    return battleInterval >= BATTLE_INTERVAL_DEFAULT;
+    return battleInterval >= BATTLE_INTERVAL_DEFAULT && !moving;
 }
 
 void GameEntity::resetBattleInterval() {

@@ -45,6 +45,7 @@ protected:
     int step = 0;
     bool inBattle = false;
     bool dead = false;
+    bool moving = true;
     bool running = false;
     MoveDirection moveDirection;
     EntityMovementState movementState;
@@ -168,7 +169,9 @@ public:
     Weapon *getWeapon();
 
     bool isRunning() const;
-    void setIsRunning(const bool flag);
+    void setIsRunning(bool flag);
+    bool isMoving() const;
+    void setIsMoving(bool flag);
     bool canAttack() const;
     void resetBattleInterval();
     void increaseBattleInterval(const real dt);
