@@ -53,7 +53,6 @@ namespace physics {
         relativeVelocity = first->getPosition() - second->getPosition();
         
         real e = std::min(first->getRestitution(), second->getRestitution());
-        // real j = -((real) 1 + e) * -penetrationDistance; // for smoother visuals but not accurate
         real j = -((real) 1 + e) * relativeVelocity.dot(axisNormalized);
         j /= first->getInverseMass() + second->getInverseMass(); // if axis wasn't normalized, magnitude was needed in the denominator, multiplied by the inverse masses sum
         Vector impulse = axisNormalized * (2 * j);
@@ -97,8 +96,8 @@ namespace physics {
         real currentPenetration = 0;
         // checking first polygon's edges
         for (int i = 0; i < firstNumVertices; i++) {
-            Vector vertexA = first.getVertices()->at(i);
-            Vector vertexB = first.getVertices()->at((i+1) % firstNumVertices);
+            const Vector &vertexA = first.getVertices()->at(i);
+            const Vector &vertexB = first.getVertices()->at((i+1) % firstNumVertices);
             Vector edge = vertexB - vertexA; // vector from A to B
             // getting orthogonal vector to the edge, i.e: the axis
             Vector axis = Vector{-edge.y, edge.x};
@@ -117,8 +116,8 @@ namespace physics {
         }
         // checking second polygon
         for (int i = 0; i < secondNumVertices; i++) {
-            Vector vertexA = second.getVertices()->at(i);
-            Vector vertexB = second.getVertices()->at((i+1) % secondNumVertices);
+            const Vector &vertexA = second.getVertices()->at(i);
+            const Vector &vertexB = second.getVertices()->at((i+1) % secondNumVertices);
             Vector edge = vertexB - vertexA; // vector from A to B
             // getting orthogonal vector to the edge, i.e: the axis
             Vector axis = Vector{-edge.y, edge.x};
@@ -150,8 +149,8 @@ namespace physics {
         real currentPenetration = 0;
         // checking polygon's edges
         for (int i = 0; i < firstNumVertices; i++) {
-            Vector vertexA = polygon.getVertices()->at(i);
-            Vector vertexB = polygon.getVertices()->at((i+1) % firstNumVertices);
+            const Vector &vertexA = polygon.getVertices()->at(i);
+            const Vector &vertexB = polygon.getVertices()->at((i+1) % firstNumVertices);
             Vector edge = vertexB - vertexA; // vector from A to B
             // getting orthogonal vector to the edge, i.e: the axis
             Vector axis = Vector{-edge.y, edge.x};
@@ -169,24 +168,7 @@ namespace physics {
                 if (circle.getPosition().dot(projectionNormal) < 0) projectionNormal *= -1;
             }
         }
-        /*
-        // trying a new axis, which is the vector from the circle to the closest point on the polygon (maybe it's closer to the circle than one of the edges
-        Vector &closestVertexToCircle = physics::closestVertexTo(circle.getPosition(), *(polygon.getVertices()));
-        Vector newAxis = closestVertexToCircle - circle.getPosition();
-        newAxis.normalize();
-        // clamping and projecting to the axis
-        physics::clampVertices(polygon, newAxis, &polygonMin, &polygonMax);
-        physics::clampCircle(circle, newAxis, &circleMin, &circleMax);
-        // if there's no overlap in one axis, they're not colliding
-        if (polygonMin >= circleMax || circleMin >= polygonMax) return false;
-        // getting the penetration value and updating the projection vector accordingly
-        currentPenetration = std::min(circleMax - polygonMin, polygonMax - circleMin);
-        if (currentPenetration < *penetrationDistance) {
-            *penetrationDistance = currentPenetration;
-            projectionNormal = newAxis;
-            if (circle.getPosition().dot(projectionNormal) < 0) projectionNormal *= -1;
-        }
-        */
+        
         // checking validity of projection's direction
         Vector polygonPosition = Vector{0, 0, 0};
         physics::polygonCenterPosition(polygon, polygonPosition);
@@ -199,8 +181,8 @@ namespace physics {
     }
 
     bool physics::areColliding(Circle &circle, Line &line, Vector &projectionNormal, real *penetrationDistance) {
-        Vector first = line.getFirst();
-        Vector second = line.getSecond();
+        const Vector &first = line.getFirst();
+        const Vector &second = line.getSecond();
         Vector lineVector = second - first;
         real lineLength = lineVector.norma();
         Vector circleToFirst = first - circle.getPosition();
