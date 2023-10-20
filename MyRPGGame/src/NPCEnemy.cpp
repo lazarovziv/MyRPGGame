@@ -3,7 +3,7 @@
 NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initialPosition, physics::RigidBodyType::CIRCLE) {
     this->type = type;
     level = 1;
-    maxHealthPoints = 20;
+    maxHealthPoints = 350000;
     currentHealthPoints = maxHealthPoints;
     maxManaPoints = 10;
     currentManaPoints = maxManaPoints;
@@ -57,7 +57,7 @@ int NPCEnemy::getType() {
 }
 
 bool NPCEnemy::canMove() const {
-    return moveInterval >= MOVE_INTERVAL_DEFAULT;
+    return moveInterval >= GameEntity::MOVE_INTERVAL_DEFAULT;
 }
 
 bool NPCEnemy::canGoToWanderArea() {
