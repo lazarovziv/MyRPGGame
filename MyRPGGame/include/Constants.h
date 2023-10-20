@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <climits>
 
 // for using throughout the project, if want to change to int/double
-typedef double real;
+typedef float real;
 
 enum class MoveDirection { DOWN, RIGHT, LEFT, UP, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT };
 
@@ -20,12 +21,15 @@ enum class EntityMovementState {
 
 class Constants {
 public:
+    // for the physics collision detection (impacts performance but more precise)
+    static const int UPDATE_ITERATIONS = 1;
+
     static constexpr real SCREEN_WIDTH = 800;
     static constexpr real SCREEN_HEIGHT = 640;
     static constexpr real FULL_SCREEN_WIDTH = 918;//4 * SCREEN_WIDTH;
     static constexpr real FULL_SCREEN_HEIGHT = 515; //3 * SCREEN_HEIGHT;
     static constexpr real TILE_SIZE = 64;
-    static constexpr real BASE_ENTITY_SPEED = 6;
+    static constexpr real BASE_ENTITY_SPEED = 6 * UPDATE_ITERATIONS;
     static const int FPS = 60;
 
     static constexpr real REAL_MAX = std::numeric_limits<real>::max();
@@ -62,10 +66,12 @@ public:
     static const int WALK_NUM_COLS = 8;
     static const int WALK_NUM_ROWS = 4;
     static const int WALK_ROW = 33;
+    // TODO: define combat rows from zero where first row is the first occurrence of 128x128 pixels
+    // OR calculate rows by the 128x128 rows above them
     static const int COMBAT_IDLE_ONE_HANDED_NUM_COLS = 2;
     static const int COMBAT_IDLE_ONE_HANDED_NUM_ROWS = 4;
     static const int COMBAT_IDLE_ONE_HANDED_ROW = 9;
-    static const int COMBAT_SLASH_ONE_HANDED_NUM_COLS = 7;
+    static const int COMBAT_SLASH_ONE_HANDED_NUM_COLS = 6;
     static const int COMBAT_SLASH_ONE_HANDED_NUM_ROWS = 4;
     static const int COMBAT_SLASH_ONE_HANDED_ROW = 37; //13;
     static const int COMBAT_BACKSLASH_ONE_HANDED_NUM_COLS = 12;
@@ -89,6 +95,19 @@ public:
             { EntityMovementState::SITTING, Constants::SITTING_NUM_COLS },
             { EntityMovementState::RUN, Constants::RUN_NUM_COLS },
             { EntityMovementState::IDLE, Constants::IDLE_NUM_COLS }
+    };
+
+    inline static const std::map<EntityMovementState, int> MOVEMENT_STATE_ROW = {
+            { EntityMovementState::CLIMB, Constants::CLIMB_ROW },
+            { EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED, Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW },
+            { EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED, Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW },
+            { EntityMovementState::COMBAT_IDLE_ONE_HANDED, Constants::COMBAT_IDLE_ONE_HANDED_ROW },
+            { EntityMovementState::COMBAT_SLASH_ONE_HANDED, Constants::COMBAT_SLASH_ONE_HANDED_ROW },
+            { EntityMovementState::WALK, Constants::WALK_ROW },
+            { EntityMovementState::JUMP, Constants::JUMP_ROW },
+            { EntityMovementState::SITTING, Constants::SITTING_ROW },
+            { EntityMovementState::RUN, Constants::RUN_ROW },
+            { EntityMovementState::IDLE, Constants::IDLE_ROW }
     };
 
     // inline is a c++ 17 feature

@@ -247,14 +247,14 @@ void GameMap::update(real dt) {
     }
     // player not in entities
     // checking collision of entity in a body and not the other way around
-    int iterations = 4;
+    real divDt = dt/Constants::UPDATE_ITERATIONS;
     for (auto entity : entities) {
         // player is in bodies
         for (auto &body : bodies) {
             if (body == entity->getRigidBody()) continue;
-            for (int i = 0; i < iterations; i++) {
-                physics::resolveCollisions(entity->getRigidBody(), body, dt);
-                entity->update(dt);
+            for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
+                physics::resolveCollisions(entity->getRigidBody(), body, divDt);
+                entity->update(divDt);
             }
         }
     }
