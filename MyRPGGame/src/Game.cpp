@@ -373,7 +373,7 @@ void Game::initWorldMap() {
     physics::Vector bottomRightOffset = physics::Vector{1, 1};
     physics::Vector topLeftOffset = physics::Vector{-1, -1};
     physics::Vector topRightOffset = physics::Vector{1, -1};
-    real edgeLength = TILE_SIZE + 10;
+    real edgeLength = TILE_SIZE;
     // top exit circle
     auto *startMapTopExitCircle = new Circle(TILE_SIZE / 2, FULL_SCREEN_WIDTH / 2 + TILE_SIZE,
                                              TILE_SIZE / 2);
@@ -421,23 +421,19 @@ void Game::initWorldMap() {
                                                   unreachableTree33Center,
                                                   unreachableTree33Vertices);
 
+    */
     physics::Vector house0Center = physics::Vector{535, 95};
     std::vector<physics::Vector> house0Vertices {
             house0Center + (bottomLeftOffset * edgeLength), // bottom left
             house0Center + (bottomRightOffset * edgeLength), // bottom right
-            house0Center + (topLeftOffset * edgeLength), // top left
-            house0Center + (topRightOffset * edgeLength)
+            house0Center + (topRightOffset * edgeLength), // top right
+            house0Center + (topLeftOffset * edgeLength) // top left
     };
     auto *unreachableHouse0 = new LandscapeEntity(LandscapeType::TREE,
                                                  house0Center,
                                                  house0Vertices);
 
-    startMap->addLandscape(unreachableTree0);
-    startMap->addLandscape(unreachableTree1);
-    startMap->addLandscape(unreachableTree22);
-    startMap->addLandscape(unreachableTree33);
     startMap->addLandscape(unreachableHouse0);
-    */
 
     std::shared_ptr<GameMap> topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
     // bottom exit circle
