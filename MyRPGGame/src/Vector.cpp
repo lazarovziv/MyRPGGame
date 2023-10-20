@@ -9,7 +9,7 @@ namespace physics {
     const Vector Vector::LEFT_DIRECTION = Vector(-1, 0, 0);
 
     real Vector::norma() const {
-        return (real) sqrt(magnitude());
+        return (real) std::sqrt(magnitude());
     }
 
     real Vector::magnitude() const {
@@ -27,13 +27,12 @@ namespace physics {
         *this /= norm;
     }
 
-    real Vector::dot(const physics::Vector &other) {
+    real Vector::dot(const physics::Vector &other) const {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    real Vector::distance(const physics::Vector &other) {
-        return (real) sqrt(pow(x - other.y, 2) + pow(y - other.y, 2) +
-                           pow(z - other.z, 2));
+    real Vector::distance(const physics::Vector &other) const {
+        return (real) std::sqrt((x - other.y)*(x - other.y) + (y - other.y)*(y - other.y) + (z - other.z)*(z - other.z));
     }
 
     void Vector::resetCoordinates() {

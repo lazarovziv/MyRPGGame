@@ -3,6 +3,8 @@
 
 #include "Vector.hpp"
 #include <memory>
+#include <vector>
+#include <algorithm>
 
 namespace physics {
     enum class RigidBodyType {

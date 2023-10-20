@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <climits>
+#include <limits>
+#include "math.h"
 
 // for using throughout the project, if want to change to int/double
 typedef float real;

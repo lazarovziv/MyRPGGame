@@ -25,8 +25,8 @@ namespace physics {
         real magnitude() const;
         Vector normalized() const;
         void normalize();
-        real dot(const Vector &other);
-        real distance(const Vector &other);
+        real dot(const Vector &other) const;
+        real distance(const Vector &other) const;
 
         void resetCoordinates();
         void printCoordinates() const;

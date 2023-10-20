@@ -2,7 +2,7 @@
 
 namespace physics {
 
-    bool physics::resolveCollisions(physics::RigidBody *first, physics::RigidBody *second, real dt) {
+    bool resolveCollisions(physics::RigidBody *first, physics::RigidBody *second, real dt) {
         if (!first->hasFiniteMass() && !second->hasFiniteMass()) return false;
         // direction vector to project first body
         Vector axisToProject = second->getPosition() - first->getPosition();
@@ -72,7 +72,7 @@ namespace physics {
         return true;
     }
 
-    Vector& physics::closestVertexTo(physics::Vector origin, std::vector<Vector> &vertices) {
+    Vector& closestVertexTo(physics::Vector origin, std::vector<Vector> &vertices) {
         Vector &closest = vertices[0];
         real minDistanceSquared = Constants::REAL_MAX;
 
@@ -88,7 +88,7 @@ namespace physics {
         return closest;
     }
 
-    bool physics::areColliding(physics::Polygon &first, physics::Polygon &second, Vector &projectionNormal, real *penetrationDistance) {
+    bool areColliding(physics::Polygon &first, physics::Polygon &second, Vector &projectionNormal, real *penetrationDistance) {
         size_t firstNumVertices = first.getNumVertices();
         size_t secondNumVertices = second.getNumVertices();
         real minFirst, maxFirst;
@@ -142,7 +142,7 @@ namespace physics {
         return true;
     }
 
-    bool physics::areColliding(physics::Circle &circle, physics::Polygon &polygon, physics::Vector &projectionNormal, real *penetrationDistance) {
+    bool areColliding(physics::Circle &circle, physics::Polygon &polygon, physics::Vector &projectionNormal, real *penetrationDistance) {
         size_t firstNumVertices = polygon.getNumVertices();
         real circleMin, circleMax;
         real polygonMin, polygonMax;
@@ -180,7 +180,7 @@ namespace physics {
         return true;
     }
 
-    bool physics::areColliding(Circle &circle, Line &line, Vector &projectionNormal, real *penetrationDistance) {
+    bool areColliding(Circle &circle, Line &line, Vector &projectionNormal, real *penetrationDistance) {
         const Vector &first = line.getFirst();
         const Vector &second = line.getSecond();
         Vector lineVector = second - first;
@@ -210,7 +210,7 @@ namespace physics {
         return false;
     }
 
-    void physics::clampVertices(physics::Polygon &polygon, physics::Vector &axis, real *min, real *max) {
+    void clampVertices(physics::Polygon &polygon, physics::Vector &axis, real *min, real *max) {
         *min = Constants::REAL_MAX;
         *max = Constants::REAL_MIN;
 
@@ -221,7 +221,7 @@ namespace physics {
         }
     }
 
-    void physics::clampVertex(Vector &vertex, Vector &axis, real *min, real *max) {
+    void clampVertex(Vector &vertex, Vector &axis, real *min, real *max) {
         *min = Constants::REAL_MAX;
         *max = Constants::REAL_MIN;
 
@@ -230,7 +230,7 @@ namespace physics {
         *max = std::max(*max, dotProduct);
     }
 
-    void physics::clampCircle(physics::Circle &circle, physics::Vector &axis, real *min, real *max) {
+    void clampCircle(physics::Circle &circle, physics::Vector &axis, real *min, real *max) {
         real radius = circle.getRadius();
         // declaring the axis for the points on the circle and scaling it by the radius
         Vector scaledAxis = axis * radius;
@@ -245,7 +245,7 @@ namespace physics {
         *max = std::max(dotA, dotB);
     }
 
-    void physics::polygonCenterPosition(physics::Polygon &polygon, physics::Vector &position) {
+    void polygonCenterPosition(physics::Polygon &polygon, physics::Vector &position) {
         real xSum = 0;
         real ySum = 0;
         real zSum = 0;
