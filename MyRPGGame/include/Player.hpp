@@ -28,9 +28,8 @@ private:
     
 public:
     Player();
-    Player(PlayerType type);
-    explicit Player(PlayerType type, Point *center);
-    ~Player();
+    explicit Player(PlayerType type, physics::Vector initialPosition);
+    ~Player() override;
     int getStrengthPoints();
     int getIntelligencePoints();
     int getCriticalHitPoints();
@@ -42,7 +41,6 @@ public:
     void incrementExpPoints(int amount);
     void setPlayerType(PlayerType type);
 
-    void update(Point ***points, real dt) override;
 };
 
 #endif /* Player_hpp */

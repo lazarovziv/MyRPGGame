@@ -37,7 +37,8 @@ GameEntity::GameEntity() {
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 }
 
-GameEntity::GameEntity(Point *center) {
+GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
+                       const std::vector<physics::Vector> &vertices, real mass) {
     level = 1;
     maxHealthPoints = 50;
     currentHealthPoints = maxHealthPoints;
@@ -76,16 +77,36 @@ GameEntity::GameEntity(Point *center) {
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
-    entityCircle = std::make_unique<Circle>(center->getX(), center->getY(), (real) Constants::TILE_SIZE/4);
-    entityRightCircle = std::make_unique<Circle>(center->getX() + speed, center->getY(), (real) Constants::TILE_SIZE/4);
-    entityLeftCircle = std::make_unique<Circle>(center->getX() - speed, center->getY(), (real) Constants::TILE_SIZE/4);
-    entityTopCircle = std::make_unique<Circle>(center->getX(), center->getY() - speed, (real) Constants::TILE_SIZE/4);
-    entityBottomCircle = std::make_unique<Circle>(center->getX(), center->getY() + speed, (real) Constants::TILE_SIZE/4);
+    movementStateColMap[EntityMovementState::IDLE] = 0;
+    movementStateColMap[EntityMovementState::CLIMB] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::WALK] = 0;
+    movementStateColMap[EntityMovementState::JUMP] = 0;
+    movementStateColMap[EntityMovementState::SITTING] = 0;
+    movementStateColMap[EntityMovementState::RUN] = 0;
 
-    attackRangeCircle = std::make_unique<Circle>(entityCircle->getCenter(), (real) Constants::TILE_SIZE/4);
+    switch (rigidBodyType) {
+        case physics::RigidBodyType::CIRCLE: {
+            rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z,
+                                                          (real) Constants::TILE_SIZE/4);
+            break;
+        }
+        case physics::RigidBodyType::POLYGON: {
+            rigidBody = std::make_unique<physics::Polygon>(initialPosition.x, initialPosition.y, initialPosition.z,
+                                                           vertices, mass);
+            break;
+        }
+        default:
+            break;
+    }
+    // updating the mass because derived classes aren't setting new values to the mass in their constructors
+    rigidBody->setMass(mass);
 
-    position.x = entityCircle->getCenter()->getX();
-    position.y = entityCircle->getCenter()->getY();
+    position.x = rigidBody->getPosition().x;
+    position.y = rigidBody->getPosition().y;
 }
 
 GameEntity::~GameEntity() {
@@ -112,7 +133,7 @@ void GameEntity::increaseMaxManaPoints(int amount) {
     } else currentManaPoints += amount;
 }
 
-void GameEntity::increaseSpeed(real amount) {
+void GameEntity::increaseSpeed(const real amount) {
     // setting upper limit to 3
 //    if (speed + amount < 3) {
 //        speed += amount;
@@ -141,7 +162,7 @@ void GameEntity::changeInBattleState() {
 void GameEntity::setMoveDirection(MoveDirection direction) {
     moveDirection = direction;
     // adjusting weapon direction
-    weapon->setTransitionDirection(direction);
+//    weapon->setTransitionDirection(direction);
 }
 
 void GameEntity::setMovementState(EntityMovementState state) {
@@ -162,150 +183,42 @@ void GameEntity::setY(real y) {
 }
 
 // TODO: add direction vector and normalize it for diagonal movement?
-void GameEntity::setPosition(real x, real y) {
-    position.x = x;
-    position.y = y;
-    if (entityCircle != nullptr) {
-        entityCircle->getCenter()->setX(position.x);
-        entityCircle->getCenter()->setY(position.y);
-        // if not created
-    }
-//    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
+void GameEntity::setPosition(const real x, const real y, const real z) {
+    rigidBody->setPosition(x, y, z);
 }
 
-void GameEntity::setPosition(Point *point) {
-    position.x = point->getX();
-    position.y = point->getY();
-    if (entityCircle != nullptr) {
-        entityCircle->setCenter(point);
-        // if not created
-    }
-    if (attackRangeCircle != nullptr) {
-        attackRangeCircle->setCenter(point);
-    }
-//    else entityCircle = new Circle(position.x, position.y, (float) 3 * Constants::TILE_SIZE / 4);
+void GameEntity::setPosition(physics::Vector newPosition) {
+    rigidBody->setPosition(newPosition.x, newPosition.y, newPosition.z);
 }
 
-void GameEntity::setPosition(sf::Vector2f directionVector, real dt) {
-    position.x = position.x + speed * dt * directionVector.x;
-    position.y = position.y + speed * dt * directionVector.y;
-}
-
-bool GameEntity::createMovementStateSprite(EntityMovementState state) {
-    sf::Texture textureToCreate;
-    sf::Sprite *spriteToCreate = new sf::Sprite();
-    switch (state) {
-        case EntityMovementState::IDLE: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "idle/body_idle.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::CLIMB: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "climb/body_climb.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::WALK: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "walk/body_walk.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::JUMP: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "jump/body_jump.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::RUN: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "run/body_run.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::SITTING: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "sitting/body_sitting.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_IDLE_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_idle.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_SLASH_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_slash.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_backslash.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
-        case EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED: {
-            if (!textureToCreate.loadFromFile(Constants::PLAYER_IMAGES_PATH + "combat/body_combat_1h_halfslash.png")) {
-                std::cout << "Texture wasn't loaded properly." << std::endl;
-                return false;
-            }
-            break;
-        }
+void GameEntity::move(const physics::Vector directionVector, const real dt) {
+    // TODO: delete this after anti gravity force will be added
+    if (directionVector == physics::Vector::ZERO) {
+        positionUpdated = false;
+        return;
     }
-    // texture is loaded
-
-    // add texture to vector to keep in memory for future use
-    movementStateTextures.push_back(textureToCreate);
-    // load the texture into the sprite
-    spriteToCreate->setTexture(textureToCreate);
-    spriteToCreate->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection]*Constants::TILE_SIZE,
-                                               0, Constants::TILE_SIZE, Constants::TILE_SIZE));
-    spriteToCreate->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-    spriteToCreate->setPosition(position.x, position.y);
-    // set created sprite as the movement state sprite
-    movementStateSpritesMap[state] = spriteToCreate;
-    return true;
-}
-
-bool GameEntity::addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite) {
-    // calling the function with a nullptr parameter only if we want to initialize a new sprite
-    if (sprite == nullptr) {
-        return createMovementStateSprite(state);
+    real currentSpeed = running ? speed * 2.f : speed; // multiply by dt?
+    rigidBody->addForce(directionVector * currentSpeed);
+    // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
+    incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
+    // setting the moveDirection used for animating
+    real horizontalDirection = directionVector.x;
+    real verticalDirection = directionVector.y;
+    if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
+    else if (horizontalDirection < 0) moveDirection = MoveDirection::LEFT;
+    else {
+        if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
+        else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
-    // we want to change the current sprite
-    delete movementStateSpritesMap[state];
-    // create the new one
-    movementStateSpritesMap[state] = newSprite;
-    return true;
+    positionUpdated = true;
 }
 
 void GameEntity::setWeapon(WeaponType type) {
-    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), type);
-//    // initializing attackRangeCircle according to weapon
-//    if (attackRangeCircle != nullptr) {
-//        attackRangeCircle->setRadius(entityCircle->getRadius() + weapon->getHitRadius());
-//    } else {
-//        attackRangeCircle = new Circle(position.x, position.y, entityCircle->getRadius() + weapon->getHitRadius());
-//        cout << attackRangeCircle->getCenter()->getX() << endl;
-//    }
+    weapon = std::make_unique<Weapon>(rigidBody->getPosition(), type);
 }
 
-void GameEntity::setIsInBattle(bool inBattle) {
-    this->inBattle = inBattle;
+void GameEntity::setIsInBattle(bool flag) {
+    this->inBattle = flag;
 }
 
 void GameEntity::decreaseMaxHealthPoints(int amount) {
@@ -327,7 +240,7 @@ void GameEntity::decreaseMaxManaPoints(int amount) {
     maxManaPoints -= amount;
 }
 
-void GameEntity::decreaseSpeed(int speed) {
+void GameEntity::decreaseSpeed(const real speed) {
     if (this->speed - speed <= 0) this->speed = 0;
     this->speed -= speed;
 }
@@ -423,11 +336,27 @@ std::map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() const {
     return moveDirectionsSpritesMap;
 }
 
+int GameEntity::getMovementStateColCount(EntityMovementState state) const {
+    return movementStateColMap.at(state);
+}
+
+void GameEntity::incrementMovementStateColCount(const EntityMovementState state) {
+    if (movementStateColMap[state] < Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+        movementStateColMap[state] = movementStateColMap[state] + 1;
+        return;
+    }
+    movementStateColMap[state] = 0;
+}
+
+void GameEntity::resetMovementStateColCount(const EntityMovementState state) {
+    movementStateColMap[state] = 0;
+}
+
 std::map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
     return movementStateRowMap;
 }
 
-sf::Vector2f GameEntity::getPosition() const {
+sf::Vector2f GameEntity::getRenderPosition() const {
     return position;
 }
 
@@ -455,12 +384,36 @@ void GameEntity::setIntRectPosition(int left, int top, int width, int height) {
     sprite->setTextureRect(spriteRect);
 }
 
+physics::RigidBody* GameEntity::getRigidBody() const {
+    return rigidBody.get();
+}
+
+physics::Vector GameEntity::getPosition() const {
+    return (*rigidBody).getPosition();
+}
+
+bool GameEntity::isRunning() const {
+    return running;
+}
+
+void GameEntity::setIsRunning(const bool flag) {
+    running = flag;
+}
+
 bool GameEntity::canAttack() const {
     return battleInterval >= BATTLE_INTERVAL_DEFAULT;
 }
 
 void GameEntity::resetBattleInterval() {
     battleInterval = 0;
+}
+
+void GameEntity::increaseBattleInterval(const real dt) {
+    battleInterval += dt;
+}
+
+void GameEntity::resetBattleIntervalForSwing() {
+    battleInterval = -SWING_INTERVAL_DEFAULT;
 }
 
 bool GameEntity::didJustMove() const {
@@ -476,13 +429,17 @@ bool GameEntity::canGoIdle() const {
     return moveInterval >= MOVE_INTERVAL_DEFAULT;
 }
 
+bool GameEntity::canChangeDirection() const {
+    return changeMoveDirectionInterval >= CHANGE_MOVE_DIRECTION_INTERVAL;
+}
+
+void GameEntity::resetChangeDirectionInterval() {
+    changeMoveDirectionInterval = 0;
+}
+
 void GameEntity::resetMoveInterval() {
     moveInterval = 0;
     resetIdleAnimationInterval();
-}
-
-void GameEntity::setLastTimeMoved(std::clock_t time) {
-
 }
 
 void GameEntity::setIsIdle(bool flag) {
@@ -497,21 +454,21 @@ void GameEntity::resetDistanceTraveledSinceIdle() {
     distanceTraveledSinceIdle = 0;
 }
 
-void GameEntity::incrementDistanceTraveledSinceIdle(real distance) {
+void GameEntity::incrementDistanceTraveledSinceIdle(const real distance) {
     distanceTraveledSinceIdle += distance;
 }
 
-bool GameEntity::canAnimateMovement() {
+bool GameEntity::canAnimateMovement(const bool check) {
     if (distanceTraveledSinceIdle >= speed) {
-        resetDistanceTraveledSinceIdle();
+        if (!check) resetDistanceTraveledSinceIdle();
         return true;
     }
     return false;
 }
 
-bool GameEntity::canAnimateIdle() {
+bool GameEntity::canAnimateIdle(const bool check) {
     if (idleAnimationInterval >= Constants::NUM_FRAMES_IDLE_ANIMATION) {
-        resetIdleAnimationInterval();
+        if (!check) resetIdleAnimationInterval();
         return true;
     }
     return false;
@@ -519,84 +476,32 @@ bool GameEntity::canAnimateIdle() {
 
 void GameEntity::resetIdleAnimationInterval() {
     idleAnimationInterval = 0;
+//    resetMovementStateColCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED);
+//    resetMovementStateColCount(EntityMovementState::WALK);
 }
 
-void GameEntity::incrementIdleAnimationInterval(real dt) {
+void GameEntity::incrementIdleAnimationInterval(const real dt) {
     idleAnimationInterval += dt;
-}
-
-bool GameEntity::isEntityInAttackRange(GameEntity &entity) {
-    return attackRangeCircle->intersects(entity.entityCircle.get());
-}
-
-bool GameEntity::intersects(GameEntity &entity) {
-    return entityCircle->intersects(entity.entityCircle.get());
-}
-
-Circle* GameEntity::getCircle() {
-    return entityCircle.get();
-}
-
-Circle* GameEntity::getRightCircle() {
-    return entityRightCircle.get();
-}
-
-Circle* GameEntity::getLeftCircle() {
-    return entityLeftCircle.get();
-}
-
-Circle* GameEntity::getTopCircle() {
-    return entityTopCircle.get();
-}
-
-Circle* GameEntity::getBottomCircle() {
-    return entityBottomCircle.get();
-}
-
-Circle* GameEntity::getAttackRangeCircle() {
-    return attackRangeCircle.get();
 }
 
 Weapon* GameEntity::getWeapon() {
     return weapon.get();
 }
 
-void GameEntity::update(Point ***points, real dt) {
+void GameEntity::printPosition() const {
+    rigidBody->getPosition().printCoordinates();
+}
+
+void GameEntity::update(real dt) {
     if (!dead) {
+        rigidBody->update(dt);
+
+        position.x = rigidBody->getPosition().x;
+        position.y = rigidBody->getPosition().y;
         sprite->setPosition(position.x, position.y);
-        // updating intervals
+        // updating intervals (checking values to prevent overflow if not acted long enough)
         moveInterval += dt;
         battleInterval += dt;
-        // updating entity circles and attack circle
-        entityCircle->setCenter(position.x, position.y);
-        entityRightCircle->setCenter(position.x + speed * dt, position.y);
-        entityLeftCircle->setCenter(position.x - speed * dt, position.y);
-        entityTopCircle->setCenter(position.x, position.y - speed * dt);
-        entityBottomCircle->setCenter(position.x, position.y + speed * dt);
-
-        attackRangeCircle->setCenter(position.x, position.y);
+        if (!isPlayer) changeMoveDirectionInterval += dt;
     }
-}
-
-void GameEntity::pushToMoveStack(Point *move) {
-    movesStack.push(move);
-}
-
-Point *GameEntity::popMove() {
-    if (numOfMovesAvailable() == 0) return nullptr;
-    auto *move = movesStack.top();
-    movesStack.pop();
-    return move;
-}
-
-int GameEntity::numOfMovesAvailable() {
-    return movesStack.size();
-}
-
-bool GameEntity::areAvailableMoves() {
-    return !movesStack.empty();
-}
-
-void GameEntity::clearMoveStack() {
-    while (!movesStack.empty()) movesStack.pop();
 }

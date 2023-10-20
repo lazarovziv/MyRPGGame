@@ -1,13 +1,14 @@
 #include "../include/Weapon.hpp"
 
-Weapon::Weapon(Point *center, WeaponType type) {
+Weapon::Weapon(physics::Vector initialPosition, WeaponType type) {
     // TODO: handle shield differently with the directions map
     transitionDirectionsSpritesMap[MoveDirection::UP] = 1;
     transitionDirectionsSpritesMap[MoveDirection::LEFT] = 2;
     transitionDirectionsSpritesMap[MoveDirection::DOWN] = 3;
     transitionDirectionsSpritesMap[MoveDirection::RIGHT] = 4;
 
-    weaponCircle = new Circle(center, (float) Constants::TILE_SIZE/4);
+    rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z, (real) Constants::TILE_SIZE/4);
+//    weaponCircle = new Circle(center, (float) Constants::TILE_SIZE/4);
 
     switch (type) {
         case WeaponType::SWORD:
@@ -59,8 +60,8 @@ Weapon::Weapon(Point *center, WeaponType type) {
             break;
     }
 
-    position.x = weaponCircle->getCenter()->getX();
-    position.y = weaponCircle->getCenter()->getY();
+    position.x = rigidBody->getPosition().x;
+    position.y = rigidBody->getPosition().y;
 }
 
 void Weapon::increaseAttackPoints(int amount) {
@@ -148,7 +149,9 @@ void Weapon::setTransitionDirection(MoveDirection direction) {
     transitionDirection = direction;
 }
 
-void Weapon::update(Point ***points) {
+void Weapon::update(real dt) {
+    position.x = rigidBody->getPosition().x;
+    position.y = rigidBody->getPosition().y;
     sprite->setPosition(position.x, position.y);
-    weaponCircle->setCenter(points[(int)position.y][(int)position.x]);
+//    weaponCircle->setCenter(points[(int)position.y][(int)position.x]);
 }

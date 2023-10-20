@@ -1,9 +1,9 @@
 #include "../include/NPCEnemy.hpp"
 
-NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
+NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initialPosition, physics::RigidBodyType::CIRCLE) {
     this->type = type;
     level = 1;
-    maxHealthPoints = 20;
+    maxHealthPoints = 350000;
     currentHealthPoints = maxHealthPoints;
     maxManaPoints = 10;
     currentManaPoints = maxManaPoints;
@@ -13,6 +13,7 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     expPointsWorth = 10;
     inBattle = false;
     dead = false;
+    speed = Constants::BASE_ENTITY_SPEED;
     moveDirection = MoveDirection::UP;
 
     // TextureLoader.getInstance()->loadTexture("dorio_64.png");
@@ -25,13 +26,9 @@ NPCEnemy::NPCEnemy(int type, Point *center) : GameEntity(center) {
     // sprite->scale(2.0, 2.0);
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     sprite->setPosition(position.x, position.y);
-    weapon = std::make_unique<Weapon>(entityCircle->getCenter(), WeaponType::MACE);
-    attackRangeCircle->setRadius(attackRangeCircle->getRadius() + weapon->getHitRadius());
-    wanderAreaRadius = entityCircle->getRadius() * 12;
-    wanderAreaCircle = new Circle(entityCircle->getCenter(), wanderAreaRadius);
-    battleAreaRadius = (float) (wanderAreaRadius * 2.5);
-    battleAreaCircle = new Circle(entityCircle->getCenter(), battleAreaRadius);
+    moveDirection = MoveDirection::DOWN;
 
+    rigidBody->setMass(5);
     // TODO: choose random floats in defined location radius for each enemy in map
 }
 
@@ -60,7 +57,7 @@ int NPCEnemy::getType() {
 }
 
 bool NPCEnemy::canMove() const {
-    return moveInterval >= MOVE_INTERVAL_DEFAULT;
+    return moveInterval >= GameEntity::MOVE_INTERVAL_DEFAULT;
 }
 
 bool NPCEnemy::canGoToWanderArea() {
@@ -69,12 +66,14 @@ bool NPCEnemy::canGoToWanderArea() {
 
 bool NPCEnemy::isInBattleArea() {
     if (battleAreaCircle == nullptr) return false;
-    return battleAreaCircle->isPointInCircle(entityCircle->getCenter());
+//    return battleAreaCircle->isPointInCircle(entityCircle->getCenter());
+    return false;
 }
 
 bool NPCEnemy::isInWanderArea() {
-    if (wanderAreaCircle == nullptr) return false;
-    return wanderAreaCircle->isPointInCircle(entityCircle->getCenter());
+//    if (wanderAreaCircle == nullptr) return false;
+//    return wanderAreaCircle->isPointInCircle(entityCircle->getCenter());
+    return true;
 }
 
 Circle *NPCEnemy::getWanderAreaCircle() {
@@ -87,26 +86,6 @@ Circle *NPCEnemy::getBattleAreaCircle() {
 
 void NPCEnemy::setMoveInterval(real interval) {
     moveInterval = interval;
-}
-
-// TODO: add more functionality or else use GameEntity's update method
-void NPCEnemy::update(Point ***points, real dt) {
-    if (!dead) {
-        sprite->setPosition(position.x, position.y);
-        // updating game entity intervals
-        moveInterval += dt;
-        battleInterval += dt;
-        // npc enemy intervals
-        wanderAreaInterval += dt;
-        // updating entity circles and attack circle
-        entityCircle->setCenter(position.x, position.y);
-        entityRightCircle->setCenter(position.x + speed * dt, position.y);
-        entityLeftCircle->setCenter(position.x - speed * dt, position.y);
-        entityTopCircle->setCenter(position.x, position.y - speed * dt);
-        entityBottomCircle->setCenter(position.x, position.y + speed * dt);
-
-        attackRangeCircle->setCenter(position.x, position.y);
-    }
 }
 
 // TODO: what to do here? how to use observers to my advantage

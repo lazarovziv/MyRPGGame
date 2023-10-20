@@ -42,8 +42,8 @@ public:
     static const int ETC = 4;
     
     NPCEnemy() = default;
-    explicit NPCEnemy(int type, Point *center);
-    ~NPCEnemy();
+    explicit NPCEnemy(int type, physics::Vector initialPosition);
+    ~NPCEnemy() override;
     int getBattleTimeout();
     real getWanderAreaRadius();
     real getBattleAreaRadius();
@@ -60,7 +60,6 @@ public:
 
     void setMoveInterval(real interval);
 
-    void update(Point ***points, real dt) override;
     void notify() override;
 };
 

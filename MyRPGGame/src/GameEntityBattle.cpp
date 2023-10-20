@@ -18,17 +18,7 @@ void GameEntityBattle::setEntity(GameEntity *gameEntity) {
 bool GameEntityBattle::animate(real dt) {
 //    Weapon *weapon = entity->getWeapon();
 //    MoveDirection direction = weapon->getTransitionDirection();
-    MoveDirection direction = entity->getMoveDirection();
-    int directionRow = entity->getMoveDirectionsSpritesMap()[direction];
-    // AttackSuccessValue attackSuccessValue;
-    std::cout << "Attacking" << std::endl;
-    // set attack success value
-    animationManager->incrementCombatSlashOneHandedCount();
-    int movementStateCount = round(animationManager->getMovementStateCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED) * dt * 1.74f);
-
-    entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
-                               (entity->getMovementStateRowMap()[EntityMovementState::COMBAT_SLASH_ONE_HANDED] + directionRow-1) * Constants::TILE_SIZE,
-                               Constants::TILE_SIZE, Constants::TILE_SIZE);
+    animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
     return true;
 }
 
@@ -36,7 +26,7 @@ bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
     // checking attack interval
     if (!entity->canAttack()) return false;
     // checking attack range
-    if (isInAttackRange(enemy)) {
+    if (/*isInAttackRange(enemy)*/entity->canAttack()) {
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
@@ -74,8 +64,4 @@ bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
     std::cout << "Defence: " << enemy.getCurrentDefencePoints() << std::endl;
 //    entity->resetBattleInterval(); // moved to repository
     return true;
-}
-
-bool GameEntityBattle::isInAttackRange(GameEntity &enemy) {
-    return entity->getAttackRangeCircle()->intersects(enemy.getCircle());
 }

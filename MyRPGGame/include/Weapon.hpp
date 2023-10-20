@@ -5,10 +5,10 @@
 
 #include <iostream>
 #include <map>
-#include <string.h>
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
 #include "Circle.hpp"
+#include "RigidBody.hpp"
 
 //using namespace std;
 
@@ -28,9 +28,10 @@ private:
     int transition = Constants::WEAPON_TRANSITION_MIN;
 
     Circle *weaponCircle = nullptr;
+    std::unique_ptr<physics::RigidBody> rigidBody;
     
 public:
-    Weapon(Point *center, WeaponType type);
+    Weapon(physics::Vector initialPosition, WeaponType type);
     ~Weapon() = default;
     
     int getAttackPoints();
@@ -57,7 +58,7 @@ public:
     void setIntRectPosition(int left, int top, int width, int height);
 //    void attack();
 
-    void update(Point ***point);
+    void update(real dt);
 };
 
 #endif /* Weapon_hpp */

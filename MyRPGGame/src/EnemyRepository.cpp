@@ -5,7 +5,8 @@ EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle 
     this->player = player;
     movementHandler = movement;
     battleHandler = battle;
-    setGameMap(gameMap);
+    setGameMap(std::move(gameMap));
+    animationManager = new AnimationManager(nullptr);
 }
 
 EnemyRepository::~EnemyRepository() {
@@ -24,45 +25,46 @@ void EnemyRepository::move(real dt) {
     for (auto &enemy : map->getEnemies()) {
         if (!enemy->isDead() && enemy->canMove()) {
             // set enemy if not already set
-            if (movementHandler->getEntity() != enemy) movementHandler->setEntity(*enemy);
-            if (battleHandler->getEntity() != enemy) battleHandler->setEntity(enemy);
-            // if enemy is in battle (and in battle circle), chase the player
-            // TODO: add checks for chasing other entities
-            if (enemy->isInBattle() && enemy->isInBattleArea()) {
-//                if (player->didJustMove()) movementHandler->moveTowardsEntity(player, map->getMapGraph());
-                // calculate path to player
-                if (enemy->areAvailableMoves()) {
-                    movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
-                } else {
-                    // attack player when reached him
-                    if (attack(player.get(), dt)) {
-                        std::cout << "Attacked player..." << std::endl;
-                        // resetting battle interval for the enemy
-                        enemy->resetBattleInterval();
-                    }
-                    // TODO: trying without regenerating path to player right after attacking it
-//                    movementHandler->moveTowardsEntity(player, map->getMapGraph());
+            movementHandler->setEntity(*enemy);
+            battleHandler->setEntity(enemy);
+            animationManager->setEntity(enemy);
+            movementHandler->move(player->getPosition() - enemy->getPosition(), dt);
+            animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
+            /*
+            // move randomly
+            if (enemy->canChangeDirection()) {
+                enemy->resetChangeDirectionInterval();
+                int randomDirection = ((int) rand()) % 4; // change to 5 for idle state and fix the animation for NPCEnemy only
+                auto direction = (MoveDirection) randomDirection;
+                while (direction == enemy->getMoveDirection()) {
+                    randomDirection = ((int) rand()) % 4;
+                    direction = (MoveDirection) randomDirection;
                 }
-            } else {
-                // go to wander area and move random in there
-                if (enemy->isInWanderArea()) {
-                    // keep on going to center of wander area if haven't reached it
-                    if (enemy->areAvailableMoves()) {
-                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
-                    } else {
-                        // TODO: make enemy move in one direction for a period of time and then change it to another direction randomly
-                        // move randomly
-                        int randomDirection = ((int) rand()) % 4;
-                        movementHandler->moveRandomly(randomDirection, dt);
-                    }
-                } else {
-                    // go back to wander area
-                    if (enemy->areAvailableMoves()) {
-                        movementHandler->moveBasedOnPoint(enemy->popMove(), dt);
-                    } /* else movementHandler->moveTowardsPoint(enemy->getWanderAreaCircle()->getCenter(),
-                                                             map->getMapGraph()); */
+                enemy->setMoveDirection(direction);
+            }
+            switch (enemy->getMoveDirection()) {
+                case MoveDirection::RIGHT: {
+                    movementHandler->moveRandomly(0, dt);
+                    break;
+                }
+                case MoveDirection::LEFT: {
+                    movementHandler->moveRandomly(1, dt);
+                    break;
+                }
+                case MoveDirection::UP: {
+                    movementHandler->moveRandomly(2, dt);
+                    break;
+                }
+                case MoveDirection::DOWN: {
+                    movementHandler->moveRandomly(3, dt);
+                    break;
+                }
+                default: {
+                    movementHandler->moveRandomly(4, dt); // don't move
+                    break;
                 }
             }
+             */
         }
     }
 }

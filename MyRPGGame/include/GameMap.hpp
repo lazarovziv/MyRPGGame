@@ -12,6 +12,9 @@
 #include "Constants.h"
 #include "LandscapeEntity.hpp"
 #include "Graph.hpp"
+#include "RigidBodyForceRegistry.hpp"
+#include "RigidBodyGravity.hpp"
+#include "Collision.hpp"
 class NPCEnemy;
 
 class GameMap {
@@ -19,7 +22,6 @@ private:
     // in relation to the 2d array of world map
     int worldMapRow;
     int worldMapCol;
-    Point ***gameMapPoints;
     Graph<Point *> *mapGraph;
     bool initializedMapGraph = false; // used also for indicator for player's first arrival
 
@@ -39,25 +41,23 @@ private:
     std::vector<LandscapeEntity *> landscapes;
     // enemies in current map
     std::vector<NPCEnemy *> enemiesVector;
-    std::vector<GameEntity *> entities;
-    Player *player;
+    std::vector<GameEntity *> entities; // contains NPCs and player
+    std::vector<physics::RigidBody*> bodies; // contains all game entities
+    std::shared_ptr<Player> player;
+    // for handling all collisions and forces in the map
+    std::unique_ptr<physics::RigidBodyGravity> gravityForceGenerator;
+    std::unique_ptr<physics::RigidBodyForceRegistry> forceRegistry;
     
 public:
     GameMap(int row, int col);
     GameMap(int row, int col, bool up, bool down, bool right, bool left);
-    GameMap(int row, int col, bool up, bool down, bool right, bool left, Point ***points);
-    GameMap(int row, int col, Circle *up, Circle *down, Circle *right, Circle *left, Point ***points);
+    GameMap(int row, int col, Circle *up, Circle *down, Circle *right, Circle *left);
     ~GameMap();
 
     int getWorldMapRow() const;
     int getWorldMapCol() const;
     
     void init();
-    void initGraph();
-    void initGraphVertices();
-    void initGraphEdges();
-
-    Graph<Point *> *getMapGraph();
 
     sf::Sprite* getBackgroundSprite();
 
@@ -74,7 +74,8 @@ public:
     void setIsExitableFromBottom(bool flag);
 
     Player *getPlayer();
-    void setPlayer(Player *newPlayer);
+    physics::RigidBodyForceRegistry *getForceRegistry() const;
+    void setPlayer(std::shared_ptr<Player> newPlayer);
     void removePlayer();
     std::vector<NPCEnemy *> getEnemies();
     void addEnemy(NPCEnemy *enemy);
@@ -92,7 +93,7 @@ public:
     Circle *getRightExitCircle();
     Circle *getLeftExitCircle();
 
-    static int generateRandom(int min, int max);
+    static real generateRandom(int min, int max);
 
     void update(real dt);
     

@@ -10,6 +10,8 @@
 #include <SFML/Graphics.hpp>
 #include "Weapon.hpp"
 #include "Circle.hpp"
+#include "RigidBody.hpp"
+
 //#include "GameEntityMovement.hpp"
 //class GameEntityMovement;
 class GameEntityMovement;
@@ -34,14 +36,23 @@ protected:
     int maxStaminaPoints;
     int currentStaminaPoints;
 
+    bool isPlayer = false;
+    // TODO: add flag for indicating whether the entity is on the ground
+    // flag for idle state and time delta incrementation
+    bool positionUpdated = false;
+
     // counter for sprite change (0 to 3)
     int step = 0;
     bool inBattle = false;
     bool dead = false;
+    bool running = false;
     MoveDirection moveDirection;
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
     std::map<EntityMovementState, int> movementStateRowMap;
+    std::map<EntityMovementState, int> movementStateColMap;
+    // field for all collisions and position of the entity
+    std::unique_ptr<physics::RigidBody> rigidBody;
 
     sf::Vector2f position;
     sf::Texture texture;
@@ -51,17 +62,21 @@ protected:
     std::vector<sf::Texture> movementStateTextures;
     std::map<EntityMovementState, sf::Sprite*> movementStateSpritesMap;
     sf::IntRect spriteRect;
-    std::unique_ptr<Circle> entityCircle = nullptr;
-    std::unique_ptr<Circle> attackRangeCircle = nullptr;
-    // circle positioned in potentially next steps for the player (instead of creating new ones in move method)
-    std::unique_ptr<Circle> entityRightCircle, entityLeftCircle, entityTopCircle, entityBottomCircle;
 //    GameMap* currentGameMap;
     std::unique_ptr<Weapon> weapon;
 
-    // combat intervals
-    constexpr static const real BATTLE_INTERVAL_DEFAULT = 9.0f;
+    // combat intervals between each frame in the swing
+    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 6.0f;
     real battleInterval = 0.f;
     bool justMoved = false;
+
+    // interval between swings
+    constexpr static const real SWING_INTERVAL_DEFAULT = (real) 48.0f;
+    real swingInterval = 0.f;
+
+    // change direction interval (for enemies only!)
+    constexpr static const real CHANGE_MOVE_DIRECTION_INTERVAL = 256.0f;
+    real changeMoveDirectionInterval = 0;
 
     // movement intervals
     constexpr static const real MOVE_INTERVAL_DEFAULT = 3.0f;
@@ -80,7 +95,8 @@ private:
     
 public:
     GameEntity();
-    explicit GameEntity(Point *center);
+    explicit GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
+                        const std::vector<physics::Vector> &vertices = {}, real mass = 1);
     virtual ~GameEntity();
     // getters
     long getID() const;
@@ -103,16 +119,22 @@ public:
     MoveDirection getMoveDirection() const;
     EntityMovementState getMovementState() const;
     std::map<MoveDirection, int> getMoveDirectionsSpritesMap() const;
+    int getMovementStateColCount(EntityMovementState state) const;
+    void incrementMovementStateColCount(EntityMovementState state);
+    void resetMovementStateColCount(EntityMovementState state);
     std::map<EntityMovementState, int> getMovementStateRowMap();
-    sf::Vector2f getPosition() const;
+    sf::Vector2f getRenderPosition() const;
     sf::Sprite* getSprite() const;
     sf::IntRect getRectangle() const; // sprite.getGlobalBounds()
     void setIntRectPosition(int left, int top, int width, int height);
+
+    physics::RigidBody *getRigidBody() const;
+    physics::Vector getPosition() const;
     
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
     void increaseMaxManaPoints(int amount);
-    void increaseSpeed(real amount);
+    void increaseSpeed(const real amount);
     void setSpeed(real newSpeed);
     void increaseAttackPoints(int amount);
     void increaseDefencePoints(int amount);
@@ -122,9 +144,9 @@ public:
     void incrementStep();
     void setX(real x);
     void setY(real y);
-    void setPosition(real x, real y);
-    void setPosition(Point *point);
-    void setPosition(sf::Vector2f directionVector, real dt);
+    void setPosition(const real x, const real y, const real z = 0);
+    void setPosition(physics::Vector newPosition);
+    void move(const physics::Vector directionVector, const real dt);
 
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite); // if sprite is null, we'll create one based on the state
@@ -136,50 +158,41 @@ public:
     void decreaseMaxManaPoints(int amount);
     void decreaseCurrentHealthPoints(int amount);
     void decreaseCurrentManaPoints(int amount);
-    void decreaseSpeed(int speed);
+    void decreaseSpeed(const real speed);
     void decreaseAttackPoints(int amount);
     void decreaseDefencePoints(int amount);
     void decreaseCurrentDefencePoints(int amount);
-    
-    bool isEntityInAttackRange(GameEntity &entity);
-    bool intersects(GameEntity &entity);
-    Circle* getCircle();
-    Circle* getRightCircle();
-    Circle* getLeftCircle();
-    Circle* getTopCircle();
-    Circle* getBottomCircle();
-    Circle* getAttackRangeCircle();
 
     sf::Sprite* getMovementStateSprite(EntityMovementState state);
     void setSprite(sf::Sprite *newSprite);
     Weapon *getWeapon();
 
+    bool isRunning() const;
+    void setIsRunning(const bool flag);
     bool canAttack() const;
     void resetBattleInterval();
+    void increaseBattleInterval(const real dt);
+    void resetBattleIntervalForSwing();
     bool didJustMove() const;
     void setJustMoved(bool flag);
     bool isIdle() const;
     void resetDistanceTraveledSinceIdle();
-    void incrementDistanceTraveledSinceIdle(real distance);
-    bool canAnimateMovement();
+    void incrementDistanceTraveledSinceIdle(const real distance);
+    bool canAnimateMovement(bool check = false);
 
-    bool canAnimateIdle();
+    bool canAnimateIdle(bool check = false);
     void resetIdleAnimationInterval();
-    void incrementIdleAnimationInterval(real dt);
+    void incrementIdleAnimationInterval(const real dt);
 
     bool canGoIdle() const;
+    bool canChangeDirection() const;
+    void resetChangeDirectionInterval();
     void resetMoveInterval();
     void setIsIdle(bool flag);
 
-    void setLastTimeMoved(std::clock_t time);
-
-    void pushToMoveStack(Point *move);
-    Point *popMove();
-    bool areAvailableMoves();
-    int numOfMovesAvailable();
-    void clearMoveStack();
+    void printPosition() const;
     
-    virtual void update(Point ***points, real dt);
+    void update(real dt);
 };
 
 #endif /* GameEntity_hpp */

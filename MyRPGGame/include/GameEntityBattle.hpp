@@ -12,12 +12,11 @@ private:
     AnimationManager *animationManager;
     
 public:
-    GameEntityBattle(GameEntity* entity);
+    explicit GameEntityBattle(GameEntity* entity);
     ~GameEntityBattle() = default;
     GameEntity *getEntity();
     void setEntity(GameEntity *gameEntity);
     bool attack(GameEntity &enemy, real dt);
-    bool isInAttackRange(GameEntity &enemy);
     bool animate(real dt);
 };
 

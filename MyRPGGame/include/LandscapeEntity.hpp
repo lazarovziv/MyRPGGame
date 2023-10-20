@@ -17,8 +17,7 @@ private:
     
 public:
     LandscapeEntity() = default;
-    LandscapeEntity(LandscapeType type, real x, real y);
-    LandscapeEntity(LandscapeType type, Point *center);
+    LandscapeEntity(LandscapeType type, physics::Vector initialPosition, std::vector<physics::Vector> &vertices, real mass = Constants::REAL_MAX);
     LandscapeType getType();
     
 };

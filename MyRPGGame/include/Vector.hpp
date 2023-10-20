@@ -7,17 +7,29 @@
 namespace physics {
 
     class Vector {
-    private:
+    public:
         real x;
         real y;
         real z;
-    public:
+
+        static const Vector ZERO;
+        static const Vector UP_DIRECTION;
+        static const Vector DOWN_DIRECTION;
+        static const Vector RIGHT_DIRECTION;
+        static const Vector LEFT_DIRECTION;
+
         Vector(real x, real y, real z = 0) : x(x), y(y), z(z) {};
         ~Vector() = default;
 
-        real norma();
-        Vector normalize();
+        real norma() const;
+        real magnitude() const;
+        Vector normalized() const;
+        void normalize();
         real dot(const Vector &other);
+        real distance(const Vector &other);
+
+        void resetCoordinates();
+        void printCoordinates() const;
 
         void operator +=(const Vector &other);
         void operator *=(const Vector &other);
@@ -39,6 +51,8 @@ namespace physics {
 
         bool operator ==(const Vector &other) const;
         bool operator !=(const Vector &other) const;
+
+        Vector &operator =(const Vector &other);
     };
 }
 

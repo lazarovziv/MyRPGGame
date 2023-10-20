@@ -1,36 +1,30 @@
 #include "../include/PlayerRepository.hpp"
 
-PlayerRepository::PlayerRepository(Player *player, GameEntityMovement *movement,
-                                   GameEntityBattle *battle, std::shared_ptr<GameMap> gameMap) {
+PlayerRepository::PlayerRepository(const std::shared_ptr<Player> player, GameEntityMovement *movement,
+                                   GameEntityBattle *battle, const std::shared_ptr<GameMap> gameMap) {
     this->player = player;
     movementHandler = movement;
     battleHandler = battle;
-    setGameMap(std::move(gameMap));
-    animationManager = new AnimationManager(player);
+    setGameMap(gameMap);
+    animationManager = new AnimationManager(player.get());
 }
 
 void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     // setting to-be-replaced map's player to null
     if (map != nullptr) map->removePlayer();
     // changing to the new map
-    map = std::move(gameMap);
-//    map->setPlayer(std::move(player));
-    map->setPlayer(std::move(player));
+    map = gameMap;
+    map->setPlayer(player);
     // updating movement handler
     movementHandler->setCurrentMap(map);
 }
 
-void PlayerRepository::setLastTimeMoved(std::clock_t time) {
-    player->setLastTimeMoved(time);
-}
-
-// TODO: add listeners invocation
-Constants::MoveSuccessValues PlayerRepository::move(MoveDirection direction, EntityMovementState movementState, real dt) {
-    if (movementState == EntityMovementState::RUN) player->setSpeed(2*Constants::BASE_ENTITY_SPEED);
-    else if (movementState == EntityMovementState::WALK) player->setSpeed(Constants::BASE_ENTITY_SPEED);
-    Constants::MoveSuccessValues moved = movementHandler->move(direction, movementState, dt);
-    return moved;
-    // TODO: add animate call here and remove animation handling from move method in GameEntityMovement
+bool PlayerRepository::move(physics::Vector direction, bool run, real dt) {
+    player->setIsRunning(run);
+    // vector is normalized in the movement handler
+    if (movementHandler->move(direction, dt) != Constants::MoveSuccessValues::SUCCESS) return false;
+    animationManager->animate(run ? EntityMovementState::RUN : EntityMovementState::WALK, dt);
+    return true;
 }
 
 // TODO: add listeners invocation
@@ -46,16 +40,16 @@ bool PlayerRepository::attack(real dt) {
     }
     // resetting move interval because player isn't idle
     if (singleSuccess) {
-//        animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
+        battleHandler->animate(dt);
         player->resetMoveInterval();
-        player->resetBattleInterval();
+//        player->resetBattleInterval();
     }
+
     return singleSuccess;
 }
 
-void PlayerRepository::update(Point ***points, Constants::MoveSuccessValues moveSuccessValue, real dt) {
-    // setting justMoved attribute in respect to move attempt (or none)
-    player->setJustMoved(moveSuccessValue != Constants::MoveSuccessValues::NOT_MOVED &&
-    moveSuccessValue != Constants::MoveSuccessValues::FAILURE);
-    player->update(points, dt);
+void PlayerRepository::update(real dt) {
+    player->update(dt);
+    // player->getWeapon()->update(dt);
+    player->notifyAll();
 }

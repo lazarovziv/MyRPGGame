@@ -36,7 +36,7 @@ public:
     void initMenuItems(std::vector<std::string> itemsStrings);
     std::vector<sf::Text> *getMenuItems();
     std::vector<Menu*> *getSubMenus();
-    void render(int currentWindowX, int currentWindowY, sf::RenderWindow *window);
+    void render(real currentWindowX, real currentWindowY, sf::RenderWindow *window);
     void moveUp();
     void moveDown();
     bool hasSubMenus();
