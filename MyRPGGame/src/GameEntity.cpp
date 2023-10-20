@@ -77,6 +77,17 @@ GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType r
     movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
     movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
+    movementStateColMap[EntityMovementState::IDLE] = 0;
+    movementStateColMap[EntityMovementState::CLIMB] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::WALK] = 0;
+    movementStateColMap[EntityMovementState::JUMP] = 0;
+    movementStateColMap[EntityMovementState::SITTING] = 0;
+    movementStateColMap[EntityMovementState::RUN] = 0;
+
     switch (rigidBodyType) {
         case physics::RigidBodyType::CIRCLE: {
             rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z,
@@ -172,7 +183,7 @@ void GameEntity::setY(real y) {
 }
 
 // TODO: add direction vector and normalize it for diagonal movement?
-void GameEntity::setPosition(real x, real y, real z) {
+void GameEntity::setPosition(const real x, const real y, const real z) {
     rigidBody->setPosition(x, y, z);
 }
 
@@ -180,7 +191,7 @@ void GameEntity::setPosition(physics::Vector newPosition) {
     rigidBody->setPosition(newPosition.x, newPosition.y, newPosition.z);
 }
 
-void GameEntity::move(physics::Vector directionVector, real dt) {
+void GameEntity::move(const physics::Vector directionVector, const real dt) {
     // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) {
         positionUpdated = false;
@@ -325,6 +336,22 @@ std::map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() const {
     return moveDirectionsSpritesMap;
 }
 
+int GameEntity::getMovementStateColCount(EntityMovementState state) const {
+    return movementStateColMap.at(state);
+}
+
+void GameEntity::incrementMovementStateColCount(const EntityMovementState state) {
+    if (movementStateColMap[state] < Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+        movementStateColMap[state] = movementStateColMap[state] + 1;
+        return;
+    }
+    movementStateColMap[state] = 0;
+}
+
+void GameEntity::resetMovementStateColCount(const EntityMovementState state) {
+    movementStateColMap[state] = 0;
+}
+
 std::map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
     return movementStateRowMap;
 }
@@ -381,6 +408,14 @@ void GameEntity::resetBattleInterval() {
     battleInterval = 0;
 }
 
+void GameEntity::increaseBattleInterval(const real dt) {
+    battleInterval += dt;
+}
+
+void GameEntity::resetBattleIntervalForSwing() {
+    battleInterval = -SWING_INTERVAL_DEFAULT;
+}
+
 bool GameEntity::didJustMove() const {
     return justMoved;
 }
@@ -419,21 +454,21 @@ void GameEntity::resetDistanceTraveledSinceIdle() {
     distanceTraveledSinceIdle = 0;
 }
 
-void GameEntity::incrementDistanceTraveledSinceIdle(real distance) {
+void GameEntity::incrementDistanceTraveledSinceIdle(const real distance) {
     distanceTraveledSinceIdle += distance;
 }
 
-bool GameEntity::canAnimateMovement() {
+bool GameEntity::canAnimateMovement(const bool check) {
     if (distanceTraveledSinceIdle >= speed) {
-        resetDistanceTraveledSinceIdle();
+        if (!check) resetDistanceTraveledSinceIdle();
         return true;
     }
     return false;
 }
 
-bool GameEntity::canAnimateIdle() {
+bool GameEntity::canAnimateIdle(const bool check) {
     if (idleAnimationInterval >= Constants::NUM_FRAMES_IDLE_ANIMATION) {
-        resetIdleAnimationInterval();
+        if (!check) resetIdleAnimationInterval();
         return true;
     }
     return false;
@@ -441,9 +476,11 @@ bool GameEntity::canAnimateIdle() {
 
 void GameEntity::resetIdleAnimationInterval() {
     idleAnimationInterval = 0;
+//    resetMovementStateColCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED);
+//    resetMovementStateColCount(EntityMovementState::WALK);
 }
 
-void GameEntity::incrementIdleAnimationInterval(real dt) {
+void GameEntity::incrementIdleAnimationInterval(const real dt) {
     idleAnimationInterval += dt;
 }
 
@@ -452,8 +489,7 @@ Weapon* GameEntity::getWeapon() {
 }
 
 void GameEntity::printPosition() const {
-    std::cout << "(" << rigidBody->getPosition().x << ", " <<
-    rigidBody->getPosition().y << ", " << rigidBody->getPosition().z << ")" << std::endl;
+    rigidBody->getPosition().printCoordinates();
 }
 
 void GameEntity::update(real dt) {
@@ -463,7 +499,7 @@ void GameEntity::update(real dt) {
         position.x = rigidBody->getPosition().x;
         position.y = rigidBody->getPosition().y;
         sprite->setPosition(position.x, position.y);
-        // updating intervals
+        // updating intervals (checking values to prevent overflow if not acted long enough)
         moveInterval += dt;
         battleInterval += dt;
         if (!isPlayer) changeMoveDirectionInterval += dt;

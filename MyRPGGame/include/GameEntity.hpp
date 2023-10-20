@@ -50,6 +50,7 @@ protected:
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
     std::map<EntityMovementState, int> movementStateRowMap;
+    std::map<EntityMovementState, int> movementStateColMap;
     // field for all collisions and position of the entity
     std::unique_ptr<physics::RigidBody> rigidBody;
 
@@ -64,10 +65,14 @@ protected:
 //    GameMap* currentGameMap;
     std::unique_ptr<Weapon> weapon;
 
-    // combat intervals
-    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 1.5;
+    // combat intervals between each frame in the swing
+    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 6.0f;
     real battleInterval = 0.f;
     bool justMoved = false;
+
+    // interval between swings
+    constexpr static const real SWING_INTERVAL_DEFAULT = (real) 48.0f;
+    real swingInterval = 0.f;
 
     // change direction interval (for enemies only!)
     constexpr static const real CHANGE_MOVE_DIRECTION_INTERVAL = 256.0f;
@@ -114,6 +119,9 @@ public:
     MoveDirection getMoveDirection() const;
     EntityMovementState getMovementState() const;
     std::map<MoveDirection, int> getMoveDirectionsSpritesMap() const;
+    int getMovementStateColCount(EntityMovementState state) const;
+    void incrementMovementStateColCount(EntityMovementState state);
+    void resetMovementStateColCount(EntityMovementState state);
     std::map<EntityMovementState, int> getMovementStateRowMap();
     sf::Vector2f getRenderPosition() const;
     sf::Sprite* getSprite() const;
@@ -136,9 +144,9 @@ public:
     void incrementStep();
     void setX(real x);
     void setY(real y);
-    void setPosition(real x, real y, real z = 0);
+    void setPosition(const real x, const real y, const real z = 0);
     void setPosition(physics::Vector newPosition);
-    void move(physics::Vector directionVector, real dt);
+    void move(const physics::Vector directionVector, const real dt);
 
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite); // if sprite is null, we'll create one based on the state
@@ -163,16 +171,18 @@ public:
     void setIsRunning(const bool flag);
     bool canAttack() const;
     void resetBattleInterval();
+    void increaseBattleInterval(const real dt);
+    void resetBattleIntervalForSwing();
     bool didJustMove() const;
     void setJustMoved(bool flag);
     bool isIdle() const;
     void resetDistanceTraveledSinceIdle();
-    void incrementDistanceTraveledSinceIdle(real distance);
-    bool canAnimateMovement();
+    void incrementDistanceTraveledSinceIdle(const real distance);
+    bool canAnimateMovement(bool check = false);
 
-    bool canAnimateIdle();
+    bool canAnimateIdle(bool check = false);
     void resetIdleAnimationInterval();
-    void incrementIdleAnimationInterval(real dt);
+    void incrementIdleAnimationInterval(const real dt);
 
     bool canGoIdle() const;
     bool canChangeDirection() const;

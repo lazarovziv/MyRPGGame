@@ -84,38 +84,58 @@ bool AnimationManager::isCombatState(EntityMovementState state) const {
 }
 
 // TODO: create animation function for combat and for that another entity variable to cover the combats' counters
+// TODO: make function animate only, implement all intervals elsewhere (repository for example)
 void AnimationManager::animate(EntityMovementState state, real dt) {
     entity->setMovementState(state);
     int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
-    int movementStateCount = movementStateCounterMap[state];
+    int entityMovementStateColCount = entity->getMovementStateColCount(state);
+    bool animate = false;
+    real originScale = 0.5;
+    real tileScale = 1;
+
+    /*
+    if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
+        animate = true;
+    } else if (isMovementState(state)) {
+        animate = entity->canAnimateMovement();
+    } else if (isCombatState(state)) {
+        animate = entity->canAttack();
+        originScale = 1;
+        tileScale = 2;
+    }
+    // TODO: use above variables to make function more generic
+    */
 
     if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
-        incrementCount(state);
-        entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+        entity->incrementMovementStateColCount(state);
+        entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
-        return;
+        entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
     } else if (isMovementState(state)) {
         if (entity->canAnimateMovement()) {
-            incrementCount(state);
-            entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
+            entity->incrementMovementStateColCount(state);
+            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
                                     (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
                                     Constants::TILE_SIZE, Constants::TILE_SIZE);
+            entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
         }
     } else if (isCombatState(state)) {
         if (entity->canAttack()) {
-            incrementCount(state);
-            entity->setIntRectPosition(movementStateCount * Constants::TILE_SIZE,
-                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+            entity->incrementMovementStateColCount(state);
+            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE * 2,
+                                    // starting from the combat slash one handed row and jump each row by 128 pixels instead of regular 64
+                                    Constants::COMBAT_SLASH_ONE_HANDED_ROW * Constants::TILE_SIZE +
+                                    directionRow * Constants::TILE_SIZE * 2,
                                     Constants::TILE_SIZE * 2, Constants::TILE_SIZE * 2);
 
             entity->getSprite()->setOrigin(Constants::TILE_SIZE, Constants::TILE_SIZE);
+            // triggering the timeout after swing was finished
+            if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+                entity->resetBattleIntervalForSwing();
+            } else entity->resetBattleInterval();
         }
     }
-//    incrementMovementStateCountFunctionMap[state]();
-    // TODO: implement different types of states (combat, idle, movement)
-    // changing animation if player covered its' speed distance
-    
 }
 
 bool AnimationManager::generateBody() {
