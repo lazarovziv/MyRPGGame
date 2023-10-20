@@ -28,7 +28,6 @@ void EnemyRepository::move(real dt) {
             movementHandler->setEntity(*enemy);
             battleHandler->setEntity(enemy);
             animationManager->setEntity(enemy);
-
             movementHandler->move(player->getPosition() - enemy->getPosition(), dt);
             animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
             /*

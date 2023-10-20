@@ -40,9 +40,9 @@ bool PlayerRepository::attack(real dt) {
     }
     // resetting move interval because player isn't idle
     if (singleSuccess) {
-        animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
+        battleHandler->animate(dt);
         player->resetMoveInterval();
-        player->resetBattleInterval();
+//        player->resetBattleInterval();
     }
 
     return singleSuccess;
