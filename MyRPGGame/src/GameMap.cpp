@@ -133,13 +133,13 @@ void GameMap::init() {
     if (enemiesVector.size() >= NUM_OF_MAX_ENEMIES) return;
     // seeding
     srand((unsigned int) time(nullptr));
-    real randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
-    real randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+    int randX = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_WIDTH - Constants::TILE_SIZE/2);
+    int randY = generateRandom(Constants::TILE_SIZE/2, Constants::SCREEN_HEIGHT - Constants::TILE_SIZE/2);
+    // clamping the enemies spawn coordinates
+    randX = ((randX/16) * 16) % (int) Constants::FULL_SCREEN_WIDTH;
+    randY = ((randY/16) * 16) % (int) Constants::FULL_SCREEN_HEIGHT;
 
-    randX = (randX/16) * 16;
-    randY = (randY/16) * 16;
-
-    auto *enemy = new NPCEnemy(NPCEnemy::WORM, physics::Vector{randX, randY});
+    auto *enemy = new NPCEnemy(NPCEnemy::WORM, physics::Vector{(real) randX, (real) randY});
 //    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
 //    enemy->increaseSpeed(13);
