@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-
+# TODO: change file to be used in the docker container
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 if (APPLE)
     set(CMAKE_CXX_COMPILER /usr/bin/g++)
@@ -25,7 +25,7 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         MyRPGGame/src/ScriptExecutor.cpp MyRPGGame/src/AnimationManager.cpp
         MyRPGGame/src/Game.cpp MyRPGGame/src/GameEntity.cpp MyRPGGame/src/GameEntityBattle.cpp
         MyRPGGame/src/GameEntityMovement.cpp MyRPGGame/src/GameMap.cpp MyRPGGame/src/Heap.cpp
-        MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/Subject.cpp 
+        MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/Subject.cpp
         MyRPGGame/src/NPCEnemy.cpp MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp
         MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
         MyRPGGame/src/Graph.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp
