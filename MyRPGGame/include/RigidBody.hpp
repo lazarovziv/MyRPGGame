@@ -41,14 +41,14 @@ namespace physics {
 
         bool hasFiniteMass() const;
 
-        void setPosition(const real x, const real y, const real z = 0);
+        void setPosition(real x, real y, real z = 0);
         void setPosition(const Vector &other);
-        void setRestitution(const real e);
-        void setMass(const real mass); // set inverseMass accordingly
-        void scaleVelocity(const real amount);
+        void setRestitution(real e);
+        void setMass(real mass); // set inverseMass accordingly
+        void scaleVelocity(real amount);
         void incrementVelocity(const Vector &v);
-        void incrementAcceleration(const real amount);
-        void incrementAcceleration(const Vector amount);
+        void incrementAcceleration(real amount);
+        void incrementAcceleration(Vector amount);
         void resetForceAccumulator();
         void addForce(const Vector &force);
 
@@ -58,10 +58,9 @@ namespace physics {
         void operator +=(const Vector &other); // refers to the position vector!!
 
         real distance(const RigidBody &other) const;
-        bool isCollidingWith(RigidBody &other, const real dt);
-        bool collides(RigidBody &other, real dt);
+        bool isCollidingWith(RigidBody &other, real dt);
 
-        void update(const real dt);
+        void update(real dt);
     };
 
     class Circle : public RigidBody {
@@ -80,8 +79,8 @@ namespace physics {
         std::unique_ptr<std::vector<Vector>> vertices;
 
     public:
-        explicit Polygon(const real x, const real y, const real z,
-        const std::vector<Vector> &newVertices, const real mass);
+        explicit Polygon(real x, real y, real z,
+        const std::vector<Vector> &newVertices, real mass);
 
         std::vector<Vector>* getVertices();
         size_t getNumVertices() const;
@@ -103,8 +102,7 @@ namespace physics {
         real slope;
         real bias;
     public:
-        explicit Line(const real x1, const real y1, const real x2, const real y2,
-        const real mass = Constants::REAL_MAX);
+        explicit Line(real x1, real y1, real x2, real y2, real mass = Constants::REAL_MAX);
         // TODO: add static lines for edges of screen if things will work well
 
         Vector getFirst() const;
