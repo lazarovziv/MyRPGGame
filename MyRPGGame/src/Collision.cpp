@@ -2,7 +2,7 @@
 
 namespace physics {
 
-    bool resolveCollisions(physics::RigidBody *first, physics::RigidBody *second, real dt) {
+    bool resolveCollisions(physics::RigidBody *first, physics::RigidBody *second, const real dt) {
         if (!first->hasFiniteMass() && !second->hasFiniteMass()) return false;
         // direction vector to project first body
         Vector axisToProject = second->getPosition() - first->getPosition();
@@ -58,17 +58,6 @@ namespace physics {
         Vector impulse = axisNormalized * (2 * j);
         if (first->hasFiniteMass()) (*first).incrementVelocity(impulse * -first->getInverseMass() * dt);
         if (second->hasFiniteMass()) (*second).incrementVelocity(impulse * second->getInverseMass() * dt); // incremented position before
-
-        // resolving interpenetration
-
-        /*
-        // setting the separation distance for each body
-        real firstDistance = 0, secondDistance = 0;
-        firstDistance = second->getMass()/(first->getMass() + second->getMass());
-        secondDistance = first->getMass()/(first->getMass() + second->getMass());
-        if (first->hasFiniteMass()) (*first) += axisNormalized * dt * -penetrationDistance * firstDistance;
-        if (second->hasFiniteMass()) (*second) += axisNormalized * dt * penetrationDistance * secondDistance;
-        */
         return true;
     }
 
@@ -184,30 +173,20 @@ namespace physics {
         const Vector &first = line.getFirst();
         const Vector &second = line.getSecond();
         Vector lineVector = second - first;
-        real lineLength = lineVector.norma();
-        Vector circleToFirst = first - circle.getPosition();
-        
-        real lengthFromFirstToCollision = 0;
-        if (std::min(lineVector.dot(circleToFirst), lineLength) > 0) lengthFromFirstToCollision = std::min(lineVector.dot(circleToFirst), lineLength);
-        
-        // normalizing the length to get values from 0 to 1
-        lengthFromFirstToCollision /= lineLength;
-        Vector collisionVector = first + (lineVector * lengthFromFirstToCollision);
-        // getting distance to the circle
-        real distanceToLine = collisionVector.distance(circle.getPosition());
-        std::cout << distanceToLine << std::endl;
-
-        if (distanceToLine <= circle.getRadius()) {
-            *penetrationDistance = circle.getRadius() - distanceToLine;
-            projectionNormal.x = -collisionVector.y;
-            projectionNormal.y = collisionVector.x;
-            projectionNormal = projectionNormal.normalized();
-
-            if (projectionNormal.dot(circle.getPosition()) < 0) projectionNormal *= -1;
-            return true;
-        } 
-        
-        return false;
+        Vector axis = Vector{ -lineVector.y, lineVector.x };
+        axis.normalize();
+        // checking if circle is between the two vertices
+        if (circle.getPosition().dot(lineVector) < 0 ||
+        circle.getPosition().dot(lineVector * -1) < 0) return false;
+        // check collision distance
+        Vector firstToCircle = circle.getPosition() - first;
+        Vector secondToCircle = circle.getPosition() - second;
+        // calculating distance from the line as axis is normalized
+        real distanceFromLine = std::min(firstToCircle.dot(axis), secondToCircle.dot(axis));
+        if (distanceFromLine > circle.getRadius()) return false;
+        projectionNormal = axis;
+        *penetrationDistance = distanceFromLine;
+        return true;
     }
 
     void clampVertices(physics::Polygon &polygon, physics::Vector &axis, real *min, real *max) {
