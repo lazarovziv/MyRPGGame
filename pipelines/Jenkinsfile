@@ -1,0 +1,27 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                spec:
+                    nodeSelector:
+                        node-role.kubernetes.io/worker: true
+                    containers:
+                    - name: build-env
+                      image: compile-ubuntu
+                      command: 
+                      - cat
+                      tty: true
+                '''
+        }
+    }
+    stages {
+        stage('Compile') {
+            container('build-env') {
+                sh 'git clone https://github.com/lazarovziv/MyRPGGame.git'
+                sh 'cd MyRPGGame && cmake -B build . && cd build && make'
+            }
+        }
+    }
+}
