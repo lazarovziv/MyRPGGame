@@ -30,7 +30,7 @@ public:
     static constexpr real FULL_SCREEN_WIDTH = 918;//4 * SCREEN_WIDTH;
     static constexpr real FULL_SCREEN_HEIGHT = 515; //3 * SCREEN_HEIGHT;
     static constexpr real TILE_SIZE = 64;
-    static constexpr real BASE_ENTITY_SPEED = 6 * UPDATE_ITERATIONS;
+    static constexpr real BASE_ENTITY_SPEED = 4 * UPDATE_ITERATIONS;
     static const int FPS = 60;
 
     static constexpr real REAL_MAX = std::numeric_limits<real>::max();
@@ -109,6 +109,11 @@ public:
             { EntityMovementState::SITTING, Constants::SITTING_ROW },
             { EntityMovementState::RUN, Constants::RUN_ROW },
             { EntityMovementState::IDLE, Constants::IDLE_ROW }
+    };
+
+    inline static const std::vector<EntityMovementState> COMBAT_STATES = {
+            EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED, EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED,
+            EntityMovementState::COMBAT_IDLE_ONE_HANDED, EntityMovementState::COMBAT_SLASH_ONE_HANDED
     };
 
     // inline is a c++ 17 feature
