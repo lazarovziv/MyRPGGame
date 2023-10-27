@@ -23,7 +23,7 @@ pipeline {
             steps {
                 container('build-env') {
                     sh 'apt update && apt install -y git'
-                    sh 'git clone https://github.com/lazarovziv/MyRPGGame.git'
+                    sh 'rm -rf MyRPGGame && git clone https://github.com/lazarovziv/MyRPGGame.git'
                     sh 'cd MyRPGGame && cmake -B build . && cd build && make'
                 }
             }
