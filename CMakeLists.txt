@@ -40,8 +40,8 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         # test files
 )
 
-find_package(SFML 2.6.0 COMPONENTS system window graphics network audio REQUIRED)
-find_package(OpenCV COMPONENTS core highgui REQUIRED)
+#find_package(SFML 2.6.0 COMPONENTS system window graphics network audio REQUIRED)
+#find_package(OpenCV COMPONENTS core highgui REQUIRED)
 
 if (APPLE)
     include_directories(${SFML_INCLUDE_DIRS}/include)
