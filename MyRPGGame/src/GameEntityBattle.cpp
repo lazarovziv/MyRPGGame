@@ -14,37 +14,30 @@ void GameEntityBattle::setEntity(GameEntity *gameEntity) {
     animationManager->setEntity(entity);
 }
 
-// TODO: add a parameter for attack type (slash, backslash, halfslash, etc.)
-bool GameEntityBattle::animate(real dt) {
-//    Weapon *weapon = entity->getWeapon();
-//    MoveDirection direction = weapon->getTransitionDirection();
-    animationManager->animate(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
-    return true;
-}
-
-bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
+bool GameEntityBattle::attack(GameEntity &enemy, const real dt) {
     // checking attack interval
     if (!entity->canAttack()) return false;
     // checking attack range
     if (/*isInAttackRange(enemy)*/entity->canAttack()) {
+        real SCALE = 100;
         // setting entities' battle state
         entity->setIsInBattle(true);
         enemy.setIsInBattle(true);
         // lower defence points before health points
         if (enemy.getCurrentDefencePoints() > 0) {
-            int defenceAttackPtsDiff = entity->getAttackPoints() - enemy.getCurrentDefencePoints();
+            real defenceAttackPtsDiff = (entity->getAttackPoints() * dt * SCALE) - enemy.getCurrentDefencePoints();
             // if attack will break enemy's defence
             if (defenceAttackPtsDiff > 0) {
                 // zeroing defence points
                 enemy.decreaseCurrentDefencePoints(enemy.getCurrentDefencePoints());
                 // decrease enemy's health points by difference
                 enemy.decreaseCurrentHealthPoints(defenceAttackPtsDiff);
-                // TODO: set enemy image as hurt
+                // TODO: set enemy image as hurt (create force to bounce back for each weapon?)
                 // decrease defence points by attack points
-            } else enemy.decreaseCurrentDefencePoints(entity->getAttackPoints());
+            } else enemy.decreaseCurrentDefencePoints(entity->getAttackPoints() * dt * SCALE);
             // broke defence points
         } else {
-            enemy.decreaseCurrentHealthPoints(entity->getAttackPoints());
+            enemy.decreaseCurrentHealthPoints(entity->getAttackPoints() * dt * SCALE);
             // changing battle state for entities
             if (enemy.isDead()) {
                 enemy.setIsInBattle(false);
@@ -59,7 +52,6 @@ bool GameEntityBattle::attack(GameEntity &enemy, real dt) {
         return false;
     }
 
-    animate(dt); // animation
     std::cout << "Health: " << enemy.getCurrentHealthPoints() << std::endl;
     std::cout << "Defence: " << enemy.getCurrentDefencePoints() << std::endl;
 //    entity->resetBattleInterval(); // moved to repository

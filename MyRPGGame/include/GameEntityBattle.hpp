@@ -17,7 +17,6 @@ public:
     GameEntity *getEntity();
     void setEntity(GameEntity *gameEntity);
     bool attack(GameEntity &enemy, real dt);
-    bool animate(real dt);
 };
 
 #endif /* GameEntityBattle_hpp */
