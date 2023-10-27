@@ -155,7 +155,6 @@ void Game::start() {
         // setting direction to 0
         directionVector.resetCoordinates();
 
-        // TODO: delta time screws things if it's not in the pollEvent loop. processing input is outside of the loop we need to multiply each position by dt
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 state = Constants::GameState::EXITING;
@@ -167,7 +166,6 @@ void Game::start() {
         canMove = state == Constants::GameState::PLAYING;
         eventKeyCode = event.key.code;
 
-        // TODO: use H key for running to add to the direction vector in GameEntityMovement
         if (state == Constants::GameState::PLAYING) {
             // moving input
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) && canMove) {
@@ -205,7 +203,7 @@ void Game::start() {
 
             // pressing x for attacking
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
-                attacked = playerRepository->attack(dt);
+                attacked = playerRepository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
                 keysPressedMap[sf::Keyboard::J] = true;
             }
 
