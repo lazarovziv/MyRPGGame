@@ -49,8 +49,8 @@ if (APPLE)
 
     link_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/lib64)
 else()
-    include_directories(${SFML_INCLUDE_DIR})
-#    include_directories(${SFML_DIR}/include)
+    # include_directories(${SFML_INCLUDE_DIR})
+   include_directories(${SFML_DIR}/include)
 endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
