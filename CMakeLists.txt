@@ -56,24 +56,12 @@ endif()
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # creating executables
-if (APPLE)
-    add_executable(main.out ${SOURCE_FILES})
-    target_link_libraries(main.out sfml-system
-            sfml-window
-            sfml-graphics
-            sfml-audio
-            sfml-network)
-    target_link_libraries(main.out ${OpenCV_LIBS})
+add_executable(main ${SOURCE_FILES})
+target_link_libraries(main sfml-system
+        sfml-window
+        sfml-graphics
+        sfml-audio
+        sfml-network)
+target_link_libraries(main ${OpenCV_LIBS})
 
-    target_compile_features(main.out PRIVATE cxx_range_for)
-else()
-    add_executable(main ${SOURCE_FILES})
-    target_link_libraries(main sfml-system
-            sfml-window
-            sfml-graphics
-            sfml-audio
-            sfml-network)
-    target_link_libraries(main ${OpenCV_LIBS})
-
-    target_compile_features(main PRIVATE cxx_range_for)
-endif()
+target_compile_features(main PRIVATE cxx_range_for)
