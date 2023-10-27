@@ -19,7 +19,7 @@ private:
 public:
     explicit EnemyRepository(GameEntityMovement *movement, GameEntityBattle *battle,
                     std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap);
-    ~EnemyRepository();
+    ~EnemyRepository() = default;
 
     void setGameMap(std::shared_ptr<GameMap> gameMap);
 

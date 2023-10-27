@@ -9,11 +9,6 @@ EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle 
     animationManager = new AnimationManager(nullptr);
 }
 
-EnemyRepository::~EnemyRepository() {
-    // delete movementHandler;
-    // delete battleHandler;
-}
-
 void EnemyRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     map = gameMap;
     movementHandler->setCurrentMap(map);
@@ -41,35 +36,14 @@ void EnemyRepository::move(real dt) {
                     direction = (MoveDirection) randomDirection;
                 }
                 enemy->setMoveDirection(direction);
-            }
-            switch (enemy->getMoveDirection()) {
-                case MoveDirection::RIGHT: {
-                    movementHandler->moveRandomly(0, dt);
-                    break;
-                }
-                case MoveDirection::LEFT: {
-                    movementHandler->moveRandomly(1, dt);
-                    break;
-                }
-                case MoveDirection::UP: {
-                    movementHandler->moveRandomly(2, dt);
-                    break;
-                }
-                case MoveDirection::DOWN: {
-                    movementHandler->moveRandomly(3, dt);
-                    break;
-                }
-                default: {
-                    movementHandler->moveRandomly(4, dt); // don't move
-                    break;
-                }
+                movementHandler->moveRandomly(randomDirection, dt);
             }
              */
         }
     }
 }
 
-bool EnemyRepository::attack(GameEntity *entity, real dt) {
+bool EnemyRepository::attack(GameEntity *entity, const real dt) {
     return battleHandler->attack(*entity, dt);
 }
 
