@@ -22,7 +22,8 @@ pipeline {
         stage('Compile') {
             steps {
                 container('build-env') {
-                    sh 'apt update && apt install -y git clang'
+                    sh 'pwd && apt update && apt install -y git clang'
+                    sh 'cp -r /workspace/SFML-2.6.0/lib/* /usr/local/lib'
                     sh 'rm -rf /workspace/MyRPGGame && git clone https://github.com/lazarovziv/MyRPGGame.git /workspace/MyRPGGame'
                     sh 'cd /workspace/MyRPGGame'
                     sh 'cmake -B build . && cd build && make'
