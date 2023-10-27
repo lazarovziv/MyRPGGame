@@ -10,6 +10,8 @@ pipeline {
                     containers:
                     - name: build-env
                       image: compile-ubuntu
+                      # marking the image as local
+                      imagePullPolicy: Never
                       command: 
                       - cat
                       tty: true
