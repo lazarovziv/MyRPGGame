@@ -24,4 +24,6 @@ RUN cd /workspace/SFML-2.6.0 && cmake . && make
 # building OpenCV
 RUN cd /workspace/opencv-4.8.0 && cmake -B build . && cd build && make
 
+RUN cp -r /workspace/SFML-2.6.0/lib/* /usr/local/lib
+
 WORKDIR /workspace/MyRPGGame
