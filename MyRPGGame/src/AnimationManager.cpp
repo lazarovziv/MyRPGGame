@@ -102,8 +102,10 @@ void AnimationManager::animate(EntityMovementState state, real dt) {
         animate = entity->canAttack();
         originScale = 1;
         tileScale = 2;
+        // using the row generically
+        directionRow += Constants::COMBAT_SLASH_ONE_HANDED_ROW * Constants::TILE_SIZE;
     }
-    // TODO: use above variables to make function more generic
+     // TODO: use above variables to make function more generic
     */
 
     if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
