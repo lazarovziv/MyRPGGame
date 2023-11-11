@@ -1,17 +1,18 @@
 #include "../include/EnemyRepository.hpp"
 
-EnemyRepository::EnemyRepository(GameEntityMovement *movement, GameEntityBattle *battle,
-                                 std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap) {
+EnemyRepository::EnemyRepository(GameEntityMovement &movement, GameEntityBattle &battle,
+                                 std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap) :
+                                 movementHandler(movement), battleHandler(battle) {
     this->player = player;
-    movementHandler = movement;
-    battleHandler = battle;
+    // this->movementHandler = movement;
+    // this->battleHandler = battle;
     setGameMap(std::move(gameMap));
     animationManager = new AnimationManager(nullptr);
 }
 
 void EnemyRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     map = gameMap;
-    movementHandler->setCurrentMap(map);
+    movementHandler.setCurrentMap(map);
     // referring player to map is taken care of in player repository
 }
 
@@ -20,10 +21,10 @@ void EnemyRepository::move(real dt) {
     for (auto &enemy : map->getEnemies()) {
         if (!enemy->isDead() && enemy->canMove()) {
             // set enemy if not already set
-            movementHandler->setEntity(*enemy);
-            battleHandler->setEntity(enemy);
+            movementHandler.setEntity(*enemy);
+            battleHandler.setEntity(enemy);
             animationManager->setEntity(enemy);
-            movementHandler->move(player->getPosition() - enemy->getPosition(), dt);
+            movementHandler.move(player->getPosition() - enemy->getPosition(), dt);
             animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
             /*
             // move randomly
@@ -43,10 +44,10 @@ void EnemyRepository::move(real dt) {
     }
 }
 
-bool EnemyRepository::attack(GameEntity *entity, const real dt) {
-    return battleHandler->attack(*entity, dt);
+bool EnemyRepository::attack(GameEntity &entity, const real dt) {
+    return battleHandler.attack(entity, dt);
 }
 
-void EnemyRepository::update(real dt) {
+void EnemyRepository::update(const real dt) {
     map->update(dt);
 }
