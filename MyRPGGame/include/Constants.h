@@ -4,7 +4,9 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <climits>
+#include <limits>
+#include "math.h"
+#include <vector>
 
 // for using throughout the project, if want to change to int/double
 typedef float real;
@@ -108,6 +110,11 @@ public:
             { EntityMovementState::SITTING, Constants::SITTING_ROW },
             { EntityMovementState::RUN, Constants::RUN_ROW },
             { EntityMovementState::IDLE, Constants::IDLE_ROW }
+    };
+
+    inline static const std::vector<EntityMovementState> COMBAT_STATES = {
+            EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED, EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED,
+            EntityMovementState::COMBAT_IDLE_ONE_HANDED, EntityMovementState::COMBAT_SLASH_ONE_HANDED
     };
 
     // inline is a c++ 17 feature

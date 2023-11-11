@@ -57,15 +57,15 @@ namespace physics {
         position->z = other.z;
     }
 
-    void RigidBody::setMass(const real mass) {
-        if (mass == Constants::REAL_MAX) {
-            this->mass = mass;
+    void RigidBody::setMass(const real value) {
+        if (value == Constants::REAL_MAX) {
+            this->mass = value;
             inverseMass = 0;
             infiniteMass = true;
             return;
         }
-        this->mass = mass;
-        inverseMass = 1 / mass;
+        this->mass = value;
+        inverseMass = 1 / value;
         // just updated mass to be finite
         infiniteMass = false;
     }

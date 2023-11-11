@@ -52,6 +52,7 @@ public:
     static constexpr real FULL_SCREEN_HEIGHT = Constants::FULL_SCREEN_HEIGHT;
     static Game* getInstance();
     static void disposeInstance();
+    static void exitGame(bool *run);
 
     void changeState(Constants::GameState gameState);
     std::shared_ptr<GameMap> getCurrentGameMap();
@@ -68,7 +69,6 @@ public:
     void update(real dt);
     void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
-    void exitGame(bool *run);
 };
 
 #endif /* Game_hpp */

@@ -93,7 +93,7 @@ void Game::initEntities() {
     playerRepository = std::make_unique<PlayerRepository>(player, playerMovement,
                                             playerBattle, getCurrentGameMap());
     
-    enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
+    enemiesRepository = std::make_unique<EnemyRepository>(*enemiesMovement, *enemiesBattle,
                                             player, getCurrentGameMap());
 }
 
@@ -155,7 +155,6 @@ void Game::start() {
         // setting direction to 0
         directionVector.resetCoordinates();
 
-        // TODO: delta time screws things if it's not in the pollEvent loop. processing input is outside of the loop we need to multiply each position by dt
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 state = Constants::GameState::EXITING;
@@ -167,7 +166,6 @@ void Game::start() {
         canMove = state == Constants::GameState::PLAYING;
         eventKeyCode = event.key.code;
 
-        // TODO: use H key for running to add to the direction vector in GameEntityMovement
         if (state == Constants::GameState::PLAYING) {
             // moving input
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) && canMove) {
@@ -205,8 +203,14 @@ void Game::start() {
 
             // pressing x for attacking
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
-                attacked = playerRepository->attack(dt);
+                attacked = playerRepository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
                 keysPressedMap[sf::Keyboard::J] = true;
+            }
+
+            // pressing space for jumping
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                playerRepository->jump(directionVector, dt);
+                keysPressedMap[sf::Keyboard::Space] = true;
             }
 
             // pressing escape sends to menu
@@ -274,15 +278,12 @@ void Game::start() {
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
             enemiesRepository->move(dt);
+            // update physics
+            for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
+                worldMap[currentGameMapRow][currentGameMapCol]->resolveCollisions(dt);
+            }
             // update all entities' states when playing
             update(dt);
-            // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
-            if (moved) {
-                moved = false;
-                moveSuccessValue = Constants::MoveSuccessValues::FAILURE;
-            } else {
-                moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
-            }
         }
 
         for (auto &key : keysPressedMap) {

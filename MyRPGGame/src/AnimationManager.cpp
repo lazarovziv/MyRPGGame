@@ -102,8 +102,10 @@ void AnimationManager::animate(EntityMovementState state, real dt) {
         animate = entity->canAttack();
         originScale = 1;
         tileScale = 2;
+        // using the row generically
+        directionRow += Constants::COMBAT_SLASH_ONE_HANDED_ROW * Constants::TILE_SIZE;
     }
-    // TODO: use above variables to make function more generic
+     // TODO: use above variables to make function more generic
     */
 
     if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
@@ -134,6 +136,18 @@ void AnimationManager::animate(EntityMovementState state, real dt) {
             if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
                 entity->resetBattleIntervalForSwing();
             } else entity->resetBattleInterval();
+        }
+    } else if (state == EntityMovementState::JUMP) {
+        if (entity->canAnimateJump()) {
+            entity->incrementMovementStateColCount(state);
+            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
+                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
+            entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+            // triggering the timeout after jump was finished
+            if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+                entity->resetJumpInterval();
+            } else entity->resetJumpHeightSinceOnGroundInterval();
         }
     }
 }

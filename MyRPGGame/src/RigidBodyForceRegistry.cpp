@@ -13,7 +13,9 @@ namespace physics {
         RigidBodyForceItem item = {};
         item.body = body;
         item.generator = generator;
-        registrations.erase(std::remove_if(registrations.begin(), registrations.end(), [&](RigidBodyForceItem const &item) {
+        registrations.erase(std::remove_if(registrations.begin(),
+                                           registrations.end(),
+                                           [&](RigidBodyForceItem const &item) {
                     return item.body == body;
                 }),registrations.end());
     }

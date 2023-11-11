@@ -195,13 +195,31 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
     // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) {
         positionUpdated = false;
+        running = false;
+        moving = false;
         return;
     }
     real currentSpeed = running ? speed * 2.f : speed; // multiply by dt?
+
     rigidBody->addForce(directionVector * currentSpeed);
     // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
     incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
     // setting the moveDirection used for animating
+    setMoveDirection(directionVector);
+    positionUpdated = true;
+    // TODO: add reset to all entity movement states columns values besides the relevant state that'll be used
+    // OR reset only the last state the player made
+    for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
+}
+
+void GameEntity::jump(const physics::Vector directionVector, const real dt) {
+    real currentJumpScaler = running ? speed * 2 : speed;
+    rigidBody->addForce(physics::Vector{ directionVector.x, -directionVector.y * currentJumpScaler });
+    incrementJumpHeightSinceOnGround(currentJumpScaler * dt);
+    setMoveDirection(directionVector);
+}
+
+void GameEntity::setMoveDirection(physics::Vector directionVector) {
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
     if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
@@ -210,24 +228,23 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
         if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
         else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
-    positionUpdated = true;
 }
 
-void GameEntity::setWeapon(WeaponType type) {
+void GameEntity::setWeapon(const WeaponType type) {
     weapon = std::make_unique<Weapon>(rigidBody->getPosition(), type);
 }
 
-void GameEntity::setIsInBattle(bool flag) {
+void GameEntity::setIsInBattle(const bool flag) {
     this->inBattle = flag;
 }
 
-void GameEntity::decreaseMaxHealthPoints(int amount) {
+void GameEntity::decreaseMaxHealthPoints(const real amount) {
     // don't let it decrease (throw an error)
     if (maxHealthPoints - amount <= 0) return;
     maxHealthPoints -= amount; // not changing currentHealthPoints like when increasing
 }
 
-void GameEntity::decreaseCurrentHealthPoints(int amount) {
+void GameEntity::decreaseCurrentHealthPoints(const real amount) {
     if (currentHealthPoints > 0) {
         if (currentHealthPoints - amount <= 0) currentHealthPoints = 0;
         else currentHealthPoints -= amount;
@@ -235,27 +252,27 @@ void GameEntity::decreaseCurrentHealthPoints(int amount) {
     if (currentHealthPoints <= 0) dead = true;
 }
 
-void GameEntity::decreaseMaxManaPoints(int amount) {
+void GameEntity::decreaseMaxManaPoints(const real amount) {
     if (maxManaPoints - amount <= 0) maxManaPoints = 0;
     maxManaPoints -= amount;
 }
 
-void GameEntity::decreaseSpeed(const real speed) {
-    if (this->speed - speed <= 0) this->speed = 0;
-    this->speed -= speed;
+void GameEntity::decreaseSpeed(const real amount) {
+    if (this->speed - amount <= 0) this->speed = 0;
+    this->speed -= amount;
 }
 
-void GameEntity::decreaseAttackPoints(int amount) {
+void GameEntity::decreaseAttackPoints(const real amount) {
     if (attackPoints - amount <= 0) attackPoints = 0;
     attackPoints -= amount;
 }
 
-void GameEntity::decreaseDefencePoints(int amount) {
+void GameEntity::decreaseDefencePoints(const real amount) {
     if (defencePoints - amount <= 0) defencePoints = 0;
     defencePoints -= amount;
 }
 
-void GameEntity::decreaseCurrentDefencePoints(int amount) {
+void GameEntity::decreaseCurrentDefencePoints(const real amount) {
     if (currentDefencePoints - amount <= 0) currentDefencePoints = 0;
     else currentDefencePoints -= amount;
 }
@@ -272,39 +289,39 @@ int GameEntity::getLevel() const {
     return level;
 }
 
-int GameEntity::getMaxHealthPoints() const {
+real GameEntity::getMaxHealthPoints() const {
     return maxHealthPoints;
 }
 
-int GameEntity::getCurrentHealthPoints() const {
+real GameEntity::getCurrentHealthPoints() const {
     return currentHealthPoints;
 }
 
-int GameEntity::getMaxManaPoints() const {
+real GameEntity::getMaxManaPoints() const {
     return maxManaPoints;
 }
 
-int GameEntity::getCurrentManaPoints() const {
+real GameEntity::getCurrentManaPoints() const {
     return currentManaPoints;
 }
 
-int GameEntity::getAttackPoints() const {
+real GameEntity::getAttackPoints() const {
     return attackPoints;
 }
 
-int GameEntity::getDefencePoints() const {
+real GameEntity::getDefencePoints() const {
     return defencePoints;
 }
 
-int GameEntity::getCurrentDefencePoints() const {
+real GameEntity::getCurrentDefencePoints() const {
     return currentDefencePoints;
 }
 
-int GameEntity::getMaxStaminaPoints() const {
+real GameEntity::getMaxStaminaPoints() const {
     return maxStaminaPoints;
 }
 
-int GameEntity::getCurrentStaminaPoints() const {
+real GameEntity::getCurrentStaminaPoints() const {
     return currentStaminaPoints;
 }
 
@@ -376,7 +393,7 @@ sf::IntRect GameEntity::getRectangle() const {
     return (sf::IntRect) sprite->getGlobalBounds();
 }
 
-void GameEntity::setIntRectPosition(int left, int top, int width, int height) {
+void GameEntity::setIntRectPosition(const int left, const int top, const int width, const int height) {
     spriteRect.left = left;
     spriteRect.top = top;
     spriteRect.width = width;
@@ -400,8 +417,32 @@ void GameEntity::setIsRunning(const bool flag) {
     running = flag;
 }
 
+bool GameEntity::isMoving() const {
+    return moving;
+}
+
+void GameEntity::setIsMoving(const bool flag) {
+    moving = flag;
+}
+
+bool GameEntity::isAttacking() const {
+    return attacking;
+}
+
+void GameEntity::setIsAttacking(const bool flag) {
+    attacking = flag;
+}
+
+bool GameEntity::isJumping() const {
+    return jumping;
+}
+
+void GameEntity::setIsJumping(const bool flag) {
+    jumping = flag;
+}
+
 bool GameEntity::canAttack() const {
-    return battleInterval >= BATTLE_INTERVAL_DEFAULT;
+    return battleInterval >= BATTLE_INTERVAL_DEFAULT && !moving;
 }
 
 void GameEntity::resetBattleInterval() {
@@ -442,7 +483,7 @@ void GameEntity::resetMoveInterval() {
     resetIdleAnimationInterval();
 }
 
-void GameEntity::setIsIdle(bool flag) {
+void GameEntity::setIsIdle(const bool flag) {
     idle = flag;
 }
 
@@ -456,6 +497,10 @@ void GameEntity::resetDistanceTraveledSinceIdle() {
 
 void GameEntity::incrementDistanceTraveledSinceIdle(const real distance) {
     distanceTraveledSinceIdle += distance;
+}
+
+void GameEntity::incrementJumpHeightSinceOnGround(const real distance) {
+    jumpHeightSinceOnGround += distance;
 }
 
 bool GameEntity::canAnimateMovement(const bool check) {
@@ -474,10 +519,26 @@ bool GameEntity::canAnimateIdle(const bool check) {
     return false;
 }
 
+bool GameEntity::canAnimateJump(const bool check) {
+    if (jumpHeightSinceOnGround >= JUMP_HEIGHT_INTERVAL_DEFAULT) {
+        if (!check) resetJumpHeightSinceOnGroundInterval();
+        return true;
+    }
+    return false;
+}
+
 void GameEntity::resetIdleAnimationInterval() {
     idleAnimationInterval = 0;
 //    resetMovementStateColCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED);
 //    resetMovementStateColCount(EntityMovementState::WALK);
+}
+
+void GameEntity::resetJumpHeightSinceOnGroundInterval() {
+    jumpHeightSinceOnGround = 0;
+}
+
+void GameEntity::resetJumpInterval() {
+    jumpHeightSinceOnGround = -JUMP_INTERVAL_DEFAULT;
 }
 
 void GameEntity::incrementIdleAnimationInterval(const real dt) {
@@ -492,7 +553,7 @@ void GameEntity::printPosition() const {
     rigidBody->getPosition().printCoordinates();
 }
 
-void GameEntity::update(real dt) {
+void GameEntity::update(const real dt) {
     if (!dead) {
         rigidBody->update(dt);
 

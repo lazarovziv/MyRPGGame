@@ -25,16 +25,16 @@ protected:
     char name[10];
     int level;
     int gender; // 0 for male, 1 for female
-    int currentHealthPoints;
-    int maxHealthPoints;
-    int currentManaPoints;
-    int maxManaPoints;
-    int attackPoints;
-    int defencePoints;
-    int currentDefencePoints;
+    real currentHealthPoints;
+    real maxHealthPoints;
+    real currentManaPoints;
+    real maxManaPoints;
+    real attackPoints;
+    real defencePoints;
+    real currentDefencePoints;
     real speed;
-    int maxStaminaPoints;
-    int currentStaminaPoints;
+    real maxStaminaPoints;
+    real currentStaminaPoints;
 
     bool isPlayer = false;
     // TODO: add flag for indicating whether the entity is on the ground
@@ -45,12 +45,16 @@ protected:
     int step = 0;
     bool inBattle = false;
     bool dead = false;
+    bool moving = true;
     bool running = false;
+    bool attacking = false;
+    bool jumping = false;
     MoveDirection moveDirection;
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
     std::map<EntityMovementState, int> movementStateRowMap;
     std::map<EntityMovementState, int> movementStateColMap;
+//    EntityMovementState lastCombatStateUsed;
     // field for all collisions and position of the entity
     std::unique_ptr<physics::RigidBody> rigidBody;
 
@@ -72,7 +76,6 @@ protected:
 
     // interval between swings
     constexpr static const real SWING_INTERVAL_DEFAULT = (real) 48.0f;
-    real swingInterval = 0.f;
 
     // change direction interval (for enemies only!)
     constexpr static const real CHANGE_MOVE_DIRECTION_INTERVAL = 256.0f;
@@ -84,9 +87,13 @@ protected:
     bool idle = true;
     // for the animations. after traveled the speed distance, increment relevant animation count
     real distanceTraveledSinceIdle = 0;
-
     // idle interval
     real idleAnimationInterval = 0;
+
+    constexpr static const real JUMP_HEIGHT_INTERVAL_DEFAULT = 6.0f;
+    // for between jumps
+    constexpr static const real JUMP_INTERVAL_DEFAULT = 48.0f;
+    real jumpHeightSinceOnGround = 0;
 
     std::stack<Point *> movesStack;
     
@@ -103,15 +110,15 @@ public:
     char* getName();
     int getLevel() const;
     int getGender() const;
-    int getMaxHealthPoints() const;
-    int getCurrentHealthPoints() const;
-    int getMaxManaPoints() const;
-    int getCurrentManaPoints() const;
-    int getAttackPoints() const;
-    int getDefencePoints() const;
-    int getCurrentDefencePoints() const;
-    int getMaxStaminaPoints() const;
-    int getCurrentStaminaPoints() const;
+    real getMaxHealthPoints() const;
+    real getCurrentHealthPoints() const;
+    real getMaxManaPoints() const;
+    real getCurrentManaPoints() const;
+    real getAttackPoints() const;
+    real getDefencePoints() const;
+    real getCurrentDefencePoints() const;
+    real getMaxStaminaPoints() const;
+    real getCurrentStaminaPoints() const;
     real getSpeed() const;
     int getStep() const;
     bool isInBattle() const;
@@ -144,9 +151,11 @@ public:
     void incrementStep();
     void setX(real x);
     void setY(real y);
-    void setPosition(const real x, const real y, const real z = 0);
+    void setPosition(real x, real y, real z = 0);
     void setPosition(physics::Vector newPosition);
-    void move(const physics::Vector directionVector, const real dt);
+    void move(physics::Vector directionVector, real dt);
+    void jump(physics::Vector directionVector, real dt);
+    void setMoveDirection(physics::Vector directionVector);
 
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite); // if sprite is null, we'll create one based on the state
@@ -154,35 +163,46 @@ public:
     void setIsInBattle(bool inBattle);
 
     // for situations where changing for worse equipment (adding logic for negative base values)
-    void decreaseMaxHealthPoints(int amount);
-    void decreaseMaxManaPoints(int amount);
-    void decreaseCurrentHealthPoints(int amount);
-    void decreaseCurrentManaPoints(int amount);
-    void decreaseSpeed(const real speed);
-    void decreaseAttackPoints(int amount);
-    void decreaseDefencePoints(int amount);
-    void decreaseCurrentDefencePoints(int amount);
+    void decreaseMaxHealthPoints(real amount);
+    void decreaseMaxManaPoints(real amount);
+    void decreaseCurrentHealthPoints(real amount);
+    void decreaseCurrentManaPoints(real amount);
+    void decreaseSpeed(real speed);
+    void decreaseAttackPoints(real amount);
+    void decreaseDefencePoints(real amount);
+    void decreaseCurrentDefencePoints(real amount);
 
     sf::Sprite* getMovementStateSprite(EntityMovementState state);
     void setSprite(sf::Sprite *newSprite);
     Weapon *getWeapon();
 
     bool isRunning() const;
-    void setIsRunning(const bool flag);
+    void setIsRunning(bool flag);
+    bool isMoving() const;
+    void setIsMoving(bool flag);
+    bool isAttacking() const;
+    void setIsAttacking(bool flag);
+    bool isJumping() const;
+    void setIsJumping(bool flag);
     bool canAttack() const;
     void resetBattleInterval();
-    void increaseBattleInterval(const real dt);
+    void increaseBattleInterval(real dt);
     void resetBattleIntervalForSwing();
     bool didJustMove() const;
     void setJustMoved(bool flag);
     bool isIdle() const;
     void resetDistanceTraveledSinceIdle();
-    void incrementDistanceTraveledSinceIdle(const real distance);
+    void incrementDistanceTraveledSinceIdle(real distance);
+    void incrementJumpHeightSinceOnGround(real distance);
     bool canAnimateMovement(bool check = false);
 
     bool canAnimateIdle(bool check = false);
     void resetIdleAnimationInterval();
-    void incrementIdleAnimationInterval(const real dt);
+    void resetJumpHeightSinceOnGroundInterval();
+    void resetJumpInterval();
+    void incrementIdleAnimationInterval(real dt);
+
+    bool canAnimateJump(bool check = false);
 
     bool canGoIdle() const;
     bool canChangeDirection() const;

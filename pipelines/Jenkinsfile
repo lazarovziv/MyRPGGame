@@ -1,0 +1,21 @@
+def yamlFile = readYaml file: 'pods/pod.yml'
+def json = readJson file: params
+def checkoutBranch = params.checkoutBranch
+
+pipeline {
+    agent {
+        kubernetes {
+            yaml yamlFile
+        }
+    }
+    stages {
+        stage('Compile') {
+            steps {
+                container('build-env') {
+                    sh 'cd /workspace/MyRPGGame && git fetch --all && git checkout ${checkoutBranch}'
+                    sh 'cmake -B build . && cd build && make'
+                }
+            }
+        }
+    }
+}

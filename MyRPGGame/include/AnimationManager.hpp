@@ -7,9 +7,9 @@
 #include <map>
 #include <functional>
 #include "GameEntity.hpp"
-#include <opencv2/core/mat.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
+//#include <opencv2/core/mat.hpp>
+//#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/opencv.hpp>
 #include "ScriptExecutor.hpp"
 
 class AnimationManager {
