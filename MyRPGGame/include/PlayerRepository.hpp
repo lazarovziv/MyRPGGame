@@ -20,6 +20,7 @@ public:
 
     void setGameMap(std::shared_ptr<GameMap> gameMap);
     bool move(physics::Vector direction, bool run, real dt);
+    bool jump(physics::Vector direction, real dt);
 //    Constants::MoveSuccessValues move(MoveDirection direction, EntityMovementState movementState, real dt);
     bool attack(EntityMovementState state, real dt);
     void update(real dt);

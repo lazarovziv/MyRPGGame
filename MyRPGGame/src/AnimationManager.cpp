@@ -137,6 +137,18 @@ void AnimationManager::animate(EntityMovementState state, real dt) {
                 entity->resetBattleIntervalForSwing();
             } else entity->resetBattleInterval();
         }
+    } else if (state == EntityMovementState::JUMP) {
+        if (entity->canAnimateJump()) {
+            entity->incrementMovementStateColCount(state);
+            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
+                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
+                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
+            entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+            // triggering the timeout after jump was finished
+            if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+                entity->resetJumpInterval();
+            } else entity->resetJumpHeightSinceOnGroundInterval();
+        }
     }
 }
 

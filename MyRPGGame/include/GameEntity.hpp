@@ -48,6 +48,7 @@ protected:
     bool moving = true;
     bool running = false;
     bool attacking = false;
+    bool jumping = false;
     MoveDirection moveDirection;
     EntityMovementState movementState;
     std::map<MoveDirection, int> moveDirectionsSpritesMap;
@@ -86,9 +87,13 @@ protected:
     bool idle = true;
     // for the animations. after traveled the speed distance, increment relevant animation count
     real distanceTraveledSinceIdle = 0;
-
     // idle interval
     real idleAnimationInterval = 0;
+
+    constexpr static const real JUMP_HEIGHT_INTERVAL_DEFAULT = 6.0f;
+    // for between jumps
+    constexpr static const real JUMP_INTERVAL_DEFAULT = 48.0f;
+    real jumpHeightSinceOnGround = 0;
 
     std::stack<Point *> movesStack;
     
@@ -149,6 +154,8 @@ public:
     void setPosition(real x, real y, real z = 0);
     void setPosition(physics::Vector newPosition);
     void move(physics::Vector directionVector, real dt);
+    void jump(physics::Vector directionVector, real dt);
+    void setMoveDirection(physics::Vector directionVector);
 
     bool createMovementStateSprite(EntityMovementState state);
     bool addMovementStateSprite(EntityMovementState state, sf::Sprite *newSprite); // if sprite is null, we'll create one based on the state
@@ -175,6 +182,8 @@ public:
     void setIsMoving(bool flag);
     bool isAttacking() const;
     void setIsAttacking(bool flag);
+    bool isJumping() const;
+    void setIsJumping(bool flag);
     bool canAttack() const;
     void resetBattleInterval();
     void increaseBattleInterval(real dt);
@@ -184,11 +193,16 @@ public:
     bool isIdle() const;
     void resetDistanceTraveledSinceIdle();
     void incrementDistanceTraveledSinceIdle(real distance);
+    void incrementJumpHeightSinceOnGround(real distance);
     bool canAnimateMovement(bool check = false);
 
     bool canAnimateIdle(bool check = false);
     void resetIdleAnimationInterval();
+    void resetJumpHeightSinceOnGroundInterval();
+    void resetJumpInterval();
     void incrementIdleAnimationInterval(real dt);
+
+    bool canAnimateJump(bool check = false);
 
     bool canGoIdle() const;
     bool canChangeDirection() const;

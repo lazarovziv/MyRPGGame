@@ -27,6 +27,13 @@ bool PlayerRepository::move(physics::Vector direction, const bool run, const rea
     return true;
 }
 
+bool PlayerRepository::jump(physics::Vector direction, const real dt) {
+    player->setIsJumping(true);
+    player->jump(direction, dt); // TODO: change to use movementHandler
+    animationManager->animate(EntityMovementState::JUMP, dt);
+    return true;
+}
+
 // TODO: add listeners invocation
 bool PlayerRepository::attack(const EntityMovementState state, const real dt) {
     if (!player->canAttack()) return false;
@@ -43,7 +50,7 @@ bool PlayerRepository::attack(const EntityMovementState state, const real dt) {
         player->setIsAttacking(true);
         animationManager->animate(state, dt);
         player->resetMoveInterval();
-//        player->resetBattleInterval();
+        // player->resetBattleInterval();
     }
 
     return singleSuccess;

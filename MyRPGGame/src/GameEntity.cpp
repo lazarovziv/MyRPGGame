@@ -205,6 +205,21 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
     // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
     incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
     // setting the moveDirection used for animating
+    setMoveDirection(directionVector);
+    positionUpdated = true;
+    // TODO: add reset to all entity movement states columns values besides the relevant state that'll be used
+    // OR reset only the last state the player made
+    for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
+}
+
+void GameEntity::jump(const physics::Vector directionVector, const real dt) {
+    real currentJumpScaler = running ? speed * 2 : speed;
+    rigidBody->addForce(physics::Vector{ directionVector.x, -directionVector.y * currentJumpScaler });
+    incrementJumpHeightSinceOnGround(currentJumpScaler * dt);
+    setMoveDirection(directionVector);
+}
+
+void GameEntity::setMoveDirection(physics::Vector directionVector) {
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
     if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
@@ -213,13 +228,6 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
         if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
         else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
-    positionUpdated = true;
-    moving = true;
-    attacking = false;
-
-    // TODO: add reset to all entity movement states columns values besides the relevant state that'll be used
-    // OR reset only the last state the player made
-    for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
 }
 
 void GameEntity::setWeapon(const WeaponType type) {
@@ -425,6 +433,14 @@ void GameEntity::setIsAttacking(const bool flag) {
     attacking = flag;
 }
 
+bool GameEntity::isJumping() const {
+    return jumping;
+}
+
+void GameEntity::setIsJumping(const bool flag) {
+    jumping = flag;
+}
+
 bool GameEntity::canAttack() const {
     return battleInterval >= BATTLE_INTERVAL_DEFAULT && !moving;
 }
@@ -483,6 +499,10 @@ void GameEntity::incrementDistanceTraveledSinceIdle(const real distance) {
     distanceTraveledSinceIdle += distance;
 }
 
+void GameEntity::incrementJumpHeightSinceOnGround(const real distance) {
+    jumpHeightSinceOnGround += distance;
+}
+
 bool GameEntity::canAnimateMovement(const bool check) {
     if (distanceTraveledSinceIdle >= speed) {
         if (!check) resetDistanceTraveledSinceIdle();
@@ -499,10 +519,26 @@ bool GameEntity::canAnimateIdle(const bool check) {
     return false;
 }
 
+bool GameEntity::canAnimateJump(const bool check) {
+    if (jumpHeightSinceOnGround >= JUMP_HEIGHT_INTERVAL_DEFAULT) {
+        if (!check) resetJumpHeightSinceOnGroundInterval();
+        return true;
+    }
+    return false;
+}
+
 void GameEntity::resetIdleAnimationInterval() {
     idleAnimationInterval = 0;
 //    resetMovementStateColCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED);
 //    resetMovementStateColCount(EntityMovementState::WALK);
+}
+
+void GameEntity::resetJumpHeightSinceOnGroundInterval() {
+    jumpHeightSinceOnGround = 0;
+}
+
+void GameEntity::resetJumpInterval() {
+    jumpHeightSinceOnGround = -JUMP_INTERVAL_DEFAULT;
 }
 
 void GameEntity::incrementIdleAnimationInterval(const real dt) {

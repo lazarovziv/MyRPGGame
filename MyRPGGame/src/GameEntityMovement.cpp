@@ -7,7 +7,7 @@ GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::sha
     animationManager = new AnimationManager(this->entity);
 }
 
-Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction, real dt) {
+Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction, const real dt) {
     // no need to create extra variables if not using them
     if (direction == physics::Vector::ZERO) {
         entity->move(direction, dt);
@@ -24,7 +24,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction,
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
-bool GameEntityMovement::moveRandomly(int randomDirection, real dt) {
+bool GameEntityMovement::moveRandomly(const int randomDirection, const real dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
         case 0:
