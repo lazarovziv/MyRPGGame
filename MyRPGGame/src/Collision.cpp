@@ -9,7 +9,6 @@ namespace physics {
         Vector axisNormalized = axisToProject.normalized();
         // checking moving in the same direction
         Vector relativeVelocity = second->getVelocity() - first->getVelocity();
-        if (relativeVelocity.dot(axisNormalized) > 0) return false;
         // scaler to the direction vector
         real penetrationDistance = Constants::REAL_MAX;
         // dividing into all types of bodies
@@ -55,7 +54,7 @@ namespace physics {
         real e = std::min(first->getRestitution(), second->getRestitution());
         real j = -((real) 1 + e) * relativeVelocity.dot(axisNormalized);
         j /= first->getInverseMass() + second->getInverseMass(); // if axis wasn't normalized, magnitude was needed in the denominator, multiplied by the inverse masses sum
-        Vector impulse = axisNormalized * (2 * j);
+        Vector impulse = axisNormalized * j;
         if (first->hasFiniteMass()) (*first).incrementVelocity(impulse * -first->getInverseMass() * dt);
         if (second->hasFiniteMass()) (*second).incrementVelocity(impulse * second->getInverseMass() * dt); // incremented position before
         return true;
@@ -77,7 +76,8 @@ namespace physics {
         return closest;
     }
 
-    bool areColliding(physics::Polygon &first, physics::Polygon &second, Vector &projectionNormal, real *penetrationDistance) {
+    bool areColliding(physics::Polygon &first, physics::Polygon &second,
+     Vector &projectionNormal, real *penetrationDistance) {
         size_t firstNumVertices = first.getNumVertices();
         size_t secondNumVertices = second.getNumVertices();
         real minFirst, maxFirst;
@@ -131,7 +131,8 @@ namespace physics {
         return true;
     }
 
-    bool areColliding(physics::Circle &circle, physics::Polygon &polygon, physics::Vector &projectionNormal, real *penetrationDistance) {
+    bool areColliding(physics::Circle &circle, physics::Polygon &polygon,
+     physics::Vector &projectionNormal, real *penetrationDistance) {
         size_t firstNumVertices = polygon.getNumVertices();
         real circleMin, circleMax;
         real polygonMin, polygonMax;
