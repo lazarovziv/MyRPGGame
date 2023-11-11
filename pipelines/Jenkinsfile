@@ -1,28 +1,18 @@
+def yamlFile = readYaml file: 'pods/pod.yml'
+def json = readJson file: params
+def checkoutBranch = params.checkoutBranch
+
 pipeline {
     agent {
         kubernetes {
-            yaml '''
-                apiVersion: v1
-                kind: Pod
-                spec:
-                    nodeSelector:
-                        node-role.kubernetes.io/worker: true
-                    containers:
-                    - name: build-env
-                      image: compile-ubuntu
-                      # marking the image as local
-                      imagePullPolicy: Never
-                      command: 
-                      - cat
-                      tty: true
-                '''
+            yaml yamlFile
         }
     }
     stages {
         stage('Compile') {
             steps {
                 container('build-env') {
-                    sh 'cd /workspace/MyRPGGame && git fetch --all && git checkout ci'
+                    sh 'cd /workspace/MyRPGGame && git fetch --all && git checkout ${checkoutBranch}'
                     sh 'cmake -B build . && cd build && make'
                 }
             }
