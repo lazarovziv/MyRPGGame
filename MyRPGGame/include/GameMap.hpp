@@ -95,6 +95,7 @@ public:
 
     static real generateRandom(int min, int max);
 
+    void resolveCollisions(real dt);
     void update(real dt);
     
     bool operator ==(const GameMap& map) const;

@@ -93,7 +93,7 @@ void Game::initEntities() {
     playerRepository = std::make_unique<PlayerRepository>(player, playerMovement,
                                             playerBattle, getCurrentGameMap());
     
-    enemiesRepository = std::make_unique<EnemyRepository>(enemiesMovement, enemiesBattle,
+    enemiesRepository = std::make_unique<EnemyRepository>(*enemiesMovement, *enemiesBattle,
                                             player, getCurrentGameMap());
 }
 
@@ -207,6 +207,12 @@ void Game::start() {
                 keysPressedMap[sf::Keyboard::J] = true;
             }
 
+            // pressing space for jumping
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                playerRepository->jump(directionVector, dt);
+                keysPressedMap[sf::Keyboard::Space] = true;
+            }
+
             // pressing escape sends to menu
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                 keysPressedMap[sf::Keyboard::Escape] = true;
@@ -272,15 +278,12 @@ void Game::start() {
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
             enemiesRepository->move(dt);
+            // update physics
+            for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
+                worldMap[currentGameMapRow][currentGameMapCol]->resolveCollisions(dt);
+            }
             // update all entities' states when playing
             update(dt);
-            // resetting moved for enemies movement. moved = false iff moveSuccessValue = FAILURE
-            if (moved) {
-                moved = false;
-                moveSuccessValue = Constants::MoveSuccessValues::FAILURE;
-            } else {
-                moveSuccessValue = Constants::MoveSuccessValues::NOT_MOVED;
-            }
         }
 
         for (auto &key : keysPressedMap) {

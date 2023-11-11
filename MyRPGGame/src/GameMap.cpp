@@ -236,8 +236,17 @@ bool GameMap::operator==(const GameMap &map) const {
     return map.worldMapRow == worldMapRow && map.worldMapCol == worldMapCol;
 }
 
-void GameMap::update(real dt) {
-    // TODO: check death of entity in another place to use only RigidBody objects for collision detection
+void GameMap::resolveCollisions(const real dt) {
+    for (auto entity : entities) {
+        // player is in bodies
+        for (auto &body : bodies) {
+            if (body == entity->getRigidBody()) continue;
+            physics::resolveCollisions(entity->getRigidBody(), body, dt);
+        }
+    }
+}
+
+void GameMap::update(const real dt) {
     for (auto entity : entities) {
         // checking if enemy is dead
         if (entity->isDead()) {
@@ -250,17 +259,8 @@ void GameMap::update(real dt) {
     real divDt = dt/Constants::UPDATE_ITERATIONS;
     for (auto entity : entities) {
         // player is in bodies
-        for (auto &body : bodies) {
-            if (body == entity->getRigidBody()) continue;
-            for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
-                physics::resolveCollisions(entity->getRigidBody(), body, divDt);
-                entity->update(divDt);
-            }
-        }
+        entity->update(divDt);
     }
-
-    // std::cout << "Count: " << count/iterations << std::endl;
-    // std::cout << "# Entities: " << entities.size() << std::endl;
 
     // updating physics
     forceRegistry->update(dt);
