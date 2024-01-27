@@ -4,7 +4,7 @@ GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::sha
     this->entity = entity;
     currentMap = map;
 
-    animationManager = new AnimationManager(this->entity);
+    animationManager = std::make_unique<AnimationManager>(this->entity);
 }
 
 Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction, const real dt) {

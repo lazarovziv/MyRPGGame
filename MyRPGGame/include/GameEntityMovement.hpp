@@ -13,10 +13,10 @@ private:
     GameEntity *entity;
     std::shared_ptr<GameMap> currentMap;
     Point ***gameMapsPoints;
-    AnimationManager *animationManager;
+    std::unique_ptr<AnimationManager> animationManager;
 
 public:
-    GameEntityMovement(GameEntity* entity, bool player, std::shared_ptr<GameMap> map);
+    GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map);
     ~GameEntityMovement() = default;
     Constants::MoveSuccessValues move(physics::Vector direction, real dt);
     // TODO: add run method (use acceleration, speed etc.)
@@ -24,7 +24,7 @@ public:
     bool moveRandomly(int randomDirection, real dt);
 
     void setEntity(GameEntity &entity);
-    GameEntity* getEntity();
+    GameEntity *getEntity();
     void setCurrentMap(std::shared_ptr<GameMap> map);
 };
 

@@ -9,10 +9,10 @@
 class GameEntityBattle {
 private:
     GameEntity *entity;
-    AnimationManager *animationManager;
+    std::unique_ptr<AnimationManager> animationManager;
     
 public:
-    explicit GameEntityBattle(GameEntity* entity);
+    explicit GameEntityBattle(GameEntity *entity);
     ~GameEntityBattle() = default;
     GameEntity *getEntity();
     void setEntity(GameEntity *gameEntity);

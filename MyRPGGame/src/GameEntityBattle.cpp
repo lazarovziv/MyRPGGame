@@ -1,8 +1,8 @@
 #include "../include/GameEntityBattle.hpp"
 
-GameEntityBattle::GameEntityBattle(GameEntity* entity) {
+GameEntityBattle::GameEntityBattle(GameEntity *entity) {
     this->entity = entity;
-    animationManager = new AnimationManager(this->entity);
+    animationManager = std::make_unique<AnimationManager>(this->entity);
 }
 
 GameEntity *GameEntityBattle::getEntity() {
