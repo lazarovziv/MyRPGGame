@@ -37,6 +37,7 @@ protected:
     real currentStaminaPoints;
 
     bool isPlayer = false;
+    bool isLandscape = false;
     // TODO: add flag for indicating whether the entity is on the ground
     // flag for idle state and time delta incrementation
     bool positionUpdated = false;
@@ -70,12 +71,12 @@ protected:
     std::unique_ptr<Weapon> weapon;
 
     // combat intervals between each frame in the swing
-    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 6.0f;
+    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 1.0f;
     real battleInterval = 0.f;
     bool justMoved = false;
 
     // interval between swings
-    constexpr static const real SWING_INTERVAL_DEFAULT = (real) 48.0f;
+    constexpr static const real SWING_INTERVAL_DEFAULT = (real) 8.0f;
 
     // change direction interval (for enemies only!)
     constexpr static const real CHANGE_MOVE_DIRECTION_INTERVAL = 256.0f;
@@ -90,7 +91,7 @@ protected:
     // idle interval
     real idleAnimationInterval = 0;
 
-    constexpr static const real JUMP_HEIGHT_INTERVAL_DEFAULT = 6.0f;
+    constexpr static const real JUMP_HEIGHT_INTERVAL_DEFAULT = 4.0f;
     // for between jumps
     constexpr static const real JUMP_INTERVAL_DEFAULT = 48.0f;
     real jumpHeightSinceOnGround = 0;
@@ -152,7 +153,7 @@ public:
     void setX(real x);
     void setY(real y);
     void setPosition(real x, real y, real z = 0);
-    void setPosition(physics::Vector newPosition);
+    void setPosition(const physics::Vector &newPosition);
     void move(physics::Vector directionVector, real dt);
     void jump(physics::Vector directionVector, real dt);
     void setMoveDirection(physics::Vector directionVector);

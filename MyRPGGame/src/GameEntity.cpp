@@ -145,11 +145,11 @@ void GameEntity::setSpeed(real newSpeed) {
     speed = newSpeed;
 }
 
-void GameEntity::increaseAttackPoints(int amount) {
+void GameEntity::increaseAttackPoints(const int amount) {
     attackPoints += amount;
 }
 
-void GameEntity::increaseDefencePoints(int amount) {
+void GameEntity::increaseDefencePoints(const int amount) {
     defencePoints += amount;
     // increasing current defence points altogether
     currentDefencePoints += amount;
@@ -159,13 +159,13 @@ void GameEntity::changeInBattleState() {
     inBattle = !inBattle;
 }
 
-void GameEntity::setMoveDirection(MoveDirection direction) {
+void GameEntity::setMoveDirection(const MoveDirection direction) {
     moveDirection = direction;
     // adjusting weapon direction
 //    weapon->setTransitionDirection(direction);
 }
 
-void GameEntity::setMovementState(EntityMovementState state) {
+void GameEntity::setMovementState(const EntityMovementState state) {
     movementState = state;
 }
 
@@ -174,11 +174,11 @@ void GameEntity::incrementStep() {
     else step = 0;
 }
 
-void GameEntity::setX(real x) {
+void GameEntity::setX(const real x) {
     position.x = x;
 }
 
-void GameEntity::setY(real y) {
+void GameEntity::setY(const real y) {
     position.y = y;
 }
 
@@ -187,7 +187,7 @@ void GameEntity::setPosition(const real x, const real y, const real z) {
     rigidBody->setPosition(x, y, z);
 }
 
-void GameEntity::setPosition(physics::Vector newPosition) {
+void GameEntity::setPosition(const physics::Vector &newPosition) {
     rigidBody->setPosition(newPosition.x, newPosition.y, newPosition.z);
 }
 
@@ -200,6 +200,7 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
         return;
     }
     real currentSpeed = running ? speed * 2.f : speed; // multiply by dt?
+    moving = true;
 
     rigidBody->addForce(directionVector * currentSpeed);
     // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
@@ -214,12 +215,47 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
 
 void GameEntity::jump(const physics::Vector directionVector, const real dt) {
     real currentJumpScaler = running ? speed * 2 : speed;
-    rigidBody->addForce(physics::Vector{ directionVector.x, -directionVector.y * currentJumpScaler });
+    // TODO: make the force to be applied when the animation finishes
+    physics::Vector jumpDirectionVector = physics::Vector::ZERO;
+    if (directionVector == physics::Vector::ZERO) {
+        // setting the force direction based on the move direction of the jump
+        switch (moveDirection) {
+            case MoveDirection::UP: {
+                jumpDirectionVector = physics::Vector::UP_DIRECTION;
+                // scaling the y value if entity means to jump vertically
+                jumpDirectionVector.y *= currentJumpScaler;
+                break;
+            }
+            case MoveDirection::DOWN: {
+                jumpDirectionVector = physics::Vector::DOWN_DIRECTION;
+                // scaling the y value if entity means to jump vertically
+                jumpDirectionVector.y *= currentJumpScaler;
+                break;
+            }
+            case MoveDirection::RIGHT: {
+                jumpDirectionVector = physics::Vector::RIGHT_DIRECTION;
+                // scaling the y value if entity means to jump horizontally
+                jumpDirectionVector.x *= currentJumpScaler;
+                break;
+            }
+            case MoveDirection::LEFT: {
+                jumpDirectionVector = physics::Vector::LEFT_DIRECTION;
+                // scaling the y value if entity means to jump horizontally
+                jumpDirectionVector.x *= currentJumpScaler;
+                break;
+            }
+            default: {}
+        }
+    }
+    // incrementing the z axis for using high floors (to be implemented later)
+    jumpDirectionVector.z += currentJumpScaler;
+    // applying the force (should be applied when animation is about to finish)
+    rigidBody->addForce(jumpDirectionVector);
     incrementJumpHeightSinceOnGround(currentJumpScaler * dt);
     setMoveDirection(directionVector);
 }
 
-void GameEntity::setMoveDirection(physics::Vector directionVector) {
+void GameEntity::setMoveDirection(const physics::Vector directionVector) {
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
     if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
@@ -353,7 +389,7 @@ std::map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() const {
     return moveDirectionsSpritesMap;
 }
 
-int GameEntity::getMovementStateColCount(EntityMovementState state) const {
+int GameEntity::getMovementStateColCount(const EntityMovementState state) const {
     return movementStateColMap.at(state);
 }
 
@@ -385,7 +421,7 @@ void GameEntity::setSprite(sf::Sprite *newSprite) {
 //    sprite = newSprite;
 }
 
-sf::Sprite* GameEntity::getMovementStateSprite(EntityMovementState state) {
+sf::Sprite* GameEntity::getMovementStateSprite(const EntityMovementState state) {
     return movementStateSpritesMap[state];
 }
 
@@ -461,7 +497,7 @@ bool GameEntity::didJustMove() const {
     return justMoved;
 }
 
-void GameEntity::setJustMoved(bool flag) {
+void GameEntity::setJustMoved(const bool flag) {
     justMoved = flag;
 }
 
