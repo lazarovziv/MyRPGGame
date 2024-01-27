@@ -29,6 +29,8 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, physics::Vector initialPosi
     sprite->setPosition(position.x, position.y);
     // setting the landscape as inelastic as possible
     rigidBody->setRestitution(0);
+
+    isLandscape = true;
 //    entityCircle->setRadius(entityCircle->getRadius()*2);
 }
 

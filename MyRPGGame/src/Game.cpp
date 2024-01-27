@@ -85,13 +85,18 @@ Game::Game(const char* str) {
 
 void Game::initEntities() {
     // initialize player's systems
+    // std::unique_ptr<GameEntityMovement> playerMovement = std::make_unique<GameEntityMovement>(
+    //     player.get(), true, std::move(getCurrentGameMap()));
+    // std::unique_ptr<GameEntityBattle> playerBattle = std::make_unique<GameEntityBattle>(
+    //     player.get()
+    // );
     auto *playerMovement = new GameEntityMovement(player.get(), true, std::move(getCurrentGameMap()));
     auto *playerBattle = new GameEntityBattle(player.get());
     auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()));
     auto *enemiesBattle = new GameEntityBattle(nullptr);
 
-    playerRepository = std::make_unique<PlayerRepository>(player, playerMovement,
-                                            playerBattle, getCurrentGameMap());
+    playerRepository = std::make_unique<PlayerRepository>(player, *playerMovement,
+                                            *playerBattle, getCurrentGameMap());
     
     enemiesRepository = std::make_unique<EnemyRepository>(*enemiesMovement, *enemiesBattle,
                                             player, getCurrentGameMap());
@@ -280,7 +285,7 @@ void Game::start() {
             enemiesRepository->move(dt);
             // update physics
             for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
-                worldMap[currentGameMapRow][currentGameMapCol]->resolveCollisions(dt);
+                getCurrentGameMap()->resolveCollisions(dt);
             }
             // update all entities' states when playing
             update(dt);
@@ -346,9 +351,9 @@ void Game::renderMenu(Menu *menu) {
                  player->getPosition().y, window.get());
 }
 
-void Game::update(real dt) {
+void Game::update(const real dt) {
     // updating current map states
-    enemiesRepository->update(dt);
+    getCurrentGameMap()->update(dt);
     // updating player state
     // playerRepository->update(dt);
 
@@ -468,15 +473,15 @@ void Game::initWorldMap() {
     // deallocate memory if needed
 }
 
-void Game::setCurrentWorldMapRow(int row) {
+void Game::setCurrentWorldMapRow(const int row) {
     currentGameMapRow = row;
 }
 
-void Game::setCurrentWorldMapCol(int col) {
+void Game::setCurrentWorldMapCol(const int col) {
     currentGameMapCol = col;
 }
 
-void Game::changeCurrentMap(int row, int col) {
+void Game::changeCurrentMap(const int row, const int col) {
     if (row < 0 || row >= Constants::NUM_ROWS) return;
     if (col < 0 || col >= Constants::NUM_COLS) return;
     // abandoning previous map and setting its player attribute to null
