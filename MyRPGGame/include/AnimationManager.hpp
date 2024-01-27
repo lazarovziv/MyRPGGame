@@ -14,8 +14,8 @@
 
 class AnimationManager {
 private:
+    // TODO: remove entity field and pass weak_ptr to every method that uses entity
     GameEntity *entity;
-    Weapon *weapon;
 
     // TODO: add constants for dimensions and all that kinda stuff
     std::map<AnimationPathType, std::string> animationsPaths;
