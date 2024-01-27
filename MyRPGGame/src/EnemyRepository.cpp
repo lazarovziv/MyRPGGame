@@ -4,8 +4,6 @@ EnemyRepository::EnemyRepository(GameEntityMovement &movement, GameEntityBattle 
                                  std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap) :
                                  movementHandler(movement), battleHandler(battle) {
     this->player = player;
-    // this->movementHandler = movement;
-    // this->battleHandler = battle;
     setGameMap(std::move(gameMap));
     animationManager = new AnimationManager(nullptr);
 }
@@ -24,7 +22,8 @@ void EnemyRepository::move(real dt) {
             movementHandler.setEntity(*enemy);
             battleHandler.setEntity(enemy);
             animationManager->setEntity(enemy);
-            movementHandler.move(player->getPosition() - enemy->getPosition(), dt);
+            physics::Vector enemyToPlayerVector = player->getPosition() - enemy->getPosition();
+            movementHandler.move(enemyToPlayerVector, dt);
             animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
             /*
             // move randomly
@@ -46,8 +45,4 @@ void EnemyRepository::move(real dt) {
 
 bool EnemyRepository::attack(GameEntity &entity, const real dt) {
     return battleHandler.attack(entity, dt);
-}
-
-void EnemyRepository::update(const real dt) {
-    map->update(dt);
 }

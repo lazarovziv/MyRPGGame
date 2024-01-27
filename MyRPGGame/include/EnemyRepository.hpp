@@ -25,7 +25,6 @@ public:
 
     void move(real dt);
     bool attack(GameEntity &entity, real dt);
-    void update(real dt);
 };
 
 #endif //MYRPGGAME_ENEMYREPOSITORY_HPP
