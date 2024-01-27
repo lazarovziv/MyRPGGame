@@ -191,7 +191,7 @@ void GameEntity::setPosition(const physics::Vector &newPosition) {
     rigidBody->setPosition(newPosition.x, newPosition.y, newPosition.z);
 }
 
-void GameEntity::move(const physics::Vector directionVector, const real dt) {
+void GameEntity::move(const physics::Vector &directionVector, const real dt) {
     // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) {
         positionUpdated = false;
@@ -213,7 +213,7 @@ void GameEntity::move(const physics::Vector directionVector, const real dt) {
     for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
 }
 
-void GameEntity::jump(const physics::Vector directionVector, const real dt) {
+void GameEntity::jump(physics::Vector &directionVector, const real dt) {
     real currentJumpScaler = running ? speed * 2 : speed;
     // TODO: make the force to be applied when the animation finishes
     physics::Vector jumpDirectionVector = physics::Vector::ZERO;
@@ -244,7 +244,9 @@ void GameEntity::jump(const physics::Vector directionVector, const real dt) {
                 jumpDirectionVector.x *= currentJumpScaler;
                 break;
             }
-            default: {}
+            default: {
+                jumpDirectionVector = physics::Vector::ZERO;
+            }
         }
     }
     // incrementing the z axis for using high floors (to be implemented later)
@@ -574,7 +576,8 @@ void GameEntity::resetJumpHeightSinceOnGroundInterval() {
 }
 
 void GameEntity::resetJumpInterval() {
-    jumpHeightSinceOnGround = -JUMP_INTERVAL_DEFAULT;
+//    jumpHeightSinceOnGround = -JUMP_INTERVAL_DEFAULT;
+    jumpHeightSinceOnGround = 0;
 }
 
 void GameEntity::incrementIdleAnimationInterval(const real dt) {

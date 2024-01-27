@@ -207,13 +207,13 @@ void Game::start() {
             enemiesRepository->setGameMap(getCurrentGameMap());
 
             // pressing x for attacking
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
+            if (player->isAttacking() || sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
                 attacked = playerRepository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
                 keysPressedMap[sf::Keyboard::J] = true;
             }
 
             // pressing space for jumping
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            if (player->isJumping() || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 playerRepository->jump(directionVector, dt);
                 keysPressedMap[sf::Keyboard::Space] = true;
             }
