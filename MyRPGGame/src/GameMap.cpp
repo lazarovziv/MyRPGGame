@@ -25,8 +25,9 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     backgroundSprite->setPosition(Constants::FULL_SCREEN_WIDTH/2, Constants::FULL_SCREEN_HEIGHT/2);
 
     // initializing gravity for map
-//    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0,  (real) -9.81});
-    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector::ZERO);
+    gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0,  (real) 9.81});
+    groundForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector{0, (real) -9.81});
+    // gravityForceGenerator = std::make_unique<physics::RigidBodyGravity>(physics::Vector::ZERO);
     forceRegistry = std::make_unique<physics::RigidBodyForceRegistry>();
     // forceRegistry->addItem(&physics::Polygon::RIGHT_END_SCREEN, gravityForceGenerator.get());
     // forceRegistry->addItem(&physics::Polygon::LEFT_END_SCREEN, gravityForceGenerator.get());
@@ -36,9 +37,6 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
     bodies.push_back(&physics::Polygon::LEFT_END_SCREEN);
     bodies.push_back(&physics::Polygon::TOP_END_SCREEN);
     bodies.push_back(&physics::Polygon::BOTTOM_END_SCREEN);
-    auto *testCircle = new physics::Circle(255, 282, 0, 64);
-    testCircle->setMass(1000);
-    bodies.push_back(testCircle);
 }
 
 // setting circles as nullptr means player can't exit from that direction
@@ -118,9 +116,10 @@ void GameMap::addLandscape(LandscapeEntity *entity) {
     landscapes.push_back(entity);
     bodies.push_back(entity->getRigidBody());
     forceRegistry->addItem(entity->getRigidBody(), gravityForceGenerator.get());
+    forceRegistry->addItem(entity->getRigidBody(), groundForceGenerator.get());
 }
 
-std::vector<NPCEnemy*> GameMap::getEnemies() {
+std::vector<NPCEnemy *> GameMap::getEnemies() {
     return enemiesVector;
 }
 
@@ -140,9 +139,7 @@ void GameMap::init() {
     randY = ((randY/16) * 16) % (int) Constants::FULL_SCREEN_HEIGHT;
 
     auto *enemy = new NPCEnemy(NPCEnemy::WORM, physics::Vector{(real) randX, (real) randY});
-//    enemy->increaseMaxHealthPoints(50);
     enemy->increaseDefencePoints(20);
-//    enemy->increaseSpeed(13);
     addEnemy(enemy);
 }
 
@@ -150,7 +147,9 @@ void GameMap::addEnemy(NPCEnemy *enemy) {
     enemiesVector.push_back(enemy);
     entities.push_back(enemy);
     bodies.push_back(enemy->getRigidBody());
+    // TODO: make this more generic
     forceRegistry->addItem(enemy->getRigidBody(), gravityForceGenerator.get());
+    forceRegistry->addItem(enemy->getRigidBody(), groundForceGenerator.get());
     // registering observer
     if (player != nullptr) player->registerObserver(enemy);
 }
@@ -165,6 +164,7 @@ void GameMap::removeEnemy(NPCEnemy *enemy) {
     entities.erase(std::find(entities.begin(), entities.end(), enemy));
     bodies.erase(std::find(bodies.begin(), bodies.end(), enemy->getRigidBody()));
     forceRegistry->removeItem(enemy->getRigidBody(), gravityForceGenerator.get());
+    forceRegistry->removeItem(enemy->getRigidBody(), groundForceGenerator.get());
     // unregistering enemy from player's observers
     player->unregisterObserver(enemy);
 }
@@ -185,6 +185,7 @@ void GameMap::removePlayer() {
     if (player != nullptr) {
         bodies.erase(std::find(bodies.begin(), bodies.end(), this->player->getRigidBody()));
         forceRegistry->removeItem(this->player->getRigidBody(), gravityForceGenerator.get());
+        forceRegistry->removeItem(this->player->getRigidBody(), groundForceGenerator.get());
     }
     player.reset();
 }
@@ -194,6 +195,7 @@ void GameMap::setPlayer(std::shared_ptr<Player> player) {
     entities.push_back(this->player.get());
     bodies.push_back(this->player->getRigidBody());
     forceRegistry->addItem(this->player->getRigidBody(), gravityForceGenerator.get());
+    forceRegistry->addItem(this->player->getRigidBody(), groundForceGenerator.get());
 }
 
 Player *GameMap::getPlayer() {

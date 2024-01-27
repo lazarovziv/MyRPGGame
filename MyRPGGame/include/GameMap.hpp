@@ -42,10 +42,11 @@ private:
     // enemies in current map
     std::vector<NPCEnemy *> enemiesVector;
     std::vector<GameEntity *> entities; // contains NPCs and player
-    std::vector<physics::RigidBody*> bodies; // contains all game entities
+    std::vector<physics::RigidBody *> bodies; // contains all game entities
     std::shared_ptr<Player> player;
     // for handling all collisions and forces in the map
     std::unique_ptr<physics::RigidBodyGravity> gravityForceGenerator;
+    std::unique_ptr<physics::RigidBodyGravity> groundForceGenerator;
     std::unique_ptr<physics::RigidBodyForceRegistry> forceRegistry;
     
 public:
