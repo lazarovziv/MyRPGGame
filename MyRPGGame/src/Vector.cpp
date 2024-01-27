@@ -2,11 +2,11 @@
 
 namespace physics {
 
-    const Vector Vector::ZERO = Vector(0, 0, 0);
-    const Vector Vector::UP_DIRECTION = Vector(0, -1, 0);
-    const Vector Vector::DOWN_DIRECTION = Vector(0, 1, 0);
-    const Vector Vector::RIGHT_DIRECTION = Vector(1, 0, 0);
-    const Vector Vector::LEFT_DIRECTION = Vector(-1, 0, 0);
+    const Vector &Vector::ZERO = Vector(0, 0, 0);
+    const Vector &Vector::UP_DIRECTION = Vector(0, -1, 0);
+    const Vector &Vector::DOWN_DIRECTION = Vector(0, 1, 0);
+    const Vector &Vector::RIGHT_DIRECTION = Vector(1, 0, 0);
+    const Vector &Vector::LEFT_DIRECTION = Vector(-1, 0, 0);
 
     real Vector::norma() const {
         return (real) std::sqrt(magnitude());
