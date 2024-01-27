@@ -1,12 +1,11 @@
 #include "../include/PlayerRepository.hpp"
 
-PlayerRepository::PlayerRepository(const std::shared_ptr<Player> &player, GameEntityMovement *movement,
-                                   GameEntityBattle *battle, const std::shared_ptr<GameMap> &gameMap) {
+PlayerRepository::PlayerRepository(const std::shared_ptr<Player> &player, GameEntityMovement &movement,
+                                   GameEntityBattle &battle, const std::shared_ptr<GameMap> &gameMap) :
+                                   movementHandler(movement), battleHandler(battle) {
     this->player = player;
-    movementHandler = movement;
-    battleHandler = battle;
     setGameMap(gameMap);
-    animationManager = new AnimationManager(player.get());
+    animationManager = new AnimationManager(this->player.get());
 }
 
 void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
@@ -16,13 +15,13 @@ void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     map = std::move(gameMap);
     map->setPlayer(player);
     // updating movement handler
-    movementHandler->setCurrentMap(map);
+    movementHandler.setCurrentMap(map);
 }
 
 bool PlayerRepository::move(physics::Vector direction, const bool run, const real dt) {
     player->setIsRunning(run);
     // vector is normalized in the movement handler
-    if (movementHandler->move(direction, dt) != Constants::MoveSuccessValues::SUCCESS) return false;
+    if (movementHandler.move(direction, dt) != Constants::MoveSuccessValues::SUCCESS) return false;
     animationManager->animate(run ? EntityMovementState::RUN : EntityMovementState::WALK, dt);
     return true;
 }
@@ -42,7 +41,7 @@ bool PlayerRepository::attack(const EntityMovementState state, const real dt) {
     // TODO: instead of traversing all enemies, maybe keep a min heap which is ordered by the distance from the player
     for (int i = 0; i < map->getEnemies().size(); i++) {
         if (!map->getEnemies().at(i)->isDead()) {
-             singleSuccess = battleHandler->attack(*(map->getEnemies()[i]), dt);
+             singleSuccess = player->isAttacking() || battleHandler.attack(*(map->getEnemies()[i]), dt);
         }
     }
     // resetting move interval because player isn't idle
