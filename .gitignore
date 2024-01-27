@@ -5,9 +5,10 @@ token.txt
 db_creds.txt
 valgrind*
 # directories
-build
-.vscode
-.idea
-.cmake
+build/
+.vscode/
+.idea/
+.cmake/
+cmake-build-debug/
 MyRPGGame.xcodeproj
 Testing
