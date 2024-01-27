@@ -7,7 +7,8 @@ GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::sha
     animationManager = std::make_unique<AnimationManager>(this->entity);
 }
 
-Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction, const real dt) {
+// expecting a normalized vector (no check of norma value to avoid sqrt invocation)
+Constants::MoveSuccessValues GameEntityMovement::move(const physics::Vector &direction, const real dt) {
     // no need to create extra variables if not using them
     if (direction == physics::Vector::ZERO) {
         entity->move(direction, dt);
@@ -17,8 +18,7 @@ Constants::MoveSuccessValues GameEntityMovement::move(physics::Vector direction,
         entity->incrementIdleAnimationInterval(dt);
         return Constants::MoveSuccessValues::NOT_MOVED;
     }
-
-    direction.normalize(); // for diagonal movements
+    // direction vector is passed normalized
     entity->move(direction, dt);
     // TODO: handle collisions in the physics manager
     return Constants::MoveSuccessValues::SUCCESS;

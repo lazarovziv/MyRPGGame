@@ -154,8 +154,8 @@ public:
     void setY(real y);
     void setPosition(real x, real y, real z = 0);
     void setPosition(const physics::Vector &newPosition);
-    void move(physics::Vector directionVector, real dt);
-    void jump(physics::Vector directionVector, real dt);
+    void move(const physics::Vector &directionVector, real dt);
+    void jump(physics::Vector &directionVector, real dt);
     void setMoveDirection(physics::Vector directionVector);
 
     bool createMovementStateSprite(EntityMovementState state);

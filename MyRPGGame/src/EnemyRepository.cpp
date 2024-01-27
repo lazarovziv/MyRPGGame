@@ -23,6 +23,8 @@ void EnemyRepository::move(real dt) {
             battleHandler.setEntity(enemy);
             animationManager->setEntity(enemy);
             physics::Vector enemyToPlayerVector = player->getPosition() - enemy->getPosition();
+            // movement handler move method expects a normalized vector
+            enemyToPlayerVector.normalize();
             movementHandler.move(enemyToPlayerVector, dt);
             animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
             /*

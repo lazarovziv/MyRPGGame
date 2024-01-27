@@ -18,7 +18,7 @@ private:
 public:
     GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map);
     ~GameEntityMovement() = default;
-    Constants::MoveSuccessValues move(physics::Vector direction, real dt);
+    Constants::MoveSuccessValues move(const physics::Vector &direction, real dt);
     // TODO: add run method (use acceleration, speed etc.)
 
     bool moveRandomly(int randomDirection, real dt);
