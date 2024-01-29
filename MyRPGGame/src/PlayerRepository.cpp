@@ -12,7 +12,7 @@ void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     // setting to-be-replaced map's player to null
     if (map != nullptr) map->removePlayer();
     // changing to the new map (move cause for crash?)
-    map = std::move(gameMap);
+    map = std::move(gameMap); // transferring ownership of the gameMap pointer to PlayerRepository
     map->setPlayer(player);
     // updating movement handler
     movementHandler.setCurrentMap(map);

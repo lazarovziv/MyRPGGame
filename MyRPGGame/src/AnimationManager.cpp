@@ -89,75 +89,51 @@ bool AnimationManager::isCombatState(const EntityMovementState state) const {
 // TODO: move all unnecessary logic from animate method to another function which is not in the animation manager, i.e, make animation manager manage animation ONLY
 void AnimationManager::animate(const EntityMovementState state, const real dt) {
     entity->setMovementState(state);
+    // using the row generically
     int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
     int entityMovementStateColCount = entity->getMovementStateColCount(state);
+    bool isLastColumn = entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state) - 1;
     bool animate = false;
     real originScale = 0.5;
     real tileScale = 1;
+    void (GameEntity::*finishFunction)() = nullptr;
+    void (GameEntity::*nonFinishFunction)() = nullptr;
 
-    /*
-    if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
-        animate = true;
+    if (state == EntityMovementState::IDLE) {
+        animate = entity->canAnimateIdle();
+        directionRow += entity->getMovementStateRowMap()[state];
     } else if (isMovementState(state)) {
-        animate = entity->canAnimateMovement();
+        animate = entity->isMoving() && entity->canAnimateMovement();
+        directionRow += entity->getMovementStateRowMap()[state];
+        finishFunction = &GameEntity::resetMoving;
     } else if (isCombatState(state)) {
-        animate = entity->canAttack();
+        animate = entity->isAttacking() && entity->canAttack();
         originScale = 1;
         tileScale = 2;
-        // using the row generically
-        directionRow += Constants::COMBAT_SLASH_ONE_HANDED_ROW * Constants::TILE_SIZE;
-    }
-     // TODO: use above variables to make function more generic
-    */
-
-    if (state == EntityMovementState::IDLE && entity->canAnimateIdle()) {
-        entity->incrementMovementStateColCount(state);
-        entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
-                                   (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
-                                   Constants::TILE_SIZE, Constants::TILE_SIZE);
-        entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-    } else if (isMovementState(state)) {
-        if (entity->isMoving() && entity->canAnimateMovement()) {
-            entity->incrementMovementStateColCount(state);
-            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
-                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
-                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
-            entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-        }
-        // entity finished moving
-        if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
-            entity->setIsMoving(false);
-            entity->setIsRunning(false);
-        }
-    } else if (isCombatState(state)) {
-        if (entity->isAttacking() && entity->canAttack()) {
-            entity->incrementMovementStateColCount(state);
-            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE * 2,
-                                    // starting from the combat slash one handed row and jump each row by 128 pixels instead of regular 64
-                                    Constants::COMBAT_SLASH_ONE_HANDED_ROW * Constants::TILE_SIZE +
-                                    directionRow * Constants::TILE_SIZE * 2,
-                                    Constants::TILE_SIZE * 2, Constants::TILE_SIZE * 2);
-
-            entity->getSprite()->setOrigin(Constants::TILE_SIZE, Constants::TILE_SIZE);
-            // triggering the timeout after swing was finished
-            if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
-                entity->resetBattleIntervalForSwing();
-                entity->setIsAttacking(false);
-            } else entity->resetBattleInterval();
-        }
+        directionRow *= tileScale;
+        directionRow += Constants::COMBAT_SLASH_ONE_HANDED_ROW;
+        finishFunction = &GameEntity::resetAttacking;
+        nonFinishFunction = &GameEntity::resetBattleInterval;
     } else if (state == EntityMovementState::JUMP) {
-        if (entity->isJumping() && entity->canAnimateJump()) {
-            entity->incrementMovementStateColCount(state);
-            entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE,
-                                    (entity->getMovementStateRowMap()[state] + directionRow) * Constants::TILE_SIZE,
-                                    Constants::TILE_SIZE, Constants::TILE_SIZE);
-            entity->getSprite()->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-            // triggering the timeout after jump was finished
-            if (entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
-                entity->resetJumpInterval();
-                entity->setIsJumping(false);
-            } else entity->resetJumpHeightSinceOnGroundInterval();
-        }
+        animate = entity->isJumping() && entity->canAnimateJump();
+        directionRow += entity->getMovementStateRowMap()[state];
+        finishFunction = &GameEntity::resetJumping;
+        nonFinishFunction = &GameEntity::resetJumpHeightSinceOnGroundInterval;
+    }
+
+    if (animate) {
+        entity->incrementMovementStateColCount(state);
+        entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE * tileScale,
+                                               directionRow * Constants::TILE_SIZE,
+                                               Constants::TILE_SIZE * tileScale,
+                                               Constants::TILE_SIZE * tileScale);
+        entity->getSprite()->setOrigin(Constants::TILE_SIZE * originScale, Constants::TILE_SIZE * originScale);
+        // reached end of the entire animation
+        if (isLastColumn && finishFunction != nullptr) {
+            (*entity.*finishFunction)();
+        } else if (nonFinishFunction != nullptr) (*entity.*nonFinishFunction)();
+
+        return;
     }
 }
 

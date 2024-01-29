@@ -71,7 +71,7 @@ protected:
     std::unique_ptr<Weapon> weapon;
 
     // combat intervals between each frame in the swing
-    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 1.0f;
+    constexpr static const real BATTLE_INTERVAL_DEFAULT = (real) 0.75f;
     real battleInterval = 0.f;
     bool justMoved = false;
 
@@ -181,10 +181,16 @@ public:
     void setIsRunning(bool flag);
     bool isMoving() const;
     void setIsMoving(bool flag);
+    void resetMoving();
+
     bool isAttacking() const;
     void setIsAttacking(bool flag);
+    void resetAttacking();
+
     bool isJumping() const;
     void setIsJumping(bool flag);
+    void resetJumping();
+
     bool canAttack() const;
     void resetBattleInterval();
     void increaseBattleInterval(real dt);

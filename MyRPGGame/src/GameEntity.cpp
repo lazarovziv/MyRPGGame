@@ -463,6 +463,11 @@ void GameEntity::setIsMoving(const bool flag) {
     moving = flag;
 }
 
+void GameEntity::resetMoving() {
+    moving = false;
+    running = false;
+}
+
 bool GameEntity::isAttacking() const {
     return attacking;
 }
@@ -471,12 +476,22 @@ void GameEntity::setIsAttacking(const bool flag) {
     attacking = flag;
 }
 
+void GameEntity::resetAttacking() {
+    resetBattleIntervalForSwing();
+    attacking = false;
+}
+
 bool GameEntity::isJumping() const {
     return jumping;
 }
 
 void GameEntity::setIsJumping(const bool flag) {
     jumping = flag;
+}
+
+void GameEntity::resetJumping() {
+    resetJumpInterval();
+    jumping = false;
 }
 
 bool GameEntity::canAttack() const {
