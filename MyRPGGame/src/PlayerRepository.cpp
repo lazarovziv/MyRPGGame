@@ -19,19 +19,19 @@ void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
 }
 
 bool PlayerRepository::move(physics::Vector &direction, const bool run, const real dt) {
-    player->setIsRunning(run);
     // movement handler expects a normalized vector
     direction.normalize();
     if (movementHandler.move(direction, dt) != Constants::MoveSuccessValues::SUCCESS) return false;
+    player->setIsRunning(run);
     animationManager->animate(run ? EntityMovementState::RUN : EntityMovementState::WALK, dt);
     return true;
 }
 
 bool PlayerRepository::jump(physics::Vector &direction, const real dt) {
+    if (!player->jump(direction, dt)) return false; // TODO: change to use movementHandler
     if (!player->isJumping()) {
         player->setIsJumping(true);
     }
-    player->jump(direction, dt); // TODO: change to use movementHandler
     animationManager->animate(EntityMovementState::JUMP, dt);
     return true;
 }

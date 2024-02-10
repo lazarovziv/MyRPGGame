@@ -93,8 +93,8 @@ protected:
 
     constexpr static const real JUMP_HEIGHT_INTERVAL_DEFAULT = 4.0f;
     // for between jumps
-    constexpr static const real JUMP_INTERVAL_DEFAULT = 48.0f;
-    real jumpHeightSinceOnGround = 0;
+    constexpr static const real JUMP_INTERVAL_DEFAULT = 8.0f;
+    real jumpInterval = 0;
 
     std::stack<Point *> movesStack;
     
@@ -155,7 +155,7 @@ public:
     void setPosition(real x, real y, real z = 0);
     void setPosition(const physics::Vector &newPosition);
     void move(const physics::Vector &directionVector, real dt);
-    void jump(physics::Vector &directionVector, real dt);
+    bool jump(physics::Vector &directionVector, real dt);
     void setMoveDirection(physics::Vector directionVector);
 
     bool createMovementStateSprite(EntityMovementState state);

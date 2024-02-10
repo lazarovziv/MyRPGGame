@@ -213,7 +213,12 @@ void GameEntity::move(const physics::Vector &directionVector, const real dt) {
     for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
 }
 
-void GameEntity::jump(physics::Vector &directionVector, const real dt) {
+bool GameEntity::jump(physics::Vector &directionVector, const real dt) {
+    // don't apply force if interval hasn't been reset yet
+    if (jumpInterval < 0) {
+        std::cout << jumpInterval << std::endl;
+        return false;
+    }
     real currentJumpScaler = running ? speed * 2 : speed;
     // TODO: make the force to be applied when the animation finishes
     physics::Vector jumpDirectionVector = physics::Vector::ZERO;
@@ -255,6 +260,8 @@ void GameEntity::jump(physics::Vector &directionVector, const real dt) {
     rigidBody->addForce(jumpDirectionVector);
     incrementJumpHeightSinceOnGround(currentJumpScaler * dt);
     setMoveDirection(directionVector);
+
+    return true;
 }
 
 void GameEntity::setMoveDirection(const physics::Vector directionVector) {
@@ -553,10 +560,12 @@ void GameEntity::incrementDistanceTraveledSinceIdle(const real distance) {
 }
 
 void GameEntity::incrementJumpHeightSinceOnGround(const real distance) {
-    jumpHeightSinceOnGround += distance;
+    jumpInterval += distance;
 }
 
 bool GameEntity::canAnimateMovement(const bool check) {
+    // checking we're not animating other animation type
+    if (jumping || attacking) return false;
     if (distanceTraveledSinceIdle >= speed) {
         if (!check) resetDistanceTraveledSinceIdle();
         return true;
@@ -565,6 +574,8 @@ bool GameEntity::canAnimateMovement(const bool check) {
 }
 
 bool GameEntity::canAnimateIdle(const bool check) {
+    // checking we're not animating other animation type
+    if (jumping || attacking || moving) return false;
     if (idleAnimationInterval >= Constants::NUM_FRAMES_IDLE_ANIMATION) {
         if (!check) resetIdleAnimationInterval();
         return true;
@@ -573,7 +584,9 @@ bool GameEntity::canAnimateIdle(const bool check) {
 }
 
 bool GameEntity::canAnimateJump(const bool check) {
-    if (jumpHeightSinceOnGround >= JUMP_HEIGHT_INTERVAL_DEFAULT) {
+    // checking we're not animating other animation type
+    if (moving || attacking) return false;
+    if (jumpInterval >= JUMP_HEIGHT_INTERVAL_DEFAULT) {
         if (!check) resetJumpHeightSinceOnGroundInterval();
         return true;
     }
@@ -587,12 +600,12 @@ void GameEntity::resetIdleAnimationInterval() {
 }
 
 void GameEntity::resetJumpHeightSinceOnGroundInterval() {
-    jumpHeightSinceOnGround = 0;
+    jumpInterval = 0;
 }
 
 void GameEntity::resetJumpInterval() {
-//    jumpHeightSinceOnGround = -JUMP_INTERVAL_DEFAULT;
-    jumpHeightSinceOnGround = 0;
+    jumpInterval = -JUMP_INTERVAL_DEFAULT;
+//    jumpHeightSinceOnGround = 0;
 }
 
 void GameEntity::incrementIdleAnimationInterval(const real dt) {
@@ -617,6 +630,7 @@ void GameEntity::update(const real dt) {
         // updating intervals (checking values to prevent overflow if not acted long enough)
         moveInterval += dt;
         battleInterval += dt;
+        jumpInterval += dt;
         if (!isPlayer) changeMoveDirectionInterval += dt;
     }
 }
