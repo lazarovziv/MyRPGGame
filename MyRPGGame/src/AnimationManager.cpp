@@ -95,7 +95,8 @@ void AnimationManager::animate(const EntityMovementState state, const real dt) {
     bool isLastColumn = entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state) - 1;
     bool animate = false;
     real originScale = 0.5;
-    real tileScale = 1;
+    int tileScale = 1;
+    // function pointers for after the animation has finished (one sprite of it)
     void (GameEntity::*finishFunction)() = nullptr;
     void (GameEntity::*nonFinishFunction)() = nullptr;
 
@@ -132,8 +133,6 @@ void AnimationManager::animate(const EntityMovementState state, const real dt) {
         if (isLastColumn && finishFunction != nullptr) {
             (*entity.*finishFunction)();
         } else if (nonFinishFunction != nullptr) (*entity.*nonFinishFunction)();
-
-        return;
     }
 }
 
