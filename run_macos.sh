@@ -7,6 +7,6 @@ echo "Run? (y/n)"
 read ANSWER
 
 if [ "$ANSWER"="y" ]; then
-  cd build
+  cd build/Release
   ./main
 fi
