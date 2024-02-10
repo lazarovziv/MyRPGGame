@@ -119,6 +119,7 @@ public:
 
     // inline is a c++ 17 feature
     inline static const std::string PLAYER_IMAGES_PATH = "../graphics/player/body/";
+    inline static const std::string GRAPHICS_BASE_PATH = "../../graphics/";
 
     // enum for distinguishing moves - CHANGE_* values means needs to change to relevant map
     enum MoveSuccessValues {

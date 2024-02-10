@@ -20,7 +20,7 @@ Player::Player(PlayerType type, physics::Vector initialPosition) : GameEntity(in
     isPlayer = true;
     this->type = type;
     // gray_t_shirt_leather_pants_spritesheet
-    if (!texture.loadFromFile("../graphics/player/uriel_spritesheet.png")) {
+    if (!texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "player/uriel_spritesheet.png")) {
         std::cout << "Texture NOT loaded properly!" << std::endl;
         texture.setSmooth(true);
     } else std::cout << "Texture loaded properly." << std::endl;

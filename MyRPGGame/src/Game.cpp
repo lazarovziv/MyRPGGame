@@ -76,7 +76,7 @@ Game::Game(const char* str) {
     initWorldMap();
     changeCurrentMap(currentGameMapRow, currentGameMapCol);
 
-    fpsFont.loadFromFile("../graphics/fonts/arial.ttf");
+    fpsFont.loadFromFile(Constants::GRAPHICS_BASE_PATH + "fonts/arial.ttf");
     fpsText.setFillColor(sf::Color::Blue);
     dtText.setFillColor(sf::Color::Blue);
     fpsText.setFont(fpsFont);

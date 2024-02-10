@@ -17,7 +17,7 @@ NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initi
     moveDirection = MoveDirection::UP;
 
     // TextureLoader.getInstance()->loadTexture("dorio_64.png");
-    texture.loadFromFile("../graphics/enemies/green_orcs/spritesheet.png");
+    texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "enemies/green_orcs/spritesheet.png");
     texture.setSmooth(true);
     sprite->setTexture(texture);
     sprite->setTextureRect(sf::IntRect(moveDirectionsSpritesMap[moveDirection] * Constants::TILE_SIZE,

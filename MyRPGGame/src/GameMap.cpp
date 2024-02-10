@@ -16,7 +16,7 @@ GameMap::GameMap(int row, int col, bool up, bool down, bool right, bool left) {
 //    backgroundSprite = new sf::Sprite();
     backgroundSprite = std::make_unique<sf::Sprite>();
 
-    if (texture.loadFromFile("../graphics/maps/Sample.png")) {
+    if (texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "maps/Sample.png")) {
         std::cout << "Background loaded properly." << std::endl;
     } else std::cout << "Background NOT loaded." << std::endl;
 //    texture.setSmooth(true);

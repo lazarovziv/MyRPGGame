@@ -18,7 +18,7 @@ Weapon::Weapon(physics::Vector initialPosition, WeaponType type) {
             numHitsPerSecond = 3;
             // init graphics
             sprite = new sf::Sprite();
-            if (!texture.loadFromFile("../graphics/images/weapons/oversize/right_hand/male/longsword_male.png")) {
+            if (!texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "images/weapons/oversize/right_hand/male/longsword_male.png")) {
                 std::cout << "Texture NOT loaded properly!" << std::endl;
                 texture.setSmooth(true);
             } else std::cout << "Weapon loaded properly." << std::endl;

@@ -1,7 +1,7 @@
 #include "../include/Menu.hpp"
 
 Menu::Menu(std::vector<std::string> itemsStrings, bool gameMenu) {
-    if (!font.loadFromFile("../graphics/fonts/arial.ttf")) {
+    if (!font.loadFromFile(Constants::GRAPHICS_BASE_PATH + "fonts/arial.ttf")) {
         std::cout << "Failed to load font!" << std::endl;
         // TODO: throw error
     }

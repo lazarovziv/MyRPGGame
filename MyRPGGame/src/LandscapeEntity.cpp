@@ -6,19 +6,19 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, physics::Vector initialPosi
 //    RectangleShape rectangle0(Vector2f(200, 200));
     switch (this->type) {
         case LandscapeType::TREE:
-            if (texture.loadFromFile("../graphics/trees/maple_64.png")) std::cout << "Tree loaded." << std::endl;
+            if (texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "trees/maple_64.png")) std::cout << "Tree loaded." << std::endl;
             id = 1; // totally arbitrary`
             break;
         case LandscapeType::GRASS:
-            texture.loadFromFile("../graphics/grass.png");
+            texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "grass.png");
             id = 2; // totally arbitrary
             break;
         case LandscapeType::FLOWER:
-            texture.loadFromFile("../graphics/flower.png");
+            texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "flower.png");
             id = 3; // totally arbitrary
             break;
         case LandscapeType::HOUSE:
-            texture.loadFromFile("../graphics/house.png");
+            texture.loadFromFile(Constants::GRAPHICS_BASE_PATH + "house.png");
             id = 4; // totally arbitrary
             break;
     }

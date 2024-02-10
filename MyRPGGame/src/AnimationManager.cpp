@@ -44,7 +44,7 @@ AnimationManager::AnimationManager(GameEntity *entity) {
 void AnimationManager::addBodyPath(std::string path) {
     bodyPaths.push_back(path);
     animationsPaths[AnimationPathType::BODY] = path;
-    animationsPaths[AnimationPathType::HEAD] = "../graphics/Characters/Head/masculine/idle.png";
+    animationsPaths[AnimationPathType::HEAD] = Constants::GRAPHICS_BASE_PATH + "Characters/Head/masculine/idle.png";
 }
 
 void AnimationManager::addClothingPath(std::string path) {
@@ -140,8 +140,8 @@ bool AnimationManager::generateBody() {
     for (std::string movementState : movementStates) {
         std::cout << movementState << std::endl;
         // using the generate_image.py script
-        createImage("../graphics/Characters/Body/masculine/" + movementState + ".png",
-                    "../graphics/Characters/Head/masculine/" + movementState + ".png",
+        createImage(Constants::GRAPHICS_BASE_PATH + "Characters/Body/masculine/" + movementState + ".png",
+                    Constants::GRAPHICS_BASE_PATH + "Characters/Head/masculine/" + movementState + ".png",
                     movementState);
     }
     return true;
