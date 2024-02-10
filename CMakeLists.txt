@@ -1,23 +1,36 @@
 cmake_minimum_required(VERSION 3.14)
-# TODO: change file to be used in the docker container
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
+# macOS configurations
 if (APPLE)
-    set(CMAKE_CXX_COMPILER /usr/bin/g++)
-    set(CMAKE_OSX_ARCHITECTURE arm64)
-    set(FULL_PATH_TO_CPP_MYSQL_CONNECTOR /usr/local/mysql-connector-c++-8.0.32)
-    set(CMAKE_PREFIX_PATH /opt/homebrew)
-elseif (WIN32)
-    # set windows compiler
-    set(SFML_DIR C:/SFML/lib/cmake/SFML)
-    set(OpenCV_DIR C:/opencv/build/x64/vc16/lib)
-else()
     set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-    set(CMAKE_C_COMPILER  /usr/bin/clang)
-
-    set(SFML_DIR /workspace/SFML-2.6.0)
-    set(OpenCV_DIR /workspace/opencv-4.8.0/build)
+    # architecture of the cpu
+    set(CMAKE_OSX_ARCHITECTURE arm64)
+    set(CMAKE_PREFIX_PATH /opt/homebrew)
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error")
+    # for ignoring the compiler error that fails the compilation
+    add_compile_options(
+            "-Wno-error=unused-command-line-argument"
+    )
 endif()
+# making the sfml libraries to be built for static linking
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+# getting the SFML files
+include(FetchContent)
+FetchContent_Declare(SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.0)
+FetchContent_MakeAvailable(SFML)
+
+# TODO: modify if statement to be used in a linux docker container
+#if (LINUX)
+#    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+#    set(CMAKE_C_COMPILER  /usr/bin/clang)
+#
+#    set(SFML_DIR /workspace/SFML-2.6.0)
+#    set(OpenCV_DIR /workspace/opencv-4.8.0/build)
+#endif()
+
+# using C++ 17
 set(CMAKE_CXX_STANDARD 17)
 
 project(MyRPGGame)
@@ -40,28 +53,24 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         # test files
 )
 
-find_package(SFML 2.6.0 COMPONENTS system window graphics network audio REQUIRED)
-find_package(OpenCV COMPONENTS core highgui REQUIRED)
-
-if (APPLE)
-    include_directories(${SFML_INCLUDE_DIRS}/include)
-    include_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/include)
-
-    link_directories(${FULL_PATH_TO_CPP_MYSQL_CONNECTOR}/lib64)
-else()
-    # include_directories(${SFML_INCLUDE_DIR})
-   include_directories(${SFML_DIR}/include)
-endif()
-
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-# creating executables
+# creating the executable
 add_executable(main ${SOURCE_FILES})
 target_link_libraries(main sfml-system
         sfml-window
         sfml-graphics
         sfml-audio
         sfml-network)
+# linking OpenCV if necessary
 target_link_libraries(main ${OpenCV_LIBS})
+# additional configurations for windows to use the right .dll file in the linking process
+if (WIN32)
+    add_custom_command(
+            TARGET main
+            COMMENT "Copy OpenAL DLL"
+            PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:main>
+            VERBATIM)
+endif()
 
-target_compile_features(main PRIVATE cxx_range_for)
+# use C++ 17 compilation features - can be good for templates, overriding constructors, etc.
+target_compile_features(main PRIVATE cxx_std_17)
+set_property(TARGET main PROPERTY COMPILE_WARNING_AS_ERROR OFF)
