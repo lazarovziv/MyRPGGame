@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 #include <limits>
-#include "math.h"
+#include <cmath>
 #include <vector>
 
 // for using throughout the project, if want to change to int/double
