@@ -6,7 +6,7 @@ cmake --build build/ --config Release
 echo "Run? (y/n)"
 read ANSWER
 
-if [ "$ANSWER"="y" ]; then
+if [ "$ANSWER" = "y" ]; then
   cd build/Release
   ./main
 fi
