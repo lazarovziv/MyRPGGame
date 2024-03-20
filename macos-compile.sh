@@ -1,12 +1,16 @@
 #!/bin/zsh
 
 cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release .
-cmake --build build/ --config Release
-
-echo "Run? (y/n)"
-read ANSWER
-
-if [ "$ANSWER" = "y" ]; then
-  cd build/Release
-  ./main
+if [ $? != 0 ]; then
+  echo "Compilation failed. Exiting..."
+  exit 1
 fi
+
+cmake --build build/ --config Release
+if [ $? != 0 ]; then
+  echo "Compilation failed. Exiting..."
+  exit 1
+fi
+
+cd build/Release
+./main
