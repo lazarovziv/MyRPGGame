@@ -213,7 +213,7 @@ void GameEntity::move(const physics::Vector &directionVector, const real dt) {
     for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
 }
 
-bool GameEntity::jump(physics::Vector &directionVector, const real dt) {
+bool GameEntity::jump(const physics::Vector &directionVector, const real dt) {
     // don't apply force if interval hasn't been reset yet
     if (jumpInterval < 0) {
         std::cout << jumpInterval << std::endl;
@@ -450,7 +450,7 @@ physics::RigidBody* GameEntity::getRigidBody() const {
     return rigidBody.get();
 }
 
-physics::Vector GameEntity::getPosition() const {
+physics::Vector &GameEntity::getPosition() const {
     return (*rigidBody).getPosition();
 }
 

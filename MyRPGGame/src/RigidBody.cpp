@@ -21,8 +21,8 @@ namespace physics {
         return (*acceleration);
     }
 
-    Vector RigidBody::getPosition() {
-        return (*position);
+    Vector &RigidBody::getPosition() {
+        return *position;
     }
 
     real RigidBody::getRestitution() const {

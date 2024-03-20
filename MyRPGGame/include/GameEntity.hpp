@@ -137,7 +137,7 @@ public:
     void setIntRectPosition(int left, int top, int width, int height);
 
     physics::RigidBody *getRigidBody() const;
-    physics::Vector getPosition() const;
+    physics::Vector &getPosition() const;
     
     void increaseLevel(int amount);
     void increaseMaxHealthPoints(int amount);
@@ -155,7 +155,7 @@ public:
     void setPosition(real x, real y, real z = 0);
     void setPosition(const physics::Vector &newPosition);
     void move(const physics::Vector &directionVector, real dt);
-    bool jump(physics::Vector &directionVector, real dt);
+    bool jump(const physics::Vector &directionVector, real dt);
     void setMoveDirection(physics::Vector directionVector);
 
     bool createMovementStateSprite(EntityMovementState state);

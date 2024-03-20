@@ -9,6 +9,7 @@ namespace physics {
     const Vector &Vector::LEFT_DIRECTION = Vector(-1, 0, 0);
 
     real Vector::norma() const {
+        if ((*this) == Vector::ZERO) return 0;
         return (real) std::sqrt(magnitude());
     }
 
@@ -22,8 +23,8 @@ namespace physics {
     }
 
     void Vector::normalize() {
-        if ((*this) == Vector::ZERO) return;
         real norm = this->norma();
+        if (norm == 0) return; // TODO: raise error?
         *this /= norm;
     }
 

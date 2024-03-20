@@ -31,9 +31,10 @@ namespace physics {
         RigidBody(RigidBodyType type, real x, real y, real z = 0, real mass = 1);
         ~RigidBody() = default;
 
-        Vector getPosition();
+        Vector &getPosition();
         Vector getVelocity();
         Vector getAcceleration();
+        // TODO: add [[nodiscard]] for all return const functions to avoid calling the function w/o using its' return value
         real getRestitution() const;
         real getMass() const;
         real getInverseMass() const;
