@@ -1,38 +1,26 @@
 #include "../include/PlayerRepository.hpp"
 
-PlayerRepository::PlayerRepository(const std::shared_ptr<Player> &player, GameEntityMovement &movement,
-                                   GameEntityBattle &battle, const std::shared_ptr<GameMap> &gameMap) :
-                                   movementHandler(movement), battleHandler(battle) {
+PlayerRepository::PlayerRepository(const std::shared_ptr<Player> &player, std::unique_ptr<GameEntityMovement> movement,
+                                   std::unique_ptr<GameEntityBattle> battle, const std::shared_ptr<GameMap> &gameMap)
+                                   : GameEntityRepository(std::move(movement), std::move(battle)) {
     this->player = player;
-    setGameMap(gameMap);
     animationManager = new AnimationManager(this->player.get());
+    setGameMap(gameMap);
 }
 
 void PlayerRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
     // setting to-be-replaced map's player to null
     if (map != nullptr) map->removePlayer();
-    // changing to the new map (move cause for crash?)
-    map = std::move(gameMap); // transferring ownership of the gameMap pointer to PlayerRepository
+    GameEntityRepository::setGameMap(std::move(gameMap));
     map->setPlayer(player);
-    // updating movement handler
-    movementHandler.setCurrentMap(map);
 }
 
 bool PlayerRepository::move(physics::Vector &direction, const bool run, const real dt) {
     // movement handler expects a normalized vector
     direction.normalize();
-    if (movementHandler.move(direction, dt) != Constants::MoveSuccessValues::SUCCESS) return false;
+    if (movementHandler->move(direction, dt) != Constants::MoveSuccessValues::SUCCESS) return false;
     player->setIsRunning(run);
     animationManager->animate(run ? EntityMovementState::RUN : EntityMovementState::WALK, dt);
-    return true;
-}
-
-bool PlayerRepository::jump(physics::Vector &direction, const real dt) {
-    if (!player->jump(direction, dt)) return false; // TODO: change to use movementHandler
-    if (!player->isJumping()) {
-        player->setIsJumping(true);
-    }
-    animationManager->animate(EntityMovementState::JUMP, dt);
     return true;
 }
 
@@ -44,7 +32,7 @@ bool PlayerRepository::attack(const EntityMovementState state, const real dt) {
     // TODO: instead of traversing all enemies, maybe keep a min heap which is ordered by the distance from the player
     for (int i = 0; i < map->getEnemies().size(); i++) {
         if (!map->getEnemies().at(i)->isDead()) {
-             singleSuccess = player->isAttacking() || battleHandler.attack(*(map->getEnemies()[i]), dt);
+             singleSuccess = player->isAttacking() || battleHandler->attack(*(map->getEnemies()[i]), dt);
         }
     }
     // resetting move interval because player isn't idle

@@ -12,14 +12,15 @@ class GameEntityMovement {
 private:
     GameEntity *entity;
     std::shared_ptr<GameMap> currentMap;
-    Point ***gameMapsPoints;
     std::unique_ptr<AnimationManager> animationManager;
 
 public:
     GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map);
     ~GameEntityMovement() = default;
+
     Constants::MoveSuccessValues move(const physics::Vector &direction, real dt);
     // TODO: add run method (use acceleration, speed etc.)
+    bool jump(const physics::Vector &direction, real dt);
 
     bool moveRandomly(int randomDirection, real dt);
 

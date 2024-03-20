@@ -85,21 +85,29 @@ Game::Game(const char* str) {
 
 void Game::initEntities() {
     // initialize player's systems
-    // std::unique_ptr<GameEntityMovement> playerMovement = std::make_unique<GameEntityMovement>(
-    //     player.get(), true, std::move(getCurrentGameMap()));
-    // std::unique_ptr<GameEntityBattle> playerBattle = std::make_unique<GameEntityBattle>(
-    //     player.get()
-    // );
-    auto *playerMovement = new GameEntityMovement(player.get(), true, std::move(getCurrentGameMap()));
-    auto *playerBattle = new GameEntityBattle(player.get());
-    auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()));
-    auto *enemiesBattle = new GameEntityBattle(nullptr);
+     std::unique_ptr<GameEntityMovement> playerMovement = std::make_unique<GameEntityMovement>(
+         player.get(), true, std::move(getCurrentGameMap()));
+     std::unique_ptr<GameEntityBattle> playerBattle = std::make_unique<GameEntityBattle>(
+         player.get()
+     );
+     std::unique_ptr<GameEntityMovement> enemiesMovement = std::make_unique<GameEntityMovement>(
+             nullptr, false, std::move(getCurrentGameMap()));
+    std::unique_ptr<GameEntityBattle> enemiesBattle = std::make_unique<GameEntityBattle>(
+            nullptr
+    );
+//    auto *playerMovement = new GameEntityMovement(player.get(), true, std::move(getCurrentGameMap()));
+//    auto *playerBattle = new GameEntityBattle(player.get());
+//    auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()));
+//    auto *enemiesBattle = new GameEntityBattle(nullptr);
 
-    playerRepository = std::make_unique<PlayerRepository>(player, *playerMovement,
-                                            *playerBattle, getCurrentGameMap());
+    playerRepository = std::make_unique<PlayerRepository>(player,
+                                                          std::move(playerMovement),
+                                                          std::move(playerBattle),
+                                                          getCurrentGameMap());
     
-    enemiesRepository = std::make_unique<EnemyRepository>(*enemiesMovement, *enemiesBattle,
-                                            player, getCurrentGameMap());
+    enemiesRepository = std::make_unique<EnemyRepository>(std::move(enemiesMovement),
+                                                          std::move(enemiesBattle),
+                                                          getCurrentGameMap());
 }
 
 void Game::initMenus() {
@@ -207,6 +215,7 @@ void Game::start() {
             enemiesRepository->setGameMap(getCurrentGameMap());
 
             // pressing x for attacking
+            // TODO: use player repository instead of player
             if (player->isAttacking() || sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
                 attacked = playerRepository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
                 keysPressedMap[sf::Keyboard::J] = true;
@@ -282,7 +291,7 @@ void Game::start() {
 
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
-            enemiesRepository->move(dt);
+            enemiesRepository->move(player->getPosition(), false, dt);
             // update physics
             for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
                 getCurrentGameMap()->resolveCollisions(dt);

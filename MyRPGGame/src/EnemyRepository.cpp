@@ -1,31 +1,25 @@
 #include "../include/EnemyRepository.hpp"
 
-EnemyRepository::EnemyRepository(GameEntityMovement &movement, GameEntityBattle &battle,
-                                 std::shared_ptr<Player> player, std::shared_ptr<GameMap> gameMap) :
-                                 movementHandler(movement), battleHandler(battle) {
-    this->player = player;
-    setGameMap(std::move(gameMap));
+EnemyRepository::EnemyRepository(std::unique_ptr<GameEntityMovement> movement,
+                                 std::unique_ptr<GameEntityBattle> battle,
+                                 const std::shared_ptr<GameMap> &gameMap)
+                                 : GameEntityRepository(std::move(movement), std::move(battle)) {
+    setGameMap(gameMap);
     animationManager = new AnimationManager(nullptr);
 }
 
-void EnemyRepository::setGameMap(std::shared_ptr<GameMap> gameMap) {
-    map = gameMap;
-    movementHandler.setCurrentMap(map);
-    // referring player to map is taken care of in player repository
-}
-
 // TODO: create move method for attacking other enemies (some skill for controlling enemies)
-void EnemyRepository::move(real dt) {
+bool EnemyRepository::move(physics::Vector &direction, bool run, real dt) {
     for (auto &enemy : map->getEnemies()) {
         if (!enemy->isDead() && enemy->canMove()) {
             // set enemy if not already set
-            movementHandler.setEntity(*enemy);
-            battleHandler.setEntity(enemy);
+            movementHandler->setEntity(*enemy);
+            battleHandler->setEntity(enemy);
             animationManager->setEntity(enemy);
-            physics::Vector enemyToPlayerVector = player->getPosition() - enemy->getPosition();
+            physics::Vector enemyToPlayerVector = direction - enemy->getPosition();
             // movement handler move method expects a normalized vector
             enemyToPlayerVector.normalize();
-            movementHandler.move(enemyToPlayerVector, dt);
+            movementHandler->move(enemyToPlayerVector, dt);
             animationManager->animate(EntityMovementState::WALK, dt); // TODO: change to only if in battle area
             /*
             // move randomly
@@ -43,8 +37,9 @@ void EnemyRepository::move(real dt) {
              */
         }
     }
+    return true;
 }
 
 bool EnemyRepository::attack(GameEntity &entity, const real dt) {
-    return battleHandler.attack(entity, dt);
+    return battleHandler->attack(entity, dt);
 }

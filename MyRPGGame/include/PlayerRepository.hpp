@@ -1,27 +1,21 @@
 #ifndef MYRPGGAME_PLAYERREPOSITORY_HPP
 #define MYRPGGAME_PLAYERREPOSITORY_HPP
 
-#include "GameEntityMovement.hpp"
-#include "GameEntityBattle.hpp"
+#include "GameEntityRepository.hpp"
 
-class PlayerRepository {
+class PlayerRepository : public GameEntityRepository {
 private:
     std::shared_ptr<Player> player;
-    GameEntityMovement &movementHandler;
-    GameEntityBattle &battleHandler;
-    std::shared_ptr<GameMap> map;
-    AnimationManager *animationManager = nullptr;
 
 public:
-    explicit PlayerRepository(const std::shared_ptr<Player> &player, GameEntityMovement &movement,
-                              GameEntityBattle &battle, const std::shared_ptr<GameMap> &gameMap);
+    explicit PlayerRepository(const std::shared_ptr<Player> &player, std::unique_ptr<GameEntityMovement> movement,
+                              std::unique_ptr<GameEntityBattle> battle, const std::shared_ptr<GameMap> &gameMap);
     ~PlayerRepository() = default; // TODO: delete all handlers and player (same for enemy repository)
 
     void setGameMap(std::shared_ptr<GameMap> gameMap);
-    bool move(physics::Vector &direction, bool run, real dt);
-    bool jump(physics::Vector &direction, real dt);
-    bool attack(EntityMovementState state, real dt);
-    void update(real dt);
+    bool move(physics::Vector &direction, const bool run, const real dt);
+    bool attack(const EntityMovementState state, const real dt);
+    void update(const real dt);
 };
 
 #endif //MYRPGGAME_PLAYERREPOSITORY_HPP

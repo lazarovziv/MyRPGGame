@@ -24,6 +24,17 @@ Constants::MoveSuccessValues GameEntityMovement::move(const physics::Vector &dir
     return Constants::MoveSuccessValues::SUCCESS;
 }
 
+bool GameEntityMovement::jump(const physics::Vector &direction, const real dt) {
+    // if jump wasn't successful
+    if (!entity->jump(direction, dt)) return false;
+    // in the middle of a jump
+    if (!entity->isJumping()) {
+        entity->setIsJumping(true);
+    }
+    animationManager->animate(EntityMovementState::JUMP, dt);
+    return true;
+}
+
 bool GameEntityMovement::moveRandomly(const int randomDirection, const real dt) {
     // DOWN, RIGHT, LEFT, UP
     switch (randomDirection) {
