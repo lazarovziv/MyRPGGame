@@ -1,4 +1,4 @@
-#include "../include/Collision.hpp"
+#include "../physics/Collision.hpp"
 #include <SFML/Graphics.hpp>
 
 using namespace sf;

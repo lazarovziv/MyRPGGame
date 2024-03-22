@@ -36,43 +36,54 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(MyRPGGame)
 
-set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/MenuRepository.cpp
-        MyRPGGame/src/Menu.cpp MyRPGGame/src/TerrainGenerator.cpp
-        # physics
-        MyRPGGame/src/Vector.cpp MyRPGGame/src/Collision.cpp MyRPGGame/src/RigidBody.cpp
-        MyRPGGame/src/RigidBodyForceRegistry.cpp MyRPGGame/src/RigidBodyForceRegistry.cpp
-        MyRPGGame/src/RigidBodyGravity.cpp MyRPGGame/src/RigidBodyDrag.cpp
-        # physics
-        MyRPGGame/src/ScriptExecutor.cpp MyRPGGame/src/AnimationManager.cpp
-        MyRPGGame/src/Game.cpp MyRPGGame/src/GameEntity.cpp MyRPGGame/src/GameEntityBattle.cpp
-        MyRPGGame/src/GameEntityMovement.cpp MyRPGGame/src/GameMap.cpp MyRPGGame/src/Heap.cpp
-        MyRPGGame/src/LandscapeEntity.cpp MyRPGGame/src/Subject.cpp
-        MyRPGGame/src/NPCEnemy.cpp MyRPGGame/src/Player.cpp MyRPGGame/src/Point.cpp
-        MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
-        MyRPGGame/src/Graph.cpp
-        MyRPGGame/src/GameEntityRepository.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp
-        # test files
-        # test files
-)
+add_subdirectory(MyRPGGame/animation)
+add_subdirectory(MyRPGGame/combat)
+add_subdirectory(MyRPGGame/common)
+add_subdirectory(MyRPGGame/entities)
+add_subdirectory(MyRPGGame/items)
+add_subdirectory(MyRPGGame/main)
+add_subdirectory(MyRPGGame/maps)
+add_subdirectory(MyRPGGame/menu)
+add_subdirectory(MyRPGGame/misc)
+add_subdirectory(MyRPGGame/movement)
+add_subdirectory(MyRPGGame/physics)
+add_subdirectory(MyRPGGame/repositories)
+
+set(SOURCE_FILES MyRPGGame/main.cpp)
 
 # creating the executable
-add_executable(main ${SOURCE_FILES})
-target_link_libraries(main sfml-system
+add_executable(game ${SOURCE_FILES})
+target_link_libraries(game sfml-system
         sfml-window
         sfml-graphics
         sfml-audio
         sfml-network)
 # linking OpenCV if necessary
-target_link_libraries(main ${OpenCV_LIBS})
+target_link_libraries(game ${OpenCV_LIBS})
+
+# linking all our sub libraries
+target_link_libraries(game animation)
+target_link_libraries(game combat)
+target_link_libraries(game common)
+target_link_libraries(game entities)
+target_link_libraries(game items)
+target_link_libraries(game main)
+target_link_libraries(game maps)
+target_link_libraries(game menu)
+target_link_libraries(game misc)
+target_link_libraries(game movement)
+target_link_libraries(game physics)
+target_link_libraries(game repositories)
+
 # additional configurations for windows to use the right .dll file in the linking process
 if (WIN32)
     add_custom_command(
-            TARGET main
+            TARGET game
             COMMENT "Copy OpenAL DLL"
-            PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:main>
+            PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:game>
             VERBATIM)
 endif()
 
 # use C++ 17 compilation features - can be good for templates, overriding constructors, etc.
-target_compile_features(main PRIVATE cxx_std_17)
-set_property(TARGET main PROPERTY COMPILE_WARNING_AS_ERROR OFF)
+target_compile_features(game PRIVATE cxx_std_17)
+set_property(TARGET game PROPERTY COMPILE_WARNING_AS_ERROR OFF)

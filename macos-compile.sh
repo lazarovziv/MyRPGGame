@@ -13,4 +13,4 @@ if [ $? != 0 ]; then
 fi
 
 cd build/Release
-./main
+./game

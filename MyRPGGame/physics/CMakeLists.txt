@@ -1,0 +1,2 @@
+add_library(physics src/Collision.cpp src/RigidBodyDrag.cpp src/RigidBodyGravity.cpp src/RigidBodyForceRegistry.cpp src/RigidBody.cpp)
+target_include_directories(physics PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
