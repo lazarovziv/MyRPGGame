@@ -136,6 +136,11 @@ void Game::start() {
     bool running = window->isOpen();
 
     sf::Event event;
+    pthread_t timerThread;
+    struct threadArguments timerThreadArgs;
+    timerThreadArgs.event = event;
+    timerThreadArgs.window = window.get();
+    pthread_create(&timerThread, nullptr,&TimerThread::start,(void *)&timerThreadArgs);
 
     int eventKeyCode;
     bool moved = false;
@@ -159,6 +164,8 @@ void Game::start() {
     EntityMovementState playerMovementState = EntityMovementState::WALK;
 
     physics::Vector directionVector = physics::Vector::ZERO;
+
+    pthread_join(timerThread, nullptr);
 
     while (running) {
         dt = clock.restart().asSeconds();
@@ -305,6 +312,11 @@ void Game::start() {
         }
         // render playing or main menu or game menu
         render();
+    }
+
+    //if in timer thread - EXIT!
+    if(pthread_equal(timerThread,pthread_self())){
+        pthread_exit(nullptr);
     }
 }
 

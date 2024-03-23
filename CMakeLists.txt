@@ -51,6 +51,7 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
         MyRPGGame/src/Graph.cpp
         MyRPGGame/src/GameEntityRepository.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp
+        MyRPGGame/src/TimerThread.cpp
         # test files
         # test files
 )
@@ -71,6 +72,8 @@ if (WIN32)
             COMMENT "Copy OpenAL DLL"
             PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:main>
             VERBATIM)
+    find_package(Threads)
+    option(CMAKE_USE_WIN32_THREADS_INIT "Using WIN threads" ON)
 endif()
 
 # use C++ 17 compilation features - can be good for templates, overriding constructors, etc.

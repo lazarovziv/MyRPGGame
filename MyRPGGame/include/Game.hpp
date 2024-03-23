@@ -7,6 +7,8 @@
 #include <chrono>
 #include <map>
 #include <memory>
+#include "TimerThread.hpp"
+#include <pthread.h>
 #include "MenuRepository.hpp"
 #include "NPCEnemy.hpp"
 #include "LandscapeEntity.hpp"
