@@ -51,6 +51,7 @@ set(SOURCE_FILES MyRPGGame/src/main.cpp MyRPGGame/src/Circle.cpp MyRPGGame/src/M
         MyRPGGame/src/Projectile.cpp MyRPGGame/src/TextureLoader.cpp MyRPGGame/src/Weapon.cpp
         MyRPGGame/src/Graph.cpp
         MyRPGGame/src/GameEntityRepository.cpp MyRPGGame/src/PlayerRepository.cpp MyRPGGame/src/EnemyRepository.cpp
+        generate_img_cpp.cpp
         # test files
         # test files
 )
@@ -62,15 +63,20 @@ target_link_libraries(main sfml-system
         sfml-graphics
         sfml-audio
         sfml-network)
-# linking OpenCV if necessary
-target_link_libraries(main ${OpenCV_LIBS})
+
+
 # additional configurations for windows to use the right .dll file in the linking process
 if (WIN32)
+
     add_custom_command(
             TARGET main
             COMMENT "Copy OpenAL DLL"
             PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:main>
             VERBATIM)
+
+    find_package(OpenCV REQUIRED)
+
+    target_link_libraries(main  ${OpenCV_LIBS})
 endif()
 
 # use C++ 17 compilation features - can be good for templates, overriding constructors, etc.
