@@ -1,0 +1,3 @@
+[submodule "MyRPGGame/tests/googletest"]
+	path = MyRPGGame/tests/googletest
+	url = https://github.com/google/googletest
