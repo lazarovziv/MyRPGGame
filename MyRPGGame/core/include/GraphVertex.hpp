@@ -1,0 +1,8 @@
+//
+// Created by Ziv Lazarov on 28/04/2023.
+//
+
+#ifndef MYRPGGAME_GRAPHVERTEX_HPP
+#define MYRPGGAME_GRAPHVERTEX_HPP
+
+#endif //MYRPGGAME_GRAPHVERTEX_HPP

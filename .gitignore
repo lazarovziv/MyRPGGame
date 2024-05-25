@@ -4,6 +4,7 @@
 token.txt
 db_creds.txt
 valgrind*
+.idea/workspace.xml
 # directories
 build/
 .vscode/
