@@ -11,7 +11,7 @@ if (APPLE)
     add_compile_options(
             "-Wno-error=unused-command-line-argument"
     )
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif()
 
 # using C++ 17
