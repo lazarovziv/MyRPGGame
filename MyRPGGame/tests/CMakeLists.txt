@@ -24,6 +24,7 @@ add_executable(tests ${TESTS_SOURCE_FILES})
 
 # linking the core library to the tests executable
 target_link_libraries(tests PRIVATE main_lib)
+target_include_directories(tests PRIVATE ${CORE_INCLUDE_DIR})
 
 # adding googletest as submodule w/o installing it
 set(INSTALL_GTEST OFF)
