@@ -22,6 +22,9 @@ project(MyRPGGame)
 add_subdirectory(MyRPGGame/core)
 add_subdirectory(MyRPGGame/tests)
 
+set(CORE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/MyRPGGame/core/include)
+target_include_directories(tests PUBLIC ${CORE_INCLUDE_DIR})
+
 # use C++ 17 compilation features - can be good for templates, overriding constructors, etc.
 target_compile_features(main PRIVATE cxx_std_17)
 set_property(TARGET main PROPERTY COMPILE_WARNING_AS_ERROR OFF)
