@@ -27,7 +27,9 @@ WORKDIR /home/$UNAME/MyRPGGame
 # initializing all submodules in case we're not mounting a workspace
 RUN git submodule update --init --recursive
 
+USER root
 # creating a symbolic link to repository directory for easier use
 RUN ln -s /home/$UNAME/MyRPGGame /workspace
 
+USER $UNAME
 WORKDIR /workspace
