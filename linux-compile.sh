@@ -11,5 +11,7 @@ if [ $(ls -la | wc -l) -ge 1 ]; then
   mv build/MyRPGGame/core/* build/bin/
 fi
 
-cd build/bin
-./main
+if [[ $1 == "run" ]]; then
+  cd build/bin
+  ./main
+fi
