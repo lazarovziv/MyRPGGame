@@ -3,7 +3,7 @@ FROM ubuntu:latest
 
 RUN apt update
 # last 2 lines are necessary packages for using SFML
-RUN apt install -y cmake build-essential ca-certificates wget ninja-build gcc g++ unzip git clang \
+RUN apt install -y --no-install-recommends cmake build-essential ca-certificates wget ninja-build gcc g++ unzip git clang \
            libfreetype-dev libx11-dev libxrandr-dev libudev-dev libopengl-dev libflac-dev libogg-dev libvorbis-dev \
            libvorbisenc2 libvorbisfile3 libopenal-dev libblis-pthread-dev libopengl-dev libglew-dev libxcursor-dev
 
@@ -26,3 +26,6 @@ ENV CC=/usr/bin/clang
 WORKDIR /home/$UNAME/MyRPGGame
 # initializing all submodules in case we're not mounting a workspace
 RUN git submodule update --init --recursive
+
+# creating a symbolic link to repository directory for easier use
+RUN ln -s /home/$UNAME/MyRPGGame /workspace
