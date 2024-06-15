@@ -29,3 +29,5 @@ RUN git submodule update --init --recursive
 
 # creating a symbolic link to repository directory for easier use
 RUN ln -s /home/$UNAME/MyRPGGame /workspace
+
+WORKDIR /workspace
