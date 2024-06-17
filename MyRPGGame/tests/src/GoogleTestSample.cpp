@@ -8,7 +8,7 @@ TEST(SampleTestsGroupName, SampleTestName) {
     // Expect equality.
     EXPECT_EQ(7 * 6, 42);
     // should fail
-    EXPECT_EQ(4 * 5, 21);
+    EXPECT_EQ(4 * 5, 20);
 }
 
 TEST(SampleTestsGroupName, SampleTestName1) {

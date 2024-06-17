@@ -17,6 +17,7 @@ endif ()
 set(TESTS_SOURCE_FILES
         src/main.cpp
         src/GoogleTestSample.cpp
+        src/OpenCVTests.cpp
 )
 
 # adding to the tests executable
