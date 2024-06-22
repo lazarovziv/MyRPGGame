@@ -3,15 +3,15 @@ cmake_minimum_required(VERSION 3.14)
 enable_testing()
 
 # getting the Google Test files
-#FetchContent_Declare(
-#        googletest
-#        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-#)
-# prevent overriding the parent project's compiler/linker settings for windows
+# FetchContent_Declare(
+#         googletest
+#         URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+# )
+# # prevent overriding the parent project's compiler/linker settings for windows
 if (WIN32)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif ()
-#FetchContent_MakeAvailable(googletest)
+# FetchContent_MakeAvailable(googletest)
 
 # all test files go here
 set(TESTS_SOURCE_FILES
