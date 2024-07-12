@@ -18,14 +18,16 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 
 project(MyRPGGame)
+# setting executables and libraries path to build/bin and build/lib
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
 add_subdirectory(MyRPGGame/core)
 add_subdirectory(MyRPGGame/tests)
 
 set(CORE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/MyRPGGame/core/include)
 target_include_directories(tests PUBLIC ${CORE_INCLUDE_DIR})
-# setting the executable path to build/bin
-set_target_properties(main PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 # use C++ 17 compilation features - can be good for templates, overriding constructors, etc.
 target_compile_features(main PRIVATE cxx_std_17)
 set_property(TARGET main PROPERTY COMPILE_WARNING_AS_ERROR OFF)

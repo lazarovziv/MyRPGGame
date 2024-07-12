@@ -1,5 +1,5 @@
 # docker image for the build environment
-FROM ubuntu:latest
+FROM ubuntu:24.04
 
 RUN apt update
 # last line is for running the game from inside the container
@@ -22,8 +22,6 @@ RUN mkdir /workspace && chown $UNAME:$UNAME /workspace
 # setting env variables for compilation
 ENV CXX=/usr/bin/clang++
 ENV CC=/usr/bin/clang
-
-RUN apt install ninja-build ca-certificates --no-install-recommends -y
 
 USER $UNAME
 WORKDIR /workspace
