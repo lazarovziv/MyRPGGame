@@ -147,14 +147,25 @@ void Game::start() {
     real dt, multiplier = (real) 12;
 
     std::map<sf::Keyboard::Key, bool> keysPressedMap;
-    keysPressedMap[sf::Keyboard::Key::E] = false;
-    keysPressedMap[sf::Keyboard::Key::D] = false;
-    keysPressedMap[sf::Keyboard::Key::F] = false;
-    keysPressedMap[sf::Keyboard::Key::S] = false;
-    keysPressedMap[sf::Keyboard::Key::J] = false;
-    keysPressedMap[sf::Keyboard::Key::I] = false;
-    keysPressedMap[sf::Keyboard::Key::H] = false;
-    keysPressedMap[sf::Keyboard::Key::Escape] = false;
+    sf::Keyboard::Key upKey = sf::Keyboard::Key::W;
+    sf::Keyboard::Key downKey = sf::Keyboard::Key::S;
+    sf::Keyboard::Key rightKey = sf::Keyboard::Key::D;
+    sf::Keyboard::Key leftKey = sf::Keyboard::Key::A;
+    sf::Keyboard::Key runKey = sf::Keyboard::Key::LShift;
+    sf::Keyboard::Key attackKey = sf::Keyboard::LControl;
+    sf::Keyboard::Key jumpKey = sf::Keyboard::Space;
+    sf::Keyboard::Key inventoryKey = sf::Keyboard::Key::I;
+    sf::Keyboard::Key pauseKey = sf::Keyboard::Key::Escape;
+
+    keysPressedMap[upKey] = false;
+    keysPressedMap[downKey] = false;
+    keysPressedMap[rightKey] = false;
+    keysPressedMap[leftKey] = false;
+    keysPressedMap[runKey] = false;
+    keysPressedMap[attackKey] = false;
+    keysPressedMap[jumpKey] = false;
+    keysPressedMap[inventoryKey] = false;
+    keysPressedMap[pauseKey] = false;
 
     EntityMovementState playerMovementState = EntityMovementState::WALK;
 
@@ -181,60 +192,60 @@ void Game::start() {
 
         if (state == Constants::GameState::PLAYING) {
             // moving input
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) && canMove) {
-                keysPressedMap[sf::Keyboard::E] = true;
-                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
+            if (sf::Keyboard::isKeyPressed(upKey) && canMove) {
+                keysPressedMap[upKey] = true;
+                keysPressedMap[runKey] = sf::Keyboard::isKeyPressed(runKey) && canMove;
                 // pressing the H key will trigger running state
-                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+                playerMovementState = keysPressedMap[runKey] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 directionVector += physics::Vector::UP_DIRECTION;
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && canMove) {
-                keysPressedMap[sf::Keyboard::D] = true;
+            if (sf::Keyboard::isKeyPressed(downKey) && canMove) {
+                keysPressedMap[downKey] = true;
                 // pressing the H key will trigger running state
-                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+                keysPressedMap[runKey] = sf::Keyboard::isKeyPressed(runKey) && canMove;
+                playerMovementState = keysPressedMap[runKey] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 directionVector += physics::Vector::DOWN_DIRECTION;
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::F) && canMove) {
-                keysPressedMap[sf::Keyboard::F] = true;
+            if (sf::Keyboard::isKeyPressed(rightKey) && canMove) {
+                keysPressedMap[rightKey] = true;
                 // pressing the H key will trigger running state
-                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+                keysPressedMap[runKey] = sf::Keyboard::isKeyPressed(runKey) && canMove;
+                playerMovementState = keysPressedMap[runKey] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 directionVector += physics::Vector::RIGHT_DIRECTION;
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && canMove) {
-                keysPressedMap[sf::Keyboard::S] = true;
+            if (sf::Keyboard::isKeyPressed(leftKey) && canMove) {
+                keysPressedMap[leftKey] = true;
                 // pressing the H key will trigger running state
-                keysPressedMap[sf::Keyboard::H] = sf::Keyboard::isKeyPressed(sf::Keyboard::H) && canMove;
-                playerMovementState = keysPressedMap[sf::Keyboard::H] ? EntityMovementState::RUN : EntityMovementState::WALK;
+                keysPressedMap[runKey] = sf::Keyboard::isKeyPressed(runKey) && canMove;
+                playerMovementState = keysPressedMap[runKey] ? EntityMovementState::RUN : EntityMovementState::WALK;
                 directionVector += physics::Vector::LEFT_DIRECTION;
             }
 
-            playerRepository->move(directionVector, keysPressedMap[sf::Keyboard::H], dt);
+            playerRepository->move(directionVector, keysPressedMap[runKey], dt);
 
             enemiesRepository->setGameMap(getCurrentGameMap());
 
             // pressing x for attacking
             // TODO: use player repository instead of player
-            if (player->isAttacking() || sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
+            if (player->isAttacking() || sf::Keyboard::isKeyPressed(attackKey)) {
                 attacked = playerRepository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
-                keysPressedMap[sf::Keyboard::J] = true;
+                keysPressedMap[attackKey] = true;
             }
 
             // pressing space for jumping
-            if (player->isJumping() || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            if (player->isJumping() || sf::Keyboard::isKeyPressed(jumpKey)) {
                 playerRepository->jump(directionVector, dt);
-                keysPressedMap[sf::Keyboard::Space] = true;
+                keysPressedMap[jumpKey] = true;
             }
 
             // pressing escape sends to menu
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                keysPressedMap[sf::Keyboard::Escape] = true;
+            if (sf::Keyboard::isKeyPressed(pauseKey)) {
+                keysPressedMap[pauseKey] = true;
                 changeState(Constants::GameState::IN_MENU);
                 std::cout << "In Menu (Press Space to choose)" << std::endl;
                 canMove = false;
                 // pressing I sends to inventory menu (to be implemented)
-            } else if (eventKeyCode == sf::Keyboard::I) {
+            } else if (eventKeyCode == inventoryKey) {
                 changeState(Constants::GameState::IN_MENU);
                 // currentMenu = inventoryMenu;
                 std::cout << "Inventory Menu" << std::endl;
@@ -242,12 +253,12 @@ void Game::start() {
             }
             // TODO: add key for going straight to character creation
         } else if (state == Constants::GameState::IN_MENU) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+            if (sf::Keyboard::isKeyPressed(upKey)) {
                 menuRepository->moveUp();
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            } else if (sf::Keyboard::isKeyPressed(downKey)) {
                 menuRepository->moveDown();
                 // user chose an item menu
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
                 // set current menu to be the relevant one based on currentMenuItemIdx
                 if (menuRepository->choseSubMenuItem()) {
                     menuRepository->updateSubMenu(currentMenu, &state);
@@ -271,7 +282,7 @@ void Game::start() {
                     }
                 }
                 // going back one menu
-            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            } else if (sf::Keyboard::isKeyPressed(pauseKey)) {
                 // if it's the game menu then we'll exit the game
                 if (menuRepository->isGameMenu()) {
                     exitGame(&running);
