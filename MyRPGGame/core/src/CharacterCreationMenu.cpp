@@ -1,4 +1,4 @@
-#include "../include/CharacterCreationMenu.hpp"
+#include "CharacterCreationMenu.hpp"
 
 CharacterCreationMenu::CharacterCreationMenu(std::vector<std::string> itemsStrings) : Menu(itemsStrings) {
     for (auto &item : itemsStrings) {

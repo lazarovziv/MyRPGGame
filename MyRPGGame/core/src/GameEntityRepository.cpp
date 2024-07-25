@@ -1,4 +1,4 @@
-#include "../include/GameEntityRepository.hpp"
+#include "GameEntityRepository.hpp"
 
 GameEntityRepository::GameEntityRepository(std::unique_ptr<GameEntityMovement> movement,
                                    std::unique_ptr<GameEntityBattle> battle)

@@ -1,4 +1,4 @@
-#include "../include/AnimationManager.hpp"
+#include "AnimationManager.hpp"
 
 AnimationManager::AnimationManager(GameEntity *entity) {
     this->entity = entity;

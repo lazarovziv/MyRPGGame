@@ -1,4 +1,4 @@
-#include "../include/EnemyRepository.hpp"
+#include "EnemyRepository.hpp"
 
 EnemyRepository::EnemyRepository(std::unique_ptr<GameEntityMovement> movement,
                                  std::unique_ptr<GameEntityBattle> battle,

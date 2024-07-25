@@ -1,4 +1,4 @@
-#include "../include/GameEntity.hpp"
+#include "GameEntity.hpp"
 
 GameEntity::GameEntity() {
     level = 1;

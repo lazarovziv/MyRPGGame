@@ -1,4 +1,4 @@
-#include "../include/ScriptExecutor.hpp"
+#include "ScriptExecutor.hpp"
 
 bool create_image(std::string backgroundFileName, std::string foregroundFileName, std::string postfixName) {
     std::string command = "eval \"$(conda shell.bash hook)\" && python3 ../generate_image.py ";

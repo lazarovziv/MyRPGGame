@@ -1,4 +1,4 @@
-#include "../include/Game.hpp"
+#include "Game.hpp"
 
 #define SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 

@@ -1,4 +1,4 @@
-#include "../include/MenuRepository.hpp"
+#include "MenuRepository.hpp"
 
 void MenuRepository::set_menu(Menu *menu) {
     menu->set_is_active(false);

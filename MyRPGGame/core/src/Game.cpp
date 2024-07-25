@@ -1,4 +1,4 @@
-#include "../include/Game.hpp"
+#include "Game.hpp"
 
 std::unique_ptr<Game> Game::instance = nullptr;
 

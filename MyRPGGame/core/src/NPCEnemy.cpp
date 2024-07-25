@@ -1,4 +1,4 @@
-#include "../include/NPCEnemy.hpp"
+#include "NPCEnemy.hpp"
 
 NPCEnemy::NPCEnemy(int type, physics::Vector initialPosition) : GameEntity(initialPosition, physics::RigidBodyType::CIRCLE) {
     this->type = type;

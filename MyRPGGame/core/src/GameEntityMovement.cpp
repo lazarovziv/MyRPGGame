@@ -1,4 +1,4 @@
-#include "../include/GameEntityMovement.hpp"
+#include "GameEntityMovement.hpp"
 
 GameEntityMovement::GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map) {
     this->entity = entity;

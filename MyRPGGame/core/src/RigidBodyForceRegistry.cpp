@@ -1,4 +1,4 @@
-#include "../include/RigidBodyForceRegistry.hpp"
+#include "RigidBodyForceRegistry.hpp"
 
 namespace physics {
 

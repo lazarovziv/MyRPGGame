@@ -1,4 +1,4 @@
-#include "../include/RigidBodyGravity.hpp"
+#include "RigidBodyGravity.hpp"
 
 namespace physics {
 

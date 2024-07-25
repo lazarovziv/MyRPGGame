@@ -1,4 +1,4 @@
-#include "../include/GameMap.hpp"
+#include "GameMap.hpp"
 //class NPCEnemy;
 
 GameMap::GameMap(int row, int col) {

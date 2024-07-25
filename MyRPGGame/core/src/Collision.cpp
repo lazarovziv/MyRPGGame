@@ -1,4 +1,4 @@
-#include "../include/Collision.hpp"
+#include "Collision.hpp"
 
 namespace physics {
 

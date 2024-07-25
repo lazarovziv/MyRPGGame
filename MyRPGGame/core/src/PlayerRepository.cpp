@@ -1,4 +1,4 @@
-#include "../include/PlayerRepository.hpp"
+#include "PlayerRepository.hpp"
 
 PlayerRepository::PlayerRepository(const std::shared_ptr<Player> &player, std::unique_ptr<GameEntityMovement> movement,
                                    std::unique_ptr<GameEntityBattle> battle, const std::shared_ptr<GameMap> &gameMap)

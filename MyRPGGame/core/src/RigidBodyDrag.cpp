@@ -1,4 +1,4 @@
-#include "../include/RigidBodyDrag.hpp"
+#include "RigidBodyDrag.hpp"
 
 namespace physics {
 

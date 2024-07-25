@@ -1,4 +1,4 @@
-#include "../include/Menu.hpp"
+#include "Menu.hpp"
 
 Menu::Menu(std::vector<std::string> itemsStrings, bool gameMenu) {
     if (!font.loadFromFile(Constants::GRAPHICS_BASE_PATH + "fonts/arial.ttf")) {

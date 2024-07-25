@@ -1,4 +1,4 @@
-#include "../include/RigidBody.hpp"
+#include "RigidBody.hpp"
 
 namespace physics {
 

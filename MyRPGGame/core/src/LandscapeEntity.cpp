@@ -1,4 +1,4 @@
-#include "../include/LandscapeEntity.hpp"
+#include "LandscapeEntity.hpp"
 
 LandscapeEntity::LandscapeEntity(LandscapeType type, physics::Vector initialPosition, std::vector<physics::Vector> &vertices, real mass)
 : GameEntity(initialPosition, physics::RigidBodyType::POLYGON, vertices, mass) {

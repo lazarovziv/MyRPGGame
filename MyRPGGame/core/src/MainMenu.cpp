@@ -1,4 +1,4 @@
-#include "../include/MainMenu.hpp"
+#include "MainMenu.hpp"
 
 MainMenu::MainMenu(std::vector<std::string> itemsStrings) : Menu(itemsStrings) {}
 

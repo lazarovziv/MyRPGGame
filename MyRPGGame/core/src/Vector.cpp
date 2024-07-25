@@ -1,4 +1,4 @@
-#include "../include/Vector.hpp"
+#include "Vector.hpp"
 
 namespace physics {
 

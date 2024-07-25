@@ -1,4 +1,4 @@
-#include "../include/MapEntity.hpp"
+#include "MapEntity.hpp"
 
 MapEntity::MapEntity(int x, int y) {
     walkableOn = true;

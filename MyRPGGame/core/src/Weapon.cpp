@@ -1,4 +1,4 @@
-#include "../include/Weapon.hpp"
+#include "Weapon.hpp"
 
 Weapon::Weapon(physics::Vector initialPosition, WeaponType type) {
     // TODO: handle shield differently with the directions map

@@ -1,4 +1,4 @@
-#include "../include/Player.hpp"
+#include "Player.hpp"
 //#include "Game.hpp"
 
 Player::Player() : GameEntity() {

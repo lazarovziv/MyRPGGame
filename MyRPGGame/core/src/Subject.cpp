@@ -1,4 +1,4 @@
-#include "../include/Subject.hpp"
+#include "Subject.hpp"
 
 void Subject::notify_all() {
     for (auto &observer : observers) observer->notify();

@@ -1,4 +1,4 @@
-#include "../include/Point.hpp"
+#include "Point.hpp"
 
 Point::Point(real X, real Y, real Z) {
     x = X;
