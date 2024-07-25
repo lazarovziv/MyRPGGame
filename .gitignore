@@ -2,6 +2,7 @@
 *.xcuserstate
 .ninja_*
 token.txt
+docker_token.txt
 db_creds.txt
 valgrind*
 .idea/workspace.xml

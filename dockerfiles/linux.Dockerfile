@@ -1,29 +1,31 @@
 # docker image for the build environment
-FROM ubuntu:latest
+FROM ubuntu:24.04
 
 RUN apt update
-# last 2 lines are necessary packages for building SFML
-RUN apt install -y cmake build-essential wget gcc g++ unzip git clang \
-           libfreetype-dev libx11-dev libxrandr-dev libudev-dev libopengl-dev libflac-dev libogg-dev libvorbis-dev \
-           libvorbisenc2 libvorbisfile3 libopenal-dev libblis-pthread-dev libopengl-dev libglew-dev libxcursor-dev
+# last line is for running the game from inside the container
+RUN apt install -y --no-install-recommends cmake build-essential wget gcc g++ unzip git clang \
+    libfreetype-dev libx11-dev libxrandr-dev libudev-dev libopengl-dev libflac-dev libogg-dev libvorbis-dev \
+    libvorbisenc2 libvorbisfile3 libopenal-dev libblis-pthread-dev libopengl-dev libglew-dev libxcursor-dev \
+    ninja-build ca-certificates \
+    libcanberra-gtk-module libcanberra-gtk3-module
 
-RUN mkdir /workspace
-# getting sfml 2.6.0 and compiling it
-RUN wget https://www.sfml-dev.org/files/SFML-2.6.0-sources.zip -O /workspace/sfml.zip && cd /workspace && unzip sfml.zip
-# getting opencv
-RUN wget https://github.com/opencv/opencv/archive/4.8.0.zip -O /workspace/opencv.zip && cd /workspace && unzip opencv.zip
-RUN rm /workspace/sfml.zip /workspace/opencv.zip
+RUN apt install libvulkan-dev -y --no-install-recommends
 
-RUN git clone https://github.com/lazarovziv/MyRPGGame.git /workspace/MyRPGGame
+RUN apt clean
+
+ARG UNAME=ubuntu
+ARG UID=1000
+ARG GID=1000
+
+RUN usermod -aG $GID $UNAME
+
+RUN mkdir /workspace && chown $UNAME:$UNAME /workspace
+
 # setting env variables for compilation
 ENV CXX=/usr/bin/clang++
 ENV CC=/usr/bin/clang
 
-# building SFML
-RUN cd /workspace/SFML-2.6.0 && cmake . && make
-# building OpenCV
-RUN cd /workspace/opencv-4.8.0 && cmake -B build . && cd build && make
+USER $UNAME
+WORKDIR /workspace
 
-RUN cp -r /workspace/SFML-2.6.0/lib/* /usr/local/lib
-
-WORKDIR /workspace/MyRPGGame
+#CMD cmake -B build/ -G "Ninja" . && cmake --build build/
