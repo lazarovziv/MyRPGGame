@@ -232,16 +232,8 @@ void Game::start() {
             // TODO: use player repository instead of player
             if (player->is_attacking() || sf::Keyboard::isKeyPressed(attackKey)) {
                 attacked = player_repository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
-                keysPressedMap[attackKey] = true;
-            }
-
-            // pressing space for jumping
             if (player->is_jumping() || sf::Keyboard::isKeyPressed(jumpKey)) {
                 player_repository->jump(directionVector, dt);
-                keysPressedMap[jumpKey] = true;
-            }
-
-            // pressing escape sends to menu
             if (sf::Keyboard::isKeyPressed(pauseKey)) {
                 keysPressedMap[pauseKey] = true;
                 change_state(Constants::GameState::IN_MENU);
