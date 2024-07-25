@@ -1,100 +1,45 @@
 #include "../include/generateImg.hpp"
 
 
-void layerPngs(std::string bgPngFileName, std::string fgPngFileName, std::string postFixName) {
-//    bgPngFileName += ".png";
-//    fgPngFileName += ".png";
-
+void alphaBlend(std::string bgPngFileName, std::string fgPngFileName,std::string blended_image_name) {
     cv::Mat background = imread(bgPngFileName, cv::IMREAD_UNCHANGED);
     cv::Mat foreground = imread(fgPngFileName, cv::IMREAD_UNCHANGED);
 
-    background.convertTo(background, CV_32FC3);
-    foreground.convertTo(foreground, CV_32FC3);
+    std::vector<cv::Mat> fg_channels(4), bg_channels(4);
+    cv::split(foreground, fg_channels);
+    cv::split(background, bg_channels);
 
-    cv::Mat alphaBackground = extractAlphaChannel(background);
-    cv::Mat alphaForeground = extractAlphaChannel(foreground);
+    cv::Mat fg_alpha, bg_alpha;
+    fg_channels[3].convertTo(fg_alpha, CV_32F, 1.0 / 255.0);
+    bg_channels[3].convertTo(bg_alpha, CV_32F, 1.0 / 255.0);
 
+    cv::Mat blended_alpha = fg_alpha + bg_alpha - fg_alpha.mul(bg_alpha);
 
-    normalizeAlphaChannels(&alphaBackground);
-    normalizeAlphaChannels(&alphaForeground);
+    std::vector<cv::Mat> blended_channels(3);
+    for (int i = 0; i < 3; ++i) {
+        cv::Mat fg_rgb, bg_rgb, blended_rgb;
+        fg_channels[i].convertTo(fg_rgb, CV_32F);
+        bg_channels[i].convertTo(bg_rgb, CV_32F);
 
-//    cv::imshow("backGround",alphaBackground);
-//    cv::waitKey(0);
+        cv::Mat fg_contrib = fg_rgb.mul(fg_alpha);
+        cv::Mat bg_contrib = bg_rgb.mul(bg_alpha).mul(1.0 - fg_alpha);
 
-//    cv::multiply(alphaBackground, background, background);
-//    cv::multiply(alphaForeground,foreground,foreground);
+        blended_rgb = (fg_contrib + bg_contrib).mul(1.0 / blended_alpha);
 
-    int backgroundImgLastSlash = findLastSlash(bgPngFileName);
-    int foregroundImgLastSlash = findLastSlash(fgPngFileName);
+        blended_rgb.convertTo(blended_channels[i], CV_8U);
+    }
 
+    // Convert the blended alpha channel back to 8-bit
+    cv::Mat blended_alpha_8u;
+    blended_alpha.convertTo(blended_alpha_8u, CV_8U, 255.0);
 
-}
+    // Combine the blended RGB channels and the blended alpha channel
+    std::vector<cv::Mat> result_channels = { blended_channels[0], blended_channels[1], blended_channels[2], blended_alpha_8u };
+    cv::Mat result;
+    cv::merge(result_channels, result);
 
-void normalizeAlphaChannels(cv::Mat *imgToNormalize) {
-    imgToNormalize->convertTo(*imgToNormalize, CV_32FC3, 1.0 / 255.0);
-}
-
-cv::Mat extractAlphaChannel(cv::Mat img) {
-    std::vector<cv::Mat> channels;
-    split(img, channels);
-    return channels[3];
-}
-
-int findLastSlash(std::string file) {
-    int idx = 0;
-    for (int i = 0; i < file.length(); ++i)
-        if (file[i] == '/')
-            idx = i;
-    return idx;
-}
-
-
-void alphaBlend(std::string bgPngFileName, std::string fgPngFileName) {
-    cv::Mat background = imread(bgPngFileName, cv::IMREAD_UNCHANGED);
-    cv::Mat foreground = imread(fgPngFileName, cv::IMREAD_UNCHANGED);
-
-    cv::Mat bgRGB;
-    cv::Mat fgRGB;
-    cv::Mat bgAlpha;
-    cv::Mat fgAlpha;
-
-    std::vector<cv::Mat> bgChannels(4);
-    std::vector<cv::Mat> fgChannels(4);
-
-    cv::split(background,bgChannels);
-    cv::split(foreground,fgChannels);
-
-    cv::merge(&bgChannels[0], 3,bgRGB);
-    cv::merge(&fgChannels[0],3,fgRGB);
-
-    bgAlpha = bgChannels[3];
-    fgAlpha = fgChannels[3];
-
-    cv::Mat bgAlphaf;
-    cv::Mat fgAlphaf;
-
-    bgAlpha.convertTo(bgAlphaf,CV_32F,1.0/ 255);
-    fgAlpha.convertTo(fgAlphaf,CV_32F,1.0 / 255);
-
-    cv::Mat outAlphaf = fgAlphaf + bgAlphaf.mul(1.0 - fgAlphaf);
-    cv::Mat outAlphafNonZero = outAlphaf + (outAlphaf == 0) / 255.0;
-
-    cv::Mat outRGBf = (fgRGB.mul(fgAlphaf) + bgRGB.mul(bgAlphaf).mul(1.0 - fgAlphaf))/ outAlphafNonZero;
-
-    cv::Mat outRGB;
-    cv::Mat outAlpha;
-
-    outRGBf.convertTo(outRGB,CV_8UC3);
-    outAlphaf.convertTo(outAlpha,CV_8UC1,255);
-
-    std::vector<cv::Mat> outChannels = {outRGB,outAlpha};
-    cv::Mat outRGBA;
-    cv::merge(outChannels,outRGBA);
-
-    cv::imshow("msg",outRGBA);
-    cv::waitKey(0);
-
-
+    std::string final_img_name = "../../../graphics/player/spritesheets/blended_images/" + blended_image_name;
+    cv::imwrite(final_img_name,result);
 }
 
 

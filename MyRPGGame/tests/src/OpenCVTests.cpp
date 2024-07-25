@@ -3,9 +3,9 @@
 #include "../../../MyRPGGame/core/include/generateImg.hpp"
 
 void openCvTest() {
-   std::string first ="../../../../graphics/Characters/Head/masculine/climb.png";
-   std::string second = "../../../../graphics/Characters/Body/masculine/climb.png";
-   alphaBlend(first,second);
+   std::string first ="../../../graphics/Characters/Head/masculine/climb.png";
+   std::string second = "../../../graphics/Characters/Body/masculine/climb.png";
+   alphaBlend(first,second,"blended_img.png");
 
 }
 
