@@ -11,7 +11,7 @@ real TerrainGenerator::interpolate(real a0, real a1, real w) {
     return (a1 - a0) * ((w * (w * 6.0 - 15.f) + 10.f) * w * w * w) + a0;
 }
 
-sf::Vector2f TerrainGenerator::randomGradient(int positionX, int positionY) {
+sf::Vector2f TerrainGenerator::random_gradient(int positionX, int positionY) {
     const unsigned w = 8 * sizeof(unsigned);
     const unsigned s = w >> 1;
     unsigned a = positionX, b = positionY;
@@ -27,9 +27,9 @@ sf::Vector2f TerrainGenerator::randomGradient(int positionX, int positionY) {
     return vector;
 }
 
-real TerrainGenerator::dotGridGradient(int positionX, int positionY, real x, real y) {
+real TerrainGenerator::dot_grid_gradient(int positionX, int positionY, real x, real y) {
     // get gradient from position on grid
-    sf::Vector2f gradient = randomGradient(positionX, positionY);
+    sf::Vector2f gradient = random_gradient(positionX, positionY);
     // calculate distance vector
     real dx = x - (real) positionX;
     real dy = y - (real) positionY;
@@ -47,11 +47,11 @@ real TerrainGenerator::perlin(real x, real y) {
     real sx = x - (real) x0;
     real sy = y - (real) y0;
     // interpolate
-    real n0 = dotGridGradient(x0, y0, x, y);
-    real n1 = dotGridGradient(x1, y0, x, y);
+    real n0 = dot_grid_gradient(x0, y0, x, y);
+    real n1 = dot_grid_gradient(x1, y0, x, y);
     real ix0 = interpolate(n0, n1, sx);
-    n0 = dotGridGradient(x0, y1, x, y);
-    n1 = dotGridGradient(x1, y1, x, y);
+    n0 = dot_grid_gradient(x0, y1, x, y);
+    n1 = dot_grid_gradient(x1, y1, x, y);
     real ix1 = interpolate(n0, n1, sx);
 
     return interpolate(ix0, ix1, sy); // getting value in range [-1, 1]

@@ -11,8 +11,8 @@
 class GameEntityMovement {
 private:
     GameEntity *entity;
-    std::shared_ptr<GameMap> currentMap;
-    std::unique_ptr<AnimationManager> animationManager;
+    std::shared_ptr<GameMap> current_map;
+    std::unique_ptr<AnimationManager> animation_manager;
 
 public:
     GameEntityMovement(GameEntity *entity, bool player, std::shared_ptr<GameMap> map);
@@ -22,11 +22,11 @@ public:
     // TODO: add run method (use acceleration, speed etc.)
     bool jump(const physics::Vector &direction, real dt);
 
-    bool moveRandomly(int randomDirection, real dt);
+    bool move_randomly(int random_direction, real dt);
 
-    void setEntity(GameEntity &entity);
-    GameEntity *getEntity();
-    void setCurrentMap(std::shared_ptr<GameMap> map);
+    void set_entity(GameEntity &entity);
+    GameEntity *get_entity();
+    void set_current_map(std::shared_ptr<GameMap> map);
 };
 
 #endif /* GameEntityMovement_hpp */

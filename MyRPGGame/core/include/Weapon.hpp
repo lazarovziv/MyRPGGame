@@ -15,47 +15,47 @@
 class Weapon {
 private:
     std::string name;
-    int attackPoints;
-    real hitRadius;
-    int numHitsPerSecond;
+    int attack_points;
+    real hit_radius;
+    int num_hits_per_second;
 
-    MoveDirection transitionDirection; // copying the entity's direction (simply for choosing the appropriate rows in the png file)
-    std::map<MoveDirection, int> transitionDirectionsSpritesMap; // for defining movement and animation for the pngs
+    MoveDirection transition_direction; // copying the entity's direction (simply for choosing the appropriate rows in the png file)
+    std::map<MoveDirection, int> transition_directions_sprites_map; // for defining movement and animation for the pngs
     sf::Vector2f position; // for collision detection
     sf::Texture texture;
     sf::Sprite *sprite;
-    sf::IntRect spriteRect; // for setting the relevant image from the png
+    sf::IntRect sprite_rect; // for setting the relevant image from the png
     int transition = Constants::WEAPON_TRANSITION_MIN;
 
-    Circle *weaponCircle = nullptr;
-    std::unique_ptr<physics::RigidBody> rigidBody;
+    Circle *weapon_circle = nullptr;
+    std::unique_ptr<physics::RigidBody> rigid_body;
     
 public:
-    Weapon(physics::Vector initialPosition, WeaponType type);
+    Weapon(physics::Vector initial_position, WeaponType type);
     ~Weapon() = default;
     
-    int getAttackPoints();
-    int getNumHitsPerSecond();
-    real getHitRadius();
+    int get_attack_points();
+    int get_num_hits_per_second();
+    real get_hit_radius();
 
-    MoveDirection getTransitionDirection();
-    std::map<MoveDirection, int> getTransitionDirectionsSpritesMap();
-    sf::Vector2f getPosition();
-    sf::Sprite *getSprite();
-    Circle *getWeaponCircle();
-    int getTransition();
-    void incrementTransition();
+    MoveDirection get_transition_direction();
+    std::map<MoveDirection, int> get_transition_directions_sprites_map();
+    sf::Vector2f get_position();
+    sf::Sprite *get_sprite();
+    Circle *get_weapon_circle();
+    int get_transition();
+    void increment_transition();
 
-    void setTransitionDirection(MoveDirection direction);
+    void set_transition_direction(MoveDirection direction);
     
-    void increaseAttackPoints(int amount);
-    void increaseHitRadius(real amount);
-    void increaseNumHitsPerSecond(int amount);
-    void decreaseAttackPoints(int amount);
-    void decreaseHitRadius(real amount);
-    void decreaseNumHitsPerSecond(int amount);
+    void increase_attack_points(int amount);
+    void increase_hit_radius(real amount);
+    void increase_num_hits_per_second(int amount);
+    void decrease_attack_points(int amount);
+    void decrease_hit_radius(real amount);
+    void decrease_num_hits_per_second(int amount);
     // call this function inside the battleMovementHandler
-    void setIntRectPosition(int left, int top, int width, int height);
+    void set_int_rect_position(int left, int top, int width, int height);
 //    void attack();
 
     void update(real dt);
