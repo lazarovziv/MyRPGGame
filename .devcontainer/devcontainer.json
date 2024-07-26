@@ -1,0 +1,13 @@
+{
+    "name": "MyRPGGame",
+    "image": "zivlazarov/rpg:1.2",
+    "mounts": [
+        "source=.,target=/workspace,type=bind",
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"
+    ],
+    "runArgs": [
+        "--device=/dev/input",
+        "--device=/dev/dri",
+        "-e=DISPLAY=:1"
+    ]
+}

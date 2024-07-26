@@ -10,6 +10,8 @@ RUN apt install -y --no-install-recommends cmake build-essential wget gcc g++ un
     libcanberra-gtk-module libcanberra-gtk3-module
 
 RUN apt install libvulkan-dev -y --no-install-recommends
+RUN apt install libxinerama-dev -y --no-install-recommends
+RUN apt install libxi-dev -y --no-install-recommends
 
 RUN apt clean
 
