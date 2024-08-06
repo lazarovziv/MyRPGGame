@@ -5,7 +5,8 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 # getting the SFML files
 include(FetchContent)
-FetchContent_Declare(SFML
+FetchContent_Declare(
+        SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
         GIT_TAG 2.6.0)
 FetchContent_MakeAvailable(SFML)
