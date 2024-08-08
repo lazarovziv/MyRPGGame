@@ -1,5 +1,7 @@
 #!/bin/bash
 
+FULL_IMAGE_NAME=$1
+
 if [ "$1" == "run" ]; then
   echo "Compiling and running..."
 #  docker-compose -f dockerfiles/linux-start-docker-compose.yml up
@@ -14,6 +16,6 @@ elif [ "$1" == "test" ]; then
 else
   echo "Compiling..."
   #  docker-compose -f dockerfiles/linux-compile-docker-compose.yml up
-  docker run --rm -v $(pwd):/workspace -v /tmp/.X11-unix:/tmp.X11-unix -v /dev/shb:/dev/shm -e DISPLAY=$DISPLAY --net host --name rpg zivlazarov/rpg:1.1 \
+  docker run --rm -v $(pwd):/workspace --name rpg $FULL_IMAGE_NAME \
     bash -c "cmake -B build/ -G \"Ninja\" . && cmake --build build/"
 fi

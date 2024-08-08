@@ -1,0 +1,33 @@
+name: Linux Build
+
+on: [ pull_request, workflow_dispatch ]
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Initial checkout
+      uses: actions/checkout@v4
+    
+    - name: Login to Docker Hub
+      run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+      id: docker_login
+
+    - name: Build Linux image
+      run: docker build -f ./dockerfiles/linux.Dockerfile -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
+      id: docker_build
+      if: steps.docker_login.outcome == 'success'
+
+    - name: Push Linux image
+      run: docker push ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+      id: docker_push
+      if: steps.docker_build.output == 'success'
+    
+    - name: Run build
+      run: ./linux-compile.sh ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+      id: compilation
+
+    - name: Fail action job if build failed
+      run: exit 1
+      if: steps.compilation.outcome != 'success'
+      
