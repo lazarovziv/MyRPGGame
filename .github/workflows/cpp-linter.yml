@@ -1,6 +1,10 @@
 name: cpp-linter
 
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
+    paths:
+    - 'MyRPGGame/**'
+  workflow_dispatch:
 
 jobs:
   cpp-linter:
