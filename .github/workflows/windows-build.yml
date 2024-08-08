@@ -1,9 +1,15 @@
 name: Windows Build
 
-on: [ pull_request, workflow_dispatch ]
+on:
+  # run if any of the dockerfiles changed
+  pull_request:
+    paths:
+      - 'dockerfiles/**'
+  # run on demand
+  workflow_dispatch:
 
 jobs:
-  windows-build:
+  windows-image-build:
     runs-on: windows-latest
     steps:
     - name: Initial checkout
@@ -23,11 +29,22 @@ jobs:
       id: docker_push
       if: steps.docker_build.output == 'success'
     
-    - name: Run build
-      run: ./windows-compile.ps1
-      id: compilation
+  windows-build:
+    runs-on: windows-latest
+    container:
+      image: ${{ secrets.IMAGE_NAME }}:${{ secrets.WINDOWS_IMAGE_TAG }}
+    steps:
+    - name: Initial checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
-    - name: Fail action job if build failed
-      run: exit 1
-      if: steps.compilation.outcome != 'success'
+    - name: Compile
+      run: cmake -B build/ . && cmake --build build/
+
+    # upload tests artifact to be used in another job
+    - uses: actions/upload-artifact@v4
+      with:
+        name: tests-artifact
+        path: build/bin/tests
       
