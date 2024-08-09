@@ -9,30 +9,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  windows-image-build:
-    runs-on: windows-latest
-    steps:
-    - name: Initial checkout
-      uses: actions/checkout@v4
+  # windows-image-build:
+  #   runs-on: windows-latest
+  #   steps:
+  #   - name: Initial checkout
+  #     uses: actions/checkout@v4
     
-    - name: Login to Docker Hub
-      run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-      id: docker_login
+  #   - name: Login to Docker Hub
+  #     run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+  #     id: docker_login
 
-    - name: Build Windows image
-      run: docker build -f ./dockerfiles/windows.Dockerfile -t ${{ secrets.IMAGE_NAME }}:${{ secrets.WINDOWS_IMAGE_TAG }} .
-      id: docker_build
-      if: steps.docker_login.outcome == 'success'
+  #   - name: Build Windows image
+  #     run: docker build -f ./dockerfiles/windows.Dockerfile -t ${{ secrets.IMAGE_NAME }}:${{ secrets.WINDOWS_IMAGE_TAG }} .
+  #     id: docker_build
+  #     if: steps.docker_login.outcome == 'success'
 
-    - name: Push Windows image
-      run: docker push ${{ secrets.IMAGE_NAME }}:${{ secrets.WINDOWS_IMAGE_TAG }}
-      id: docker_push
-      if: steps.docker_build.output == 'success'
+  #   - name: Push Windows image
+  #     run: docker push ${{ secrets.IMAGE_NAME }}:${{ secrets.WINDOWS_IMAGE_TAG }}
+  #     id: docker_push
+  #     if: steps.docker_build.output == 'success'
     
-  windows-build:
+  windows-compile:
     runs-on: windows-latest
     container:
-      image: ${{ secrets.IMAGE_NAME }}:${{ secrets.WINDOWS_IMAGE_TAG }}
+      image: zivlazarov/rpg:windows-1.0
     steps:
     - name: Initial checkout
       uses: actions/checkout@v4
@@ -47,4 +47,26 @@ jobs:
       with:
         name: tests-artifact
         path: build/bin/tests
+
+  windows-test:
+    runs-on: windows-latest
+    needs: windows-compile
+    container:
+      image: zivlazarov/rpg:windows-1.0
+      credentials:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+    steps:
+    - name: Initial checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+      
+    # get tests artifact
+    - uses: actions/download-artifact@v4
+      with:
+        name: tests-artifact
+    
+    - name: Run tests
+      run: chmod +x ./tests && ./tests
       
