@@ -1,6 +1,5 @@
-name: Linux Compile and Test
+name: Linux Build
 
-# run if any of the dockerfiles changed
 on: [ pull_request, workflow_dispatch ]
 
 jobs:
@@ -11,6 +10,7 @@ jobs:
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      options: --user root
     steps:
     - name: Initial checkout
       uses: actions/checkout@v4
@@ -34,6 +34,7 @@ jobs:
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      options: --user root
     steps:
     - name: Initial checkout
       uses: actions/checkout@v4
