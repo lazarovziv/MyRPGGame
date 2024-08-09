@@ -38,6 +38,16 @@ RUN `
     # Cleanup
     && del /q vs_buildtools.exe
 
+SHELL [ "powershell.exe" ]
+
+RUN Invoke-WebRequest -Uri "https://sdk.lunarg.com/sdk/download/1.3.290.0/windows/VulkanSDK-1.3.290.0-Installer.exe" `
+-OutFile \vulkansdk-installer.exe -UseBasicParsing -MaximumRedirection 10
+
+RUN Start-Process -FilePath "./vulkansdk-installer.exe" -ArgumentList "--accept-licenses", "--default-answer", `
+ "--confirm-command", "install"
+
+#  ttps://sdk.lunarg.com/sdk/download/1.3.290.0/windows/VulkanRT-1.3.290.0-Installer.exe
+
 # RUN Invoke-WebRequest -Uri "https://github.com/Kitware/CMake/releases/download/v3.30.2/cmake-3.30.2-windows-x86_64.msi" `
 # -OutFile \cmake-installer.msi -UseBasicParsing -MaximumRedirection 10
 
@@ -54,6 +64,8 @@ RUN `
 # RUN Remove-Item \vs_buildtools.exe
 # RUN Remove-Item \cmake-installer.msi
 # RUN Remove-Item \ninja.zip
+
+SHELL ["cmd", "/S", "/C"]
 
 # CMD "& 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\Launch-VsDevShell.ps1' %*"
 
