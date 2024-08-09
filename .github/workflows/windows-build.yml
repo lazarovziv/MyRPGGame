@@ -31,8 +31,9 @@ jobs:
     
   windows-compile:
     runs-on: windows-latest
-    container:
-      image: zivlazarov/rpg:windows-1.0
+    # not supported yet (https://github.com/actions/runner/issues/904)
+    # container:
+    #   image: zivlazarov/rpg:windows-1.0
     steps:
     - name: Initial checkout
       uses: actions/checkout@v4
@@ -42,31 +43,6 @@ jobs:
     - name: Compile
       run: cmake -B build/ . && cmake --build build/
 
-    # upload tests artifact to be used in another job
-    - uses: actions/upload-artifact@v4
-      with:
-        name: tests-artifact
-        path: build/bin/tests
-
-  windows-test:
-    runs-on: windows-latest
-    needs: windows-compile
-    container:
-      image: zivlazarov/rpg:windows-1.0
-      credentials:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_TOKEN }}
-    steps:
-    - name: Initial checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-      
-    # get tests artifact
-    - uses: actions/download-artifact@v4
-      with:
-        name: tests-artifact
-    
-    - name: Run tests
-      run: chmod +x ./tests && ./tests
+    - name:
+      run: ./build/bin/tests
       
