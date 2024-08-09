@@ -1,0 +1,31 @@
+# name: Linux Image Build
+
+# on:
+#   # run if any of the dockerfiles changed
+#   pull_request:
+#     paths:
+#       - 'dockerfiles/**'
+#   # run on demand
+#   workflow_dispatch:
+
+# jobs:
+#   linux-image-build:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Initial checkout
+#       uses: actions/checkout@v4
+    
+#     - name: Login to Docker Hub
+#       run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+#       id: docker_login
+
+#     - name: Build Linux image
+#       run: docker build -f ./dockerfiles/linux.Dockerfile -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
+#       id: docker_build
+#       if: steps.docker_login.outcome == 'success'
+
+#     - name: Push Linux image
+#       run: docker push ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+#       id: docker_push
+#       if: steps.docker_build.outcome == 'success'
+      

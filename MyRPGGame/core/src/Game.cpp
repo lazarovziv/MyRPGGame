@@ -237,6 +237,7 @@ void Game::start() {
             if (sf::Keyboard::isKeyPressed(pauseKey)) {
                 keysPressedMap[pauseKey] = true;
                 change_state(Constants::GameState::IN_MENU);
+
                 std::cout << "In Menu (Press Space to choose)" << std::endl;
                 canMove = false;
                 // pressing I sends to inventory menu (to be implemented)

@@ -21,7 +21,6 @@ RUN apt install python3 -y
 RUN cmake -S . -B build -D UPDATE_DEPS=ON -D BUILD_WERROR=ON -D BUILD_TESTS=ON -D CMAKE_BUILD_TYPE=Debug
 RUN cmake --build build --config Debug
 
-
 RUN apt clean
 
 ARG UNAME=ubuntu
