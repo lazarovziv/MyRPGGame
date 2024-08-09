@@ -1,0 +1,29 @@
+name: Cross Platform Build
+
+on: [ pull_request, workflow_dispatch ]
+
+jobs:
+  compile:
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-latest
+          image: zivlazarov/rpg:1.3
+          executable_postfix: ''
+        - os: windows-latest
+          image: none
+          executable_postfix: '.exe'
+    runs-on: ${{ matrix.os }}
+    container:
+      image: ${{ matrix.image }}
+      options: --user root
+      if: ${{ matrix.image }} != 'none'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Compile
+        run: cmake -B build/ -G "Ninja" . && cmake --build build/
+      - name: Test
+        run: ./build/bin/tests${{ matrix.executable_postfix }}
+      
