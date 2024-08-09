@@ -38,10 +38,11 @@ target_link_libraries(main_lib sfml-system
         sfml-audio
         sfml-network)
 
-# finding and linking Vulkan
-find_package(Vulkan REQUIRED)
-target_link_libraries(main_lib Vulkan::Vulkan)
-
+if (UNIX)
+        # finding and linking Vulkan
+        find_package(Vulkan REQUIRED)
+        target_link_libraries(main_lib Vulkan::Vulkan)
+endif (UNIX)
 # finding and linking OpenCV
 #find_package(OpenCV REQUIRED)
 #target_link_libraries(main ${OpenCV_LIBS})

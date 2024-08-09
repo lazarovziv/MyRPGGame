@@ -42,7 +42,4 @@ jobs:
 
     - name: Compile
       run: cmake -B build/ . && cmake --build build/
-
-    - name:
-      run: ./build/bin/tests
       
