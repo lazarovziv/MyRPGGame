@@ -1,12 +1,6 @@
 name: Windows Build
 
-on:
-  # run if any of the dockerfiles changed
-  pull_request:
-    paths:
-      - 'dockerfiles/**'
-  # run on demand
-  workflow_dispatch:
+on: [ pull_request, workflow_dispatch ]
 
 jobs:
   # windows-image-build:
