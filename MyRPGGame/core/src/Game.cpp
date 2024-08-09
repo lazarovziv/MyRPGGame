@@ -1,22 +1,25 @@
-#include "../include/Game.hpp"
+#include "Game.hpp"
 
-Game* Game::instance = nullptr;
+std::unique_ptr<Game> Game::instance = nullptr;
 
-Game* Game::getInstance() {
+std::unique_ptr<Game> Game::get_instance() {
     if (instance == nullptr) {
         std::cout << "Initializing game..." << std::endl;
-        instance = new Game("MyRPGGame");
+        // instance = new Game("MyRPGGame");
+        instance = std::unique_ptr<Game>(new Game("MyRPGGame"));
     }
-    return instance;
+    return std::move(instance);
 }
 
-void Game::disposeInstance() {
-    delete instance;
-    instance = nullptr;
+void Game::dispose_instance() {
+    std::cout << "Nulling instance..." << '\n';
+    // delete instance;
+    // instance = nullptr;
 }
 
 Game::~Game() {
     delete title;
+    delete current_menu;
 }
 
 Game::Game(const char* str) {
@@ -26,14 +29,14 @@ Game::Game(const char* str) {
     window = std::make_unique<sf::RenderWindow>(videoMode, s);
 
     window->setVerticalSyncEnabled(false);
-//    window->setFramerateLimit(Constants::FPS);
-    window->setFramerateLimit(0);
+    window->setFramerateLimit(Constants::FPS);
+    // window->setFramerateLimit(0);
 
-    cameraView = std::make_unique<sf::View>(sf::Vector2f(0, 0), sf::Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
+    camera_view = std::make_unique<sf::View>(sf::Vector2f(0, 0), sf::Vector2f(Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT));
 
-    menuRepository = std::make_unique<MenuRepository>();
-    initMenus();
-    menuRepository->setMenu(currentMenu); // first menu is the game menu
+    menu_repository = std::make_unique<MenuRepository>();
+    init_menus();
+    menu_repository->set_menu(current_menu); // first menu is the game menu
     
     state = Constants::GameState::PLAYING;
 
@@ -63,35 +66,35 @@ Game::Game(const char* str) {
             }
             rowVector.push_back(std::make_shared<GameMap>(r, c, true, true, true, true));
         }
-        worldMap.push_back(rowVector);
+        world_map.push_back(rowVector);
     }
 
-    currentGameMapRow = 1;
-    currentGameMapCol = 1;
+    current_game_map_row = 1;
+    current_game_map_col = 1;
     
     this->player = std::make_shared<Player>(PlayerType::KNIGHT,
                                             physics::Vector{ (real) Constants::SCREEN_HEIGHT/2,
                                                              (real) Constants::SCREEN_WIDTH/2 });
     
-    initWorldMap();
-    changeCurrentMap(currentGameMapRow, currentGameMapCol);
+    init_world_map();
+    change_current_map(current_game_map_row, current_game_map_col);
 
-    fpsFont.loadFromFile(Constants::GRAPHICS_BASE_PATH + "fonts/arial.ttf");
-    fpsText.setFillColor(sf::Color::Blue);
-    dtText.setFillColor(sf::Color::Blue);
-    fpsText.setFont(fpsFont);
-    dtText.setFont(fpsFont);
+    fps_font.loadFromFile(Constants::GRAPHICS_BASE_PATH + "fonts/arial.ttf");
+    fps_text.setFillColor(sf::Color::Blue);
+    dt_text.setFillColor(sf::Color::Blue);
+    fps_text.setFont(fps_font);
+    dt_text.setFont(fps_font);
 }
 
-void Game::initEntities() {
+void Game::init_entities() {
     // initialize player's systems
      std::unique_ptr<GameEntityMovement> playerMovement = std::make_unique<GameEntityMovement>(
-         player.get(), true, std::move(getCurrentGameMap()));
+         player.get(), true, std::move(get_current_game_map()));
      std::unique_ptr<GameEntityBattle> playerBattle = std::make_unique<GameEntityBattle>(
          player.get()
      );
      std::unique_ptr<GameEntityMovement> enemiesMovement = std::make_unique<GameEntityMovement>(
-             nullptr, false, std::move(getCurrentGameMap()));
+             nullptr, false, std::move(get_current_game_map()));
     std::unique_ptr<GameEntityBattle> enemiesBattle = std::make_unique<GameEntityBattle>(
             nullptr
     );
@@ -100,29 +103,29 @@ void Game::initEntities() {
 //    auto *enemiesMovement = new GameEntityMovement(nullptr, false, std::move(getCurrentGameMap()));
 //    auto *enemiesBattle = new GameEntityBattle(nullptr);
 
-    playerRepository = std::make_unique<PlayerRepository>(player,
+    player_repository = std::make_unique<PlayerRepository>(player,
                                                           std::move(playerMovement),
                                                           std::move(playerBattle),
-                                                          getCurrentGameMap());
+                                                          get_current_game_map());
     
-    enemiesRepository = std::make_unique<EnemyRepository>(std::move(enemiesMovement),
+    enemies_repository = std::make_unique<EnemyRepository>(std::move(enemiesMovement),
                                                           std::move(enemiesBattle),
-                                                          getCurrentGameMap());
+                                                          get_current_game_map());
 }
 
-void Game::initMenus() {
+void Game::init_menus() {
     std::vector<std::string> gameMenuItemsStrings = { "Start", "Settings", "Exit" };
     std::vector<std::string> mainMenuItemsStrings = { "Resume", "Inventory", "Settings", "Exit" };
     std::vector<std::string> characterCreationItemsStrings = { "Change Body", "Change Torso" };
 
-    gameMenu = std::make_unique<Menu>(gameMenuItemsStrings, true);
-    mainMenu = std::make_unique<Menu>(mainMenuItemsStrings, false);
-    characterCreationMenu = std::make_unique<Menu>(characterCreationItemsStrings, false);
+    game_menu = std::make_unique<Menu>(gameMenuItemsStrings, true);
+    main_menu = std::make_unique<Menu>(mainMenuItemsStrings, false);
+    character_creation_menu = std::make_unique<Menu>(characterCreationItemsStrings, false);
 
-    gameMenu->addSubMenu(mainMenu.get(), 0);
-    mainMenu->addSubMenu(characterCreationMenu.get(), 1);
+    game_menu->add_sub_menu(main_menu.get(), 0);
+    main_menu->add_sub_menu(character_creation_menu.get(), 1);
     // gameMenu->addSubMenu(settingsMenu);
-    currentMenu = gameMenu.get(); // initial menu is gameMenu
+    current_menu = game_menu.get(); // initial menu is gameMenu
 }
 
 void Game::start() {
@@ -130,7 +133,7 @@ void Game::start() {
     std::cout << "Press I or Esc to enter menu" << std::endl;
     std::cout << "Press X near an enemy to attack" << std::endl;
 
-    initEntities();
+    init_entities();
 
     bool canMove = false;
     bool running = window->isOpen();
@@ -173,11 +176,11 @@ void Game::start() {
 
     while (running) {
         dt = clock.restart().asSeconds();
-        fpsText.setString("FPS: " + std::to_string(1/dt));
-        dtText.setString("DT: " + std::to_string(dt));
+        fps_text.setString("FPS: " + std::to_string(1/dt));
+        dt_text.setString("DT: " + std::to_string(dt));
         dt *= multiplier;
         // setting direction to 0
-        directionVector.resetCoordinates();
+        directionVector.reset_coordinates();
 
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -221,32 +224,32 @@ void Game::start() {
                 directionVector += physics::Vector::LEFT_DIRECTION;
             }
 
-            playerRepository->move(directionVector, keysPressedMap[runKey], dt);
+            player_repository->move(directionVector, keysPressedMap[runKey], dt);
 
-            enemiesRepository->setGameMap(getCurrentGameMap());
+            enemies_repository->set_game_map(get_current_game_map());
 
             // pressing x for attacking
             // TODO: use player repository instead of player
-            if (player->isAttacking() || sf::Keyboard::isKeyPressed(attackKey)) {
-                attacked = playerRepository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
+            if (player->is_attacking() || sf::Keyboard::isKeyPressed(attackKey)) {
+                attacked = player_repository->attack(EntityMovementState::COMBAT_SLASH_ONE_HANDED, dt);
                 keysPressedMap[attackKey] = true;
             }
 
             // pressing space for jumping
-            if (player->isJumping() || sf::Keyboard::isKeyPressed(jumpKey)) {
-                playerRepository->jump(directionVector, dt);
+            if (player->is_jumping() || sf::Keyboard::isKeyPressed(jumpKey)) {
+                player_repository->jump(directionVector, dt);
                 keysPressedMap[jumpKey] = true;
             }
 
             // pressing escape sends to menu
             if (sf::Keyboard::isKeyPressed(pauseKey)) {
                 keysPressedMap[pauseKey] = true;
-                changeState(Constants::GameState::IN_MENU);
+                change_state(Constants::GameState::IN_MENU);
                 std::cout << "In Menu (Press Space to choose)" << std::endl;
                 canMove = false;
                 // pressing I sends to inventory menu (to be implemented)
             } else if (eventKeyCode == inventoryKey) {
-                changeState(Constants::GameState::IN_MENU);
+                change_state(Constants::GameState::IN_MENU);
                 // currentMenu = inventoryMenu;
                 std::cout << "Inventory Menu" << std::endl;
                 canMove = false;
@@ -254,20 +257,20 @@ void Game::start() {
             // TODO: add key for going straight to character creation
         } else if (state == Constants::GameState::IN_MENU) {
             if (sf::Keyboard::isKeyPressed(upKey)) {
-                menuRepository->moveUp();
+                menu_repository->move_up();
             } else if (sf::Keyboard::isKeyPressed(downKey)) {
-                menuRepository->moveDown();
+                menu_repository->move_down();
                 // user chose an item menu
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
                 // set current menu to be the relevant one based on currentMenuItemIdx
-                if (menuRepository->choseSubMenuItem()) {
-                    menuRepository->updateSubMenu(currentMenu, &state);
+                if (menu_repository->chose_sub_menu_item()) {
+                    menu_repository->update_sub_menu(current_menu, &state);
                     //updateMenu(currentMenu, &running, &canMove, menuRepository->getMenuType());
                 } else {
                     // execute the menu item functionality (cant overflow as it's defined only for non submenu indexes in the class)
-                    switch (menuRepository->execute(&state)) {
+                    switch (menu_repository->execute(&state)) {
                         case 0: {
-                            changeState(Constants::GameState::PLAYING);
+                            change_state(Constants::GameState::PLAYING);
                             std::cout << "Returning to game..." << std::endl;
                             break;
                         }
@@ -275,8 +278,8 @@ void Game::start() {
                             break;
                         }
                         case 2: {
-                            changeState(Constants::GameState::EXITING);
-                            exitGame(&running);
+                            change_state(Constants::GameState::EXITING);
+                            exit_game(&running);
                             break;
                         }
                     }
@@ -284,28 +287,28 @@ void Game::start() {
                 // going back one menu
             } else if (sf::Keyboard::isKeyPressed(pauseKey)) {
                 // if it's the game menu then we'll exit the game
-                if (menuRepository->isGameMenu()) {
-                    exitGame(&running);
+                if (menu_repository->is_game_menu()) {
+                    exit_game(&running);
                     break;
                 }
                 // not a game menu
-                currentMenu = currentMenu->getParentMenu();
-                menuRepository->setMenu(currentMenu);
+                current_menu = current_menu->get_parent_menu();
+                menu_repository->set_menu(current_menu);
             }
         }
 
         // TODO: add save game functionality
         if (state == Constants::GameState::EXITING) {
-            exitGame(&running);
+            exit_game(&running);
             break;
         }
 
         if (state == Constants::GameState::PLAYING) {
             // make enemies move
-            enemiesRepository->move(player->getPosition(), false, dt);
+            enemies_repository->move(player->get_position(), false, dt);
             // update physics
             for (int i = 0; i < Constants::UPDATE_ITERATIONS; i++) {
-                getCurrentGameMap()->resolveCollisions(dt);
+                get_current_game_map()->resolve_collisions(dt);
             }
             // update all entities' states when playing
             update(dt);
@@ -319,18 +322,22 @@ void Game::start() {
     }
 }
 
-void Game::exitGame(bool *run) {
+void Game::exit_game(bool *run) {
     // do all things before closing the game session (autosave or whatever)
     *run = false;
 }
 
-void Game::changeState(Constants::GameState gameState) {
-    this->state = gameState;
+void Game::change_state(Constants::GameState game_state) {
+    this->state = game_state;
     // TODO: change running and canMove local variables in start method
 }
 
-std::shared_ptr<GameMap> Game::getCurrentGameMap() {
-    return worldMap[currentGameMapRow][currentGameMapCol];
+std::shared_ptr<GameMap> Game::get_current_game_map() {
+    return world_map[current_game_map_row][current_game_map_col];
+}
+
+void Game::handle_movement() {
+
 }
 
 void Game::render() {
@@ -339,71 +346,71 @@ void Game::render() {
     // TODO: handle case where state == IS_EXITING
     // draw based on game state
     if (state != Constants::GameState::PLAYING) {
-        renderMenu(currentMenu);
+        render_menu(current_menu);
     } else {
-        std::shared_ptr<GameMap> map = getCurrentGameMap();
+        std::shared_ptr<GameMap> map = get_current_game_map();
         // draw background
-        window->draw(*(map->getBackgroundSprite()));
+        window->draw(*(map->get_background_sprite()));
         // draw fps and dt
-        window->draw(fpsText);
-        window->draw(dtText);
+        window->draw(fps_text);
+        window->draw(dt_text);
         // drawing undead enemies
-        for (int i = 0; i < map->getEnemies().size(); i++) {
-            if (!map->getEnemies()[i]->isDead()) {
-                window->draw(*(map->getEnemies()[i]->getSprite()));
+        for (int i = 0; i < map->get_enemies().size(); i++) {
+            if (!map->get_enemies()[i]->is_dead()) {
+                window->draw(*(map->get_enemies()[i]->get_sprite()));
                 // draw enemies' weapon
             }
         }
-        window->draw(*(player->getSprite()));
-        window->draw(*(player->getWeapon()->getSprite()));
+        window->draw(*(player->get_sprite()));
+        window->draw(*(player->get_weapon()->get_sprite()));
 
         // drawing unreachable areas
-        for (int i = 0; i < map->getLandscapes().size(); i++) {
-            window->draw(*(map->getLandscapes()[i]->getSprite()));
+        for (int i = 0; i < map->get_landscapes().size(); i++) {
+            window->draw(*(map->get_landscapes()[i]->get_sprite()));
         }
     }
     // display all drawn sprites
     window->display();
 }
 
-void Game::renderMenu(Menu *menu) {
-    menu->render(player->getPosition().x,
-                 player->getPosition().y, window.get());
+void Game::render_menu(Menu *menu) {
+    menu->render(player->get_position().x,
+                 player->get_position().y, window.get());
 }
 
 void Game::update(const real dt) {
     // updating current map states
-    getCurrentGameMap()->update(dt);
+    get_current_game_map()->update(dt);
     // updating player state
     // playerRepository->update(dt);
 
-    cameraView->setCenter(player->getRenderPosition());
-    window->setView(*cameraView);
+    camera_view->setCenter(player->get_render_position());
+    window->setView(*camera_view);
     // setting at the left hand corner in according to the player's position
-    fpsText.setPosition(player->getRenderPosition().x - SCREEN_WIDTH/2, player->getRenderPosition().y - SCREEN_HEIGHT/2);
-    dtText.setPosition(player->getRenderPosition().x - SCREEN_WIDTH/2, player->getRenderPosition().y - SCREEN_HEIGHT/2 + 2*fpsText.getGlobalBounds().height);
+    fps_text.setPosition(player->get_render_position().x - SCREEN_WIDTH/2, player->get_render_position().y - SCREEN_HEIGHT/2);
+    dt_text.setPosition(player->get_render_position().x - SCREEN_WIDTH/2, player->get_render_position().y - SCREEN_HEIGHT/2 + 2*fps_text.getGlobalBounds().height);
 }
 
-void Game::updateMenu(Menu *menu, bool *run, bool *move) {
+void Game::update_menu(Menu *menu, bool *run, bool *move) {
     // executing command
-    menuRepository->execute(&state);
+    menu_repository->execute(&state);
     // resetting idx
-    menuRepository->resetMenuItemIdx();
+    menu_repository->reset_menu_item_idx();
 }
 
-void Game::initWorldMap() {
+void Game::init_world_map() {
     // TODO: declare all maps here with unreachable areas and exit/enter points
-    std::shared_ptr<GameMap> startMap = worldMap[currentGameMapRow][currentGameMapRow];
+    std::shared_ptr<GameMap> start_map = world_map[current_game_map_row][current_game_map_row];
     // TODO: AUTOMATE THIS SECTION
-    physics::Vector bottomLeftOffset = physics::Vector{-1, 1};
-    physics::Vector bottomRightOffset = physics::Vector{1, 1};
-    physics::Vector topLeftOffset = physics::Vector{-1, -1};
-    physics::Vector topRightOffset = physics::Vector{1, -1};
-    real edgeLength = TILE_SIZE;
+    physics::Vector bottom_left_offset = physics::Vector{-1, 1};
+    physics::Vector bottom_right_offset = physics::Vector{1, 1};
+    physics::Vector top_left_offset = physics::Vector{-1, -1};
+    physics::Vector top_right_offset = physics::Vector{1, -1};
+    real edge_length = TILE_SIZE;
     // top exit circle
-    auto *startMapTopExitCircle = new Circle(TILE_SIZE / 2, FULL_SCREEN_WIDTH / 2 + TILE_SIZE,
+    auto *start_map_top_exit_circle = new Circle(TILE_SIZE / 2, FULL_SCREEN_WIDTH / 2 + TILE_SIZE,
                                              TILE_SIZE / 2);
-    startMap->setTopExitCircle(startMapTopExitCircle);
+    start_map->set_top_exit_circle(start_map_top_exit_circle);
     /*
     physics::Vector unreachableTree0Center = physics::Vector{FULL_SCREEN_HEIGHT/6, 3*FULL_SCREEN_WIDTH/16};
     std::vector<physics::Vector> unreachableTree0Vertices = {
@@ -448,70 +455,70 @@ void Game::initWorldMap() {
                                                   unreachableTree33Vertices);
 
     */
-    physics::Vector house0Center = physics::Vector{535, 95};
-    std::vector<physics::Vector> house0Vertices {
-            house0Center + (bottomLeftOffset * edgeLength), // bottom left
-            house0Center + (bottomRightOffset * edgeLength), // bottom right
-            house0Center + (topRightOffset * edgeLength), // top right
-            house0Center + (topLeftOffset * edgeLength) // top left
+    physics::Vector house0_center = physics::Vector{535, 95};
+    std::vector<physics::Vector> house0_vertices {
+            house0_center + (bottom_left_offset * edge_length), // bottom left
+            house0_center + (bottom_right_offset * edge_length), // bottom right
+            house0_center + (top_right_offset * edge_length), // top right
+            house0_center + (top_left_offset * edge_length) // top left
     };
-    auto *unreachableHouse0 = new LandscapeEntity(LandscapeType::TREE,
-                                                 house0Center,
-                                                 house0Vertices);
+    auto *unreachable_house0 = new LandscapeEntity(LandscapeType::TREE,
+                                                 house0_center,
+                                                 house0_vertices);
 
-    startMap->addLandscape(unreachableHouse0);
+    start_map->add_landscape(unreachable_house0);
 
-    std::shared_ptr<GameMap> topMap = worldMap[currentGameMapRow - 1][currentGameMapCol];
+    std::shared_ptr<GameMap> top_map = world_map[current_game_map_row - 1][current_game_map_col];
     // bottom exit circle
-    auto *topMapBottomExitCircle = new Circle(
+    auto *top_map_bottom_exit_circle = new Circle(
     FULL_SCREEN_HEIGHT-TILE_SIZE/2, FULL_SCREEN_WIDTH/2 + TILE_SIZE, TILE_SIZE/2);
-    topMap->setBottomExitCircle(topMapBottomExitCircle);
+    top_map->set_bottom_exit_circle(top_map_bottom_exit_circle);
     // adding unreachable areas and landscapes
-    physics::Vector unreachableTree2Center = physics::Vector{5*FULL_SCREEN_HEIGHT/24, 6.5*FULL_SCREEN_WIDTH/8};
-    std::vector<physics::Vector> unreachableTree2Vertices = {
-            unreachableTree2Center + bottomLeftOffset * edgeLength, // bottom left
-            unreachableTree2Center + bottomRightOffset * edgeLength, // bottom right
-            unreachableTree2Center + topLeftOffset * edgeLength, // top left
-            unreachableTree2Center + topRightOffset * edgeLength
+    physics::Vector unreachable_tree2_center = physics::Vector{5*FULL_SCREEN_HEIGHT/24, 6.5*FULL_SCREEN_WIDTH/8};
+    std::vector<physics::Vector> unreachable_tree2_vertices = {
+            unreachable_tree2_center + bottom_left_offset * edge_length, // bottom left
+            unreachable_tree2_center + bottom_right_offset * edge_length, // bottom right
+            unreachable_tree2_center + top_left_offset * edge_length, // top left
+            unreachable_tree2_center + top_right_offset * edge_length
     };
-    auto *unreachableTree2 = new LandscapeEntity(LandscapeType::TREE,
-                                                 unreachableTree2Center,
-                                                 unreachableTree2Vertices);
-    physics::Vector unreachableTree3Center = physics::Vector{7*FULL_SCREEN_HEIGHT/12, 3*FULL_SCREEN_WIDTH/16};
-    std::vector<physics::Vector> unreachableTree3Vertices = {
-            unreachableTree3Center + bottomLeftOffset * edgeLength, // bottom left
-            unreachableTree3Center + bottomRightOffset * edgeLength, // bottom right
-            unreachableTree3Center + topLeftOffset * edgeLength, // top left
-            unreachableTree3Center + topRightOffset * edgeLength
+    auto *unreachable_tree2 = new LandscapeEntity(LandscapeType::TREE,
+                                                 unreachable_tree2_center,
+                                                 unreachable_tree2_vertices);
+    physics::Vector unreachable_tree3_center = physics::Vector{7*FULL_SCREEN_HEIGHT/12, 3*FULL_SCREEN_WIDTH/16};
+    std::vector<physics::Vector> unreachable_tree3_vertices = {
+            unreachable_tree3_center + bottom_left_offset * edge_length, // bottom left
+            unreachable_tree3_center + bottom_right_offset * edge_length, // bottom right
+            unreachable_tree3_center + top_left_offset * edge_length, // top left
+            unreachable_tree3_center + top_right_offset * edge_length
     };
-    auto *unreachableTree3 = new LandscapeEntity(LandscapeType::TREE,
-                                                 unreachableTree3Center,
-                                                 unreachableTree3Vertices);
-    topMap->addLandscape(unreachableTree2);
-    topMap->addLandscape(unreachableTree3);
+    auto *unreachable_tree3 = new LandscapeEntity(LandscapeType::TREE,
+                                                 unreachable_tree3_center,
+                                                 unreachable_tree3_vertices);
+    top_map->add_landscape(unreachable_tree2);
+    top_map->add_landscape(unreachable_tree3);
 
     // deallocate memory if needed
 }
 
-void Game::setCurrentWorldMapRow(const int row) {
-    currentGameMapRow = row;
+void Game::set_current_world_map_row(const int row) {
+    current_game_map_row = row;
 }
 
-void Game::setCurrentWorldMapCol(const int col) {
-    currentGameMapCol = col;
+void Game::set_current_world_map_col(const int col) {
+    current_game_map_col = col;
 }
 
-void Game::changeCurrentMap(const int row, const int col) {
+void Game::change_current_map(const int row, const int col) {
     if (row < 0 || row >= Constants::NUM_ROWS) return;
     if (col < 0 || col >= Constants::NUM_COLS) return;
     // abandoning previous map and setting its player attribute to null
-    worldMap[currentGameMapRow][currentGameMapCol]->removePlayer();
+    world_map[current_game_map_row][current_game_map_col]->remove_player();
     // change current map
-    setCurrentWorldMapRow(row);
-    setCurrentWorldMapCol(col);
+    set_current_world_map_row(row);
+    set_current_world_map_col(col);
     // initialize map (or reinitialize?)
-    worldMap[currentGameMapRow][currentGameMapCol]->init();
+    world_map[current_game_map_row][current_game_map_col]->init();
     // define the new game map for the entities
-    if (playerRepository != nullptr) playerRepository->setGameMap(std::move(getCurrentGameMap()));
-    if (enemiesRepository != nullptr) enemiesRepository->setGameMap(std::move(getCurrentGameMap()));
+    if (player_repository != nullptr) player_repository->set_game_map(std::move(get_current_game_map()));
+    if (enemies_repository != nullptr) enemies_repository->set_game_map(std::move(get_current_game_map()));
 }

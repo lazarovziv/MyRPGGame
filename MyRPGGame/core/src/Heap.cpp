@@ -1,4 +1,4 @@
-#include "../include/Heap.hpp"
+#include "Heap.hpp"
 
 Heap::Heap(int size) {
     length = size;

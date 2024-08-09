@@ -8,7 +8,7 @@ protected:
 
 public:
     Subject() = default;
-    void registerObserver(Observer *observer);
-    void unregisterObserver(Observer *observer);
-    void notifyAll();
+    void register_observer(Observer *observer);
+    void unregister_observer(Observer *observer);
+    void notify_all();
 }; 

@@ -17,37 +17,37 @@ enum MenuActions {
 
 class Menu {
 protected:
-    std::vector<sf::Text> *menuItems;
+    std::vector<sf::Text> *menu_items;
     sf::Font font;
-    int currentMenuItemIdx;
-    int numOfMenuItems;
+    int current_menu_items_idx;
+    int num_menu_items;
     bool active; // indicator whether the menu is currently shown on screen (if switched off we'll go to parent menu)
-    bool gameMenu = false;
-    Menu *parentMenu; // for navigating backwards from the submenus
-    std::vector<Menu*> *subMenus = nullptr; // setting an option for every menu to have a sub menu
-    std::map<int, Menu*> *subMenusIndexesMap = nullptr;
+    bool game_menu = false;
+    Menu *parent_menu; // for navigating backwards from the submenus
+    std::vector<Menu*> *sub_menus = nullptr; // setting an option for every menu to have a sub menu
+    std::map<int, Menu*> *sub_menus_indices_map = nullptr;
 
-    void setParentMenu(Menu *menu);
+    void set_parent_menu(Menu *menu);
 
 public:
-    explicit Menu(std::vector<std::string> itemsStrings, bool gameMenu);
+    explicit Menu(std::vector<std::string> items_strings, bool game_menu);
     ~Menu() = default;
 
-    void initMenuItems(std::vector<std::string> itemsStrings);
-    std::vector<sf::Text> *getMenuItems();
-    std::vector<Menu*> *getSubMenus();
-    void render(real currentWindowX, real currentWindowY, sf::RenderWindow *window);
-    void moveUp();
-    void moveDown();
-    bool hasSubMenus();
-    void addSubMenu(Menu *menu, int menuIndex);
-    Menu *getParentMenu();
-    void setIsActive(bool flag);
-    bool isActive();
-    bool isGameMenu();
-    virtual bool isSubMenuItem();
+    void init_menu_items(std::vector<std::string> items_strings);
+    std::vector<sf::Text> *get_menu_items();
+    std::vector<Menu*> *get_sub_menus();
+    void render(real current_window_x, real current_window_y, sf::RenderWindow *window);
+    void move_up();
+    void move_down();
+    bool has_sub_menus();
+    void add_sub_menu(Menu *menu, int menu_index);
+    Menu *get_parent_menu();
+    void set_is_active(bool flag);
+    bool is_active();
+    bool is_game_menu();
+    virtual bool is_sub_menu_item();
     virtual int execute(Constants::GameState *state);
-    void resetMenuItemIdx();
+    void reset_menu_item_idx();
 };
 
 #endif //MYRPGGAME_MENU_HPP

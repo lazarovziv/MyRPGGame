@@ -17,10 +17,10 @@ namespace physics {
         registry registrations;
 
     public:
-        void addItem(RigidBody *body, RigidBodyForceGenerator *generator);
-        void removeItem(RigidBody *body, RigidBodyForceGenerator *generator);
-        void clearRegistrations();
-        registry getItems() const;
+        void add_item(RigidBody *body, RigidBodyForceGenerator *generator);
+        void remove_item(RigidBody *body, RigidBodyForceGenerator *generator);
+        void clear_registrations();
+        registry get_items() const;
 
         void update(real dt);
     };

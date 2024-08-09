@@ -1,4 +1,4 @@
-#include "../include/LandscapeEntity.hpp"
+#include "LandscapeEntity.hpp"
 
 LandscapeEntity::LandscapeEntity(LandscapeType type, physics::Vector initialPosition, std::vector<physics::Vector> &vertices, real mass)
 : GameEntity(initialPosition, physics::RigidBodyType::POLYGON, vertices, mass) {
@@ -28,12 +28,12 @@ LandscapeEntity::LandscapeEntity(LandscapeType type, physics::Vector initialPosi
     sprite->setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2); // or set texture.size / 2, texture.size / 2
     sprite->setPosition(position.x, position.y);
     // setting the landscape as inelastic as possible
-    rigidBody->setRestitution(0);
+    rigid_body->set_restitution(0);
 
-    isLandscape = true;
+    is_landscape = true;
 //    entityCircle->setRadius(entityCircle->getRadius()*2);
 }
 
-LandscapeType LandscapeEntity::getType() {
+LandscapeType LandscapeEntity::get_type() {
     return type;
 }

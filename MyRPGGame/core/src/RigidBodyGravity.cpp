@@ -1,4 +1,4 @@
-#include "../include/RigidBodyGravity.hpp"
+#include "RigidBodyGravity.hpp"
 
 namespace physics {
 
@@ -9,6 +9,6 @@ namespace physics {
     void RigidBodyGravity::update(physics::RigidBody *body, real dt) {
         // no force can be applied to body with infinite mass as
 //        if (!body->hasFiniteMass()) return;
-        body->addForce(gravity * body->getMass());
+        body->add_force(gravity * body->get_mass());
     }
 }

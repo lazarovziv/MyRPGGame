@@ -41,8 +41,8 @@ public:
     static constexpr real VELOCITY_MAGNITUDE_MIN = 0.002;
     static constexpr real VELOCITY_MAGNITUDE_MAX = BASE_ENTITY_SPEED * 0.45;
     // TODO: add more friction variables per ground type
-    static constexpr real ICE_FRICTION_DEGRADATION_CONSTANT = (real) 1.0015;
-    static constexpr real GRASS_FRICTION_DEGRADATION_CONSTANT = (real) 1.005;
+    static constexpr real ICE_FRICTION_DEGRADATION_CONSTANT = (real) 1.03; // 1.0015
+    static constexpr real GRASS_FRICTION_DEGRADATION_CONSTANT = (real) 1.1; // 1.005
 
     static const int NUM_FRAMES_IDLE_ANIMATION = 13;
 

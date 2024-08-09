@@ -7,7 +7,7 @@
 
 class MainMenu : public Menu {
 public:
-    explicit MainMenu(std::vector<std::string> itemsStrings);
+    explicit MainMenu(std::vector<std::string> items_strings);
 
     MenuActions execute() override;
 };
