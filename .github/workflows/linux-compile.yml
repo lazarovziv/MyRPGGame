@@ -1,6 +1,5 @@
 name: Linux Build
 
-# run if any of the dockerfiles changed
 on: [ pull_request, workflow_dispatch ]
 
 jobs:
