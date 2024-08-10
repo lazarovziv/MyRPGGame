@@ -26,7 +26,7 @@
 const uint32_t WIDTH = 1920;
 const uint32_t HEIGHT = 1080;
 
-// const int MAX_FRAMES_IN_FLIGHT = 2;
+const int MAX_FRAMES_IN_FLIGHT = 2;
 
 const std::vector<const char*> validation_layers = {
     "VK_LAYER_KHRONOS_validation"
@@ -86,11 +86,13 @@ private:
 
     // used for drawing
     VkCommandPool command_pool;
-    VkCommandBuffer command_buffer;
+    std::vector<VkCommandBuffer> command_buffers;
 
-    VkSemaphore image_available_semaphore;
-    VkSemaphore render_finished_semaphore;
-    VkFence in_flight_fence;
+    uint32_t current_frame = 0;
+
+    std::vector<VkSemaphore> image_available_semaphores;
+    std::vector<VkSemaphore> render_finished_semaphores;
+    std::vector<VkFence> in_flight_fences;
 
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
@@ -110,7 +112,7 @@ private:
     void create_render_pass();
 
     void create_command_pool();
-    void create_command_buffer();
+    void create_command_buffers();
 
     void create_sync_objects();
 
