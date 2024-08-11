@@ -6,7 +6,7 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     container:
-      image: ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+      image: zivlazarov/rpg:1.3
       options: --user root
     steps:
     - uses: actions/checkout@v4
