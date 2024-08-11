@@ -1,0 +1,16 @@
+name: Vulkan Build
+
+on: [ pull_request, workflow_dispatch ]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+      options: --user root
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive  
+    - name: Compile
+      run: cmake -B MyRPGGame/vulkan/build/ -G "Ninja" . && cmake --build MyRPGGame/vulkan/build/  
