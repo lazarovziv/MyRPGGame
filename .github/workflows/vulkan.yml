@@ -13,4 +13,4 @@ jobs:
       with:
         submodules: recursive  
     - name: Compile
-      run: cmake -B MyRPGGame/vulkan/build/ -G "Ninja" MyRPGGame/vulkan/ && cmake --build MyRPGGame/vulkan/build/  
+      run: cmake -D GLFW_BUILD_X11=1 -D GLFW_BUILD_WAYLAND=0 -B MyRPGGame/vulkan/build/ -G "Ninja" MyRPGGame/vulkan/ && cmake --build MyRPGGame/vulkan/build/  
