@@ -13,4 +13,4 @@ jobs:
       with:
         submodules: recursive  
     - name: Compile
-      run: cmake -B MyRPGGame/vulkan/build/ -G "Ninja" . && cmake --build MyRPGGame/vulkan/build/  
+      run: cmake -B MyRPGGame/vulkan/build/ -G "Ninja" MyRPGGame/vulkan/ && cmake --build MyRPGGame/vulkan/build/  
