@@ -9,7 +9,7 @@ SECOND_OPTION=$3
 DOCKER_OPTIONS="--rm -v $(pwd):/workspace -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
       -v $HOME/.Xauthority:/home/ubuntu/.Xauthority:rw --ipc=host \
       -e DISPLAY=$DISPLAY --net x11-network \
-      --device /dev/input --device /dev/dri --user ubuntu --name rpg"
+      --device /dev/input --device /dev/dri --user ubuntu --name rpg --cpus=1"
 
 if [ "$SECOND_OPTION" != "" ]; then
   SECOND_OPTION="--config $SECOND_OPTION"
