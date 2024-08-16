@@ -42,6 +42,7 @@ target_link_libraries(main_lib sfml-system
         sfml-audio
         sfml-network)
 
+
 if (UNIX)
         # finding and linking Vulkan
         find_package(Vulkan REQUIRED)

@@ -6,10 +6,10 @@
 
 class GameEntityRepository {
 protected:
-    std::unique_ptr<GameEntityMovement> movementHandler;
-    std::unique_ptr<GameEntityBattle> battleHandler;
+    std::unique_ptr<GameEntityMovement> movement_handler;
+    std::unique_ptr<GameEntityBattle> battle_handler;
     std::shared_ptr<GameMap> map;
-    AnimationManager *animationManager = nullptr;
+    AnimationManager *animation_manager = nullptr;
 
 public:
     explicit GameEntityRepository(std::unique_ptr<GameEntityMovement> movement,
@@ -17,7 +17,7 @@ public:
     ~GameEntityRepository() = default; // TODO: delete all handlers and player (same for enemy repository)
 
 public:
-    void setGameMap(std::shared_ptr<GameMap> gameMap);
+    void set_game_map(std::shared_ptr<GameMap> game_map);
     bool move(physics::Vector &direction, const bool run, const real dt);
     // can set the direction vector as const as we don't normalize it like in move()
     bool jump(const physics::Vector &direction, const real dt);

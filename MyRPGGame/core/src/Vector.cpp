@@ -1,4 +1,4 @@
-#include "../include/Vector.hpp"
+#include "Vector.hpp"
 
 namespace physics {
 
@@ -36,13 +36,13 @@ namespace physics {
         return (real) std::sqrt((x - other.y)*(x - other.y) + (y - other.y)*(y - other.y) + (z - other.z)*(z - other.z));
     }
 
-    void Vector::resetCoordinates() {
+    void Vector::reset_coordinates() {
         x = 0;
         y = 0;
         z = 0;
     }
 
-    void Vector::printCoordinates() const {
+    void Vector::print_coordinates() const {
         std::cout << "(" << x << ", " << y << "," << z << ")" << std::endl;
     }
 
