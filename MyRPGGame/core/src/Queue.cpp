@@ -1,4 +1,4 @@
-#include "Queue.hpp"
+#include "../include/Queue.hpp"
 
 Queue::Queue(bool isMin, int size) {
     this->isMin = isMin;

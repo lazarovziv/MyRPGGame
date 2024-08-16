@@ -1,101 +1,101 @@
-#include "GameEntity.hpp"
+#include "../include/GameEntity.hpp"
 
 GameEntity::GameEntity() {
     level = 1;
-    max_health_points = 50;
-    current_health_points = max_health_points;
-    max_mana_points = 30;
-    current_mana_points = max_mana_points;
-    attack_points = 1;
-    defence_points = 5;
-    current_defence_points = defence_points;
+    maxHealthPoints = 50;
+    currentHealthPoints = maxHealthPoints;
+    maxManaPoints = 30;
+    currentManaPoints = maxManaPoints;
+    attackPoints = 1;
+    defencePoints = 5;
+    currentDefencePoints = defencePoints;
     speed = Constants::BASE_ENTITY_SPEED;
-    in_battle = false;
+    inBattle = false;
     dead = false;
-    move_direction = MoveDirection::RIGHT;
+    moveDirection = MoveDirection::RIGHT;
 //    sprite = new sf::Sprite();
     sprite = std::make_unique<sf::Sprite>();
 
 //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
-    move_directions_sprites_map[MoveDirection::DOWN] = 3;
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
 //    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11; // change to 4
-    move_directions_sprites_map[MoveDirection::RIGHT] = 4;
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 4;
 //    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9; // change to 2
-    move_directions_sprites_map[MoveDirection::LEFT] = 2;
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
 //    moveDirectionsSpritesMap[MoveDirection::UP] = 8; // change to 1
-    move_directions_sprites_map[MoveDirection::UP] = 1;
+    moveDirectionsSpritesMap[MoveDirection::UP] = 1;
 
-    movement_state_row_map[EntityMovementState::IDLE] = Constants::IDLE_ROW;
-    movement_state_row_map[EntityMovementState::CLIMB] = Constants::CLIMB_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = Constants::COMBAT_IDLE_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = Constants::COMBAT_SLASH_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::WALK] = Constants::WALK_ROW;
-    movement_state_row_map[EntityMovementState::JUMP] = Constants::JUMP_ROW;
-    movement_state_row_map[EntityMovementState::SITTING] = Constants::SITTING_ROW;
-    movement_state_row_map[EntityMovementState::RUN] = Constants::RUN_ROW;
+    movementStateRowMap[EntityMovementState::IDLE] = Constants::IDLE_ROW;
+    movementStateRowMap[EntityMovementState::CLIMB] = Constants::CLIMB_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = Constants::COMBAT_IDLE_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = Constants::COMBAT_SLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::WALK] = Constants::WALK_ROW;
+    movementStateRowMap[EntityMovementState::JUMP] = Constants::JUMP_ROW;
+    movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
+    movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 }
 
 GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType rigidBodyType,
                        const std::vector<physics::Vector> &vertices, real mass) {
     level = 1;
-    max_health_points = 50;
-    current_health_points = max_health_points;
-    max_mana_points = 30;
-    current_mana_points = max_mana_points;
-    attack_points = 1;
-    defence_points = 5;
-    current_defence_points = defence_points;
-    max_stamina_points = 35;
-    current_stamina_points = max_stamina_points;
+    maxHealthPoints = 50;
+    currentHealthPoints = maxHealthPoints;
+    maxManaPoints = 30;
+    currentManaPoints = maxManaPoints;
+    attackPoints = 1;
+    defencePoints = 5;
+    currentDefencePoints = defencePoints;
+    maxStaminaPoints = 35;
+    currentStaminaPoints = maxStaminaPoints;
     speed = Constants::BASE_ENTITY_SPEED;
-    in_battle = false;
+    inBattle = false;
     dead = false;
-    move_direction = MoveDirection::DOWN;
-    movement_state = EntityMovementState::WALK;
+    moveDirection = MoveDirection::DOWN;
+    movementState = EntityMovementState::WALK;
 //    sprite = new sf::Sprite();
     sprite = std::make_unique<sf::Sprite>();
 
     //    moveDirectionsSpritesMap[MoveDirection::DOWN] = 10; // change to 3
-    move_directions_sprites_map[MoveDirection::DOWN] = 3;
+    moveDirectionsSpritesMap[MoveDirection::DOWN] = 3;
 //    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 11; // change to 4
-    move_directions_sprites_map[MoveDirection::RIGHT] = 4;
+    moveDirectionsSpritesMap[MoveDirection::RIGHT] = 4;
 //    moveDirectionsSpritesMap[MoveDirection::LEFT] = 9; // change to 2
-    move_directions_sprites_map[MoveDirection::LEFT] = 2;
+    moveDirectionsSpritesMap[MoveDirection::LEFT] = 2;
 //    moveDirectionsSpritesMap[MoveDirection::UP] = 8; // change to 1
-    move_directions_sprites_map[MoveDirection::UP] = 1;
+    moveDirectionsSpritesMap[MoveDirection::UP] = 1;
 
-    movement_state_row_map[EntityMovementState::IDLE] = Constants::IDLE_ROW;
-    movement_state_row_map[EntityMovementState::CLIMB] = Constants::CLIMB_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = Constants::COMBAT_IDLE_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = Constants::COMBAT_SLASH_ONE_HANDED_ROW;
-    movement_state_row_map[EntityMovementState::WALK] = Constants::WALK_ROW;
-    movement_state_row_map[EntityMovementState::JUMP] = Constants::JUMP_ROW;
-    movement_state_row_map[EntityMovementState::SITTING] = Constants::SITTING_ROW;
-    movement_state_row_map[EntityMovementState::RUN] = Constants::RUN_ROW;
+    movementStateRowMap[EntityMovementState::IDLE] = Constants::IDLE_ROW;
+    movementStateRowMap[EntityMovementState::CLIMB] = Constants::CLIMB_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = Constants::COMBAT_BACKSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = Constants::COMBAT_HALFSLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = Constants::COMBAT_IDLE_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = Constants::COMBAT_SLASH_ONE_HANDED_ROW;
+    movementStateRowMap[EntityMovementState::WALK] = Constants::WALK_ROW;
+    movementStateRowMap[EntityMovementState::JUMP] = Constants::JUMP_ROW;
+    movementStateRowMap[EntityMovementState::SITTING] = Constants::SITTING_ROW;
+    movementStateRowMap[EntityMovementState::RUN] = Constants::RUN_ROW;
 
-    movement_state_col_map[EntityMovementState::IDLE] = 0;
-    movement_state_col_map[EntityMovementState::CLIMB] = 0;
-    movement_state_col_map[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = 0;
-    movement_state_col_map[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
-    movement_state_col_map[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = 0;
-    movement_state_col_map[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = 0;
-    movement_state_col_map[EntityMovementState::WALK] = 0;
-    movement_state_col_map[EntityMovementState::JUMP] = 0;
-    movement_state_col_map[EntityMovementState::SITTING] = 0;
-    movement_state_col_map[EntityMovementState::RUN] = 0;
+    movementStateColMap[EntityMovementState::IDLE] = 0;
+    movementStateColMap[EntityMovementState::CLIMB] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = 0;
+    movementStateColMap[EntityMovementState::WALK] = 0;
+    movementStateColMap[EntityMovementState::JUMP] = 0;
+    movementStateColMap[EntityMovementState::SITTING] = 0;
+    movementStateColMap[EntityMovementState::RUN] = 0;
 
     switch (rigidBodyType) {
         case physics::RigidBodyType::CIRCLE: {
-            rigid_body = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z,
+            rigidBody = std::make_unique<physics::Circle>(initialPosition.x, initialPosition.y, initialPosition.z,
                                                           (real) Constants::TILE_SIZE/4);
             break;
         }
         case physics::RigidBodyType::POLYGON: {
-            rigid_body = std::make_unique<physics::Polygon>(initialPosition.x, initialPosition.y, initialPosition.z,
+            rigidBody = std::make_unique<physics::Polygon>(initialPosition.x, initialPosition.y, initialPosition.z,
                                                            vertices, mass);
             break;
         }
@@ -103,37 +103,37 @@ GameEntity::GameEntity(physics::Vector initialPosition, physics::RigidBodyType r
             break;
     }
     // updating the mass because derived classes aren't setting new values to the mass in their constructors
-    rigid_body->set_mass(mass);
+    rigidBody->setMass(mass);
 
-    position.x = rigid_body->get_position().x;
-    position.y = rigid_body->get_position().y;
+    position.x = rigidBody->getPosition().x;
+    position.y = rigidBody->getPosition().y;
 }
 
 GameEntity::~GameEntity() {
 //    delete sprite;
 }
 
-void GameEntity::increate_level(int amount) {
+void GameEntity::increaseLevel(int amount) {
     level += amount;
 }
 
-void GameEntity::increase_max_health_points(int amount) {
-    max_health_points += amount;
+void GameEntity::increaseMaxHealthPoints(int amount) {
+    maxHealthPoints += amount;
     // also adding amount to current health points
-    if (current_health_points + amount >= max_health_points) {
-        current_health_points = max_health_points;
-    } else current_health_points += amount;
+    if (currentHealthPoints + amount >= maxHealthPoints) {
+        currentHealthPoints = maxHealthPoints;
+    } else currentHealthPoints += amount;
 }
 
-void GameEntity::increase_max_mana_points(int amount) {
-    max_mana_points += amount;
+void GameEntity::increaseMaxManaPoints(int amount) {
+    maxManaPoints += amount;
     // same like increaseMaxHealthPoints
-    if (current_mana_points + amount >= max_mana_points) {
-        current_mana_points = max_mana_points;
-    } else current_mana_points += amount;
+    if (currentManaPoints + amount >= maxManaPoints) {
+        currentManaPoints = maxManaPoints;
+    } else currentManaPoints += amount;
 }
 
-void GameEntity::increase_speed(const real amount) {
+void GameEntity::increaseSpeed(const real amount) {
     // setting upper limit to 3
 //    if (speed + amount < 3) {
 //        speed += amount;
@@ -141,60 +141,60 @@ void GameEntity::increase_speed(const real amount) {
     speed += amount;
 }
 
-void GameEntity::set_speed(real newSpeed) {
+void GameEntity::setSpeed(real newSpeed) {
     speed = newSpeed;
 }
 
-void GameEntity::increase_attack_points(const int amount) {
-    attack_points += amount;
+void GameEntity::increaseAttackPoints(const int amount) {
+    attackPoints += amount;
 }
 
-void GameEntity::increase_defence_points(const int amount) {
-    defence_points += amount;
+void GameEntity::increaseDefencePoints(const int amount) {
+    defencePoints += amount;
     // increasing current defence points altogether
-    current_defence_points += amount;
+    currentDefencePoints += amount;
 }
 
-void GameEntity::change_in_battle_state() {
-    in_battle = !in_battle;
+void GameEntity::changeInBattleState() {
+    inBattle = !inBattle;
 }
 
-void GameEntity::set_move_direction(const MoveDirection direction) {
-    move_direction = direction;
+void GameEntity::setMoveDirection(const MoveDirection direction) {
+    moveDirection = direction;
     // adjusting weapon direction
 //    weapon->setTransitionDirection(direction);
 }
 
-void GameEntity::set_movement_state(const EntityMovementState state) {
-    movement_state = state;
+void GameEntity::setMovementState(const EntityMovementState state) {
+    movementState = state;
 }
 
-void GameEntity::increment_step() {
+void GameEntity::incrementStep() {
     if (step < Constants::NUM_STEPS) step++;
     else step = 0;
 }
 
-void GameEntity::set_x(const real x) {
+void GameEntity::setX(const real x) {
     position.x = x;
 }
 
-void GameEntity::set_y(const real y) {
+void GameEntity::setY(const real y) {
     position.y = y;
 }
 
 // TODO: add direction vector and normalize it for diagonal movement?
-void GameEntity::set_position(const real x, const real y, const real z) {
-    rigid_body->set_position(x, y, z);
+void GameEntity::setPosition(const real x, const real y, const real z) {
+    rigidBody->setPosition(x, y, z);
 }
 
-void GameEntity::set_position(const physics::Vector &newPosition) {
-    rigid_body->set_position(newPosition.x, newPosition.y, newPosition.z);
+void GameEntity::setPosition(const physics::Vector &newPosition) {
+    rigidBody->setPosition(newPosition.x, newPosition.y, newPosition.z);
 }
 
 void GameEntity::move(const physics::Vector &directionVector, const real dt) {
     // TODO: delete this after anti gravity force will be added
     if (directionVector == physics::Vector::ZERO) {
-        position_updated = false;
+        positionUpdated = false;
         running = false;
         moving = false;
         return;
@@ -202,21 +202,21 @@ void GameEntity::move(const physics::Vector &directionVector, const real dt) {
     real currentSpeed = running ? speed * 2.f : speed; // multiply by dt?
     moving = true;
 
-    rigid_body->add_force(directionVector * currentSpeed);
+    rigidBody->addForce(directionVector * currentSpeed);
     // incrementing the distance traveled a bit lower than it should be when running to look realistic when animating
-    increment_distance_traveled_since_idle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
+    incrementDistanceTraveledSinceIdle(running ? ((real) 2/3) * currentSpeed * dt : currentSpeed * dt);
     // setting the moveDirection used for animating
-    set_move_direction(directionVector);
-    position_updated = true;
+    setMoveDirection(directionVector);
+    positionUpdated = true;
     // TODO: add reset to all entity movement states columns values besides the relevant state that'll be used
     // OR reset only the last state the player made
-    for (auto &state : Constants::COMBAT_STATES) movement_state_col_map[state] = 0;
+    for (auto &state : Constants::COMBAT_STATES) movementStateColMap[state] = 0;
 }
 
 bool GameEntity::jump(const physics::Vector &directionVector, const real dt) {
     // don't apply force if interval hasn't been reset yet
-    if (jump_interval < 0) {
-        std::cout << jump_interval << std::endl;
+    if (jumpInterval < 0) {
+        std::cout << jumpInterval << std::endl;
         return false;
     }
     real currentJumpScaler = running ? speed * 2 : speed;
@@ -224,7 +224,7 @@ bool GameEntity::jump(const physics::Vector &directionVector, const real dt) {
     physics::Vector jumpDirectionVector = physics::Vector::ZERO;
     if (directionVector == physics::Vector::ZERO) {
         // setting the force direction based on the move direction of the jump
-        switch (move_direction) {
+        switch (moveDirection) {
             case MoveDirection::UP: {
                 jumpDirectionVector = physics::Vector::UP_DIRECTION;
                 // scaling the y value if entity means to jump vertically
@@ -257,380 +257,380 @@ bool GameEntity::jump(const physics::Vector &directionVector, const real dt) {
     // incrementing the z axis for using high floors (to be implemented later)
     jumpDirectionVector.z += currentJumpScaler;
     // applying the force (should be applied when animation is about to finish)
-    rigid_body->add_force(jumpDirectionVector);
-    increment_jump_height_since_on_ground(currentJumpScaler * dt);
-    set_move_direction(directionVector);
+    rigidBody->addForce(jumpDirectionVector);
+    incrementJumpHeightSinceOnGround(currentJumpScaler * dt);
+    setMoveDirection(directionVector);
 
     return true;
 }
 
-void GameEntity::set_move_direction(const physics::Vector directionVector) {
+void GameEntity::setMoveDirection(const physics::Vector directionVector) {
     real horizontalDirection = directionVector.x;
     real verticalDirection = directionVector.y;
-    if (horizontalDirection > 0) move_direction = MoveDirection::RIGHT;
-    else if (horizontalDirection < 0) move_direction = MoveDirection::LEFT;
+    if (horizontalDirection > 0) moveDirection = MoveDirection::RIGHT;
+    else if (horizontalDirection < 0) moveDirection = MoveDirection::LEFT;
     else {
-        if (verticalDirection > 0) move_direction = MoveDirection::DOWN;
-        else if (verticalDirection < 0) move_direction = MoveDirection::UP;
+        if (verticalDirection > 0) moveDirection = MoveDirection::DOWN;
+        else if (verticalDirection < 0) moveDirection = MoveDirection::UP;
     }
 }
 
-void GameEntity::set_weapon(const WeaponType type) {
-    weapon = std::make_unique<Weapon>(rigid_body->get_position(), type);
+void GameEntity::setWeapon(const WeaponType type) {
+    weapon = std::make_unique<Weapon>(rigidBody->getPosition(), type);
 }
 
-void GameEntity::set_is_in_battle(const bool flag) {
-    this->in_battle = flag;
+void GameEntity::setIsInBattle(const bool flag) {
+    this->inBattle = flag;
 }
 
-void GameEntity::decrease_max_health_points(const real amount) {
+void GameEntity::decreaseMaxHealthPoints(const real amount) {
     // don't let it decrease (throw an error)
-    if (max_health_points - amount <= 0) return;
-    max_health_points -= amount; // not changing currentHealthPoints like when increasing
+    if (maxHealthPoints - amount <= 0) return;
+    maxHealthPoints -= amount; // not changing currentHealthPoints like when increasing
 }
 
-void GameEntity::decrease_current_health_points(const real amount) {
-    if (current_health_points > 0) {
-        if (current_health_points - amount <= 0) current_health_points = 0;
-        else current_health_points -= amount;
+void GameEntity::decreaseCurrentHealthPoints(const real amount) {
+    if (currentHealthPoints > 0) {
+        if (currentHealthPoints - amount <= 0) currentHealthPoints = 0;
+        else currentHealthPoints -= amount;
     }
-    if (current_health_points <= 0) dead = true;
+    if (currentHealthPoints <= 0) dead = true;
 }
 
-void GameEntity::decrease_max_mana_points(const real amount) {
-    if (max_mana_points - amount <= 0) max_mana_points = 0;
-    max_mana_points -= amount;
+void GameEntity::decreaseMaxManaPoints(const real amount) {
+    if (maxManaPoints - amount <= 0) maxManaPoints = 0;
+    maxManaPoints -= amount;
 }
 
-void GameEntity::decrease_speed(const real amount) {
+void GameEntity::decreaseSpeed(const real amount) {
     if (this->speed - amount <= 0) this->speed = 0;
     this->speed -= amount;
 }
 
-void GameEntity::decrease_attack_points(const real amount) {
-    if (attack_points - amount <= 0) attack_points = 0;
-    attack_points -= amount;
+void GameEntity::decreaseAttackPoints(const real amount) {
+    if (attackPoints - amount <= 0) attackPoints = 0;
+    attackPoints -= amount;
 }
 
-void GameEntity::decrease_defence_points(const real amount) {
-    if (defence_points - amount <= 0) defence_points = 0;
-    defence_points -= amount;
+void GameEntity::decreaseDefencePoints(const real amount) {
+    if (defencePoints - amount <= 0) defencePoints = 0;
+    defencePoints -= amount;
 }
 
-void GameEntity::decrease_current_defence_points(const real amount) {
-    if (current_defence_points - amount <= 0) current_defence_points = 0;
-    else current_defence_points -= amount;
+void GameEntity::decreaseCurrentDefencePoints(const real amount) {
+    if (currentDefencePoints - amount <= 0) currentDefencePoints = 0;
+    else currentDefencePoints -= amount;
 }
 
-long GameEntity::get_id() const {
+long GameEntity::getID() const {
     return id;
 }
 
-char* GameEntity::get_name() {
+char* GameEntity::getName() {
     return name;
 }
 
-int GameEntity::get_level() const {
+int GameEntity::getLevel() const {
     return level;
 }
 
-real GameEntity::get_max_health_points() const {
-    return max_health_points;
+real GameEntity::getMaxHealthPoints() const {
+    return maxHealthPoints;
 }
 
-real GameEntity::get_current_health_points() const {
-    return current_health_points;
+real GameEntity::getCurrentHealthPoints() const {
+    return currentHealthPoints;
 }
 
-real GameEntity::get_max_mana_points() const {
-    return max_mana_points;
+real GameEntity::getMaxManaPoints() const {
+    return maxManaPoints;
 }
 
-real GameEntity::get_current_mana_points() const {
-    return current_mana_points;
+real GameEntity::getCurrentManaPoints() const {
+    return currentManaPoints;
 }
 
-real GameEntity::get_attack_points() const {
-    return attack_points;
+real GameEntity::getAttackPoints() const {
+    return attackPoints;
 }
 
-real GameEntity::get_defence_points() const {
-    return defence_points;
+real GameEntity::getDefencePoints() const {
+    return defencePoints;
 }
 
-real GameEntity::get_current_defence_points() const {
-    return current_defence_points;
+real GameEntity::getCurrentDefencePoints() const {
+    return currentDefencePoints;
 }
 
-real GameEntity::get_max_stamina_points() const {
-    return max_stamina_points;
+real GameEntity::getMaxStaminaPoints() const {
+    return maxStaminaPoints;
 }
 
-real GameEntity::get_current_stamina_points() const {
-    return current_stamina_points;
+real GameEntity::getCurrentStaminaPoints() const {
+    return currentStaminaPoints;
 }
 
-real GameEntity::get_speed() const {
+real GameEntity::getSpeed() const {
     return speed;
 }
 
-int GameEntity::get_step() const {
+int GameEntity::getStep() const {
     return step;
 }
 
-bool GameEntity::is_in_battle() const {
-    return in_battle;
+bool GameEntity::isInBattle() const {
+    return inBattle;
 }
 
-bool GameEntity::is_dead() const {
+bool GameEntity::isDead() const {
     return dead;
 }
 
-MoveDirection GameEntity::get_move_direction() const {
-    return move_direction;
+MoveDirection GameEntity::getMoveDirection() const {
+    return moveDirection;
 }
 
-EntityMovementState GameEntity::get_movement_state() const {
-    return movement_state;
+EntityMovementState GameEntity::getMovementState() const {
+    return movementState;
 }
 
-std::map<MoveDirection, int> GameEntity::get_move_directions_sprites_map() const {
-    return move_directions_sprites_map;
+std::map<MoveDirection, int> GameEntity::getMoveDirectionsSpritesMap() const {
+    return moveDirectionsSpritesMap;
 }
 
-int GameEntity::get_movement_state_col_count(const EntityMovementState state) const {
-    return movement_state_col_map.at(state);
+int GameEntity::getMovementStateColCount(const EntityMovementState state) const {
+    return movementStateColMap.at(state);
 }
 
-void GameEntity::increment_movement_state_col_count(const EntityMovementState state) {
-    if (movement_state_col_map[state] < Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
-        movement_state_col_map[state] = movement_state_col_map[state] + 1;
+void GameEntity::incrementMovementStateColCount(const EntityMovementState state) {
+    if (movementStateColMap[state] < Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+        movementStateColMap[state] = movementStateColMap[state] + 1;
         return;
     }
-    movement_state_col_map[state] = 0;
+    movementStateColMap[state] = 0;
 }
 
-void GameEntity::reset_movement_state_col_count(const EntityMovementState state) {
-    movement_state_col_map[state] = 0;
+void GameEntity::resetMovementStateColCount(const EntityMovementState state) {
+    movementStateColMap[state] = 0;
 }
 
-std::map<EntityMovementState, int> GameEntity::get_movement_state_row_map() {
-    return movement_state_row_map;
+std::map<EntityMovementState, int> GameEntity::getMovementStateRowMap() {
+    return movementStateRowMap;
 }
 
-sf::Vector2f GameEntity::get_render_position() const {
+sf::Vector2f GameEntity::getRenderPosition() const {
     return position;
 }
 
-sf::Sprite* GameEntity::get_sprite() const {
+sf::Sprite* GameEntity::getSprite() const {
     return sprite.get();
 }
 
-void GameEntity::set_sprite(sf::Sprite *newSprite) {
+void GameEntity::setSprite(sf::Sprite *newSprite) {
 //    sprite = newSprite;
 }
 
-sf::Sprite* GameEntity::get_movement_state_sprite(const EntityMovementState state) {
-    return movement_state_sprites_map[state];
+sf::Sprite* GameEntity::getMovementStateSprite(const EntityMovementState state) {
+    return movementStateSpritesMap[state];
 }
 
-sf::IntRect GameEntity::get_rectangle() const {
+sf::IntRect GameEntity::getRectangle() const {
     return (sf::IntRect) sprite->getGlobalBounds();
 }
 
-void GameEntity::set_int_rect_position(const int left, const int top, const int width, const int height) {
-    sprite_rect.left = left;
-    sprite_rect.top = top;
-    sprite_rect.width = width;
-    sprite_rect.height = height;
-    sprite->setTextureRect(sprite_rect);
+void GameEntity::setIntRectPosition(const int left, const int top, const int width, const int height) {
+    spriteRect.left = left;
+    spriteRect.top = top;
+    spriteRect.width = width;
+    spriteRect.height = height;
+    sprite->setTextureRect(spriteRect);
 }
 
-physics::RigidBody* GameEntity::get_rigid_body() const {
-    return rigid_body.get();
+physics::RigidBody* GameEntity::getRigidBody() const {
+    return rigidBody.get();
 }
 
-physics::Vector &GameEntity::get_position() const {
-    return (*rigid_body).get_position();
+physics::Vector &GameEntity::getPosition() const {
+    return (*rigidBody).getPosition();
 }
 
-bool GameEntity::is_running() const {
+bool GameEntity::isRunning() const {
     return running;
 }
 
-void GameEntity::set_is_running(const bool flag) {
+void GameEntity::setIsRunning(const bool flag) {
     running = flag;
 }
 
-bool GameEntity::is_moving() const {
+bool GameEntity::isMoving() const {
     return moving;
 }
 
-void GameEntity::set_is_moving(const bool flag) {
+void GameEntity::setIsMoving(const bool flag) {
     moving = flag;
 }
 
-void GameEntity::reset_moving() {
+void GameEntity::resetMoving() {
     moving = false;
     running = false;
 }
 
-bool GameEntity::is_attacking() const {
+bool GameEntity::isAttacking() const {
     return attacking;
 }
 
-void GameEntity::set_is_attacking(const bool flag) {
+void GameEntity::setIsAttacking(const bool flag) {
     attacking = flag;
 }
 
-void GameEntity::reset_attacking() {
-    reset_battle_interval_for_swing();
+void GameEntity::resetAttacking() {
+    resetBattleIntervalForSwing();
     attacking = false;
 }
 
-bool GameEntity::is_jumping() const {
+bool GameEntity::isJumping() const {
     return jumping;
 }
 
-void GameEntity::set_is_jumping(const bool flag) {
+void GameEntity::setIsJumping(const bool flag) {
     jumping = flag;
 }
 
-void GameEntity::reset_jumping() {
-    reset_jump_interval();
+void GameEntity::resetJumping() {
+    resetJumpInterval();
     jumping = false;
 }
 
-bool GameEntity::can_attack() const {
-    return battle_interval >= BATTLE_INTERVAL_DEFAULT && !moving;
+bool GameEntity::canAttack() const {
+    return battleInterval >= BATTLE_INTERVAL_DEFAULT && !moving;
 }
 
-void GameEntity::reset_battle_interval() {
-    battle_interval = 0;
+void GameEntity::resetBattleInterval() {
+    battleInterval = 0;
 }
 
-void GameEntity::increase_battle_interval(const real dt) {
-    battle_interval += dt;
+void GameEntity::increaseBattleInterval(const real dt) {
+    battleInterval += dt;
 }
 
-void GameEntity::reset_battle_interval_for_swing() {
-    battle_interval = -SWING_INTERVAL_DEFAULT;
+void GameEntity::resetBattleIntervalForSwing() {
+    battleInterval = -SWING_INTERVAL_DEFAULT;
 }
 
-bool GameEntity::did_just_move() const {
-    return just_moved;
+bool GameEntity::didJustMove() const {
+    return justMoved;
 }
 
-void GameEntity::set_just_moved(const bool flag) {
-    just_moved = flag;
+void GameEntity::setJustMoved(const bool flag) {
+    justMoved = flag;
 }
 
 // direction is chosen randomly
-bool GameEntity::can_go_idle() const {
-    return move_interval >= MOVE_INTERVAL_DEFAULT;
+bool GameEntity::canGoIdle() const {
+    return moveInterval >= MOVE_INTERVAL_DEFAULT;
 }
 
-bool GameEntity::can_change_direction() const {
-    return change_move_direction_interval >= CHANGE_MOVE_DIRECTION_INTERVAL;
+bool GameEntity::canChangeDirection() const {
+    return changeMoveDirectionInterval >= CHANGE_MOVE_DIRECTION_INTERVAL;
 }
 
-void GameEntity::reset_change_direction_interval() {
-    change_move_direction_interval = 0;
+void GameEntity::resetChangeDirectionInterval() {
+    changeMoveDirectionInterval = 0;
 }
 
-void GameEntity::reset_move_interval() {
-    move_interval = 0;
-    reset_idle_animation_interval();
+void GameEntity::resetMoveInterval() {
+    moveInterval = 0;
+    resetIdleAnimationInterval();
 }
 
-void GameEntity::set_is_idle(const bool flag) {
+void GameEntity::setIsIdle(const bool flag) {
     idle = flag;
 }
 
-bool GameEntity::is_idle() const {
+bool GameEntity::isIdle() const {
     return idle;
 }
 
-void GameEntity::reset_distance_traveled_since_idle() {
-    distance_traveled_since_idle = 0;
+void GameEntity::resetDistanceTraveledSinceIdle() {
+    distanceTraveledSinceIdle = 0;
 }
 
-void GameEntity::increment_distance_traveled_since_idle(const real distance) {
-    distance_traveled_since_idle += distance;
+void GameEntity::incrementDistanceTraveledSinceIdle(const real distance) {
+    distanceTraveledSinceIdle += distance;
 }
 
-void GameEntity::increment_jump_height_since_on_ground(const real distance) {
-    jump_interval += distance;
+void GameEntity::incrementJumpHeightSinceOnGround(const real distance) {
+    jumpInterval += distance;
 }
 
-bool GameEntity::can_animate_movement(const bool check) {
+bool GameEntity::canAnimateMovement(const bool check) {
     // checking we're not animating other animation type
     if (jumping || attacking) return false;
-    if (distance_traveled_since_idle >= speed) {
-        if (!check) reset_distance_traveled_since_idle();
+    if (distanceTraveledSinceIdle >= speed) {
+        if (!check) resetDistanceTraveledSinceIdle();
         return true;
     }
     return false;
 }
 
-bool GameEntity::can_animate_idle(const bool check) {
+bool GameEntity::canAnimateIdle(const bool check) {
     // checking we're not animating other animation type
     if (jumping || attacking || moving) return false;
-    if (idle_animation_interval >= Constants::NUM_FRAMES_IDLE_ANIMATION) {
-        if (!check) reset_idle_animation_interval();
+    if (idleAnimationInterval >= Constants::NUM_FRAMES_IDLE_ANIMATION) {
+        if (!check) resetIdleAnimationInterval();
         return true;
     }
     return false;
 }
 
-bool GameEntity::can_animate_jump(const bool check) {
+bool GameEntity::canAnimateJump(const bool check) {
     // checking we're not animating other animation type
     if (moving || attacking) return false;
-    if (jump_interval >= JUMP_HEIGHT_INTERVAL_DEFAULT) {
-        if (!check) reset_jump_height_since_on_ground_interval();
+    if (jumpInterval >= JUMP_HEIGHT_INTERVAL_DEFAULT) {
+        if (!check) resetJumpHeightSinceOnGroundInterval();
         return true;
     }
     return false;
 }
 
-void GameEntity::reset_idle_animation_interval() {
-    idle_animation_interval = 0;
+void GameEntity::resetIdleAnimationInterval() {
+    idleAnimationInterval = 0;
 //    resetMovementStateColCount(EntityMovementState::COMBAT_SLASH_ONE_HANDED);
 //    resetMovementStateColCount(EntityMovementState::WALK);
 }
 
-void GameEntity::reset_jump_height_since_on_ground_interval() {
-    jump_interval = 0;
+void GameEntity::resetJumpHeightSinceOnGroundInterval() {
+    jumpInterval = 0;
 }
 
-void GameEntity::reset_jump_interval() {
-    jump_interval = -JUMP_INTERVAL_DEFAULT;
+void GameEntity::resetJumpInterval() {
+    jumpInterval = -JUMP_INTERVAL_DEFAULT;
 //    jumpHeightSinceOnGround = 0;
 }
 
-void GameEntity::increment_idle_animation_interval(const real dt) {
-    idle_animation_interval += dt;
+void GameEntity::incrementIdleAnimationInterval(const real dt) {
+    idleAnimationInterval += dt;
 }
 
-Weapon* GameEntity::get_weapon() {
+Weapon* GameEntity::getWeapon() {
     return weapon.get();
 }
 
-void GameEntity::print_position() const {
-    rigid_body->get_position().print_coordinates();
+void GameEntity::printPosition() const {
+    rigidBody->getPosition().printCoordinates();
 }
 
 void GameEntity::update(const real dt) {
     if (!dead) {
-        rigid_body->update(dt);
+        rigidBody->update(dt);
 
-        position.x = rigid_body->get_position().x;
-        position.y = rigid_body->get_position().y;
+        position.x = rigidBody->getPosition().x;
+        position.y = rigidBody->getPosition().y;
         sprite->setPosition(position.x, position.y);
         // updating intervals (checking values to prevent overflow if not acted long enough)
-        move_interval += dt;
-        battle_interval += dt;
-        jump_interval += dt;
-        if (!is_player) change_move_direction_interval += dt;
+        moveInterval += dt;
+        battleInterval += dt;
+        jumpInterval += dt;
+        if (!isPlayer) changeMoveDirectionInterval += dt;
     }
 }

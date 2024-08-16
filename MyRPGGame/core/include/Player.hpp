@@ -14,12 +14,12 @@ enum class PlayerType { KNIGHT, WIZARD, DUAL_WIELDER };
 class Player : public GameEntity, public Subject {
 private:
     // for knight
-    int strength_points;
+    int strengthPoints;
     // for wizard
-    int intelligence_points;
+    int intelligencePoints;
     // for dual wielder
-    int critical_hist_points;
-    int exp_points;
+    int criticalHitsPoints;
+    int expPoints;
     // Weapon currentWeapon
     // Helmet helmet
     // Braces braces
@@ -28,18 +28,18 @@ private:
     
 public:
     Player();
-    explicit Player(PlayerType type, physics::Vector initial_position);
+    explicit Player(PlayerType type, physics::Vector initialPosition);
     ~Player() override;
-    int get_strength_points();
-    int get_intelligence_points();
-    int get_critical_hist_points();
-    int get_exp_points();
+    int getStrengthPoints();
+    int getIntelligencePoints();
+    int getCriticalHitPoints();
+    int getExpPoints();
     // called when leveling up attributes
-    void level_up_strength_points();
-    void level_up_intelligence_points();
-    void level_up_critical_hits_points();
-    void increment_exp_points(int amount);
-    void set_player_type(PlayerType type);
+    void levelUpStrengthPoints();
+    void levelUpIntelligencePoints();
+    void levelUpCriticalHitsPoints();
+    void incrementExpPoints(int amount);
+    void setPlayerType(PlayerType type);
 
 };
 

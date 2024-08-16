@@ -1,4 +1,4 @@
-#include "Projectile.hpp"
+#include "../include/Projectile.hpp"
 
 Projectile::Projectile(real v, real x, real y, ProjectileType t) {
     velocity = v;

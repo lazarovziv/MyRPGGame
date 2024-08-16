@@ -1,15 +1,15 @@
-#include "RigidBodyForceRegistry.hpp"
+#include "../include/RigidBodyForceRegistry.hpp"
 
 namespace physics {
 
-    void RigidBodyForceRegistry::add_item(physics::RigidBody *body, physics::RigidBodyForceGenerator *generator) {
+    void RigidBodyForceRegistry::addItem(physics::RigidBody *body, physics::RigidBodyForceGenerator *generator) {
         RigidBodyForceItem item = {};
         item.body = body;
         item.generator = generator;
         registrations.push_back(item);
     }
 
-    void RigidBodyForceRegistry::remove_item(physics::RigidBody *body, physics::RigidBodyForceGenerator *generator) {
+    void RigidBodyForceRegistry::removeItem(physics::RigidBody *body, physics::RigidBodyForceGenerator *generator) {
         RigidBodyForceItem item = {};
         item.body = body;
         item.generator = generator;
@@ -20,11 +20,11 @@ namespace physics {
                 }),registrations.end());
     }
 
-    void RigidBodyForceRegistry::clear_registrations() {
+    void RigidBodyForceRegistry::clearRegistrations() {
         registrations.clear();
     }
 
-    std::vector<RigidBodyForceRegistry::RigidBodyForceItem> RigidBodyForceRegistry::get_items() const {
+    std::vector<RigidBodyForceRegistry::RigidBodyForceItem> RigidBodyForceRegistry::getItems() const {
         return registrations;
     }
 

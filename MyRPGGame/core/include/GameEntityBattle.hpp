@@ -14,8 +14,8 @@ private:
 public:
     explicit GameEntityBattle(GameEntity *entity);
     ~GameEntityBattle() = default;
-    GameEntity *get_entity();
-    void set_entity(GameEntity *game_entity);
+    GameEntity *getEntity();
+    void setEntity(GameEntity *gameEntity);
     bool attack(GameEntity &enemy, real dt);
 };
 

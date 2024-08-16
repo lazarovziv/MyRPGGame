@@ -1,4 +1,4 @@
-#include "Point.hpp"
+#include "../include/Point.hpp"
 
 Point::Point(real X, real Y, real Z) {
     x = X;
@@ -32,11 +32,11 @@ void Point::setZ(real Z) {
 }
 // probably here too
 real Point::distance(Point p) const {
-    return (real) sqrt(pow(x - p.x, 2) + pow(y - p.y, 2) + pow(z - p.z, 2));
+    return (real) std::sqrt(std::pow(x - p.x, 2) + std::pow(y - p.y, 2) + std::pow(z - p.z, 2));
 }
 
 int Point::operator-(const Point &other) const {
-    return abs(x - other.x) + abs(y - other.y) + abs(z - other.z);
+    return std::abs(x - other.x) + std::abs(y - other.y) + std::abs(z - other.z);
 }
 
 /*

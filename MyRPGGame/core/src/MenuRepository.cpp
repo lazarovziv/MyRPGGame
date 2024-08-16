@@ -1,7 +1,7 @@
-#include "MenuRepository.hpp"
+#include "../include/MenuRepository.hpp"
 
-void MenuRepository::set_menu(Menu *menu) {
-    menu->set_is_active(false);
+void MenuRepository::setMenu(Menu *menu) {
+    menu->setIsActive(false);
     this->menu = menu;
 }
 
@@ -9,31 +9,31 @@ int MenuRepository::execute(Constants::GameState *state) {
     return menu->execute(state);
 }
 
-void MenuRepository::move_up() {
-    menu->move_up();
+void MenuRepository::moveUp() {
+    menu->moveUp();
 }
 
-void MenuRepository::move_down() {
-    menu->move_down();
+void MenuRepository::moveDown() {
+    menu->moveDown();
 }
 
-void MenuRepository::reset_menu_item_idx() {
-    menu->reset_menu_item_idx();
+void MenuRepository::resetMenuItemIdx() {
+    menu->resetMenuItemIdx();
 }
 
-bool MenuRepository::menu_has_sub_menus() {
-    return menu->has_sub_menus();
+bool MenuRepository::menuHasSubMenus() {
+    return menu->hasSubMenus();
 }
 
-void MenuRepository::update_sub_menu(Menu *currentMenu, Constants::GameState *state) {
-    set_menu(menu->get_sub_menus()->at(menu->execute(state)));
+void MenuRepository::updateSubMenu(Menu *currentMenu, Constants::GameState *state) {
+    setMenu(menu->getSubMenus()->at(menu->execute(state)));
     currentMenu = this->menu;
 }
 
-bool MenuRepository::chose_sub_menu_item() {
-    return menu->is_sub_menu_item();
+bool MenuRepository::choseSubMenuItem() {
+    return menu->isSubMenuItem();
 }
 
-bool MenuRepository::is_game_menu() {
-    return menu->is_game_menu();
+bool MenuRepository::isGameMenu() {
+    return menu->isGameMenu();
 }

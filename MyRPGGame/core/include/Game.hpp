@@ -16,52 +16,31 @@
 
 class Game {
 private:
-    // static Game *instance;
-    static std::unique_ptr<Game> instance;
+    static Game *instance;
     std::unique_ptr<sf::RenderWindow> window = nullptr;
 
-    std::unique_ptr<sf::View> camera_view;
-    std::unique_ptr<Menu> main_menu;
-    std::unique_ptr<Menu> character_creation_menu;
-    std::unique_ptr<Menu> game_menu;
-    Menu *current_menu; // for changing menus when choosing submenus
+    std::unique_ptr<sf::View> cameraView;
+    std::unique_ptr<Menu> mainMenu;
+    std::unique_ptr<Menu> characterCreationMenu;
+    std::unique_ptr<Menu> gameMenu;
+    Menu *currentMenu; // for changing menus when choosing submenus
     const char *title;
-    sf::Text fps_text, dt_text;
-    sf::Font fps_font;
+    sf::Text fpsText, dtText;
+    sf::Font fpsFont;
     Constants::GameState state;
     
     // entities
     std::shared_ptr<Player> player = nullptr;
-    std::vector<std::vector<std::shared_ptr<GameMap>>> world_map;
+    std::vector<std::vector<std::shared_ptr<GameMap>>> worldMap;
 
     // repositories
-    std::unique_ptr<MenuRepository> menu_repository;
-    std::unique_ptr<PlayerRepository> player_repository;
-    std::unique_ptr<EnemyRepository> enemies_repository;
+    std::unique_ptr<MenuRepository> menuRepository;
+    std::unique_ptr<PlayerRepository> playerRepository;
+    std::unique_ptr<EnemyRepository> enemiesRepository;
 //    std::vector<std::vector<GameMap*>> worldMap(3, )
-    int current_game_map_row, current_game_map_col;
+    int currentGameMapRow, currentGameMapCol;
     
     explicit Game(const char *str);
-
-    static void exit_game(bool *run);
-
-    void change_state(Constants::GameState game_state);
-    std::shared_ptr<GameMap> get_current_game_map();
-    void set_current_world_map_row(int row);
-    void set_current_world_map_col(int col);
-
-    void change_current_map(int row, int col);
-
-    void init_world_map();
-    void init_entities();
-    void init_menus();
-
-    void handle_movement();
-
-    void render();
-    void render_menu(Menu *menu);
-    void update(real dt);
-    void update_menu(Menu *menu, bool *run, bool *move);
     
 public:
     Game(Game &game) = delete;
@@ -71,9 +50,24 @@ public:
     static constexpr real TILE_SIZE = Constants::TILE_SIZE;
     static constexpr real FULL_SCREEN_WIDTH = Constants::FULL_SCREEN_WIDTH;
     static constexpr real FULL_SCREEN_HEIGHT = Constants::FULL_SCREEN_HEIGHT;
-    static std::unique_ptr<Game> get_instance();
-    static void dispose_instance();
+    static Game* getInstance();
+    static void disposeInstance();
+    static void exitGame(bool *run);
 
+    void changeState(Constants::GameState gameState);
+    std::shared_ptr<GameMap> getCurrentGameMap();
+    void setCurrentWorldMapRow(int row);
+    void setCurrentWorldMapCol(int col);
+    
+    void changeCurrentMap(int row, int col);
+    
+    void initWorldMap();
+    void initEntities();
+    void initMenus();
+    void render();
+    void renderMenu(Menu *menu);
+    void update(real dt);
+    void updateMenu(Menu *menu, bool *run, bool *move);
     void start();
 };
 

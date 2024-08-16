@@ -20,10 +20,10 @@ class NPCEnemy;
 class GameMap {
 private:
     // in relation to the 2d array of world map
-    int world_map_row;
-    int world_map_col;
-    Graph<Point *> *map_graph;
-    bool initialized_map_graph = false; // used also for indicator for player's first arrival
+    int worldMapRow;
+    int worldMapCol;
+    Graph<Point *> *mapGraph;
+    bool initializedMapGraph = false; // used also for indicator for player's first arrival
 
     bool exitableFromLeft, exitableFromRight, exitableFromTop, exitableFromBottom;
 
@@ -34,20 +34,20 @@ private:
 
     sf::Texture texture;
 //    sf::Sprite *backgroundSprite;
-    std::unique_ptr<sf::Sprite> background_sprite;
+    std::unique_ptr<sf::Sprite> backgroundSprite;
 
     const int NUM_OF_MAX_ENEMIES = 3;
     // areas where entities cannot move or reach by walking
     std::vector<LandscapeEntity *> landscapes;
     // enemies in current map
-    std::vector<NPCEnemy *> enemies_vector;
+    std::vector<NPCEnemy *> enemiesVector;
     std::vector<GameEntity *> entities; // contains NPCs and player
     std::vector<physics::RigidBody *> bodies; // contains all game entities
     std::shared_ptr<Player> player;
     // for handling all collisions and forces in the map
-    std::unique_ptr<physics::RigidBodyGravity> gravity_force_generator;
-    std::unique_ptr<physics::RigidBodyGravity> ground_force_generator;
-    std::unique_ptr<physics::RigidBodyForceRegistry> force_registry;
+    std::unique_ptr<physics::RigidBodyGravity> gravityForceGenerator;
+    std::unique_ptr<physics::RigidBodyGravity> groundForceGenerator;
+    std::unique_ptr<physics::RigidBodyForceRegistry> forceRegistry;
     
 public:
     GameMap(int row, int col);
@@ -55,15 +55,15 @@ public:
     GameMap(int row, int col, Circle *up, Circle *down, Circle *right, Circle *left);
     ~GameMap();
 
-    int get_world_map_row() const;
-    int get_world_map_col() const;
+    int getWorldMapRow() const;
+    int getWorldMapCol() const;
     
     void init();
 
-    sf::Sprite* get_background_sprite();
+    sf::Sprite* getBackgroundSprite();
 
-    std::vector<LandscapeEntity *> get_landscapes();
-    void add_landscape(LandscapeEntity* entity);
+    std::vector<LandscapeEntity *> getLandscapes();
+    void addLandscape(LandscapeEntity* entity);
     bool isExitableFromLeft() const;
     bool isExitableFromRight() const;
     bool isExitableFromTop() const;
@@ -74,29 +74,29 @@ public:
     void setIsExitableFromTop(bool flag);
     void setIsExitableFromBottom(bool flag);
 
-    Player *get_player();
-    physics::RigidBodyForceRegistry *get_force_registry() const;
-    void set_player(std::shared_ptr<Player> new_player);
-    void remove_player();
-    std::vector<NPCEnemy *> get_enemies();
-    void add_enemy(NPCEnemy *enemy);
-    void remove_enemy_at_index(int i);
-    void remove_enemy(NPCEnemy *enemy);
-    void remove_all_enemies();
+    Player *getPlayer();
+    physics::RigidBodyForceRegistry *getForceRegistry() const;
+    void setPlayer(std::shared_ptr<Player> newPlayer);
+    void removePlayer();
+    std::vector<NPCEnemy *> getEnemies();
+    void addEnemy(NPCEnemy *enemy);
+    void removeEnemyAtIndex(int i);
+    void removeEnemy(NPCEnemy *enemy);
+    void removeAllEnemies();
 
-    void set_top_exit_circle(Circle *circle);
-    void set_bottom_exit_circle(Circle *circle);
-    void set_right_exit_circle(Circle *circle);
-    void set_left_exit_circle(Circle *circle);
+    void setTopExitCircle(Circle *circle);
+    void setBottomExitCircle(Circle *circle);
+    void setRightExitCircle(Circle *circle);
+    void setLeftExitCircle(Circle *circle);
 
     Circle *getTopExitCircle();
     Circle *getBottomExitCircle();
     Circle *getRightExitCircle();
     Circle *getLeftExitCircle();
 
-    static real generate_random(int min, int max);
+    static real generateRandom(int min, int max);
 
-    void resolve_collisions(real dt);
+    void resolveCollisions(real dt);
     void update(real dt);
     
     bool operator ==(const GameMap& map) const;

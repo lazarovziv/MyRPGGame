@@ -12,19 +12,19 @@ public:
      TextureLoader(TextureLoader& loader) = delete;
      void operator=(const TextureLoader&) = delete;
      
-     static TextureLoader* get_instance() {
+     static TextureLoader* getInstance() {
          if (instance == nullptr) {
              instance = new TextureLoader();
          }
          return instance;
      }
 
-     static void dispose_instance() {
+     static void disposeInstance() {
          delete instance;
          instance = nullptr;
      }
      
-     static sf::Texture load_texture(const char* path) {
+     static sf::Texture loadTexture(const char* path) {
          sf::Texture texture;
          if (texture.loadFromFile(path)) {
              std::cout << "Texture loaded properly." << std::endl;

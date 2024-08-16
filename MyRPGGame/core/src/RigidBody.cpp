@@ -1,4 +1,4 @@
-#include "RigidBody.hpp"
+#include "../include/RigidBody.hpp"
 
 namespace physics {
 
@@ -6,109 +6,109 @@ namespace physics {
         position = std::make_unique<Vector>(x, y, z);
         velocity = std::make_unique<Vector>(0, 0);
         acceleration = std::make_unique<Vector>(0, 0);
-        force_accumulator = std::make_unique<Vector>(0, 0);
+        forceAccumulator = std::make_unique<Vector>(0, 0);
         restitution = 0.69;
-        set_mass(mass);
-        body_type = type;
+        setMass(mass);
+        bodyType = type;
         damping = 0.995;
     }
 
-    Vector RigidBody::get_velocity() {
+    Vector RigidBody::getVelocity() {
         return (*velocity);
     }
 
-    Vector RigidBody::get_acceleration() {
+    Vector RigidBody::getAcceleration() {
         return (*acceleration);
     }
 
-    Vector &RigidBody::get_position() {
+    Vector &RigidBody::getPosition() {
         return *position;
     }
 
-    real RigidBody::get_restitution() const {
+    real RigidBody::getRestitution() const {
         return restitution;
     }
 
-    real RigidBody::get_mass() const {
+    real RigidBody::getMass() const {
         return mass;
     }
 
-    real RigidBody::get_inverse_mass() const {
-        return inverse_mass;
+    real RigidBody::getInverseMass() const {
+        return inverseMass;
     }
 
-    RigidBodyType RigidBody::get_body_type() const {
-        return body_type;
+    RigidBodyType RigidBody::getBodyType() const {
+        return bodyType;
     }
 
-    bool RigidBody::has_finite_mass() const {
-        return !infinite_mass;
+    bool RigidBody::hasFiniteMass() const {
+        return !infiniteMass;
     }
 
-    void RigidBody::set_position(const real x, const real y, const real z) {
+    void RigidBody::setPosition(const real x, const real y, const real z) {
         position->x = x;
         position->y = y;
         position->z = z;
     }
 
-    void RigidBody::set_position(const physics::Vector &other) {
+    void RigidBody::setPosition(const physics::Vector &other) {
         position->x = other.x;
         position->y = other.y;
         position->z = other.z;
     }
 
-    void RigidBody::set_mass(const real value) {
+    void RigidBody::setMass(const real value) {
         if (value == Constants::REAL_MAX) {
             this->mass = value;
-            inverse_mass = 0;
-            infinite_mass = true;
+            inverseMass = 0;
+            infiniteMass = true;
             return;
         }
         this->mass = value;
-        inverse_mass = 1 / value;
+        inverseMass = 1 / value;
         // just updated mass to be finite
-        infinite_mass = false;
+        infiniteMass = false;
     }
 
-    void RigidBody::scale_velocity(const real amount) {
+    void RigidBody::scaleVelocity(const real amount) {
         (*velocity) *= amount;
     }
 
-    void RigidBody::set_restitution(const real e) {
+    void RigidBody::setRestitution(const real e) {
         restitution = e;
     }
 
-    void RigidBody::increment_velocity(const Vector &v) {
+    void RigidBody::incrementVelocity(const Vector &v) {
         (*velocity) += v;
     }
 
-    void RigidBody::increment_acceleration(const real amount) {
+    void RigidBody::incrementAcceleration(const real amount) {
         (*acceleration) += amount;
     }
 
-    void RigidBody::increment_acceleration(const Vector amount) {
+    void RigidBody::incrementAcceleration(const Vector amount) {
         (*acceleration) += amount;
     }
 
-    void RigidBody::reset_force_accumulator() {
-        force_accumulator->reset_coordinates();
+    void RigidBody::resetForceAccumulator() {
+        forceAccumulator->resetCoordinates();
     }
 
     // needs to be called before the rigid body is integrated (before changing its position)
-    void RigidBody::add_force(const physics::Vector &force) {
-        (*force_accumulator) += force; // * mass * Constants::RIGID_BODY_FORCE_SCALE;
+    void RigidBody::addForce(const physics::Vector &force) {
+        (*forceAccumulator) += force; // * mass * Constants::RIGID_BODY_FORCE_SCALE;
     }
 
-    void RigidBody::reset_velocity() {
-        velocity->reset_coordinates();
+    void RigidBody::resetVelocity() {
+        velocity->resetCoordinates();
     }
 
-    void RigidBody::reset_acceleration() {
-        acceleration->reset_coordinates();
+    void RigidBody::resetAcceleration() {
+        acceleration->resetCoordinates();
     }
 
     void RigidBody::operator +=(const Vector &other) {
-        if (RigidBody::infinite_mass) return;
+        if (RigidBody::infiniteMass) return;
         (*position) += other;
     }
 
@@ -117,9 +117,9 @@ namespace physics {
     }
 
     // checking if this is colliding with other, meaning immovable bodies aren't colliding at others, it's others colliding with them
-    bool RigidBody::is_colliding_with(physics::RigidBody &other, const real dt) {
+    bool RigidBody::isCollidingWith(physics::RigidBody &other, const real dt) {
         // no collision for immovable bodies
-        if (infinite_mass) return false;
+        if (infiniteMass) return false;
         real currentPenetrationDistance = Constants::REAL_MAX;
         // scalar value for the final force direction normal
         real finalPenetrationDistance = Constants::REAL_MAX;
@@ -128,31 +128,31 @@ namespace physics {
         // axis we're currently checking 
         Vector currentAxis = Vector::ZERO;
         // handle collision by the types of the shapes
-        if (body_type == RigidBodyType::CIRCLE) {
+        if (bodyType == RigidBodyType::CIRCLE) {
             Circle &thisCircle = (Circle&) *this;
 
-            if (other.body_type == RigidBodyType::CIRCLE) {
+            if (other.bodyType == RigidBodyType::CIRCLE) {
                 Circle &otherCircle = (Circle&) other;
-                finalAxis = otherCircle.get_position() - thisCircle.get_position();
-                finalPenetrationDistance = thisCircle.get_radius() + otherCircle.get_radius() - finalAxis.norma();
+                finalAxis = otherCircle.getPosition() - thisCircle.getPosition();
+                finalPenetrationDistance = thisCircle.getRadius() + otherCircle.getRadius() - finalAxis.norma();
                 
-            } else if (other.body_type == RigidBodyType::POLYGON) {
+            } else if (other.bodyType == RigidBodyType::POLYGON) {
                 Polygon &otherPolygon = (Polygon&) other;
                 
             }
-        } else if (body_type == RigidBodyType::POLYGON) {
+        } else if (bodyType == RigidBodyType::POLYGON) {
             Polygon &thisPolygon = (Polygon&) *this;
 
-            if (other.body_type == RigidBodyType::CIRCLE) {
+            if (other.bodyType == RigidBodyType::CIRCLE) {
 
-            } else if (other.body_type == RigidBodyType::POLYGON) {
+            } else if (other.bodyType == RigidBodyType::POLYGON) {
                 Polygon &otherPolygon = (Polygon&) other;
-                size_t thisVerticesSize = thisPolygon.get_num_vertices();
-                size_t otherVerticesSize = otherPolygon.get_num_vertices();
+                size_t thisVerticesSize = thisPolygon.getNumVertices();
+                size_t otherVerticesSize = otherPolygon.getNumVertices();
                 // checking this edges
                 for (int i = 0; i < thisVerticesSize; i++) {
-                    Vector thisVertexA = thisPolygon.get_vertices()->at(i);
-                    Vector thisVertexB = thisPolygon.get_vertices()->at((i+1) % thisVerticesSize);
+                    Vector thisVertexA = thisPolygon.getVertices()->at(i);
+                    Vector thisVertexB = thisPolygon.getVertices()->at((i+1) % thisVerticesSize);
                     // edge is A to B
                     Vector thisEdge = thisVertexB - thisVertexA;
                     // getting the normal (i.e the orthogonal vector to the edge), which is the currentAxis we're checking
@@ -164,13 +164,13 @@ namespace physics {
                     real otherMin = Constants::REAL_MAX;
                     real otherMax = Constants::REAL_MIN;
                     // traversing all edgs in this polygon and get min/max values
-                    for (auto &vertex : *(thisPolygon.get_vertices())) {
+                    for (auto &vertex : *(thisPolygon.getVertices())) {
                         real currentDotProduct = vertex.dot(currentAxis);
                         thisMin = std::min(thisMin, currentDotProduct);
                         thisMax = std::max(thisMax, currentDotProduct);
                     }
                     // traversing all edges in the other shape and check for overlap
-                    for (auto &vertex : *(otherPolygon.get_vertices())) {
+                    for (auto &vertex : *(otherPolygon.getVertices())) {
                         real currentDotProduct = vertex.dot(currentAxis);
                         otherMin = std::min(otherMin, currentDotProduct);
                         otherMax = std::max(otherMax, currentDotProduct);
@@ -194,22 +194,22 @@ namespace physics {
         // Vector thisToOther = other.getPosition() - this->getPosition();
         // if (thisToOther.dot(finalAxis) < 0) finalAxis *= -1;
         // not found a separating axis, which means it's colliding
-        real e = std::min(this->get_restitution(), other.get_restitution());
+        real e = std::min(this->getRestitution(), other.getRestitution());
         real j = -((real) 1 + e) * -finalPenetrationDistance; // for smoother visuals but not accurate
         // real j = -((real) 1 + e) * relativeVelocity.dot(axisNormalized);
-        j /= this->get_inverse_mass() + other.get_inverse_mass(); // if axis wasn't normalized, magnitude was needed in the denominator, multiplied by the inverse masses sum
+        j /= this->getInverseMass() + other.getInverseMass(); // if axis wasn't normalized, magnitude was needed in the denominator, multiplied by the inverse masses sum
         Vector impulse = finalAxis * j;
-        if (this->has_finite_mass()) this->increment_velocity(impulse * -this->get_inverse_mass() * dt);
-        if (other.has_finite_mass()) other.increment_velocity(impulse * other.get_inverse_mass() * dt); // incremented position before
+        if (this->hasFiniteMass()) this->incrementVelocity(impulse * -this->getInverseMass() * dt);
+        if (other.hasFiniteMass()) other.incrementVelocity(impulse * other.getInverseMass() * dt); // incremented position before
         return true;
     }
 
     void RigidBody::update(const real dt) {
         // updating infinite mass bodies is irrelevant
-        if (infinite_mass) return;
+        if (infiniteMass) return;
         // acceleration = force * mass
         // Vector resultingAcceleration = (*acceleration);
-        (*acceleration) += (*force_accumulator) * inverse_mass;
+        (*acceleration) += (*forceAccumulator) * inverseMass;
         // if (acceleration->magnitude() > Constants::ACCELERATION_MAGNITUDE_MAX) (*acceleration) *= 0.85;
         (*velocity) += (*acceleration) * dt;
         // drag
@@ -217,19 +217,19 @@ namespace physics {
         // applying forces to the position
         (*position) += (*velocity) * dt + (*acceleration) * dt * dt * (real) 0.5;
         // defined friction
-        scale_velocity((real) 1/Constants::GRASS_FRICTION_DEGRADATION_CONSTANT);
+        scaleVelocity((real) 1/Constants::GRASS_FRICTION_DEGRADATION_CONSTANT);
         // clamping velocity
-        if (velocity->magnitude() < Constants::VELOCITY_MAGNITUDE_MIN) velocity->reset_coordinates();
+        if (velocity->magnitude() < Constants::VELOCITY_MAGNITUDE_MIN) velocity->resetCoordinates();
         // if (velocity->magnitude() > Constants::VELOCITY_MAGNITUDE_MAX) scaleVelocity((real) 0.95);
-        reset_force_accumulator();
-        reset_acceleration();
+        resetForceAccumulator();
+        resetAcceleration();
     }
 
     Circle::Circle(real x, real y, real z, real r) : RigidBody(RigidBodyType::CIRCLE, x, y, z) {
         radius = r;
     }
 
-    real Circle::get_radius() const {
+    real Circle::getRadius() const {
         return Circle::radius;
     }
 
@@ -282,11 +282,11 @@ namespace physics {
         }
     }
 
-    std::vector<Vector>* Polygon::get_vertices() {
+    std::vector<Vector>* Polygon::getVertices() {
         return Polygon::vertices.get();
     }
 
-    size_t Polygon::get_num_vertices() const {
+    size_t Polygon::getNumVertices() const {
         return Polygon::vertices->size();
     }
 
@@ -320,19 +320,19 @@ namespace physics {
         bias = y1 - slope * x1;
     }
 
-    Vector Line::get_first() const {
+    Vector Line::getFirst() const {
         return Line::p1;
     }
 
-    Vector Line::get_second() const {
+    Vector Line::getSecond() const {
         return Line::p2;
     }
 
-    real Line::get_slope() const {
+    real Line::getSlope() const {
         return Line::slope;
     }
 
-    real Line::get_bias() const {
+    real Line::getBias() const {
         return Line::bias;
     }
 }

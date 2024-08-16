@@ -28,8 +28,8 @@ namespace physics {
         real dot(const Vector &other) const;
         real distance(const Vector &other) const;
 
-        void reset_coordinates();
-        void print_coordinates() const;
+        void resetCoordinates();
+        void printCoordinates() const;
 
         void operator +=(const Vector &other);
         void operator *=(const Vector &other);

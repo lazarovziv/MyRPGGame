@@ -1,107 +1,107 @@
-#include "Menu.hpp"
+#include "../include/Menu.hpp"
 
 Menu::Menu(std::vector<std::string> itemsStrings, bool gameMenu) {
     if (!font.loadFromFile(Constants::GRAPHICS_BASE_PATH + "fonts/arial.ttf")) {
         std::cout << "Failed to load font!" << std::endl;
         // TODO: throw error
     }
-    menu_items = new std::vector<sf::Text>();
-    sub_menus_indices_map = new std::map<int, Menu*>();
-    init_menu_items(itemsStrings);
-    this->game_menu = gameMenu;
+    menuItems = new std::vector<sf::Text>();
+    subMenusIndexesMap = new std::map<int, Menu*>();
+    initMenuItems(itemsStrings);
+    this->gameMenu = gameMenu;
 }
 
-void Menu::init_menu_items(std::vector<std::string> itemsStrings) {
-    num_menu_items = (int) itemsStrings.size();
-    current_menu_items_idx = 0;
+void Menu::initMenuItems(std::vector<std::string> itemsStrings) {
+    numOfMenuItems = (int) itemsStrings.size();
+    currentMenuItemIdx = 0;
 
-    for (int i = 0; i < num_menu_items; i++) {
+    for (int i = 0; i < numOfMenuItems; i++) {
         sf::Text text;
         text.setString(itemsStrings.at(i));
         text.setFont(font);
-        if (i == current_menu_items_idx) text.setFillColor(sf::Color::Blue);
+        if (i == currentMenuItemIdx) text.setFillColor(sf::Color::Blue);
         else text.setFillColor(sf::Color::White);
-        menu_items->push_back(text);
+        menuItems->push_back(text);
     }
 }
 
-std::vector<sf::Text>* Menu::get_menu_items() {
-    return menu_items;
+std::vector<sf::Text>* Menu::getMenuItems() {
+    return menuItems;
 }
 
-std::vector<Menu*>* Menu::get_sub_menus() {
-    return sub_menus;
+std::vector<Menu*>* Menu::getSubMenus() {
+    return subMenus;
 }
 
 void Menu::render(real currentWindowX, real currentWindowY, sf::RenderWindow *window) {
-    for (int i = 0; i < num_menu_items; i++) {
+    for (int i = 0; i < numOfMenuItems; i++) {
         // center all items
-        menu_items->at(i).setPosition(currentWindowX, currentWindowY + (i-1) * Constants::TILE_SIZE);
-        menu_items->at(i).setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
-        menu_items->at(i).setStyle(sf::Text::Bold | sf::Text::Italic);
-        window->draw(menu_items->at(i));
+        menuItems->at(i).setPosition(currentWindowX, currentWindowY + (i-1) * Constants::TILE_SIZE);
+        menuItems->at(i).setOrigin(Constants::TILE_SIZE/2, Constants::TILE_SIZE/2);
+        menuItems->at(i).setStyle(sf::Text::Bold | sf::Text::Italic);
+        window->draw(menuItems->at(i));
     }
 }
 
-void Menu::move_up() {
-    menu_items->at(current_menu_items_idx).setFillColor(sf::Color::White);
+void Menu::moveUp() {
+    menuItems->at(currentMenuItemIdx).setFillColor(sf::Color::White);
     // if at the top, go to last
-    if (current_menu_items_idx == 0) current_menu_items_idx = num_menu_items - 1;
-    else current_menu_items_idx--;
-    menu_items->at(current_menu_items_idx).setFillColor(sf::Color::Blue);
+    if (currentMenuItemIdx == 0) currentMenuItemIdx = numOfMenuItems - 1;
+    else currentMenuItemIdx--;
+    menuItems->at(currentMenuItemIdx).setFillColor(sf::Color::Blue);
 }
 
-void Menu::move_down() {
-    menu_items->at(current_menu_items_idx).setFillColor(sf::Color::White);
+void Menu::moveDown() {
+    menuItems->at(currentMenuItemIdx).setFillColor(sf::Color::White);
     // if at the bottom, go to first
-    if (current_menu_items_idx == num_menu_items - 1) current_menu_items_idx = 0;
-    else current_menu_items_idx++;
-    menu_items->at(current_menu_items_idx).setFillColor(sf::Color::Blue);
+    if (currentMenuItemIdx == numOfMenuItems - 1) currentMenuItemIdx = 0;
+    else currentMenuItemIdx++;
+    menuItems->at(currentMenuItemIdx).setFillColor(sf::Color::Blue);
 }
 
-void Menu::reset_menu_item_idx() {
-    menu_items->at(current_menu_items_idx).setFillColor(sf::Color::White);
-    current_menu_items_idx = 0;
-    menu_items->at(current_menu_items_idx).setFillColor(sf::Color::Blue);
+void Menu::resetMenuItemIdx() {
+    menuItems->at(currentMenuItemIdx).setFillColor(sf::Color::White);
+    currentMenuItemIdx = 0;
+    menuItems->at(currentMenuItemIdx).setFillColor(sf::Color::Blue);
 }
 
-bool Menu::has_sub_menus() {
-    return sub_menus != nullptr;
+bool Menu::hasSubMenus() {
+    return subMenus != nullptr;
 }
 
-void Menu::add_sub_menu(Menu *menu, int menuIndex) {
-    if (sub_menus == nullptr) {
-        sub_menus = new std::vector<Menu*>();
+void Menu::addSubMenu(Menu *menu, int menuIndex) {
+    if (subMenus == nullptr) {
+        subMenus = new std::vector<Menu*>();
     }
-    sub_menus->push_back(menu);
-    (*sub_menus_indices_map)[menuIndex] = menu;
-    menu->set_parent_menu(this);
+    subMenus->push_back(menu);
+    (*subMenusIndexesMap)[menuIndex] = menu;
+    menu->setParentMenu(this);
 }
 
-Menu* Menu::get_parent_menu() {
-    return parent_menu;
+Menu* Menu::getParentMenu() {
+    return parentMenu;
 }
 
-void Menu::set_is_active(bool flag) {
+void Menu::setIsActive(bool flag) {
     active = flag;
 }
 
-bool Menu::is_active() {
+bool Menu::isActive() {
     return active;
 }
 
-bool Menu::is_game_menu() {
-    return game_menu;
+bool Menu::isGameMenu() {
+    return gameMenu;
 }
 
-void Menu::set_parent_menu(Menu *menu) {
-    parent_menu = menu;
+void Menu::setParentMenu(Menu *menu) {
+    parentMenu = menu;
 }
 
 int Menu::execute(Constants::GameState *state) {
-    return current_menu_items_idx;
+    return currentMenuItemIdx;
 }
 
-bool Menu::is_sub_menu_item() {
-    return (*sub_menus_indices_map)[current_menu_items_idx] != nullptr;
+bool Menu::isSubMenuItem() {
+    return (*subMenusIndexesMap)[currentMenuItemIdx] != nullptr;
 }

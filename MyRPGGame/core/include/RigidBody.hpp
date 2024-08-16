@@ -17,49 +17,49 @@ namespace physics {
         std::unique_ptr<Vector> velocity;
         std::unique_ptr<Vector> acceleration;
         // used for D'Alembert rule, accumulating all forces that act on the rigid body
-        std::unique_ptr<Vector> force_accumulator;
+        std::unique_ptr<Vector> forceAccumulator;
         real restitution;
-        bool infinite_mass = true;
+        bool infiniteMass = true;
         real mass = 1;
         // 1/mass
-        real inverse_mass;
+        real inverseMass;
         real damping;
 
-        RigidBodyType body_type;
+        RigidBodyType bodyType;
 
     public:
         RigidBody(RigidBodyType type, real x, real y, real z = 0, real mass = 1);
         ~RigidBody() = default;
 
-        Vector &get_position();
-        Vector get_velocity();
-        Vector get_acceleration();
+        Vector &getPosition();
+        Vector getVelocity();
+        Vector getAcceleration();
         // TODO: add [[nodiscard]] for all return const functions to avoid calling the function w/o using its' return value
-        real get_restitution() const;
-        real get_mass() const;
-        real get_inverse_mass() const;
-        RigidBodyType get_body_type() const;
+        real getRestitution() const;
+        real getMass() const;
+        real getInverseMass() const;
+        RigidBodyType getBodyType() const;
 
-        bool has_finite_mass() const;
+        bool hasFiniteMass() const;
 
-        void set_position(real x, real y, real z = 0);
-        void set_position(const Vector &other);
-        void set_restitution(real e);
-        void set_mass(real mass); // set inverseMass accordingly
-        void scale_velocity(real amount);
-        void increment_velocity(const Vector &v);
-        void increment_acceleration(real amount);
-        void increment_acceleration(Vector amount);
-        void reset_force_accumulator();
-        void add_force(const Vector &force);
+        void setPosition(real x, real y, real z = 0);
+        void setPosition(const Vector &other);
+        void setRestitution(real e);
+        void setMass(real mass); // set inverseMass accordingly
+        void scaleVelocity(real amount);
+        void incrementVelocity(const Vector &v);
+        void incrementAcceleration(real amount);
+        void incrementAcceleration(Vector amount);
+        void resetForceAccumulator();
+        void addForce(const Vector &force);
 
-        void reset_velocity();
-        void reset_acceleration();
+        void resetVelocity();
+        void resetAcceleration();
 
         void operator +=(const Vector &other); // refers to the position vector!!
 
         real distance(const RigidBody &other) const;
-        bool is_colliding_with(RigidBody &other, real dt);
+        bool isCollidingWith(RigidBody &other, real dt);
 
         void update(real dt);
     };
@@ -71,7 +71,7 @@ namespace physics {
     public:
         explicit Circle(real x, real y, real z, real r = 1);
 
-        real get_radius() const;
+        real getRadius() const;
     };
 
     // the position field for this class is it's center
@@ -81,10 +81,10 @@ namespace physics {
 
     public:
         explicit Polygon(real x, real y, real z,
-        const std::vector<Vector> &new_vertices, real mass);
+        const std::vector<Vector> &newVertices, real mass);
 
-        std::vector<Vector>* get_vertices();
-        size_t get_num_vertices() const;
+        std::vector<Vector>* getVertices();
+        size_t getNumVertices() const;
 
         // bodies for collision when entities trying to exit map's bounds
         static Polygon RIGHT_END_SCREEN;
@@ -106,10 +106,10 @@ namespace physics {
         explicit Line(real x1, real y1, real x2, real y2, real mass = Constants::REAL_MAX);
         // TODO: add static lines for edges of screen if things will work well
 
-        Vector get_first() const;
-        Vector get_second() const;
-        real get_slope() const;
-        real get_bias() const;
+        Vector getFirst() const;
+        Vector getSecond() const;
+        real getSlope() const;
+        real getBias() const;
 
         static Line RIGHT_END_SCREEN;
         static Line LEFT_END_SCREEN;

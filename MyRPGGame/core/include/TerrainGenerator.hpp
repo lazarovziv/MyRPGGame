@@ -13,8 +13,8 @@ public:
     ~TerrainGenerator() = default;
 
     real interpolate(real a0, real a1, real w);
-    sf::Vector2f random_gradient(int position_x, int position_y);
-    real dot_grid_gradient(int position_x, int position_y, real x, real y);
+    sf::Vector2f randomGradient(int positionX, int positionY);
+    real dotGridGradient(int positionX, int positionY, real x, real y);
     real perlin(real x, real y);
 
     sf::Uint8* generate(int width, int height);

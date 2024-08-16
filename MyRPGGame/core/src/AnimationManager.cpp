@@ -1,62 +1,83 @@
-#include "AnimationManager.hpp"
+#include "../include/AnimationManager.hpp"
 
 AnimationManager::AnimationManager(GameEntity *entity) {
     this->entity = entity;
 //    weapon = this->entity->getWeapon();
-    movement_states.push_back("idle");
-    movement_states.push_back("jump");
-    movement_states.push_back("run");
-    movement_states.push_back("sitting");
-    movement_states.push_back("walk");
-    movement_states.push_back("climb");
-    movement_states.push_back("combat_1h_backslash");
-    movement_states.push_back("combat_1h_halfslash");
-    movement_states.push_back("combat_1h_idle");
-    movement_states.push_back("combat_1h_slash");
+    movementStates.push_back("idle");
+    movementStates.push_back("jump");
+    movementStates.push_back("run");
+    movementStates.push_back("sitting");
+    movementStates.push_back("walk");
+    movementStates.push_back("climb");
+    movementStates.push_back("combat_1h_backslash");
+    movementStates.push_back("combat_1h_halfslash");
+    movementStates.push_back("combat_1h_idle");
+    movementStates.push_back("combat_1h_slash");
     // filling the increment functions pointers map
-    EntityMovementState entity_movement_state = EntityMovementState::CLIMB;
-    while (entity_movement_state != EntityMovementState::IDLE) {
-        increment_movement_state_count_function_map[entity_movement_state] = [&]() { increment_count(entity_movement_state); };
-        movement_state_counter_map[entity_movement_state] = 0;
+    incrementMovementStateCountFunctionMap[EntityMovementState::IDLE] = [this]() { incrementIdleCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::JUMP] = [this]() { incrementJumpCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::RUN] = [this]() { incrementRunCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::SITTING] = [this]() { incrementSittingCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::WALK] = [this]() { incrementWalkCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::CLIMB] = [this]() { incrementClimbCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] =
+            [this]() { incrementCombatIdleOneHandedCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] =
+            [this]() { incrementCombatSlashOneHandedCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] =
+            [this]() { incrementCombatBackslashOneHandedCount(); };
+    incrementMovementStateCountFunctionMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] =
+            [this]() { incrementCombatHalfslashOneHandedCount(); };
 
-        entity_movement_state = static_cast<EntityMovementState>(static_cast<int>(entity_movement_state) + 1);
-    }
-    // entity_movement_state is now IDLE so we can use it here as the while loop stopped
-    increment_movement_state_count_function_map[entity_movement_state] = [&]() { increment_count(entity_movement_state); };
-    movement_state_counter_map[entity_movement_state] = 0;
+    movementStateCounterMap[EntityMovementState::IDLE] = 0;
+    movementStateCounterMap[EntityMovementState::JUMP] = 0;
+    movementStateCounterMap[EntityMovementState::RUN] = 0;
+    movementStateCounterMap[EntityMovementState::SITTING] = 0;
+    movementStateCounterMap[EntityMovementState::WALK] = 0;
+    movementStateCounterMap[EntityMovementState::CLIMB] = 0;
+    movementStateCounterMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = 0;
+    movementStateCounterMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = 0;
+    movementStateCounterMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = 0;
+    movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
 }
 
-void AnimationManager::add_body_path(std::string path) {
-    body_paths.push_back(path);
-    animations_paths[AnimationPathType::BODY] = path;
-    animations_paths[AnimationPathType::HEAD] = Constants::GRAPHICS_BASE_PATH + "Characters/Head/masculine/idle.png";
+void AnimationManager::addBodyPath(std::string path) {
+    bodyPaths.push_back(path);
+    animationsPaths[AnimationPathType::BODY] = path;
+    animationsPaths[AnimationPathType::HEAD] = Constants::GRAPHICS_BASE_PATH + "Characters/Head/masculine/idle.png";
 }
 
-void AnimationManager::add_clothing_path(std::string path) {
-    clothing_paths.push_back(path);
+void AnimationManager::addClothingPath(std::string path) {
+    clothingPaths.push_back(path);
 }
 
-void AnimationManager::add_head_accessories_path(std::string path) {
-    head_accessories_paths.push_back(path);
+void AnimationManager::addHeadAccessoriesPath(std::string path) {
+    headAccessoriesPaths.push_back(path);
 }
 
-void AnimationManager::add_hair_path(std::string path) {
-    hair_paths.push_back(path);
+void AnimationManager::addHairPath(std::string path) {
+    hairPaths.push_back(path);
 }
 
-void AnimationManager::set_entity(GameEntity *entity) {
+void AnimationManager::setEntity(GameEntity *entity) {
     this->entity = entity;
 }
 
-int AnimationManager::get_movement_state_count(EntityMovementState state) {
-    return movement_state_counter_map[state];
+int AnimationManager::getMovementStateCount(EntityMovementState state) {
+    return movementStateCounterMap[state];
 }
 
-bool AnimationManager::is_movement_state(const EntityMovementState state) const {
+/*
+enum class EntityMovementState {
+    CLIMB, COMBAT_BACKSLASH_ONE_HANDED, COMBAT_HALFSLASH_ONE_HANDED,
+    COMBAT_IDLE_ONE_HANDED, COMBAT_SLASH_ONE_HANDED, WALK, JUMP, SITTING, RUN, IDLE };
+*/
+
+bool AnimationManager::isMovementState(const EntityMovementState state) const {
     return state == EntityMovementState::WALK || state == EntityMovementState::RUN;
 }
 
-bool AnimationManager::is_combat_state(const EntityMovementState state) const {
+bool AnimationManager::isCombatState(const EntityMovementState state) const {
     return state == EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED ||
     state == EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED ||
     state == EntityMovementState::COMBAT_IDLE_ONE_HANDED ||
@@ -67,71 +88,152 @@ bool AnimationManager::is_combat_state(const EntityMovementState state) const {
 // TODO: make function animate only, implement all intervals elsewhere (repository for example)
 // TODO: move all unnecessary logic from animate method to another function which is not in the animation manager, i.e, make animation manager manage animation ONLY
 void AnimationManager::animate(const EntityMovementState state, const real dt) {
-    entity->set_movement_state(state);
+    entity->setMovementState(state);
     // using the row generically
-    int direction_row = entity->get_move_directions_sprites_map()[entity->get_move_direction()] - 1;
-    int entity_movement_state_col_count = entity->get_movement_state_col_count(state);
-    bool is_last_column = entity_movement_state_col_count == Constants::MOVEMENT_STATE_NUM_COLS.at(state) - 1;
+    int directionRow = entity->getMoveDirectionsSpritesMap()[entity->getMoveDirection()] - 1;
+    int entityMovementStateColCount = entity->getMovementStateColCount(state);
+    bool isLastColumn = entityMovementStateColCount == Constants::MOVEMENT_STATE_NUM_COLS.at(state) - 1;
     bool animate = false;
-    real origin_scale = 0.5;
-    int tile_scale = 1;
+    real originScale = 0.5;
+    int tileScale = 1;
     // function pointers for after the animation has finished (one sprite of it)
-    void (GameEntity::*finish_function)() = nullptr;
-    void (GameEntity::*non_finish_function)() = nullptr;
+    void (GameEntity::*finishFunction)() = nullptr;
+    void (GameEntity::*nonFinishFunction)() = nullptr;
 
     if (state == EntityMovementState::IDLE) {
-        animate = entity->can_animate_idle();
-        direction_row += entity->get_movement_state_row_map()[state];
-    } else if (is_movement_state(state)) {
-        animate = entity->is_moving() && entity->can_animate_movement();
-        direction_row += entity->get_movement_state_row_map()[state];
-        finish_function = &GameEntity::reset_moving;
-    } else if (is_combat_state(state)) {
-        animate = entity->is_attacking() && entity->can_attack();
-        origin_scale = 1;
-        tile_scale = 2;
-        direction_row *= tile_scale;
-        direction_row += Constants::COMBAT_SLASH_ONE_HANDED_ROW;
-        finish_function = &GameEntity::reset_attacking;
-        non_finish_function = &GameEntity::reset_battle_interval;
+        animate = entity->canAnimateIdle();
+        directionRow += entity->getMovementStateRowMap()[state];
+    } else if (isMovementState(state)) {
+        animate = entity->isMoving() && entity->canAnimateMovement();
+        directionRow += entity->getMovementStateRowMap()[state];
+        finishFunction = &GameEntity::resetMoving;
+    } else if (isCombatState(state)) {
+        animate = entity->isAttacking() && entity->canAttack();
+        originScale = 1;
+        tileScale = 2;
+        directionRow *= tileScale;
+        directionRow += Constants::COMBAT_SLASH_ONE_HANDED_ROW;
+        finishFunction = &GameEntity::resetAttacking;
+        nonFinishFunction = &GameEntity::resetBattleInterval;
     } else if (state == EntityMovementState::JUMP) {
-        animate = entity->is_jumping() && entity->can_animate_jump();
-        direction_row += entity->get_movement_state_row_map()[state];
-        finish_function = &GameEntity::reset_jumping;
-        non_finish_function = &GameEntity::reset_jump_height_since_on_ground_interval;
+        animate = entity->isJumping() && entity->canAnimateJump();
+        directionRow += entity->getMovementStateRowMap()[state];
+        finishFunction = &GameEntity::resetJumping;
+        nonFinishFunction = &GameEntity::resetJumpHeightSinceOnGroundInterval;
     }
 
     if (animate) {
-        entity->increment_movement_state_col_count(state);
-        entity->set_int_rect_position(entity_movement_state_col_count * Constants::TILE_SIZE * tile_scale,
-                                               direction_row * Constants::TILE_SIZE,
-                                               Constants::TILE_SIZE * tile_scale,
-                                               Constants::TILE_SIZE * tile_scale);
-        entity->get_sprite()->setOrigin(Constants::TILE_SIZE * origin_scale, Constants::TILE_SIZE * origin_scale);
+        entity->incrementMovementStateColCount(state);
+        entity->setIntRectPosition(entityMovementStateColCount * Constants::TILE_SIZE * tileScale,
+                                               directionRow * Constants::TILE_SIZE,
+                                               Constants::TILE_SIZE * tileScale,
+                                               Constants::TILE_SIZE * tileScale);
+        entity->getSprite()->setOrigin(Constants::TILE_SIZE * originScale, Constants::TILE_SIZE * originScale);
         // reached end of the entire animation
-        if (is_last_column && finish_function != nullptr) {
-            (*entity.*finish_function)();
-        } else if (non_finish_function != nullptr) (*entity.*non_finish_function)();
+        if (isLastColumn && finishFunction != nullptr) {
+            (*entity.*finishFunction)();
+        } else if (nonFinishFunction != nullptr) (*entity.*nonFinishFunction)();
     }
 }
 
-bool AnimationManager::generate_body() {
-    for (std::string movement_state : movement_states) {
-        std::cout << movement_state << std::endl;
+bool AnimationManager::generateBody() {
+    for (std::string movementState : movementStates) {
+        std::cout << movementState << std::endl;
         // using the generate_image.py script
-        create_image(Constants::GRAPHICS_BASE_PATH + "Characters/Body/masculine/" + movement_state + ".png",
-                    Constants::GRAPHICS_BASE_PATH + "Characters/Head/masculine/" + movement_state + ".png",
-                    movement_state);
+        createImage(Constants::GRAPHICS_BASE_PATH + "Characters/Body/masculine/" + movementState + ".png",
+                    Constants::GRAPHICS_BASE_PATH + "Characters/Head/masculine/" + movementState + ".png",
+                    movementState);
     }
     return true;
 }
 
-void AnimationManager::increment_count(const EntityMovementState state) {
-    if (movement_state_counter_map[state] < Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
-        movement_state_counter_map[state] = movement_state_counter_map[state] + 1;
+void AnimationManager::incrementCount(const EntityMovementState state) {
+    if (movementStateCounterMap[state] < Constants::MOVEMENT_STATE_NUM_COLS.at(state)-1) {
+        movementStateCounterMap[state] = movementStateCounterMap[state] + 1;
         return;
     }
-    movement_state_counter_map[state] = 0;
+    movementStateCounterMap[state] = 0;
+}
+
+
+void AnimationManager::incrementIdleCount() {
+    if (movementStateCounterMap[EntityMovementState::IDLE] < Constants::IDLE_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::IDLE] = movementStateCounterMap[EntityMovementState::IDLE] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::IDLE] = 0;
+}
+
+void AnimationManager::incrementClimbCount() {
+    if (movementStateCounterMap[EntityMovementState::CLIMB] < Constants::CLIMB_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::CLIMB] = movementStateCounterMap[EntityMovementState::CLIMB] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::CLIMB] = 0;
+}
+
+void AnimationManager::incrementJumpCount() {
+    if (movementStateCounterMap[EntityMovementState::JUMP] < Constants::JUMP_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::JUMP] = movementStateCounterMap[EntityMovementState::JUMP] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::JUMP] = 0;
+}
+
+void AnimationManager::incrementRunCount() {
+    if (movementStateCounterMap[EntityMovementState::RUN] < Constants::RUN_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::RUN] = movementStateCounterMap[EntityMovementState::RUN] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::RUN] = 0;
+}
+
+void AnimationManager::incrementSittingCount() {
+    if (movementStateCounterMap[EntityMovementState::SITTING] < Constants::SITTING_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::SITTING] = movementStateCounterMap[EntityMovementState::SITTING] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::SITTING] = 0;
+}
+
+void AnimationManager::incrementWalkCount() {
+    if (movementStateCounterMap[EntityMovementState::WALK] < Constants::WALK_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::WALK] = movementStateCounterMap[EntityMovementState::WALK] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::WALK] = 0;
+}
+
+void AnimationManager::incrementCombatIdleOneHandedCount() {
+    if (movementStateCounterMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] < Constants::COMBAT_IDLE_ONE_HANDED_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = movementStateCounterMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::COMBAT_IDLE_ONE_HANDED] = 0;
+}
+
+void AnimationManager::incrementCombatSlashOneHandedCount() {
+    if (movementStateCounterMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] < Constants::COMBAT_SLASH_ONE_HANDED_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = movementStateCounterMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::COMBAT_SLASH_ONE_HANDED] = 0;
+}
+
+void AnimationManager::incrementCombatBackslashOneHandedCount() {
+    if (movementStateCounterMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] < Constants::COMBAT_BACKSLASH_ONE_HANDED_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = movementStateCounterMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::COMBAT_BACKSLASH_ONE_HANDED] = 0;
+}
+
+void AnimationManager::incrementCombatHalfslashOneHandedCount() {
+    if (movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] < Constants::COMBAT_HALFSLASH_ONE_HANDED_NUM_COLS-1) {
+        movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] + 1;
+        return;
+    }
+    movementStateCounterMap[EntityMovementState::COMBAT_HALFSLASH_ONE_HANDED] = 0;
 }
 
 //// create for idle, walk, run, climb, combat, jump, sit, expressions

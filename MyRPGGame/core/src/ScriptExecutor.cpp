@@ -1,6 +1,6 @@
-#include "ScriptExecutor.hpp"
+#include "../include/ScriptExecutor.hpp"
 
-bool create_image(std::string backgroundFileName, std::string foregroundFileName, std::string postfixName) {
+bool createImage(std::string backgroundFileName, std::string foregroundFileName, std::string postfixName) {
     std::string command = "eval \"$(conda shell.bash hook)\" && python3 ../generate_image.py ";
     // don't need to add "../graphics/" because we're changing directory to graphics/player in the script
     std::string cmd = command + backgroundFileName + " " + foregroundFileName + " " + postfixName;
@@ -17,7 +17,7 @@ bool create_image(std::string backgroundFileName, std::string foregroundFileName
     return result == 0;
 }
 
-bool concatenate_images(std::string pathToImagesDir, std::string finalName) {
+bool concatenateImages(std::string pathToImagesDir, std::string finalName) {
     // command to concatenate all images in pathToImagesDir in a 768x2368 image to later use the createImage function to overlay it on top of the current spritesheet
     std::string cmd = "montage -mode concatenate -tile x10 -geometry +0+0 -background none ../graphics/" + pathToImagesDir + "/*.png ../graphics/player/" + finalName + ".png";
 
@@ -31,6 +31,6 @@ bool concatenate_images(std::string pathToImagesDir, std::string finalName) {
     return result == 0;
 }
 
-bool concat_and_create(std::string pathToImagesDir, std::string finalName, std::string backgroundFileName, std::string foregroundFileName, std::string postfixName) {
-    return concatenate_images(pathToImagesDir, finalName) && create_image(backgroundFileName, foregroundFileName, postfixName);
+bool concatAndCreate(std::string pathToImagesDir, std::string finalName, std::string backgroundFileName, std::string foregroundFileName, std::string postfixName) {
+    return concatenateImages(pathToImagesDir, finalName) && createImage(backgroundFileName, foregroundFileName, postfixName);
 }
