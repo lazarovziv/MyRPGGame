@@ -1,12 +1,23 @@
 #include <fstream>
 #include <vector>
+#include <array>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+
 namespace shaders {
 
-    std::vector<char> read_file(const std::string &file_name);
+    struct Vertex {
+        glm::vec2 position;
+        glm::vec3 color;
 
-    VkShaderModule create_shader_module(const VkDevice &device, const std::vector<char> &code);
+        static VkVertexInputBindingDescription getBindingDescriptions();
+        static std::array<VkVertexInputAttributeDescription, 2> getAttributesDescriptions();
+    };
+
+    std::vector<char> readFile(const std::string &fileName);
+
+    VkShaderModule createShaderModule(const VkDevice &device, const std::vector<char> &code);
 }

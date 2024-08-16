@@ -28,115 +28,133 @@ const uint32_t HEIGHT = 1080;
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
-const std::vector<const char*> validation_layers = {
+const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };
 
-const std::vector<const char*> device_extensions = {
+const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 struct QueueFamilyIndices {
-    std::optional<uint32_t> graphics_family;
-    std::optional<uint32_t> present_family;
+    std::optional<uint32_t> graphicsFamily;
+    std::optional<uint32_t> presentFamily;
     
     bool is_complete() {
-        return graphics_family.has_value() && present_family.has_value();
+        return graphicsFamily.has_value() && presentFamily.has_value();
     }
 };
 
 struct SwapChainSupportDetails {
     VkSurfaceCapabilitiesKHR capabilities;
     std::vector<VkSurfaceFormatKHR> formats;
-    std::vector<VkPresentModeKHR> present_modes;
+    std::vector<VkPresentModeKHR> presentModes;
 };
 
 #ifdef NDEBUG
-    const bool enable_validation_layers = false;
+    const bool enableValidationLayers = false;
 #else
-    const bool enable_validation_layers = false;
+    const bool enableValidationLayers = false;
 #endif
 
 class Window {
 private:
     GLFWwindow *window_;
     VkInstance instance;
-    VkPhysicalDevice physical_device = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
 
-    VkSwapchainKHR swap_chain;
-    VkFormat swap_chain_image_format;
-    VkExtent2D swap_chain_extent;
+    VkSwapchainKHR swapChain;
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
 
-    std::vector<VkImage> swap_chain_images;
-    std::vector<VkImageView> swap_chain_image_views;
-    std::vector<VkFramebuffer> swap_chain_frame_buffers;
+    std::vector<VkImage> swapChainImages;
+    std::vector<VkImageView> swapChainImageViews;
+    std::vector<VkFramebuffer> swapChainFrameBuffers;
 
     // connects between the devices and the GLFW window
     VkSurfaceKHR surface;
 
     // interacting with queues
-    VkQueue graphics_queue; // automatically cleaned up when device is destroyed
-    VkQueue present_queue;
+    VkQueue graphicsQueue; // automatically cleaned up when device is destroyed
+    VkQueue presentQueue;
 
-    VkPipelineLayout pipeline_layout;
-    VkRenderPass render_pass;
+    VkPipelineLayout pipelineLayout;
+    VkRenderPass renderPass;
 
-    VkPipeline graphics_pipeline;
+    VkPipeline graphicsPipeline;
 
     // used for drawing
-    VkCommandPool command_pool;
-    std::vector<VkCommandBuffer> command_buffers;
+    VkCommandPool commandPool;
+    VkBuffer vertexBuffer;
+    VkDeviceMemory vertexBufferMemory;
+    std::vector<VkCommandBuffer> commandBuffers;
 
-    uint32_t current_frame = 0;
+    uint32_t currentFrame = 0;
 
-    std::vector<VkSemaphore> image_available_semaphores;
-    std::vector<VkSemaphore> render_finished_semaphores;
-    std::vector<VkFence> in_flight_fences;
+    std::vector<VkSemaphore> imageAvailableSemaphores;
+    std::vector<VkSemaphore> renderFinishedSemaphores;
+    std::vector<VkFence> inFlightFences;
+
+    bool frameBufferResized = false;
+
+    const std::vector<shaders::Vertex> vertices = {
+        { { 0.0f, -0.75f }, { 1.0f, 1.0f, 1.0f } },
+        { { 0.8f, 0.25f }, { 0.0f, 1.0f, 0.0f } },
+        { { -0.1f, 0.9f }, { 0.0f, 0.0f, 1.0f } },
+    };
 
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
-    void init_window();
-    void init_vulkan();
-    void main_loop();
+    void initWindow();
+
+    static void frameBufferResizeCallback(GLFWwindow *window, int width, int height);
+    void initVulkan();
+    void mainLoop();
     void cleanup();
 
-    void create_instance();
-    void create_surface();
-    void create_swap_chain();
-    void create_frame_buffers();
+    void createInstance();
+    void createSurface();
+    void createSwapChain();
+    void createFrameBuffers();
 
-    void create_image_views();
-    void create_graphics_pipeline();
-    void create_render_pass();
+    void createImageViews();
+    void createGraphicsPipeline();
+    void createRenderPass();
 
-    void create_command_pool();
-    void create_command_buffers();
+    void createCommandPool();
+    void createVertexBuffer();
+    void createCommandBuffers();
 
-    void create_sync_objects();
+    void createSyncObjects();
 
-    void record_command_buffer(const VkCommandBuffer &command_buffer, const uint32_t image_index);
+    void recreateSwapChain();
+    void cleanupSwapChain();
 
-    void pick_physical_device();
-    bool is_device_suitable(const VkPhysicalDevice &device);
-    int rate_device_suitability(const VkPhysicalDevice &device);
+    void recordCommandBuffer(const VkCommandBuffer &commandBuffer, const uint32_t imageIndex);
 
-    void create_logical_device();
+    void pickPhysicalDevice();
+    bool isDeviceSuitable(const VkPhysicalDevice &device);
+    int rateDeviceSuitability(const VkPhysicalDevice &device);
 
-    QueueFamilyIndices find_queue_families(const VkPhysicalDevice &device);
-    SwapChainSupportDetails query_swap_chain_support(const VkPhysicalDevice &device);
+    void createLogicalDevice();
 
-    VkSurfaceFormatKHR choose_swap_surface_format(const std::vector<VkSurfaceFormatKHR> &formats);
-    VkPresentModeKHR choose_swap_present_mode(const std::vector<VkPresentModeKHR> &present_modes);
-    VkExtent2D choose_swap_extent(const VkSurfaceCapabilitiesKHR &capabilities);
+    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &device);
+    SwapChainSupportDetails querySwapChainSupport(const VkPhysicalDevice &device);
 
-    bool check_device_extension_support(const VkPhysicalDevice &device);
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &formats);
+    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &presentModes);
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
+
+    bool checkDeviceExtensionSupport(const VkPhysicalDevice &device);
     // validation
-    bool check_validation_layer_support();
-    std::vector<const char*> get_required_extensions();
+    bool checkValidationLayerSupport();
+    std::vector<const char*> getRequiredExtensions();
 
-    void draw_frame();
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+    void drawFrame();
 
 public:
     Window() = default;
