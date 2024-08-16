@@ -1,0 +1,18 @@
+{
+    "name": "MyRPGGame",
+    "image": "zivlazarov/rpg:1.3",
+    "mounts": [
+//        "source=.,target=/workspace,type=bind",
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind",
+        "source=/dev,target=/dev,type=bind"
+    ],
+    "runArgs": [
+        "--device=/dev/input",
+        "--device=/dev/dri"
+    ],
+    "workspaceFolder": "/workspace",
+    "containerEnv": {
+        "DISPLAY": ":1",
+        "LIBGL_ALWAYS_INDIRECT": "1"
+    }
+}

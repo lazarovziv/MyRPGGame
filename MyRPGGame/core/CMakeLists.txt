@@ -5,7 +5,8 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 # getting the SFML files
 include(FetchContent)
-FetchContent_Declare(SFML
+FetchContent_Declare(
+        SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
         GIT_TAG 2.6.0)
 FetchContent_MakeAvailable(SFML)
@@ -30,6 +31,9 @@ set(SOURCE_FILES src/Circle.cpp src/MenuRepository.cpp
 
 # creating the library
 add_library(main_lib ${SOURCE_FILES})
+
+# avoiding the use of ../ when including .hpp files for core files
+target_include_directories(main_lib PRIVATE include/)
 
 # linking sfml
 target_link_libraries(main_lib sfml-system
@@ -60,4 +64,5 @@ endif()
 
 # creating the executable
 add_executable(main src/main.cpp)
+target_include_directories(main PRIVATE include/)
 target_link_libraries(main main_lib)

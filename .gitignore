@@ -14,3 +14,4 @@ build/
 cmake-build-debug/
 MyRPGGame.xcodeproj
 Testing
+MyRPGGame/vulkan/shaders/*.spv
