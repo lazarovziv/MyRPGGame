@@ -5,7 +5,8 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 # getting the SFML files
 include(FetchContent)
-FetchContent_Declare(SFML
+FetchContent_Declare(
+        SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
         GIT_TAG 2.6.0)
 FetchContent_MakeAvailable(SFML)
@@ -26,11 +27,14 @@ set(SOURCE_FILES src/Circle.cpp src/MenuRepository.cpp
         src/Graph.cpp
         src/GameEntityRepository.cpp src/PlayerRepository.cpp src/EnemyRepository.cpp
         src/generateImg.cpp
-        #generate_img_cpp.cpp
+        src/NavigateFiles.cpp
 )
 
 # creating the library
 add_library(main_lib ${SOURCE_FILES})
+
+# avoiding the use of ../ when including .hpp files for core files
+target_include_directories(main_lib PRIVATE include/)
 
 # linking sfml
 target_link_libraries(main_lib sfml-system
@@ -39,15 +43,14 @@ target_link_libraries(main_lib sfml-system
         sfml-audio
         sfml-network)
 
-
-# finding and linking Vulkan
-find_package(Vulkan REQUIRED)
-target_link_libraries(main_lib Vulkan::Vulkan)
-
-#finding and linking OpenCV
+if (UNIX)
+        # finding and linking Vulkan
+        find_package(Vulkan REQUIRED)
+        target_link_libraries(main_lib Vulkan::Vulkan)
+endif (UNIX)
+# finding and linking OpenCV
 find_package(OpenCV REQUIRED)
 target_link_libraries(main_lib ${OpenCV_LIBS})
-
 
 # additional configurations for windows to use the right .dll file in the linking process
 if (WIN32)
@@ -62,4 +65,5 @@ endif()
 
 # creating the executable
 add_executable(main src/main.cpp)
+target_include_directories(main PRIVATE include/)
 target_link_libraries(main main_lib)

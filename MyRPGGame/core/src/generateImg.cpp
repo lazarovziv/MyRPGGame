@@ -2,6 +2,10 @@
 
 
 void alphaBlend(std::string bgPngFileName, std::string fgPngFileName,std::string blended_image_name) {
+
+    bgPngFileName = navToRoot(bgPngFileName);
+    fgPngFileName = navToRoot(fgPngFileName);
+
     cv::Mat background = imread(bgPngFileName, cv::IMREAD_UNCHANGED);
     cv::Mat foreground = imread(fgPngFileName, cv::IMREAD_UNCHANGED);
 
@@ -39,6 +43,7 @@ void alphaBlend(std::string bgPngFileName, std::string fgPngFileName,std::string
     cv::merge(result_channels, result);
 
     std::string final_img_name = "../../../graphics/player/spritesheets/blended_images/" + blended_image_name;
+
     cv::imwrite(final_img_name,result);
 }
 
