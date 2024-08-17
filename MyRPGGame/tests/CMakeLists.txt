@@ -17,6 +17,8 @@ endif ()
 set(TESTS_SOURCE_FILES
         src/main.cpp
         src/GoogleTestSample.cpp
+        src/GenerateImgTest.cpp
+        src/NavigateFilesTest.cpp
 )
 
 # adding to the tests executable

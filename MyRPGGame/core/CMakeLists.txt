@@ -26,7 +26,8 @@ set(SOURCE_FILES src/Circle.cpp src/MenuRepository.cpp
         src/Projectile.cpp src/TextureLoader.cpp src/Weapon.cpp
         src/Graph.cpp
         src/GameEntityRepository.cpp src/PlayerRepository.cpp src/EnemyRepository.cpp
-        #generate_img_cpp.cpp
+        src/generateImg.cpp
+        src/NavigateFiles.cpp
 )
 
 # creating the library
@@ -48,8 +49,8 @@ if (UNIX)
         target_link_libraries(main_lib Vulkan::Vulkan)
 endif (UNIX)
 # finding and linking OpenCV
-#find_package(OpenCV REQUIRED)
-#target_link_libraries(main ${OpenCV_LIBS})
+find_package(OpenCV REQUIRED)
+target_link_libraries(main_lib ${OpenCV_LIBS})
 
 # additional configurations for windows to use the right .dll file in the linking process
 if (WIN32)

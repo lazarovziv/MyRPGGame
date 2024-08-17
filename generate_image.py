@@ -50,3 +50,5 @@ def layer_pngs(bg_png_file_name, fg_png_file_name, postfix_name):
 
 
 layer_pngs(sys.argv[1], sys.argv[2], sys.argv[3])
+
+
