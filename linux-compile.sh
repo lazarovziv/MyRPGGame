@@ -30,16 +30,15 @@ elif [ "$COMMAND" == "test" ]; then
 
 elif [ "$COMMAND" == "vulkan" ]; then
   if [ "$FIRST_OPTION" == "run" ]; then
-    echo "Compiling and running Vulkan components..."
-    docker run $DOCKER_OPTIONS -w /workspace/MyRPGGame/vulkan $DOCKER_IMAGE \
-      bash -c "echo \"Compiling shaders...\" && glslc shaders/shader.vert -o shaders/vert.spv && \
-      glslc shaders/shader.frag -o shaders/frag.spv && echo \"Shaders compiled!\" && \
-      cmake -D GLFW_BUILD_X11=1 -D GLFW_BUILD_WAYLAND=0 -B build/ -G \"Ninja\" . && \
-      cmake --build build/ $SECOND_OPTION && cd build/bin && ./vulkan"
+    RUN_MESSAGE="Compiling and running Vulkan components..."
+    RUN_OPTIONS="&& cd build/bin && ./vulkan"
   else
-    echo "Compiling Vulkan components..."
-    #  docker-compose -f dockerfiles/linux-compile-docker-compose.yml up
-    docker run $DOCKER_OPTIONS $DOCKER_IMAGE \
-      bash -c "cmake -D GLFW_BUILD_X11=1 -D GLFW_BUILD_WAYLAND=0 -B build/ -G \"Ninja\" . && cmake --build build/"
+    RUN_MESSAGE="Compiling Vulkan components..."
+    RUN_OPTIONS=""
   fi
+
+  echo $RUN_MESSAGE
+  docker run $DOCKER_OPTIONS -w /workspace/MyRPGGame/vulkan $DOCKER_IMAGE \
+    bash -c "cmake -D GLFW_BUILD_X11=1 -D GLFW_BUILD_WAYLAND=0 -B build/ -G \"Ninja\" . && \
+    cmake --build build/ $SECOND_OPTION $RUN_OPTIONS"
 fi

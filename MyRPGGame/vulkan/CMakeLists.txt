@@ -29,7 +29,8 @@ FetchContent_Declare(glm
         GIT_TAG 1.0.1)
 FetchContent_MakeAvailable(glm)
 
-set(VULKAN_SOURCE_FILES src/Window.cpp
+set(VULKAN_SOURCE_FILES 
+        src/Window.cpp
         src/ShadersHelper.cpp
 )
 
@@ -65,3 +66,33 @@ target_link_libraries(vulkan vulkan_lib)
 # use C++ 17 compilation features - can be good for templates, overriding constructors, etc.
 target_compile_features(vulkan PRIVATE cxx_std_17)
 set_property(TARGET vulkan PROPERTY COMPILE_WARNING_AS_ERROR OFF)
+
+# finding the shaders compiler
+find_program(GLSLC_EXECUTABLE glslc)
+if (NOT GLSLC_EXECUTABLE)
+    message(FATAL_ERROR "glslc not found. Please install the Vulkan SDK.")
+endif()
+
+# this seems to do it all, but seems overly complex.
+# -- add_custom_command: OUTPUT variety to create xxx.spv file dependent on the shader.xxx files
+# -- add_custom_target: new target dependent on xxx.spv files
+# -- add_dependencies: to associate my_shaders target with main ${VULCAN_PROJECT_NAME} target
+function(compile_shader NAME)
+    # create a variable of all compiled shader file names, for add_custom_target
+    set(SPV_FILES ${SPV_FILES} ${CMAKE_SOURCE_DIR}/shaders/${NAME}.spv PARENT_SCOPE)
+
+    # Build a command to compile each xxx.spv from shader.xxx source
+    add_custom_command(
+        OUTPUT ${CMAKE_SOURCE_DIR}/shaders/${NAME}.spv
+        COMMAND ${VULKAN_SDK_PATH}/bin/glslc shader.${NAME} -o ${NAME}.spv
+        MAIN_DEPENDENCY shaders/shader.${NAME}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/shaders
+        COMMENT "Compiling shader.${NAME} to ${NAME}.spv"
+    )
+endfunction()
+
+# call these before add_custom_target, to build the SPV_FILES variable
+compile_shader(vert)
+compile_shader(frag)
+add_custom_target(shaders DEPENDS ${SPV_FILES})
+add_dependencies(vulkan shaders)
