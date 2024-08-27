@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 int main() {
-    Window window{};
+    vk::Window window{};
 
     try {
         window.run();
