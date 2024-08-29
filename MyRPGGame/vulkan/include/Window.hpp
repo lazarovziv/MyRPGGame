@@ -86,11 +86,14 @@ namespace vk {
 
         VkPipeline graphicsPipeline;
 
-        // used for drawing
-        VkCommandPool commandPool;
-        VkBuffer vertexBuffer;
-        VkDeviceMemory vertexBufferMemory;
-        std::vector<VkCommandBuffer> commandBuffers;
+    // used for drawing
+    VkCommandPool commandPool;
+    std::vector<VkCommandBuffer> commandBuffers;
+
+    VkBuffer vertexBuffer;
+    VkDeviceMemory vertexBufferMemory;
+    VkBuffer indexBuffer;
+    VkDeviceMemory indexBufferMemory;
 
         uint32_t currentFrame = 0;
 
@@ -100,11 +103,16 @@ namespace vk {
 
         bool frameBufferResized = false;
 
-        const std::vector<shaders::Vertex> vertices = {
-            { { 0.0f, -0.75f }, { 1.0f, 1.0f, 1.0f } },
-            { { 0.8f, 0.25f }, { 0.0f, 1.0f, 0.0f } },
-            { { -0.1f, 0.9f }, { 0.0f, 0.0f, 1.0f } },
-        };
+    const std::vector<shaders::Vertex> vertices = {
+        { { -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
+        { { 0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f } },
+        { { 0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } },
+        { { -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } },
+    };
+
+    const std::vector<uint16_t> indices = {
+        0, 1, 2, 2, 3, 0
+    };
 
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
@@ -125,9 +133,13 @@ namespace vk {
         void createGraphicsPipeline();
         void createRenderPass();
 
-        void createCommandPool();
-        void createVertexBuffer();
-        void createCommandBuffers();
+    void createCommandPool();
+    void createVertexBuffer();
+    void createBuffer(VkDeviceSize &size, VkBufferUsageFlags usage,
+                    VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
+    void createIndexBuffer();
+    void copyBuffer(VkBuffer &srcBuffer, VkBuffer &dstBuffer, VkDeviceSize size);
+    void createCommandBuffers();
 
         void createSyncObjects();
 
