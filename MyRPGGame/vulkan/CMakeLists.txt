@@ -32,6 +32,7 @@ FetchContent_MakeAvailable(glm)
 set(VULKAN_SOURCE_FILES 
         src/Window.cpp
         src/ShadersHelper.cpp
+        src/Device.cpp
 )
 
 add_library(vulkan_lib ${VULKAN_SOURCE_FILES})

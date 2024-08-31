@@ -1,8 +1,8 @@
-#include "../include/Window.hpp"
+#include "Window.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
-#include <cstdlib>
 
 int main() {
     vk::Window window{};
