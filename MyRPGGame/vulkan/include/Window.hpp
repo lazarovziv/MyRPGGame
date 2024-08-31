@@ -13,8 +13,8 @@
 #include <limits>
 #include <memory>
 
-#include "Device.hpp"
 #include "ShadersHelper.hpp"
+#include "Device.hpp"
 
 namespace vk {
 

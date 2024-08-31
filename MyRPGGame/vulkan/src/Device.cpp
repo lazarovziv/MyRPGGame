@@ -73,9 +73,9 @@ void Device::createLogicalDevice() {
     deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-    if (enableValidationLayers) {
-        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-        deviceCreateInfo.ppEnabledLayerNames = validationLayers.data();
+    if (vk::enableValidationLayers) {
+        deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(vk::validationLayers.size());
+        deviceCreateInfo.ppEnabledLayerNames = vk::validationLayers.data();
     } else {
         deviceCreateInfo.enabledLayerCount = 0;
     }
@@ -108,29 +108,6 @@ bool Device::checkDeviceExtensionSupport(VkPhysicalDevice device) {
     }
     // if the list is not empty, there's a required extensions that's not available
     return requiredExtensions.empty();
-}
-
-bool Device::checkValidationLayerSupport() {
-    uint32_t layerCount;
-    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-    std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-    for (const char *layerName : validationLayers) {
-        bool layerFound = false;
-
-        for (const auto &layerProperties : availableLayers) {
-            if (strcmp(layerName, layerProperties.layerName) == 0) {
-                layerFound = true;
-                break;
-            }
-        }
-        if (!layerFound)
-            return false;
-    }
-
-    return true;
 }
 
 SwapChainSupportDetails Device::querySwapChainSupport(VkPhysicalDevice physDevice) {

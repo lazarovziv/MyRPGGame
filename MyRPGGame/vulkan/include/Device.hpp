@@ -1,14 +1,12 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#include <cstring>
 #include <map>
 #include <optional>
 #include <set>
 #include <stdexcept>
 #include <vector>
+
+#include "Validation.hpp"
 
 namespace vk {
 
@@ -25,15 +23,7 @@ struct SwapChainSupportDetails {
     std::vector<VkPresentModeKHR> presentModes;
 };
 
-const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-
 const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-
-#ifdef NDEBUG
-const bool enableValidationLayers = true;
-#else
-const bool enableValidationLayers = false;
-#endif
 
 class Device {
   private:
@@ -50,13 +40,14 @@ class Device {
     void createLogicalDevice();
 
     bool checkDeviceExtensionSupport(VkPhysicalDevice physDevice);
-    bool checkValidationLayerSupport();
 
     bool isDeviceSuitable(VkPhysicalDevice physDevice);
     int rateDeviceSuitability(VkPhysicalDevice physDevice);
 
   public:
     Device(VkInstance &instance, VkSurfaceKHR &surface);
+    Device(const Device &) = delete;
+    Device &operator=(const Device &) = delete;
     ~Device();
 
     VkDevice getDevice() { return device; }

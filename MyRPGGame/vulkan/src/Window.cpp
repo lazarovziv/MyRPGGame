@@ -104,9 +104,9 @@ void Window::cleanup() {
 }
 
 void Window::createInstance() {
-    // if (enableValidationLayers && !device->checkValidationLayerSupport()) {
-    //     throw std::runtime_error("Validation layers requested, but not available!");
-    // }
+    if (vk::enableValidationLayers && !checkValidationLayerSupport()) {
+        throw std::runtime_error("Validation layers requested, but not available!");
+    }
 
     // information about the application
     VkApplicationInfo appInfo{};
@@ -124,7 +124,7 @@ void Window::createInstance() {
     instanceCreateInfo.pApplicationInfo = &appInfo;
 
     // include validation layers if enabled
-    if (enableValidationLayers) {
+    if (vk::enableValidationLayers) {
         instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
         instanceCreateInfo.ppEnabledLayerNames = validationLayers.data();
     } else
@@ -846,7 +846,7 @@ std::vector<const char *> Window::getRequiredExtensions() {
 
     std::vector<const char *> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
-    if (enableValidationLayers)
+    if (vk::enableValidationLayers)
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
     return extensions;
