@@ -46,6 +46,7 @@ namespace RpgAPI
                 var enemies = await repo.GetAllNPCEnemies();
 
                 if (enemies == null)
+                    //return Results.NotFound(new ArgumentException(nameof(enemies)));
                     throw new ArgumentNullException(nameof(enemies));
 
                 return Results.Ok(mapper.Map<IEnumerable<GameEntityReadDto>>(enemies));
