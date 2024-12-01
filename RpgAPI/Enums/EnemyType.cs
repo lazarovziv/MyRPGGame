@@ -1,9 +1,8 @@
-﻿namespace RpgAPI.Enums
+﻿namespace RpgAPI.Enums;
+
+public enum EnemyType
 {
-    public enum EnemyType
-    {
-        Worm,
-        Snake,
-        Bird
-    }
+    Worm,
+    Snake,
+    Bird
 }

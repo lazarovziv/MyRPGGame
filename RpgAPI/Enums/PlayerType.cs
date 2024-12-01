@@ -1,9 +1,8 @@
-﻿namespace RpgAPI.Enums
+﻿namespace RpgAPI.Enums;
+
+public enum PlayerType
 {
-    public enum PlayerType
-    {
-        Knight,
-        Wizard,
-        Dual_Wielder
-    }
+    Knight,
+    Wizard,
+    Dual_Wielder
 }
