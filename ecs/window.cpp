@@ -9,12 +9,10 @@ Window::Window(const uint32_t width, const uint32_t height, const std::string &t
     window->setFramerateLimit(0);
     cameraView = std::make_unique<sf::View>(sf::Vector2f{0, 0}, sf::Vector2f(width, height));
 
-    cameraView->setCenter(sf::Vector2f(0, 0));
+    cameraView->setCenter(sf::Vector2f(mrg::Constants::WINDOW_WIDTH / 2, mrg::Constants::WINDOW_HEIGHT));
     window->setView(*cameraView);
 }
 
-void Window::render(entt::registry &registry) {
-    renderer.render(window, cameraView, registry);
-}
+void Window::render(entt::registry &registry) { renderer.render(window, cameraView, registry); }
 
 } // namespace mrg

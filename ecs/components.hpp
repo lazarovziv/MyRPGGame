@@ -13,13 +13,14 @@
 
 namespace mrg {
 
-// will hold all graphics data that's relevant for rendering, as the renderer will take all other necessary components
+// will hold all graphics data that's relevant for rendering, as the renderer will take all other necessary
+// components
 struct Renderable {
     sf::Texture texture;
     sf::Sprite sprite;
 
     Renderable(const std::string &textureFilePath);
-    void setPosition(const glm::vec3 &position);
+    void setPosition(glm::vec3 &position);
 };
 
 struct Transform {
