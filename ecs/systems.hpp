@@ -20,4 +20,13 @@ class Renderer {
     void render(std::unique_ptr<sf::RenderWindow> &window, std::unique_ptr<sf::View> &cameraView,
                 const entt::registry &registry);
 };
+
+class Movement {
+  public:
+    Movement(const Movement &) = delete;
+    void operator=(const Movement &) = delete;
+
+    void move(entt::registry &registry, real dt);
+};
+
 } // namespace mrg

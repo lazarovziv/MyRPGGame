@@ -45,4 +45,13 @@ struct Gravity {
     glm::vec3 force = glm::vec3{0, (real)9.81, 0};
 };
 
+struct Moveable {
+    glm::vec3 direction;
+};
+
+// placeholder for indicating whether an entity is the player's entity
+struct Player {
+
+};
+
 } // namespace mrg
