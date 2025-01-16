@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <glm/vec3.hpp>
 
 #include "components.hpp"
 
@@ -8,6 +9,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace mrg {
 
@@ -17,7 +19,7 @@ class Renderer {
     Renderer(const Renderer &) = delete;
     void operator=(const Renderer &) = delete;
 
-    void render(std::unique_ptr<sf::RenderWindow> &window, std::unique_ptr<sf::View> &cameraView,
+    void render(const std::unique_ptr<sf::RenderWindow> &window, std::unique_ptr<sf::View> &cameraView,
                 const entt::registry &registry);
 };
 
@@ -26,7 +28,31 @@ class Movement {
     Movement(const Movement &) = delete;
     void operator=(const Movement &) = delete;
 
-    void move(entt::registry &registry, real dt);
+    void update(entt::registry &registry, real dt);
+};
+
+class Physics {
+  private:
+    // don't check with entities with a manhattan distance that is larger than gridCheckMaxDistance
+    static constexpr real gridCheckMaxDistance = Constants::TILE_SIZE * 2;
+
+  public:
+    Physics() = default;
+    Physics(const Physics &) = delete;
+    void operator=(const Physics &) = delete;
+
+    bool resolveCollisions(RigidBody &rbFirst, RigidBody &rbSecond, Transform &tFirst, Transform &tSecond, real dt);
+    void update(entt::registry &registry, real dt);
+
+  private:
+    inline int manhattanDistance(const int firstX, const int secondX, const int firstY, const int secondY) const {
+        int x = firstX - secondX;
+        // taking the absolute value
+        x = x >= 0 ? x : -x;
+        int y = firstY - secondY;
+        y = y >= 0 ? y : -y;
+        return x + y;
+    };
 };
 
 } // namespace mrg

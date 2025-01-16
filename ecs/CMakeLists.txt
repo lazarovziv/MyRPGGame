@@ -1,20 +1,26 @@
 cmake_minimum_required(VERSION 3.28)
 
 # macOS configurations
-if(APPLE)
+if (APPLE)
     set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 
     # architecture of the cpu
     set(CMAKE_OSX_ARCHITECTURE arm64)
     set(CMAKE_PREFIX_PATH /opt/homebrew)
 
+    # profiler
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error")
     # for ignoring the compiler error that fails the compilation
     add_compile_options(
-        "-Wno-error=unused-command-line-argument"
+            "-Wno-error=unused-command-line-argument"
+            "-fno-omit-frame-pointer"
+            "-mno-omit-leaf-frame-pointer"
     )
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-endif()
+endif ()
 
 # using C++ 17
 set(CMAKE_CXX_STANDARD 17)
@@ -23,9 +29,9 @@ set(CMAKE_CXX_STANDARD 17)
 project(ECS)
 
 file(GLOB SOURCE_FILES
-    "*.cpp"
-    "*.hpp"
-    "*.h"
+        "*.cpp"
+        "*.hpp"
+        "*.h"
 )
 
 add_executable(ecs ${SOURCE_FILES})
