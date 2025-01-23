@@ -36,4 +36,16 @@ jobs:
 
     - name: Compile
       run: cmake -B build/ . && cmake --build build/
+
+  windows-ecs-compile:
+    runs-on: windows-latest
+    steps:
+      - name: Initial checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Compile
+        working-directory: ./ecs
+        run: cmake -B build/ . && cmake --build build/
       

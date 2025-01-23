@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <map>
+#include <unordered_map>
 
 #include "Constants.h"
 
@@ -20,12 +20,12 @@ class SpriteManager {
 
     static SpriteManager* getInstance() noexcept;
 
-    unsigned int getRowOfEntityActionState(const Constants::EntityActionState actionState);
-    unsigned int getColOfDirection(const Constants::SpriteMoveDirection moveDirection) const noexcept;
+    unsigned int getRowOfEntityActionState(Constants::EntityActionState actionState);
+    unsigned int getColOfDirection(Constants::SpriteMoveDirection moveDirection) const noexcept;
 
   private:
     SpriteManager() noexcept;
-    void insertEntityActionState(const Constants::EntityActionState state, const unsigned int row) noexcept;
+    void insertEntityActionState(Constants::EntityActionState state, unsigned int row) noexcept;
 };
 
 } // namespace rg
