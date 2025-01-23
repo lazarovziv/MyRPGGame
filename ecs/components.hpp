@@ -3,6 +3,7 @@
 #include "Constants.h"
 
 #include <SFML/Graphics.hpp>
+#include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 
 // std
@@ -11,32 +12,40 @@
 #include <map>
 #include <string>
 
-namespace mrg {
+namespace rg {
 
-// will hold all graphics data that's relevant for rendering, as the renderer will take all other necessary
-// components
+// will hold all graphics data that's relevant for rendering, as the renderer
+// will take all other necessary components
 struct Renderable {
     sf::Sprite sprite;
 
-    explicit Renderable(const std::string& textureFilePath);
+    Renderable() = delete;
+    explicit Renderable(const std::string& textureFilePath,
+               unsigned int tileSize = Constants::TILE_SIZE,
+               unsigned int row = 33, unsigned int col = 0);
+
     void setPosition(const glm::vec3& position);
+    void setTexture(const std::string& textureFilePath,
+                    unsigned int tileSize, unsigned int row,
+                    unsigned int col);
 };
 
 struct Transform {
-    glm::vec3 position;
-    glm::vec3 rotation;
-    glm::vec3 scale;
+    glm::vec3 position{0, 0, 0};
+    glm::vec3 rotation{0, 0, 0};
+    glm::vec3 scale{0, 0, 0};
     // corresponds to a circle's radius
     real size = static_cast<real>(Constants::TILE_SIZE) / 4;
 
-    Transform() {}
-    Transform(real s);
+    Transform() = default;
+    explicit Transform(real s);
 };
 
 struct RigidBody {
     glm::vec3 velocity{0, 0, 0};
     glm::vec3 acceleration{0, 0, 0};
-    // used for D'Alembert rule, accumulating all forces that act on the rigid body
+    // used for D'Alembert rule, accumulating all forces that act on the rigid
+    // body
     glm::vec3 forceAccumulator{0, 0, 0};
     real restitution;
     real mass = 1;
@@ -44,7 +53,7 @@ struct RigidBody {
     real inverseMass;
     bool infiniteMass = false;
 
-    inline bool hasInfiniteMass() const { return infiniteMass; };
+    bool hasInfiniteMass() const { return infiniteMass; };
 
     static void resetVector(glm::vec3& vec) {
         vec.x = 0;
@@ -82,13 +91,11 @@ struct Gravity {
 struct Moveable {
     glm::vec3 direction{0, 0, 0};
     Constants::SpriteMoveDirection spriteDirection;
-
-
 };
 
 // placeholder for indicating whether an entity is the player's entity
-struct Player {
+struct Player {};
 
-};
+struct Grass {};
 
-} // namespace mrg
+} // namespace rg

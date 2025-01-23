@@ -1,6 +1,8 @@
-#include "TextureManager.h"
+#include "TextureManager.hpp"
 
 #include <stdexcept>
+
+namespace rg {
 
 TextureManager* TextureManager::instance{nullptr};
 
@@ -35,4 +37,6 @@ std::shared_ptr<sf::Texture> TextureManager::retrieveTexture(const std::string& 
         insertTexture(path);
     }
     return texturesMap[path];
+}
+
 }

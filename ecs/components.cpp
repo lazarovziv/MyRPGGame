@@ -1,18 +1,25 @@
 #include "components.hpp"
 
-#include "TextureManager.h"
-
-namespace mrg {
+#include "SpriteManager.hpp"
+#include "TextureManager.hpp"
+namespace rg {
 
 Transform::Transform(const real s) : size{s} {}
 
-Renderable::Renderable(const std::string &texturePath) {
+Renderable::Renderable(const std::string& texturePath, const unsigned int tileSize, const unsigned int row,
+                       const unsigned int col) {
+    unsigned int r = SpriteManager::getInstance()->getRowOfEntityActionState(Constants::EntityActionState::IDLE);
+    unsigned int c = SpriteManager::getInstance()->getColOfDirection(Constants::SpriteMoveDirection::BOTTOM);
+    setTexture(texturePath, tileSize, r, c);
+}
+
+void Renderable::setTexture(const std::string& texturePath, const unsigned int tileSize, const unsigned int row,
+                            const unsigned int col) {
     auto textureManager = TextureManager::getInstance();
-    // shared ptr
     auto texture = textureManager->retrieveTexture(texturePath);
     sprite.setTexture(*texture);
-    sprite.setTextureRect(sf::IntRect(0, 33 * Constants::TILE_SIZE, Constants::TILE_SIZE, Constants::TILE_SIZE));
-    sprite.setOrigin(Constants::TILE_SIZE / 2, Constants::TILE_SIZE / 2);
+    sprite.setTextureRect(sf::IntRect(col * tileSize, row * tileSize, tileSize, tileSize));
+    sprite.setOrigin(tileSize / 2, tileSize / 2);
 }
 
 RigidBody::RigidBody(const real mass) {
@@ -32,4 +39,4 @@ RigidBody::RigidBody(const real mass) {
 
 void Renderable::setPosition(const glm::vec3& position) { sprite.setPosition(position.x, position.y); }
 
-} // namespace mrg
+} // namespace rg
