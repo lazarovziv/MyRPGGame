@@ -22,21 +22,20 @@ int main() {
     prepareSimulation(registry);
 
     entt::entity entity = registry.create();
-    auto& transform = registry.emplace<rg::Transform>(entity);
+    auto& transform = registry.emplace<rg::Transform>(entity, static_cast<real>(rg::Constants::WINDOW_WIDTH) / 2 + 200,
+                                                      static_cast<real>(rg::Constants::WINDOW_HEIGHT) + 100,
+                                                      static_cast<real>(0));
     const std::string& texturePath =
-        rg::Constants::getGraphicsPath("graphics/player/gray_t_shirt_leather_pants_spritesheet.png");
+            rg::Constants::getResourcePath("LPC/player/gray_t_shirt_leather_pants_spritesheet.png");
     auto& renderable = registry.emplace<rg::Renderable>(entity, texturePath);
-    transform.position = glm::vec3{rg::Constants::WINDOW_WIDTH / 2,
-                                   rg::Constants::WINDOW_HEIGHT + 100, 0};
     auto& moveable = registry.emplace<rg::Moveable>(entity);
     auto& rigidBody = registry.emplace<rg::RigidBody>(entity, 0.2);
 
     entt::entity first = registry.create();
-    auto& t = registry.emplace<rg::Transform>(first);
-    const std::string& tPath = rg::Constants::getGraphicsPath("graphics/player/uriel_spritesheet.png");
+    auto& t = registry.emplace<rg::Transform>(first, static_cast<real>(rg::Constants::WINDOW_WIDTH) / 2 + 200,
+                                              static_cast<real>(rg::Constants::WINDOW_HEIGHT), static_cast<real>(0));
+    const std::string& tPath = rg::Constants::getResourcePath("LPC/player/uriel_spritesheet.png");
     auto& ren = registry.emplace<rg::Renderable>(first, tPath);
-    t.position = glm::vec3{rg::Constants::WINDOW_WIDTH / 2 + 200,
-                           rg::Constants::WINDOW_HEIGHT, 0};
     auto& m = registry.emplace<rg::Moveable>(first);
     auto& r = registry.emplace<rg::RigidBody>(first, 1);
 
@@ -44,8 +43,10 @@ int main() {
     rg::Physics physics{};
 
     const std::string& title = "Test";
-    rg::Window window{rg::Constants::WINDOW_WIDTH, rg::Constants::WINDOW_HEIGHT,
-                      title};
+    rg::Window window{
+        rg::Constants::WINDOW_WIDTH, rg::Constants::WINDOW_HEIGHT,
+        title
+    };
     sf::Event event;
 
     bool running = window.isOpen();
@@ -78,6 +79,9 @@ int main() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             direction += leftDirectionVector;
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            dt *= 5;
+        }
 
         rigidBody.addForce(direction);
 
@@ -89,8 +93,8 @@ int main() {
         auto stopTime = std::chrono::high_resolution_clock::now();
 
         dt = std::chrono::duration<real, std::chrono::seconds::period>(
-                 stopTime - startTime)
-                 .count();
+                    stopTime - startTime)
+                .count();
 
         window.render(transform.position, registry);
 

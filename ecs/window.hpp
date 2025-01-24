@@ -11,23 +11,23 @@
 #include <string>
 
 namespace rg {
-  class Window {
-  private:
-    std::unique_ptr<sf::RenderWindow> window;
-    std::unique_ptr<sf::View> cameraView;
+    class Window {
+    private:
+        std::unique_ptr<sf::RenderWindow> window;
+        std::unique_ptr<sf::View> cameraView;
 
-    Renderer renderer{};
+        Renderer renderer{};
 
-  public:
-    Window(uint32_t width, uint32_t height, const std::string &title);
+    public:
+        Window(uint32_t width, uint32_t height, const std::string& title);
 
-    Window(const Window &) = delete;
+        Window(const Window&) = delete;
 
-    void operator=(const Window &) = delete;
+        void operator=(const Window&) = delete;
 
-    void render(const glm::vec3 &cameraPosition, const entt::registry &registry);
+        void render(const glm::vec3& cameraPosition, const entt::registry& registry);
 
-    bool isOpen() { return window->isOpen(); }
-    bool pollingEvents(sf::Event &event) { return window->pollEvent(event); };
-  };
+        bool isOpen() { return window->isOpen(); }
+        bool pollingEvents(sf::Event& event) { return window->pollEvent(event); };
+    };
 } // rg

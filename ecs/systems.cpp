@@ -4,11 +4,10 @@
 #include <glm/vec3.hpp>
 
 namespace rg {
-    void Renderer::render(const std::unique_ptr<sf::RenderWindow> &window,
+    void Renderer::render(const std::unique_ptr<sf::RenderWindow>& window,
                           std::unique_ptr<sf::View>& cameraView,
                           const glm::vec3& cameraPosition,
-                          const entt::registry &registry) {
-
+                          const entt::registry& registry) {
         cameraView->setCenter(cameraPosition.x, cameraPosition.y);
         window->setView(*cameraView);
 
@@ -20,11 +19,11 @@ namespace rg {
         // draw background
 
         // traversing all entities
-        for (auto &entity: view) {
+        for (auto& entity: view) {
             auto renderable = view.get<Renderable>(entity);
-            sf::Sprite &sprite = renderable.sprite;
+            sf::Sprite& sprite = renderable.sprite;
             auto transform = view.get<Transform>(entity);
-            glm::vec3 &position = transform.position;
+            glm::vec3& position = transform.position;
 
             renderable.setPosition(position);
 
@@ -37,18 +36,18 @@ namespace rg {
 
     // important: if registry will be const, the view will be const and the
     // modifications of the components' data won't work
-    void Movement::update(entt::registry &registry, const real dt) {
+    void Movement::update(entt::registry& registry, const real dt) {
         auto view = registry.view<RigidBody, Moveable>();
 
-        view.each([&](auto &rigidBody, auto &moveable) {
+        view.each([&](auto& rigidBody, auto& moveable) {
             glm::vec3 force = moveable.direction * (Constants::FORCE_SCALAR * dt);
             rigidBody.addForce(force);
         });
     }
 
     // should be called after the entities' movements
-    bool Physics::resolveCollisions(RigidBody &rbFirst, RigidBody &rbSecond,
-                                    const Transform &tFirst, const Transform &tSecond,
+    bool Physics::resolveCollisions(RigidBody& rbFirst, RigidBody& rbSecond,
+                                    const Transform& tFirst, const Transform& tSecond,
                                     const real dt) {
         // no collision effect will occurr with non-moveable objects
         if (rbFirst.hasInfiniteMass() && rbSecond.hasInfiniteMass())
@@ -83,13 +82,13 @@ namespace rg {
         return true;
     }
 
-    void Physics::update(entt::registry &registry, const real dt) {
+    void Physics::update(entt::registry& registry, const real dt) {
         auto view = registry.view<RigidBody, Transform>();
 
         // calculate collision
         for (const entt::entity first: view) {
-            auto &rbFirst = view.get<RigidBody>(first);
-            auto &tFirst = view.get<Transform>(first);
+            auto& rbFirst = view.get<RigidBody>(first);
+            auto& tFirst = view.get<Transform>(first);
 
             // dont calculate collisions for infinite mass objects,
             // but will calculate collisions for non infinite mass objects with
@@ -106,8 +105,8 @@ namespace rg {
             // traversing other objects that are different and are close by in the
             // window grid
             for (const entt::entity second: view) {
-                auto &rbSecond = view.get<RigidBody>(second);
-                auto &tSecond = view.get<Transform>(second);
+                auto& rbSecond = view.get<RigidBody>(second);
+                auto& tSecond = view.get<Transform>(second);
                 // don't calculate collisions between an entity and itself
                 if (first == second)
                     continue;
@@ -126,7 +125,7 @@ namespace rg {
             }
         }
 
-        view.each([&](auto &rigidBody, auto &transform) {
+        view.each([&](auto& rigidBody, auto& transform) {
             // not updating infinite mass bodies
             if (rigidBody.infiniteMass)
                 return;

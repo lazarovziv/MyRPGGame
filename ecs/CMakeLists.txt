@@ -40,12 +40,9 @@ add_executable(ecs ${SOURCE_FILES})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
-add_subdirectory(entt/)
-
 set(ENTT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/ecs/entt)
 target_include_directories(ecs PRIVATE ${ENTT_INCLUDE_DIR})
 target_include_directories(ecs PRIVATE .)
-target_link_libraries(ecs entt)
 
 add_subdirectory(graphics)
 target_include_directories(ecs PRIVATE graphics/)

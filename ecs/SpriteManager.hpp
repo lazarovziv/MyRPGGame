@@ -6,26 +6,28 @@
 #include "Constants.h"
 
 namespace rg {
+    class SpriteManager {
+    private:
+        std::unordered_map<Constants::EntityActionState, unsigned int> entityActionStateToImageRow;
+        static SpriteManager* instance;
 
-class SpriteManager {
-  private:
-    std::unordered_map<Constants::EntityActionState, unsigned int> entityActionStateToImageRow;
-    static SpriteManager* instance;
+    public:
+        // filling the entityActionStateToImageRow map
+        ~SpriteManager();
 
-  public:
-    // filling the entityActionStateToImageRow map
-    ~SpriteManager();
-    SpriteManager(const SpriteManager&) = delete;
-    void operator=(const SpriteManager&) = delete;
+        SpriteManager(const SpriteManager&) = delete;
 
-    static SpriteManager* getInstance() noexcept;
+        void operator=(const SpriteManager&) = delete;
 
-    unsigned int getRowOfEntityActionState(Constants::EntityActionState actionState);
-    unsigned int getColOfDirection(Constants::SpriteMoveDirection moveDirection) const noexcept;
+        static SpriteManager* getInstance() noexcept;
 
-  private:
-    SpriteManager() noexcept;
-    void insertEntityActionState(Constants::EntityActionState state, unsigned int row) noexcept;
-};
+        unsigned int getRowOfEntityActionState(Constants::EntityActionState actionState);
 
+        unsigned int getColOfDirection(Constants::SpriteMoveDirection moveDirection) const noexcept;
+
+    private:
+        SpriteManager() noexcept;
+
+        void insertEntityActionState(Constants::EntityActionState state, unsigned int row) noexcept;
+    };
 } // namespace rg

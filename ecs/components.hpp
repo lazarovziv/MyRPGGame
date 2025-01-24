@@ -13,89 +13,96 @@
 #include <string>
 
 namespace rg {
+    // will hold all graphics data that's relevant for rendering, as the renderer
+    // will take all other necessary components
+    struct Renderable {
+        sf::Sprite sprite;
 
-// will hold all graphics data that's relevant for rendering, as the renderer
-// will take all other necessary components
-struct Renderable {
-    sf::Sprite sprite;
+        Renderable() = delete;
 
-    Renderable() = delete;
-    explicit Renderable(const std::string& textureFilePath,
-               unsigned int tileSize = Constants::TILE_SIZE,
-               unsigned int row = 33, unsigned int col = 0);
+        explicit Renderable(const std::string& textureFilePath,
+                            unsigned int tileSize = Constants::TILE_SIZE,
+                            unsigned int row = 33, unsigned int col = 0);
 
-    void setPosition(const glm::vec3& position);
-    void setTexture(const std::string& textureFilePath,
-                    unsigned int tileSize, unsigned int row,
-                    unsigned int col);
-};
+        void setPosition(const glm::vec3& position);
 
-struct Transform {
-    glm::vec3 position{0, 0, 0};
-    glm::vec3 rotation{0, 0, 0};
-    glm::vec3 scale{0, 0, 0};
-    // corresponds to a circle's radius
-    real size = static_cast<real>(Constants::TILE_SIZE) / 4;
+        void setTexture(const std::string& textureFilePath,
+                        unsigned int tileSize, unsigned int row,
+                        unsigned int col);
+    };
 
-    Transform() = default;
-    explicit Transform(real s);
-};
+    struct Transform {
+        glm::vec3 position{0, 0, 0};
+        glm::vec3 rotation{0, 0, 0};
+        glm::vec3 scale{0, 0, 0};
+        // corresponds to a circle's radius
+        real size = static_cast<real>(Constants::TILE_SIZE) / 4;
 
-struct RigidBody {
-    glm::vec3 velocity{0, 0, 0};
-    glm::vec3 acceleration{0, 0, 0};
-    // used for D'Alembert rule, accumulating all forces that act on the rigid
-    // body
-    glm::vec3 forceAccumulator{0, 0, 0};
-    real restitution;
-    real mass = 1;
-    real damping;
-    real inverseMass;
-    bool infiniteMass = false;
+        Transform() = default;
 
-    bool hasInfiniteMass() const { return infiniteMass; };
+        // explicit Transform(real size, real x = 0, real y = 0, real z = 0);
+        explicit Transform(const real size) : size{size} {
+        }
 
-    static void resetVector(glm::vec3& vec) {
-        vec.x = 0;
-        vec.y = 0;
-        vec.z = 0;
-    }
+        explicit Transform(real x, real y, real z);
+    };
 
-    void resetVelocity() {
-        velocity.x = 0;
-        velocity.y = 0;
-        velocity.z = 0;
-    }
+    struct RigidBody {
+        glm::vec3 velocity{0, 0, 0};
+        glm::vec3 acceleration{0, 0, 0};
+        // used for D'Alembert rule, accumulating all forces that act on the rigid
+        // body
+        glm::vec3 forceAccumulator{0, 0, 0};
+        real restitution;
+        real mass = 1;
+        real damping;
+        real inverseMass;
+        bool infiniteMass = false;
 
-    void resetAcceleration() {
-        acceleration.x = 0;
-        acceleration.y = 0;
-        acceleration.z = 0;
-    }
+        bool hasInfiniteMass() const { return infiniteMass; };
 
-    void resetForceAccumulator() {
-        forceAccumulator.x = 0;
-        forceAccumulator.y = 0;
-        forceAccumulator.z = 0;
-    }
+        static void resetVector(glm::vec3& vec) {
+            vec.x = 0;
+            vec.y = 0;
+            vec.z = 0;
+        }
 
-    inline void addForce(const glm::vec3& force) { forceAccumulator += force; }
+        void resetVelocity() {
+            velocity.x = 0;
+            velocity.y = 0;
+            velocity.z = 0;
+        }
 
-    explicit RigidBody(real mass = 1);
-};
+        void resetAcceleration() {
+            acceleration.x = 0;
+            acceleration.y = 0;
+            acceleration.z = 0;
+        }
 
-struct Gravity {
-    glm::vec3 force{0, 9.81f, 0};
-};
+        void resetForceAccumulator() {
+            forceAccumulator.x = 0;
+            forceAccumulator.y = 0;
+            forceAccumulator.z = 0;
+        }
 
-struct Moveable {
-    glm::vec3 direction{0, 0, 0};
-    Constants::SpriteMoveDirection spriteDirection;
-};
+        inline void addForce(const glm::vec3& force) { forceAccumulator += force; }
 
-// placeholder for indicating whether an entity is the player's entity
-struct Player {};
+        explicit RigidBody(real mass = 1);
+    };
 
-struct Grass {};
+    struct Gravity {
+        glm::vec3 force{0, 9.81f, 0};
+    };
 
+    struct Moveable {
+        glm::vec3 direction{0, 0, 0};
+        Constants::SpriteMoveDirection spriteDirection;
+    };
+
+    // placeholder for indicating whether an entity is the player's entity
+    struct Player {
+    };
+
+    struct Grass {
+    };
 } // namespace rg

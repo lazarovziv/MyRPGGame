@@ -61,7 +61,6 @@ file(GLOB SOURCE_FILES
 
 add_library(graphics ${SOURCE_FILES})
 add_dependencies(graphics shaders)
-set_target_properties(entt PROPERTIES LINKER_LANGUAGE CXX)
 
 # finding and linking Vulkan
 find_package(Vulkan REQUIRED)
